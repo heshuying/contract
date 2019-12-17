@@ -14,6 +14,8 @@ import com.haier.hailian.contract.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,9 +31,10 @@ import java.util.Base64;
  * Created by 19012964 on 2019/12/17.
  */
 
-@Slf4j
 @Service
 public class HacLoginServiceImpl implements HacLoginService{
+    private final Logger log =  LoggerFactory.getLogger(HacLoginServiceImpl.class);
+
     @Autowired
     private HacLoginConfig hacLoginConfig;
     @Autowired

@@ -10,5 +10,4 @@ import lombok.Data;
 public class HacLoginRespDto {
     private String code;
     private String message;
-    private String data;
 }
