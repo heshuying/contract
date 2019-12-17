@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZHrChainInfoDao">
+
+    <resultMap type="com.haier.hailian.contract.entity.ZHrChainInfo" id="ZHrChainInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="chainCode" column="chain_code" jdbcType="VARCHAR"/>
+        <result property="chainName" column="chain_name" jdbcType="VARCHAR"/>
+        <result property="tyMasterXwCode" column="ty_master_xw_code" jdbcType="VARCHAR"/>
+        <result property="tyMasterXwName" column="ty_master_xw_name" jdbcType="VARCHAR"/>
+        <result property="tyMasterEmpsn" column="ty_master_empsn" jdbcType="VARCHAR"/>
+        <result property="tyMasterEmpname" column="ty_master_empname" jdbcType="VARCHAR"/>
+        <result property="tyRegionCode" column="ty_region_code" jdbcType="VARCHAR"/>
+        <result property="cdMasterXwCode" column="cd_master_xw_code" jdbcType="VARCHAR"/>
+        <result property="cdMasterXwName" column="cd_master_xw_name" jdbcType="VARCHAR"/>
+        <result property="cdMasterEmpsn" column="cd_master_empsn" jdbcType="VARCHAR"/>
+        <result property="cdMasterEmpname" column="cd_master_empname" jdbcType="VARCHAR"/>
+        <result property="contractsId" column="contracts_id" jdbcType="INTEGER"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="tyChainPercents" column="ty_chain_percents" jdbcType="VARCHAR"/>
+        <result property="cdChainPercents" column="cd_chain_percents" jdbcType="VARCHAR"/>
+        <result property="marketPercents" column="market_percents" jdbcType="VARCHAR"/>
+        <result property="netPercents" column="net_percents" jdbcType="VARCHAR"/>
+        <result property="planSetps" column="plan_setps" jdbcType="VARCHAR"/>
+        <result property="shareSetps" column="share_setps" jdbcType="VARCHAR"/>
+        <result property="chainPtCode" column="chain_pt_code" jdbcType="VARCHAR"/>
+        <result property="deleted" column="deleted" jdbcType="BYTE"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZHrChainInfoMap">
+        select
+          id, chain_code, chain_name, ty_master_xw_code, ty_master_xw_name, ty_master_empsn, ty_master_empname, ty_region_code, cd_master_xw_code, cd_master_xw_name, cd_master_empsn, cd_master_empname, contracts_id, create_date, ty_chain_percents, cd_chain_percents, market_percents, net_percents, plan_setps, share_setps, chain_pt_code, deleted
+        from chain_contract.z_hr_chain_info
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZHrChainInfoMap">
+        select
+          id, chain_code, chain_name, ty_master_xw_code, ty_master_xw_name, ty_master_empsn, ty_master_empname, ty_region_code, cd_master_xw_code, cd_master_xw_name, cd_master_empsn, cd_master_empname, contracts_id, create_date, ty_chain_percents, cd_chain_percents, market_percents, net_percents, plan_setps, share_setps, chain_pt_code, deleted
+        from chain_contract.z_hr_chain_info
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZHrChainInfoMap">
+        select
+          id, chain_code, chain_name, ty_master_xw_code, ty_master_xw_name, ty_master_empsn, ty_master_empname, ty_region_code, cd_master_xw_code, cd_master_xw_name, cd_master_empsn, cd_master_empname, contracts_id, create_date, ty_chain_percents, cd_chain_percents, market_percents, net_percents, plan_setps, share_setps, chain_pt_code, deleted
+        from chain_contract.z_hr_chain_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="chainCode != null and chainCode != ''">
+                and chain_code = #{chainCode}
+            </if>
+            <if test="chainName != null and chainName != ''">
+                and chain_name = #{chainName}
+            </if>
+            <if test="tyMasterXwCode != null and tyMasterXwCode != ''">
+                and ty_master_xw_code = #{tyMasterXwCode}
+            </if>
+            <if test="tyMasterXwName != null and tyMasterXwName != ''">
+                and ty_master_xw_name = #{tyMasterXwName}
+            </if>
+            <if test="tyMasterEmpsn != null and tyMasterEmpsn != ''">
+                and ty_master_empsn = #{tyMasterEmpsn}
+            </if>
+            <if test="tyMasterEmpname != null and tyMasterEmpname != ''">
+                and ty_master_empname = #{tyMasterEmpname}
+            </if>
+            <if test="tyRegionCode != null and tyRegionCode != ''">
+                and ty_region_code = #{tyRegionCode}
+            </if>
+            <if test="cdMasterXwCode != null and cdMasterXwCode != ''">
+                and cd_master_xw_code = #{cdMasterXwCode}
+            </if>
+            <if test="cdMasterXwName != null and cdMasterXwName != ''">
+                and cd_master_xw_name = #{cdMasterXwName}
+            </if>
+            <if test="cdMasterEmpsn != null and cdMasterEmpsn != ''">
+                and cd_master_empsn = #{cdMasterEmpsn}
+            </if>
+            <if test="cdMasterEmpname != null and cdMasterEmpname != ''">
+                and cd_master_empname = #{cdMasterEmpname}
+            </if>
+            <if test="contractsId != null">
+                and contracts_id = #{contractsId}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+            <if test="tyChainPercents != null and tyChainPercents != ''">
+                and ty_chain_percents = #{tyChainPercents}
+            </if>
+            <if test="cdChainPercents != null and cdChainPercents != ''">
+                and cd_chain_percents = #{cdChainPercents}
+            </if>
+            <if test="marketPercents != null and marketPercents != ''">
+                and market_percents = #{marketPercents}
+            </if>
+            <if test="netPercents != null and netPercents != ''">
+                and net_percents = #{netPercents}
+            </if>
+            <if test="planSetps != null and planSetps != ''">
+                and plan_setps = #{planSetps}
+            </if>
+            <if test="shareSetps != null and shareSetps != ''">
+                and share_setps = #{shareSetps}
+            </if>
+            <if test="chainPtCode != null and chainPtCode != ''">
+                and chain_pt_code = #{chainPtCode}
+            </if>
+            <if test="deleted != null">
+                and deleted = #{deleted}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, ty_master_xw_code, ty_master_xw_name, ty_master_empsn, ty_master_empname, ty_region_code, cd_master_xw_code, cd_master_xw_name, cd_master_empsn, cd_master_empname, contracts_id, create_date, ty_chain_percents, cd_chain_percents, market_percents, net_percents, plan_setps, share_setps, chain_pt_code, deleted)
+        values (#{chainCode}, #{chainName}, #{tyMasterXwCode}, #{tyMasterXwName}, #{tyMasterEmpsn}, #{tyMasterEmpname}, #{tyRegionCode}, #{cdMasterXwCode}, #{cdMasterXwName}, #{cdMasterEmpsn}, #{cdMasterEmpname}, #{contractsId}, #{createDate}, #{tyChainPercents}, #{cdChainPercents}, #{marketPercents}, #{netPercents}, #{planSetps}, #{shareSetps}, #{chainPtCode}, #{deleted})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update chain_contract.z_hr_chain_info
+        <set>
+            <if test="chainCode != null and chainCode != ''">
+                chain_code = #{chainCode},
+            </if>
+            <if test="chainName != null and chainName != ''">
+                chain_name = #{chainName},
+            </if>
+            <if test="tyMasterXwCode != null and tyMasterXwCode != ''">
+                ty_master_xw_code = #{tyMasterXwCode},
+            </if>
+            <if test="tyMasterXwName != null and tyMasterXwName != ''">
+                ty_master_xw_name = #{tyMasterXwName},
+            </if>
+            <if test="tyMasterEmpsn != null and tyMasterEmpsn != ''">
+                ty_master_empsn = #{tyMasterEmpsn},
+            </if>
+            <if test="tyMasterEmpname != null and tyMasterEmpname != ''">
+                ty_master_empname = #{tyMasterEmpname},
+            </if>
+            <if test="tyRegionCode != null and tyRegionCode != ''">
+                ty_region_code = #{tyRegionCode},
+            </if>
+            <if test="cdMasterXwCode != null and cdMasterXwCode != ''">
+                cd_master_xw_code = #{cdMasterXwCode},
+            </if>
+            <if test="cdMasterXwName != null and cdMasterXwName != ''">
+                cd_master_xw_name = #{cdMasterXwName},
+            </if>
+            <if test="cdMasterEmpsn != null and cdMasterEmpsn != ''">
+                cd_master_empsn = #{cdMasterEmpsn},
+            </if>
+            <if test="cdMasterEmpname != null and cdMasterEmpname != ''">
+                cd_master_empname = #{cdMasterEmpname},
+            </if>
+            <if test="contractsId != null">
+                contracts_id = #{contractsId},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="tyChainPercents != null and tyChainPercents != ''">
+                ty_chain_percents = #{tyChainPercents},
+            </if>
+            <if test="cdChainPercents != null and cdChainPercents != ''">
+                cd_chain_percents = #{cdChainPercents},
+            </if>
+            <if test="marketPercents != null and marketPercents != ''">
+                market_percents = #{marketPercents},
+            </if>
+            <if test="netPercents != null and netPercents != ''">
+                net_percents = #{netPercents},
+            </if>
+            <if test="planSetps != null and planSetps != ''">
+                plan_setps = #{planSetps},
+            </if>
+            <if test="shareSetps != null and shareSetps != ''">
+                share_setps = #{shareSetps},
+            </if>
+            <if test="chainPtCode != null and chainPtCode != ''">
+                chain_pt_code = #{chainPtCode},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from chain_contract.z_hr_chain_info where id = #{id}
+    </delete>
+
+</mapper>
