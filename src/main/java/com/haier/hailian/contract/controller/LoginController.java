@@ -5,9 +5,12 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.service.HacLoginService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,5 +35,18 @@ public class LoginController {
     @ApiOperation(value = "登录")
     public R hacLogin(@RequestBody @Validated HacLoginDto hacSignInDTO) {
         return hacLoginService.login(hacSignInDTO);
+    }
+
+
+    @PostMapping(value = "/logout")
+    @ApiOperation(value = "注销登录")
+    public R logout() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            subject.logout();
+        } catch (Exception e) {
+            throw new RException(e.getMessage());
+        }
+        return R.ok();
     }
 }
