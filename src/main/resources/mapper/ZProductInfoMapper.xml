@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZProductInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.ZProductInfo">
+        <id column="id" property="id" />
+        <result column="product_name" property="productName" />
+        <result column="product_series" property="productSeries" />
+        <result column="product_model" property="productModel" />
+        <result column="product_model_code" property="productModelCode" />
+        <result column="product_stru" property="productStru" />
+        <result column="pt_code" property="ptCode" />
+        <result column="company" property="company" />
+        <result column="is_net_device" property="isNetDevice" />
+        <result column="is_scene" property="isScene" />
+        <result column="product_status" property="productStatus" />
+        <result column="period_code" property="periodCode" />
+    </resultMap>
+
+</mapper>

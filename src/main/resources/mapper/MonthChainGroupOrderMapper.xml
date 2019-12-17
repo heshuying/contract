@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.MonthChainGroupOrderDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.MonthChainGroupOrder">
+        <id column="id" property="id" />
+        <result column="year" property="year" />
+        <result column="month" property="month" />
+        <result column="product_line_code" property="productLineCode" />
+        <result column="product_line_name" property="productLineName" />
+        <result column="brand_cdde" property="brandCdde" />
+        <result column="brand_name" property="brandName" />
+        <result column="xw_code" property="xwCode" />
+        <result column="xw_name" property="xwName" />
+        <result column="series_code" property="seriesCode" />
+        <result column="series_name" property="seriesName" />
+        <result column="product_code" property="productCode" />
+        <result column="product_name" property="productName" />
+        <result column="trade_code" property="tradeCode" />
+        <result column="trade_name" property="tradeName" />
+        <result column="wg_code" property="wgCode" />
+        <result column="wg_name" property="wgName" />
+        <result column="order_num" property="orderNum" />
+        <result column="order_amt" property="orderAmt" />
+        <result column="submit_emp" property="submitEmp" />
+        <result column="submit_time" property="submitTime" />
+        <result column="add1" property="add1" />
+        <result column="add2" property="add2" />
+        <result column="add3" property="add3" />
+        <result column="add4" property="add4" />
+        <result column="add5" property="add5" />
+        <result column="add6" property="add6" />
+        <result column="add7" property="add7" />
+        <result column="add8" property="add8" />
+        <result column="add9" property="add9" />
+        <result column="add10" property="add10" />
+    </resultMap>
+
+</mapper>
