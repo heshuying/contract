@@ -1331,3 +1331,21 @@ CREATE TABLE `z_xw_score_his` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for x_people_share_ratio
+-- ----------------------------
+DROP TABLE IF EXISTS `z_people_share_ratio`;
+CREATE TABLE `z_people_share_ratio` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `contracts_id` int(11) DEFAULT NULL COMMENT '合约编码',
+  `org_code` varchar(100) DEFAULT NULL COMMENT '组织编码',
+  `org_name` varchar(100) DEFAULT NULL COMMENT '组织名称',
+  `xw_code` varchar(100) DEFAULT NULL COMMENT '小微编码',
+  `xw_name` varchar(100) DEFAULT NULL COMMENT '小微名称',
+  `emp_sn` varchar(100) DEFAULT NULL COMMENT '员工号',
+  `emp_name` varchar(100) DEFAULT NULL COMMENT '员工姓名',
+  `percents` varchar(100) DEFAULT NULL COMMENT '分享比例',
+  PRIMARY KEY (`id`),
+  KEY `idx_con` (`contracts_id`),
+  KEY `idx_xw` (`xw_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
