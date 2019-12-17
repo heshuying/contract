@@ -1,11 +1,12 @@
-### Java Spring template project
+# Getting Started
+打包：
+    开发：mvn package -Pdev -Dmaven.test.skip=true
+    生产：mvn package -Pprod -Dmaven.test.skip=true
+    测试：mvn package -Ptest -Dmaven.test.skip=true
+- 生产：
 
-This project is based on a GitLab [Project Template](https://docs.gitlab.com/ee/gitlab-basics/create-project.html).
+# 数据库
+### 测试
+    10.138.26.200:3909 库名：chain_contract 用户名：chcontract_tmp/Bfds8LvadCCd
 
-Improvements can be proposed in the [original project](https://gitlab.com/gitlab-org/project-templates/spring).
 
-### CI/CD with Auto DevOps
-
-This template is compatible with [Auto DevOps](https://docs.gitlab.com/ee/topics/autodevops/).
-
-If Auto DevOps is not already enabled for this project, you can [turn it on](https://docs.gitlab.com/ee/topics/autodevops/#enabling-auto-devops) in the project settings.

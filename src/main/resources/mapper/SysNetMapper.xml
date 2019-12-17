@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.SysNetDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.SysNet">
+        <id column="ID" property="id" />
+        <result column="center_code" property="centerCode" />
+        <result column="center_name" property="centerName" />
+        <result column="jyt_code" property="jytCode" />
+        <result column="jyt_name" property="jytName" />
+        <result column="empSN" property="empSN" />
+        <result column="empName" property="empName" />
+        <result column="xw_code" property="xwCode" />
+        <result column="xw_name" property="xwName" />
+        <result column="net_gdp" property="netGdp" />
+        <result column="net_population_count" property="netPopulationCount" />
+        <result column="product_line_code" property="productLineCode" />
+    </resultMap>
+
+</mapper>

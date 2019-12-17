@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.SysEmployeeEhrDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.SysEmployeeEhr">
+        <id column="id" property="id" />
+        <result column="empSn" property="empSn" />
+        <result column="empName" property="empName" />
+        <result column="posCode" property="posCode" />
+        <result column="posName" property="posName" />
+        <result column="deptCode" property="deptCode" />
+        <result column="deptName" property="deptName" />
+        <result column="nodeCode" property="nodeCode" />
+        <result column="nodeName" property="nodeName" />
+        <result column="mobileNo" property="mobileNo" />
+        <result column="notesmail" property="notesmail" />
+    </resultMap>
+
+</mapper>

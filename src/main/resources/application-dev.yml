@@ -1,0 +1,82 @@
+server:
+  port: 8080
+
+spring:
+  application:
+      id: zzfz
+      name: zzfx
+  datasource:
+      type: com.alibaba.druid.pool.DruidDataSource
+      druid:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://10.138.26.200:3909/chain_contract?zeroDateTimeBehavior=CONVERT_TO_NULL&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+        username: chcontract_tmp
+        password: Bfds8LvadCCd
+        initial-size: 10
+        max-active: 100
+        min-idle: 10
+        max-wait: 60000
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 20
+        time-between-eviction-runs-millis: 60000
+        min-evictable-idle-time-millis: 300000
+        #Oracle需要打开注释
+        #validation-query: SELECT 1 FROM DUAL
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          #login-username: admin
+          #login-password: admin
+        filter:
+          stat:
+            log-slow-sql: true
+            slow-sql-millis: 1000
+            merge-sql: false
+          wall:
+            config:
+              multi-statement-allow: true
+logging:
+  config: classpath:log/log-config-dev.xml
+
+sms:
+  mock: true
+
+#swagger 启用
+swagger:
+  enable: true
+  basePackage: com.haier.hailian.contract
+  info:
+    title: 增值分享API文档
+    description: 增值分享API文档
+    version: 1.0
+    serviceUrl: http://zzfx.hoptest.haier.net
+
+# 短信配置
+sms-conf:
+  smsServer: http://smsg.haier.net/sms/sendNotifyMessage
+  sysCode: W00049
+  tokenKey: r79S4Oi9lOzf22019WgRAZLLZUmRQU0xurnYAuxYFfkb2aPTDCIZ2bx9BERG9vUi
+  smsType: 0
+  sendType: 0
+  flag: false
+
+# 上链相关接口
+chain:
+  uploadUrl: http://apigw.haier.net/chain/d2v/dataUpload
+  validUrl: http://apigw.haier.net/chain/d2v/validate
+  apiGatewayAuthAppId: 960beedb-1ab8-42e4-b4ba-ab1fdf9c281c
+  apiGatewayAuthAppPassword: W00049
+
+# hac login Resp api
+hac:
+  loginUri: http://almsc.hoptest.haier.net:8899/api/service-sso/user/loginjson
+  appKey: CkHorSCQuBQwNhgHiKgvPPNWsYYprmXj
+  appSecret: RF9vLUON3pBS4FzeW4DtQ0oK6fUwACGW
+
+
+
+
+
