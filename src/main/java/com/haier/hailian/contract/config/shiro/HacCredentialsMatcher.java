@@ -1,4 +1,4 @@
-package com.haier.hailian.contract.config.oauth2;
+package com.haier.hailian.contract.config.shiro;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationInfo;

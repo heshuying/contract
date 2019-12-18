@@ -6,6 +6,8 @@ import com.haier.hailian.contract.service.MonthChainGroupOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -16,5 +18,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MonthChainGroupOrderServiceImpl extends ServiceImpl<MonthChainGroupOrderDao, MonthChainGroupOrder> implements MonthChainGroupOrderService {
-
+    @Override
+    public List<String> getProductByContract(Integer contractId, String productStru, List<String> yearMonth) {
+        return baseMapper.getProductByContract(contractId,productStru,yearMonth);
+    }
 }

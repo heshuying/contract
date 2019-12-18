@@ -1,4 +1,4 @@
-package com.haier.hailian.contract.config.oauth2;
+package com.haier.hailian.contract.config.shiro;
 
 import org.apache.shiro.authc.HostAuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
