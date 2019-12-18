@@ -2,6 +2,9 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-12-17
  */
 public interface MonthChainGroupOrderService extends IService<MonthChainGroupOrder> {
-
+    /**
+     * 根据合约和产品结构获取产品编码
+     * @param contractId
+     * @param productStru
+     * @param yearMonth
+     * @return
+     */
+    List<String> getProductByContract(Integer contractId,String productStru,
+                                      List<String> yearMonth);
 }

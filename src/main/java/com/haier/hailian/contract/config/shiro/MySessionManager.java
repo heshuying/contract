@@ -1,4 +1,4 @@
-package com.haier.hailian.contract.config.oauth2;
+package com.haier.hailian.contract.config.shiro;
 
 import com.haier.hailian.contract.util.Constant;
 import org.apache.commons.lang3.StringUtils;

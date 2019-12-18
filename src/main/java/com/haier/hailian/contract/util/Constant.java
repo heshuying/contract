@@ -40,4 +40,32 @@ public class Constant {
             return value;
         }
     }
+
+    /**
+     * 链群状态 01高； 02中 ；03低
+     */
+    public enum ProductStru {
+        /**
+         * 高
+         */
+        High("01"),
+        /**
+         * 中
+         */
+        Midd("02"),
+        /**
+         * 低
+         */
+        Low("03");
+
+        private String value;
+
+        ProductStru(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }

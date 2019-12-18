@@ -37,4 +37,16 @@
         <result column="add10" property="add10" />
     </resultMap>
 
+    <select id="getProductByContract" resultType="java.lang.String">
+        select DISTINCT product_model_code from
+        z_gambling_contracts_product_modle gpm
+        join z_product_info zpi on gpm.product_model_code=zpi.product_model_code
+        where gpm.contracts_id=#{contractId}
+        and zpi.period_code in
+        <foreach collection="yearMonth" item="item" index="index" open="(" close=")"  separator="," >
+            #{item}
+        </foreach>
+        and zpi.product_stru=#{productStru}
+    </select>
+
 </mapper>

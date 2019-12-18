@@ -3,6 +3,8 @@ package com.haier.hailian.contract.dto.grab;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * Created by 19012964 on 2019/12/17.
  */
@@ -11,8 +13,9 @@ import lombok.Data;
 public class MeshGrabInfoDto {
     private  String meshCode;
     private String meshName;
-    private String income;
-    private String struHighPercent;
-    private String struLowPercent;
+    //抢单收入
+    private BigDecimal income;
+    private BigDecimal struHighPercent;
+    private BigDecimal struLowPercent;
 
 }
