@@ -1,9 +1,8 @@
 
 package com.haier.hailian.contract.config;
 
-import com.haier.hailian.contract.config.oauth2.HacLoginRealm;
-import com.haier.hailian.contract.config.oauth2.MySessionManager;
-import com.haier.hailian.contract.config.oauth2.OAuth2Filter;
+import com.haier.hailian.contract.config.shiro.HacLoginRealm;
+import com.haier.hailian.contract.config.shiro.MySessionManager;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.codec.Base64;
@@ -33,21 +32,19 @@ public class ShiroConfig {
     public SecurityManager securityManager(HacLoginRealm hacLoginRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(hacLoginRealm);
-        securityManager.setRememberMeManager(null);
+        securityManager.setSessionManager(sessionManager());
+        //使用缓存
+        securityManager.setCacheManager(cacheManager());
+        securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
-        ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
-        shiroFilter.setSecurityManager(securityManager);
-
-        //oauth过滤
-        Map<String, Filter> filters = new HashMap<>();
-        filters.put("oauth2", new OAuth2Filter());
-        shiroFilter.setFilters(filters);
-
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> filterMap = new LinkedHashMap<>();
+
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
@@ -56,11 +53,14 @@ public class ShiroConfig {
         filterMap.put("/v2/api-docs", "anon");
         filterMap.put("/swagger-ui.html", "anon");
         filterMap.put("/swagger-resources/**", "anon");
-        filterMap.put("/cdGrab/info", "anon");
-        filterMap.put("/**", "oauth2");
-        shiroFilter.setFilterChainDefinitionMap(filterMap);
+        //未登录页面
+        shiroFilterFactoryBean.setLoginUrl("/user/unauthorized");
+        //未授权界面;
+        shiroFilterFactoryBean.setUnauthorizedUrl("/user/forbidden");
+        filterMap.put("/**", "authc");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
 
-        return shiroFilter;
+        return shiroFilterFactoryBean;
     }
 
     @Bean("lifecycleBeanPostProcessor")
@@ -128,5 +128,6 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
 
 }

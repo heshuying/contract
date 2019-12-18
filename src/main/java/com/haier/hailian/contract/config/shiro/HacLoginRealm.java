@@ -1,4 +1,4 @@
-package com.haier.hailian.contract.config.oauth2;
+package com.haier.hailian.contract.config.shiro;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
