@@ -5,8 +5,8 @@ import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
 import com.haier.hailian.contract.service.CDGrabService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,16 +17,18 @@ import java.util.Map;
 /**
  * @author 19033323
  */
+@Slf4j
 @Api(value = "创单节点抢单", tags = {"创单节点抢单"})
-@RestController(value = "/cdGrab")
+@RestController
+@RequestMapping(value = {"/cdGrab"})
 public class CDGrabController {
 
     @Autowired
     CDGrabService cdGrabService;
 
-    @RequestMapping(value = {"/info"})
+    @PostMapping(value = {"/info"})
     @ApiOperation(value = "创单节点抢单页面信息接口")
-    public R meshDetail(@RequestBody @Validated CDGrabInfoRequestDto requestDto) {
+    public R queryInfo(@RequestBody CDGrabInfoRequestDto requestDto) {
         Map<String,Object> data= cdGrabService.queryCDGrabInfo(requestDto);
         return R.ok().put("data",data);
     }
