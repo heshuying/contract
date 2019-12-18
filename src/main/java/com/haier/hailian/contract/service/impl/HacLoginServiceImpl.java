@@ -1,9 +1,8 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.config.HacLoginConfig;
-import com.haier.hailian.contract.config.oauth2.HacLoginToken;
+import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.HacLoginRespDto;
 import com.haier.hailian.contract.dto.R;
@@ -11,7 +10,6 @@ import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.util.Constant;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -24,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Base64;
 
 /**
  * Created by 19012964 on 2019/12/17.
