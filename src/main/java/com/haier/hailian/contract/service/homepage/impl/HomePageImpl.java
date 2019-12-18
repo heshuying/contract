@@ -47,9 +47,9 @@ public class HomePageImpl implements HomePageService {
         try{
             // 链群等级  现在规则没出来  卡住了
             map.put("chainGroupRank","");
-            // 链群的增值分享   实际 - 没有  卡住了
+            // 链群的增值分享   实际 - 没有  卡住了  实际利润 - 举单利润（链群）
             map.put("chainShare","");
-            // 节点、人的增值分享  实际 - 没有  卡住了
+            // 节点、人的增值分享  实际 - 没有  卡住了  实际利润 - 举单利润（个人）
             map.put("nodeShare","");
             // 吸引力预计
             map.put("estimate","");
