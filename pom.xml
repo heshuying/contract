@@ -184,8 +184,32 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!--打包插件-->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>mvn-assembly-package.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<mainClass>com.haier.hailian.contract.ContractApplication</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>${project.artifactId}-mvn-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
 
 	<!-- Maven私服配置 -->
 	<repositories>

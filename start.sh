@@ -1,0 +1,1 @@
+java -jar /contract-0.0.1-SNAPSHOT/contract-0.0.1-SNAPSHOT.jar
