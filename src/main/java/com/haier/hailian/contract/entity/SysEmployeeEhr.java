@@ -89,10 +89,6 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
      */
     private String notesmail;
 
-    /**
-     * 当前登陆用户
-     */
-    private CurrentUser currentUser;
 
     @TableField(exist=false)
     private List<SysNet> wanggeList;
