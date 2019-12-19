@@ -62,8 +62,7 @@ public class MyBatisPlusGenerator {
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
 
-        strategy.setInclude(new String[]{"month_chain_group_order","sys_net",
-                "z_net_bottom","z_product_info"}); // 排除生成的表，与setInclude二选一配置
+        strategy.setInclude(new String[]{"z_share_percent"}); // 排除生成的表，与setInclude二选一配置
         mpg.setStrategy(strategy);
 
         // 包配置
