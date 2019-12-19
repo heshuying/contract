@@ -18,4 +18,5 @@
         <result column="product_line_code" property="productLineCode" />
     </resultMap>
 
+
 </mapper>

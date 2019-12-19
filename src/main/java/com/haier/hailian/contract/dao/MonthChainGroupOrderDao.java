@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.dao;
 
+import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
+import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +28,11 @@ public interface MonthChainGroupOrderDao extends BaseMapper<MonthChainGroupOrder
     List<String> getProductByContract(@Param(value = "contractId") Integer contractId,
                                       @Param(value = "productStru") String productStru,
                                       @Param(value = "yearMonth") List<String> yearMonth);
+
+    /**
+     * 查询网格抢单收入
+     * @param queryDto
+     * @return
+     */
+     List<MeshGrabEntity> queryMeshGrabIncome(MeshStatisticQueryDto queryDto);
 }

@@ -8,6 +8,8 @@ public class Constant {
 
     public static String JWT_AUTH_HEADER = "Authorization";
     public static String CODE_LOGINFAIL = "401001";
+    public static String CODE_DATA_NOTFOUND= "404001";
+    public static String MSG_DATA_NOTFOUND= "数据不存在";
 
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；

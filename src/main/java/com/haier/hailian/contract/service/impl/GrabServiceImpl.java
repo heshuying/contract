@@ -1,19 +1,24 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
 import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
 import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
+import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.haier.hailian.contract.entity.SysNet;
+import com.haier.hailian.contract.entity.ZGamblingContracts;
 import com.haier.hailian.contract.entity.ZNetBottom;
+import com.haier.hailian.contract.gambling.service.ZGamblingContractsService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
 import com.haier.hailian.contract.service.SysNetService;
 import com.haier.hailian.contract.service.ZNetBottomService;
 import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,69 +38,106 @@ public class GrabServiceImpl implements GrabService {
     private MonthChainGroupOrderService monthChainGroupOrderService;
     @Autowired
     private ZNetBottomService netBottomService;
-
+    @Autowired
+    private ZGamblingContractsService contractsService;
     @Override
     public TyMasterGrabChainInfoDto queryChainInfo(MeshStatisticQueryDto queryDto) {
-        return null;
+        ZGamblingContracts contracts =contractsService.getById(queryDto.getContractId());
+        if(contracts==null){
+            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        }
+
+        TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
+        tyMasterGrabChainInfoDto.setChainName(contracts.getContractsName());
+        tyMasterGrabChainInfoDto.setStart(
+                DateFormatUtil.format(contracts.getStartDate()));
+        tyMasterGrabChainInfoDto.setEnd(
+                DateFormatUtil.format(contracts.getEndDate()));
+        List<MeshGrabEntity> meshGrabEntities=netBottomService.queryMeshBottomIncome(queryDto);
+        double income=meshGrabEntities.stream().mapToDouble(
+                m->AmountFormat.amtStr2D(m.getIncome())
+        ).sum();
+        tyMasterGrabChainInfoDto.setTargetIncome(new BigDecimal(income));
+
+        //高端
+        List<MeshGrabEntity> high=meshGrabEntities.stream().filter(
+                f->Constant.ProductStru.High.toString().equals(f.getProductStru()))
+                .collect(Collectors.toList());
+        if(high !=null && high.size()>0){
+            BigDecimal highIncome=new BigDecimal(high.stream().mapToDouble(m->
+                    AmountFormat.amtStr2D(m.getIncome())).sum());
+            tyMasterGrabChainInfoDto.setTargetHighPercent(highIncome.divide(tyMasterGrabChainInfoDto.getTargetIncome()));
+        }else{
+            tyMasterGrabChainInfoDto.setTargetHighPercent(BigDecimal.ZERO);
+        }
+        //低端
+        List<MeshGrabEntity> low=meshGrabEntities.stream().filter(
+                f->Constant.ProductStru.Low.toString().equals(f.getProductStru()))
+                .collect(Collectors.toList());
+        if(low !=null && low.size()>0){
+            BigDecimal lowIncome=new BigDecimal(high.stream().mapToDouble(m->
+                    AmountFormat.amtStr2D(m.getIncome())).sum());
+            tyMasterGrabChainInfoDto.setTargetLowPercent(lowIncome.divide(tyMasterGrabChainInfoDto.getTargetIncome()));
+        }else{
+            tyMasterGrabChainInfoDto.setTargetLowPercent(BigDecimal.ZERO);
+        }
+        return tyMasterGrabChainInfoDto;
     }
 
     @Override
     public MeshSummaryDto queryMeshGrabDetail(MeshStatisticQueryDto queryDto) {
-        //小微下所有的网格
-        List<SysNet> sysNets=sysNetService.queryByXwcode(queryDto.getXwCode());
-        List<String> wgCodes=sysNets.stream().map(code->code.getJytCode())
+        List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.queryMeshGrabIncome(queryDto);
+        List<String> wgCodes=meshGrabEntities.stream().map(m->m.getMeshCode())
                 .distinct().collect(Collectors.toList());
-        //网格对应年月抢单数据
-        List<MonthChainGroupOrder> chainGroupOrders=monthChainGroupOrderService.list(
-                new QueryWrapper<MonthChainGroupOrder>().eq("xw_code",queryDto.getXwCode())
-                .eq("year",queryDto.getYear())
-                .in("month", queryDto.getMonth())
-                .in("wg_code",wgCodes)
-        );
-        //网格对应年月目标数据
-        List<ZNetBottom> bottoms=netBottomService.list(
-                new QueryWrapper<ZNetBottom>().in("period_code",queryDto.getYearMonth())
-                .in("pmai_area_code", wgCodes)
-        );
-        //某个合约的高端产品
-        List<String> highProds=monthChainGroupOrderService.getProductByContract(
-                queryDto.getContractId(), Constant.ProductStru.High.getValue(),
-                queryDto.getYearMonth()
-        );
-        List<String> lowProds=monthChainGroupOrderService.getProductByContract(
-                queryDto.getContractId(), Constant.ProductStru.Low.getValue(),
-                queryDto.getYearMonth()
-        );
-        //某个合约的低端产品
         List<MeshGrabInfoDto> meshGrabInfoDtos=new ArrayList<>();
-        for ( String wg:wgCodes) {
+        for (String wg:wgCodes) {
             MeshGrabInfoDto meshGrabDto=new MeshGrabInfoDto();
-
-            SysNet curSysNet=sysNets.stream().filter(
-                    f->wg.equals(f.getJytCode())
-            ).findFirst().get();
-            meshGrabDto.setMeshCode(curSysNet.getJytCode());
-            meshGrabDto.setMeshCode(curSysNet.getJytName());
-
-            List<MonthChainGroupOrder> curChainOrder=chainGroupOrders.stream()
-                    .filter((f->wg.equals(f.getWgCode()))).collect(Collectors.toList());
-            double grabIncome=0d ,highIncome=0d, lowIncome=0d;
-            grabIncome=curChainOrder.stream().mapToDouble(
-                    m-> AmountFormat.amtStr2D(m.getOrderAmt())).sum();
-            meshGrabDto.setIncome(new BigDecimal(grabIncome));
-
-            //高、低端抢单收入
-            highIncome=curChainOrder.stream().filter(f->highProds.contains(f.getProductCode()))
-                    .mapToDouble(m-> AmountFormat.amtStr2D(m.getOrderAmt())).sum();
-            lowIncome=curChainOrder.stream().filter(f->lowProds.contains(f.getProductCode()))
-                    .mapToDouble(m-> AmountFormat.amtStr2D(m.getOrderAmt())).sum();
-
-            meshGrabDto.setStruHighPercent(new BigDecimal(highIncome).divide(
-                    meshGrabDto.getIncome() ));
-            meshGrabDto.setStruLowPercent(new BigDecimal(lowIncome).divide(
-                    meshGrabDto.getIncome() ));
+            List<MeshGrabEntity> current=meshGrabEntities.stream().filter(
+                    f->wg.equals(f.getMeshCode())
+            ).collect(Collectors.toList());
+            meshGrabDto.setMeshCode(wg);
+            meshGrabDto.setMeshName(current.get(0).getMeshName());
+            meshGrabDto.setIncome(
+                    new BigDecimal(current.stream().mapToDouble(m->
+                            AmountFormat.amtStr2D(m.getIncome())).sum())
+            );
+            //高端
+            List<MeshGrabEntity> high=current.stream().filter(
+                    f->Constant.ProductStru.High.toString().equals(f.getProductStru()))
+                    .collect(Collectors.toList());
+            if(high !=null && high.size()>0){
+                BigDecimal highIncome=new BigDecimal(high.stream().mapToDouble(m->
+                        AmountFormat.amtStr2D(m.getIncome())).sum());
+                meshGrabDto.setStruHighPercent(highIncome.divide(meshGrabDto.getIncome()));
+            }else{
+                meshGrabDto.setStruHighPercent(BigDecimal.ZERO);
+            }
+            //低端
+            List<MeshGrabEntity> low=current.stream().filter(
+                    f->Constant.ProductStru.Low.toString().equals(f.getProductStru()))
+                    .collect(Collectors.toList());
+            if(low !=null && low.size()>0){
+                BigDecimal lowIncome=new BigDecimal(high.stream().mapToDouble(m->
+                        AmountFormat.amtStr2D(m.getIncome())).sum());
+                meshGrabDto.setStruHighPercent(lowIncome.divide(meshGrabDto.getIncome()));
+            }else{
+                meshGrabDto.setStruHighPercent(BigDecimal.ZERO);
+            }
             meshGrabInfoDtos.add(meshGrabDto);
+
         }
-        return null;
+        MeshSummaryDto summaryDto=new MeshSummaryDto();
+        summaryDto.setMeshDetail(meshGrabInfoDtos);
+        BigDecimal inc=BigDecimal.ZERO,highPercent=BigDecimal.ZERO ,lowPercent=BigDecimal.ZERO;
+        for (MeshGrabInfoDto tem:meshGrabInfoDtos) {
+            inc=inc.add(tem.getIncome());
+            highPercent=highPercent.add(tem.getStruHighPercent());
+            lowPercent=lowPercent.add(tem.getStruLowPercent());
+        }
+        summaryDto.setIncome(inc);
+        summaryDto.setStruHighPercent(highPercent.divide(new BigDecimal(meshGrabInfoDtos.size())));
+        summaryDto.setStruLowPercent(lowPercent.divide(new BigDecimal(meshGrabInfoDtos.size())));
+
+        return summaryDto;
     }
 }

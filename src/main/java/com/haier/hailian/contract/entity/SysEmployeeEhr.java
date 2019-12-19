@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.List;
 
+import com.haier.hailian.contract.dto.CurrentUser;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -90,6 +91,14 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
 
     @TableField(exist=false)
     private List<SysNet> wanggeList;
+    /**
+     * 当前登陆用户
+     */
+    private CurrentUser currentUser;
+    /**
+     * 小微编码
+     */
+    private String xwCode;
 
     @Override
     protected Serializable pkVal() {
