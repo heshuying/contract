@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZGrabContractsDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.ZGrabContracts">
+        <id column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="pd_id" property="pdId" />
+        <result column="series" property="series" />
+        <result column="type" property="type" />
+        <result column="share_ratio" property="shareRatio" />
+        <result column="valu_added_share" property="valuAddedShare" />
+        <result column="grab_order_name" property="grabOrderName" />
+        <result column="grab_order_code" property="grabOrderCode" />
+        <result column="xw_name" property="xwName" />
+        <result column="xw_code" property="xwCode" />
+        <result column="grab_order_date" property="grabOrderDate" />
+        <result column="status" property="status" />
+        <result column="overall_share_ratio" property="overallShareRatio" />
+        <result column="opinion" property="opinion" />
+        <result column="overall_grab_count" property="overallGrabCount" />
+        <result column="overall_grab_income" property="overallGrabIncome" />
+        <result column="xw_type" property="xwType" />
+        <result column="org_type" property="orgType" />
+        <result column="dts_share_percentage" property="dtsSharePercentage" />
+        <result column="better_status" property="betterStatus" />
+        <result column="better_date" property="betterDate" />
+        <result column="contribution" property="contribution" />
+        <result column="is_market" property="isMarket" />
+        <result column="grab_profit" property="grabProfit" />
+        <result column="org_code" property="orgCode" />
+        <result column="org_name" property="orgName" />
+        <result column="hash_code" property="hashCode" />
+    </resultMap>
+
+    <select id="getContractList"  parameterType="com.haier.hailian.contract.dto.homepage.ContractListsDto"
+            resultType="com.haier.hailian.contract.dto.homepage.ContractListRes">
+
+        select t.status,m.create_name,n.chain_code,n.chain_name,b.target_bottom_line,
+        SUM(x.data) fact from z_grab_contracts t
+        left join z_gambling_contracts m on t.parent_id = m.id
+        left join z_hr_chain_info n on m.chain_code = n.chain_code
+        left join z_gambling_contracts_product_index b on b.contracts_id = t.parent_id
+        left join x_xw_actual x on x.entity = #{xwCode}
+        <![CDATA[
+            where m.start_date <= #{endTime}
+                and m.start_date >= #{startTime}
+                and t.grab_order_code = #{empSN}
+                and x.curdate <= #{endTime}
+                and x.curdate >= #{startTime}
+        ]]>
+
+        group by x.entity
+
+    </select>
+
+</mapper>
