@@ -13,6 +13,8 @@ public class ContractListsDto {
 
     private String role;
 
+    private String xwCode;
+
     private Date startTime;
 
     private Date endTime;
