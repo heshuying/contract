@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.XChainInfoDao">
+
+    <resultMap type="com.haier.hailian.contract.entity.XChainInfo" id="XChainInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="lqCode" column="lq_code" jdbcType="VARCHAR"/>
+        <result property="lqName" column="lq_name" jdbcType="VARCHAR"/>
+        <result property="lqMasterEmpsn" column="lq_master_empsn" jdbcType="VARCHAR"/>
+        <result property="lqMasterName" column="lq_master_name" jdbcType="VARCHAR"/>
+        <result property="lqMasterXwcode" column="lq_master_xwcode" jdbcType="VARCHAR"/>
+        <result property="lqMasterXwname" column="lq_master_xwname" jdbcType="VARCHAR"/>
+        <result property="lqPtCode" column="lq_pt_code" jdbcType="VARCHAR"/>
+        <result property="lqRegionCode" column="lq_region_code" jdbcType="VARCHAR"/>
+        <result property="lqRegionName" column="lq_region_name" jdbcType="VARCHAR"/>
+        <result property="cdChainPercents" column="cd_chain_percents" jdbcType="VARCHAR"/>
+        <result property="tyChainPercents" column="ty_chain_percents" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="XChainInfoMap">
+        select
+          id, lq_code, lq_name, lq_master_empsn, lq_master_name, lq_master_xwcode, lq_master_xwname, lq_pt_code, lq_region_code, lq_region_name, cd_chain_percents, ty_chain_percents
+        from chain_contract.x_chain_info
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="XChainInfoMap">
+        select
+          id, lq_code, lq_name, lq_master_empsn, lq_master_name, lq_master_xwcode, lq_master_xwname, lq_pt_code, lq_region_code, lq_region_name, cd_chain_percents, ty_chain_percents
+        from chain_contract.x_chain_info
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="XChainInfoMap">
+        select
+          id, lq_code, lq_name, lq_master_empsn, lq_master_name, lq_master_xwcode, lq_master_xwname, lq_pt_code, lq_region_code, lq_region_name, cd_chain_percents, ty_chain_percents
+        from chain_contract.x_chain_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="lqCode != null and lqCode != ''">
+                and lq_code = #{lqCode}
+            </if>
+            <if test="lqName != null and lqName != ''">
+                and lq_name = #{lqName}
+            </if>
+            <if test="lqMasterEmpsn != null and lqMasterEmpsn != ''">
+                and lq_master_empsn = #{lqMasterEmpsn}
+            </if>
+            <if test="lqMasterName != null and lqMasterName != ''">
+                and lq_master_name = #{lqMasterName}
+            </if>
+            <if test="lqMasterXwcode != null and lqMasterXwcode != ''">
+                and lq_master_xwcode = #{lqMasterXwcode}
+            </if>
+            <if test="lqMasterXwname != null and lqMasterXwname != ''">
+                and lq_master_xwname = #{lqMasterXwname}
+            </if>
+            <if test="lqPtCode != null and lqPtCode != ''">
+                and lq_pt_code = #{lqPtCode}
+            </if>
+            <if test="lqRegionCode != null and lqRegionCode != ''">
+                and lq_region_code = #{lqRegionCode}
+            </if>
+            <if test="lqRegionName != null and lqRegionName != ''">
+                and lq_region_name = #{lqRegionName}
+            </if>
+            <if test="cdChainPercents != null and cdChainPercents != ''">
+                and cd_chain_percents = #{cdChainPercents}
+            </if>
+            <if test="tyChainPercents != null and tyChainPercents != ''">
+                and ty_chain_percents = #{tyChainPercents}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.x_chain_info(lq_code, lq_name, lq_master_empsn, lq_master_name, lq_master_xwcode, lq_master_xwname, lq_pt_code, lq_region_code, lq_region_name, cd_chain_percents, ty_chain_percents)
+        values (#{lqCode}, #{lqName}, #{lqMasterEmpsn}, #{lqMasterName}, #{lqMasterXwcode}, #{lqMasterXwname}, #{lqPtCode}, #{lqRegionCode}, #{lqRegionName}, #{cdChainPercents}, #{tyChainPercents})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update chain_contract.x_chain_info
+        <set>
+            <if test="lqCode != null and lqCode != ''">
+                lq_code = #{lqCode},
+            </if>
+            <if test="lqName != null and lqName != ''">
+                lq_name = #{lqName},
+            </if>
+            <if test="lqMasterEmpsn != null and lqMasterEmpsn != ''">
+                lq_master_empsn = #{lqMasterEmpsn},
+            </if>
+            <if test="lqMasterName != null and lqMasterName != ''">
+                lq_master_name = #{lqMasterName},
+            </if>
+            <if test="lqMasterXwcode != null and lqMasterXwcode != ''">
+                lq_master_xwcode = #{lqMasterXwcode},
+            </if>
+            <if test="lqMasterXwname != null and lqMasterXwname != ''">
+                lq_master_xwname = #{lqMasterXwname},
+            </if>
+            <if test="lqPtCode != null and lqPtCode != ''">
+                lq_pt_code = #{lqPtCode},
+            </if>
+            <if test="lqRegionCode != null and lqRegionCode != ''">
+                lq_region_code = #{lqRegionCode},
+            </if>
+            <if test="lqRegionName != null and lqRegionName != ''">
+                lq_region_name = #{lqRegionName},
+            </if>
+            <if test="cdChainPercents != null and cdChainPercents != ''">
+                cd_chain_percents = #{cdChainPercents},
+            </if>
+            <if test="tyChainPercents != null and tyChainPercents != ''">
+                ty_chain_percents = #{tyChainPercents},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from chain_contract.x_chain_info where id = #{id}
+    </delete>
+
+</mapper>

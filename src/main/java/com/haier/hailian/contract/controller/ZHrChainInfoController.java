@@ -1,13 +1,13 @@
 package com.haier.hailian.contract.controller;
 
-import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
-import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("zHrChainInfo")
 @Slf4j
+@Api(value = "链群注册", tags = {"构建链群"})
 public class ZHrChainInfoController {
     /**
      * 服务对象
@@ -53,6 +53,7 @@ public class ZHrChainInfoController {
      * @return
      */
     @GetMapping("getAll")
+    @ApiOperation(value = "获取所有链群名称列表")
     public R getAll(@RequestBody @Validated @ApiParam(value = "条件查询", required = false) ZHrChainInfoDto zHrChainInfoDto) {
         try {
             ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
@@ -91,9 +92,9 @@ public class ZHrChainInfoController {
 
     @PostMapping(value = {"/getNodeTarget"})
     @ApiOperation(value = "查询人员目标")
-    public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询", required = true) String nodeCodeStr) {
+    public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询", required = true) String empCodeStr) {
         try {
-            List<SysNodeEhr> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
+            List<ZNodeTargetPercentInfo> list = zHrChainInfoService.getNodeTargetList(empCodeStr);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,",e);
