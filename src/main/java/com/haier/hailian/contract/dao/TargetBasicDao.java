@@ -3,6 +3,8 @@ package com.haier.hailian.contract.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.entity.TargetBasic;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.haier.hailian.contract.entity.TargetBasic;
  */
 public interface TargetBasicDao extends BaseMapper<TargetBasic> {
 
+    List<TargetBasic> selectTarget(TargetBasic targetBasic);
 }

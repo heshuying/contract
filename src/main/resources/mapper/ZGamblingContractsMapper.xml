@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZGamblingContractsDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.ZGamblingContracts">
+        <id column="id" property="id" />
+        <result column="contracts_name" property="contractsName" />
+        <result column="chain_code" property="chainCode" />
+        <result column="region_code" property="regionCode" />
+        <result column="join_time" property="joinTime" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="xiaowei_code" property="xiaoweiCode" />
+        <result column="xiaowei_name" property="xiaoweiName" />
+        <result column="create_code" property="createCode" />
+        <result column="create_name" property="createName" />
+        <result column="create_date" property="createDate" />
+        <result column="update_code" property="updateCode" />
+        <result column="update_name" property="updateName" />
+        <result column="update_date" property="updateDate" />
+        <result column="contract_status" property="contractStatus" />
+        <result column="contract_type" property="contractType" />
+        <result column="contract_group" property="contractGroup" />
+        <result column="org_type" property="orgType" />
+        <result column="hash_code" property="hashCode" />
+    </resultMap>
+
+</mapper>
