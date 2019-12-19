@@ -3,6 +3,7 @@ package com.haier.hailian.contract.controller;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
+import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
 import com.haier.hailian.contract.service.CDGrabService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,5 +33,12 @@ public class CDGrabController {
     public R queryInfo(@RequestBody CDGrabInfoRequestDto requestDto) {
         CDGrabInfoResponseDto data= cdGrabService.queryCDGrabInfo(requestDto);
         return R.ok().put("data",data);
+    }
+
+    @PostMapping(value = {"/save"})
+    @ApiOperation(value = "创单节点抢单页面信息接口")
+    public R saveGrab(@RequestBody CDGrabInfoSaveRequestDto requestDto) {
+//        CDGrabInfoResponseDto data= cdGrabService.queryCDGrabInfo(requestDto);
+        return R.ok().put("data","");
     }
 }
