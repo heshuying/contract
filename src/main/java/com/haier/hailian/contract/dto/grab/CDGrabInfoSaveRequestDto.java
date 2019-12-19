@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 @ApiModel(value = "创单节点抢单保存")
 public class CDGrabInfoSaveRequestDto {
+    @ApiModelProperty(value="合约id",name="合约id")
+    private Integer contractId;
     @ApiModelProperty(value="分享比例",name="分享比例",example="5%")
     private String sharePercent;
     @ApiModelProperty(value="达成目标预计分享酬",name="达成目标预计分享酬",example="3000")

@@ -1,19 +1,18 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.haier.hailian.contract.dao.TargetBasicDao;
-import com.haier.hailian.contract.dao.ZSharePercentDao;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
-import com.haier.hailian.contract.entity.SysEmployeeEhr;
-import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.ZSharePercent;
+import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +25,12 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZSharePercentDao sharePercentDao;
     @Autowired
     TargetBasicDao targetBasicDao;
+    @Autowired
+    ZReservePlanDao reservePlanDao;
+    @Autowired
+    ZReservePlanDetailDao reservePlanDetailDao;
+    @Autowired
+    ZGrabContractsDao grabContractsDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -54,5 +59,26 @@ public class CDGrabServiceImpl implements CDGrabService {
         // 达成目标预计分享酬 todo
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
+        ZGrabContracts grabContracts = new ZGrabContracts();
+        grabContracts.setParentId(requestDto.getContractId());
+        grabContracts.setShareRatio(requestDto.getSharePercent());
+        grabContractsDao.insert(grabContracts);
+        Integer grabId = grabContracts.getId();
+
+        ZReservePlan plan = new ZReservePlan();
+        plan.setParentId(grabId);
+        plan.setTitle(requestDto.getPlanTitle());
+        reservePlanDao.insert(plan);
+        Integer planId = plan.getId();
+
+        ZReservePlanDetail planDetail = new ZReservePlanDetail();
+        planDetail.setParentId(planId);
+        planDetail.setContent(requestDto.getPlanContent());
+        reservePlanDetailDao.insert(planDetail);
     }
 }
