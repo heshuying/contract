@@ -34,4 +34,25 @@
         <result column="hash_code" property="hashCode" />
     </resultMap>
 
+    <select id="getContractList"  parameterType="com.haier.hailian.contract.dto.homepage.ContractListsDto"
+            resultType="com.haier.hailian.contract.dto.homepage.ContractListRes">
+
+        select t.contracts_name,n.chain_code,n.chain_name,b.target_bottom_line,
+        SUM(x.data) from z_grab_contracts t
+        left join z_gambling_contracts m on t.parent_id = m.id
+        left join z_hr_chain_info n on m.chain_code = n.chain_code
+        left join z_gambling_contracts_product_index b on b.contracts_id = t.parent_id
+        left join x_xw_actual x on x.entity = #{xwCode}
+        <![CDATA[
+            where m.start_date <= #{endTime}
+                and m.start_date >= #{startTime}
+                and t.grab_order_code = #{empSN}
+                and x.curdate <= #{endTime}
+                and x.curdate >= #{startTime}
+        ]]>
+
+        group by x.entity
+
+    </select>
+
 </mapper>

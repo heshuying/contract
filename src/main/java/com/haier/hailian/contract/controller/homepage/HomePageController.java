@@ -2,6 +2,7 @@ package com.haier.hailian.contract.controller.homepage;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
+import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import io.swagger.annotations.Api;
@@ -31,7 +32,7 @@ public class HomePageController {
     public R getContractList(@RequestBody ContractListsDto contractListsDto) {
         R r = R.ok();
         try{
-            List<Object> res = homePageService.getContractList(contractListsDto);
+            List<ContractListRes> res = homePageService.getContractList(contractListsDto);
             r.put("data",res);
         }catch (Exception e){
             e.printStackTrace();

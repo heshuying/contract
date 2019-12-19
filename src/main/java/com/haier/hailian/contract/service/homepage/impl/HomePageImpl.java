@@ -1,8 +1,12 @@
 package com.haier.hailian.contract.service.homepage.impl;
 
+import com.haier.hailian.contract.dao.SysEmployeeEhrDao;
+import com.haier.hailian.contract.dao.ZGrabContractsDao;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
+import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
 import com.haier.hailian.contract.service.homepage.HomePageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,21 +18,35 @@ import java.util.Map;
 public class HomePageImpl implements HomePageService {
 
 
+    @Autowired
+    private ZGrabContractsDao zGrabContractsDao;
+    @Autowired
+    private SysEmployeeEhrDao sysEmployeeEhrDao;
+
     /**
      * 获取已抢入合约列表查询接口
      * @param contractListsDto
      * @return
      */
     @Override
-    public List<Object> getContractList(ContractListsDto contractListsDto) {
-        List<Object> list = new ArrayList<>();
+    public List<ContractListRes> getContractList(ContractListsDto contractListsDto) {
+        List<ContractListRes> list = new ArrayList<>();
         try{
+
+            // 获取当前登录人小微
+            String xWcode = sysEmployeeEhrDao.selectXwCode(contractListsDto.getEmpSN());
+
+
             // 1. z_grab_contracts 获取抢单信息  parent_id 合约id
             // 2. 通过合约id 去 z_gambling_contracts 获取链群编码  chain_code
             // 3. 通过chain_code 去 z_hr_chain_info获取链群信息
             // 4. 通过前端月份时间 + 通过chain_code（链群编码） 去 z_target_basic获取对应月份预计
             // 5. 实际 - 现在卡住了（大数据现在需要给我们数据）
-            list = null;
+
+            contractListsDto.setEmpSN(xWcode);
+
+            list = zGrabContractsDao.getContractList(contractListsDto);
+
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -17,4 +17,13 @@
         <result column="notesmail" property="notesmail" />
     </resultMap>
 
+    <select id="selectXwCode"  parameterType="java.lang.String"
+            resultType="java.lang.String">
+
+        select node.xwCode from sys_employee_ehr employee
+        left join sys_node_ehr node on employee.nodeCode = node.nodeCode
+        where employee.empSn = #{empSn}
+
+    </select>
+
 </mapper>
