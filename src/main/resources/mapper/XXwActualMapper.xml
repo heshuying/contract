@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.XXwActualDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.XXwActual">
+        <id column="id" property="id" />
+        <result column="curdate" property="curdate" />
+        <result column="entity" property="entity" />
+        <result column="entity_name" property="entityName" />
+        <result column="account" property="account" />
+        <result column="account_name" property="accountName" />
+        <result column="data" property="data" />
+        <result column="scenario" property="scenario" />
+        <result column="region" property="region" />
+        <result column="version" property="version" />
+        <result column="create_date" property="createDate" />
+        <result column="noa_create_date" property="noaCreateDate" />
+        <result column="region_name" property="regionName" />
+    </resultMap>
+
+    <select id="getChainFact"  parameterType="com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto"
+            resultType="java.math.BigDecimal">
+
+        select MAX(actual.data) from x_chain_info chain
+        left join x_xw_actual actual on chain.lq_master_xwcode = actual.entity
+        <![CDATA[
+            where chain.lq_code = #{chainCode}
+                and actual.curdate <= #{endTime}
+                and actual.curdate >= #{startTime}
+                and actual.scenario = 'S03'
+                and actual.version = 'V03'
+                and actual.account = 'A020117'
+        ]]>
+
+        group by actual.entity
+
+    </select>
+
+</mapper>
