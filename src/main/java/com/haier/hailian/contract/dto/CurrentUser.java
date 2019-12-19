@@ -9,12 +9,6 @@ import lombok.Data;
  * <p>
  *  当前用户
  * </p>
-<<<<<<< HEAD
- *
- * @author sunjian 01505617
- * @since 2019/6/28
-=======
->>>>>>> remotes/origin/dev_marketGrab_20191217
  */
 @Data
 public class CurrentUser {
