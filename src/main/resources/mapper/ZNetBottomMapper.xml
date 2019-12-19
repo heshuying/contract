@@ -18,4 +18,22 @@
         <result column="create_date" property="createDate" />
     </resultMap>
 
+    <resultMap id="wgBottomIncomeMapper" type="com.haier.hailian.contract.entity.MeshGrabEntity">
+        <result column="wg_code" property="meshCode" />
+        <result column="wg_name" property="meshName" />
+        <result column="income" property="income" />
+        <result column="product_code" property="productCode" />
+        <result column="product_stru" property="productStru" />
+    </resultMap>
+    <!--查询网格目标收入-->
+    <select id="queryMeshBottomIncome"  resultMap="wgBottomIncomeMapper"
+            parameterType="com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto">
+        SELECT znb.pmai_area_code as wg_code, znb.pmai_area_name as wg_name, znb.target_bottom_count as income , znb.model_code as product_code, zpi.product_stru
+        FROM (select distinct jyt_code from sys_net where xw_code='V01560395') sn
+        join z_net_bottom znb on sn.jyt_code=znb.pmai_area_code
+        join z_gambling_contracts_product_modle cpm
+        on znb.model_code=cpm.product_model_code and cpm.contracts_id=633
+        join z_product_info zpi on cpm.product_model_code=zpi.product_model_code and zpi.period_code='201911'
+        where znb.period_code='201910' and znb.target_code='T01001';
+    </select>
 </mapper>

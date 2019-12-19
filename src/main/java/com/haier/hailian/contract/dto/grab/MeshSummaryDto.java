@@ -3,6 +3,7 @@ package com.haier.hailian.contract.dto.grab;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -12,8 +13,8 @@ import java.util.List;
 @ApiModel(value = "网格抢单查询实体类")
 public class MeshSummaryDto {
     private String xwcode;
-    private String income;
-    private String struHighPercent;
-    private String struLowPercent;
+    private BigDecimal income;
+    private BigDecimal struHighPercent;
+    private BigDecimal struLowPercent;
     List<MeshGrabInfoDto> meshDetail;
 }

@@ -37,6 +37,14 @@
         <result column="add10" property="add10" />
     </resultMap>
 
+    <resultMap id="wgGrabIncomeMapper" type="com.haier.hailian.contract.entity.MeshGrabEntity">
+        <result column="wg_code" property="meshCode" />
+        <result column="wg_name" property="meshName" />
+        <result column="income" property="income" />
+        <result column="product_code" property="productCode" />
+        <result column="product_stru" property="productStru" />
+    </resultMap>
+
     <select id="getProductByContract" resultType="java.lang.String">
         select DISTINCT product_model_code from
         z_gambling_contracts_product_modle gpm
@@ -48,5 +56,19 @@
         </foreach>
         and zpi.product_stru=#{productStru}
     </select>
+
+    <!--查询网格抢单收入-->
+    <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto"
+            resultMap="wgGrabIncomeMapper" >
+        select  mcgo.wg_code,mcgo.wg_name,mcgo.order_amt as income,mcgo.product_code, zpi.product_stru
+        FROM month_chain_group_order mcgo
+        join (select distinct jyt_code, product_line_code from sys_net where xw_code='V01560395') sn
+        on mcgo.wg_code=sn.jyt_code and mcgo.product_line_code=sn.product_line_code
+        join z_gambling_contracts_product_modle cpm on mcgo.product_code=cpm.product_model_code and cpm.contracts_id=633
+        join z_product_info zpi on cpm.product_model_code=zpi.product_model_code
+        and period_code='201910'
+        where mcgo.year='2019' and mcgo.month='10';
+    </select>
+
 
 </mapper>

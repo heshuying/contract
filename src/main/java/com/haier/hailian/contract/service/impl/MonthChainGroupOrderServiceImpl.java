@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
+import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.haier.hailian.contract.dao.MonthChainGroupOrderDao;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
@@ -21,5 +23,10 @@ public class MonthChainGroupOrderServiceImpl extends ServiceImpl<MonthChainGroup
     @Override
     public List<String> getProductByContract(Integer contractId, String productStru, List<String> yearMonth) {
         return baseMapper.getProductByContract(contractId,productStru,yearMonth);
+    }
+
+    @Override
+    public List<MeshGrabEntity> queryMeshGrabIncome(MeshStatisticQueryDto queryDto) {
+        return baseMapper.queryMeshGrabIncome(queryDto);
     }
 }
