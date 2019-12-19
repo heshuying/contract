@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.SysNodeEhrDao">
+
+    <resultMap type="com.haier.hailian.contract.entity.SysNodeEhr" id="SysNodeEhrMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="xwcode" column="xwCode" jdbcType="VARCHAR"/>
+        <result property="xwname" column="xwName" jdbcType="VARCHAR"/>
+        <result property="nodecode" column="nodeCode" jdbcType="VARCHAR"/>
+        <result property="nodename" column="nodeName" jdbcType="VARCHAR"/>
+        <result property="nodemanagercode" column="nodeManagerCode" jdbcType="VARCHAR"/>
+        <result property="nodemanagername" column="nodeManagerName" jdbcType="VARCHAR"/>
+        <result property="nodemanagerpos" column="nodeManagerPos" jdbcType="VARCHAR"/>
+        <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysNodeEhrMap">
+        select
+          id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
+        from chain_contract.sys_node_ehr
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysNodeEhrMap">
+        select
+          id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
+        from chain_contract.sys_node_ehr
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysNodeEhrMap">
+        select
+          id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
+        from chain_contract.sys_node_ehr
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="xwcode != null and xwcode != ''">
+                and xwCode = #{xwcode}
+            </if>
+            <if test="xwname != null and xwname != ''">
+                and xwName = #{xwname}
+            </if>
+            <if test="nodecode != null and nodecode != ''">
+                and nodeCode = #{nodecode}
+            </if>
+            <if test="nodename != null and nodename != ''">
+                and nodeName = #{nodename}
+            </if>
+            <if test="nodemanagercode != null and nodemanagercode != ''">
+                and nodeManagerCode = #{nodemanagercode}
+            </if>
+            <if test="nodemanagername != null and nodemanagername != ''">
+                and nodeManagerName = #{nodemanagername}
+            </if>
+            <if test="nodemanagerpos != null and nodemanagerpos != ''">
+                and nodeManagerPos = #{nodemanagerpos}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.sys_node_ehr(xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type)
+        values (#{xwcode}, #{xwname}, #{nodecode}, #{nodename}, #{nodemanagercode}, #{nodemanagername}, #{nodemanagerpos}, #{dataType})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update chain_contract.sys_node_ehr
+        <set>
+            <if test="xwcode != null and xwcode != ''">
+                xwCode = #{xwcode},
+            </if>
+            <if test="xwname != null and xwname != ''">
+                xwName = #{xwname},
+            </if>
+            <if test="nodecode != null and nodecode != ''">
+                nodeCode = #{nodecode},
+            </if>
+            <if test="nodename != null and nodename != ''">
+                nodeName = #{nodename},
+            </if>
+            <if test="nodemanagercode != null and nodemanagercode != ''">
+                nodeManagerCode = #{nodemanagercode},
+            </if>
+            <if test="nodemanagername != null and nodemanagername != ''">
+                nodeManagerName = #{nodemanagername},
+            </if>
+            <if test="nodemanagerpos != null and nodemanagerpos != ''">
+                nodeManagerPos = #{nodemanagerpos},
+            </if>
+            <if test="dataType != null and dataType != ''">
+                data_type = #{dataType},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from chain_contract.sys_node_ehr where id = #{id}
+    </delete>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="searchUsersByKeyWords" resultMap="SysNodeEhrMap">
+        select
+        id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
+        from chain_contract.sys_node_ehr
+        where nodeManagerCode  like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
+        or nodeManagerName like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
+        or nodeName like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
+    </select>
+
+</mapper>

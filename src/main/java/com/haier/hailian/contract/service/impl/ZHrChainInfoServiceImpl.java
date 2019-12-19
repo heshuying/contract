@@ -1,10 +1,12 @@
 package com.haier.hailian.contract.service.impl;
 
 
+import com.haier.hailian.contract.dao.SysNodeEhrDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import org.apache.shiro.SecurityUtils;
@@ -24,6 +26,8 @@ import java.util.List;
 public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Resource
     private ZHrChainInfoDao zHrChainInfoDao;
+    @Resource
+    private SysNodeEhrDao sysNodeEhrDao;
 
     /**
      * 通过ID查询单条数据
@@ -46,6 +50,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Override
     public List<ZHrChainInfo> queryAllByLimit(int offset, int limit) {
         return this.zHrChainInfoDao.queryAllByLimit(offset, limit);
+    }
+
+    @Override
+    public List<ZHrChainInfo> queryAll(ZHrChainInfo zHrChainInfo) {
+        return this.zHrChainInfoDao.queryAll(zHrChainInfo);
     }
 
     /**
@@ -93,11 +102,21 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //校验链群名称是否已经存在
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         zHrChainInfo.setChainName(validateChainNameDTO.getChainName());
-        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
+//        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
         List<ZHrChainInfo> chainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
         if (chainNames.size() > 0) {
             return R.error("链群名称已经存在");
         }
         return R.ok("链群名称可用");
+    }
+
+    @Override
+    public List<SysNodeEhr> searchUsersByKeyWords(String keyWords) {
+        return sysNodeEhrDao.searchUsersByKeyWords(keyWords);
+    }
+
+    @Override
+    public List<SysNodeEhr> getNodeTargetList(String nodeCodeStr) {
+        return null;
     }
 }
