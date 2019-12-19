@@ -88,17 +88,23 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
      * 邮箱
      */
     private String notesmail;
-
-
+    @TableField(exist=false)
+    private List<SysRole> roles;
+    @TableField(exist=false)
+    private List<SysNodeEhr> nodeEhrList;
+    @TableField(exist=false)
+    private List<SysXiaoweiEhr> xiaoweiEhrList;
     @TableField(exist=false)
     private List<SysNet> wanggeList;
     /**
      * 当前登陆用户
      */
+    @TableField(exist=false)
     private CurrentUser currentUser;
     /**
      * 小微编码
      */
+    @TableField(exist=false)
     private String xwCode;
 
     @Override

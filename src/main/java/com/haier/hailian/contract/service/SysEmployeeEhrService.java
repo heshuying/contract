@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-12-16
  */
 public interface SysEmployeeEhrService extends IService<SysEmployeeEhr> {
-
+    SysEmployeeEhr getEmployeeEhr(String empSn);
 }

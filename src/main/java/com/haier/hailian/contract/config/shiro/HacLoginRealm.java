@@ -41,9 +41,7 @@ public class HacLoginRealm extends AuthorizingRealm {
 
         HacLoginToken token =  (HacLoginToken) authenticationToken;
         String empSn = (String) token.getPrincipal();
-        SysEmployeeEhr sysEmployee = sysEmployeeEhrService.getOne(
-                new QueryWrapper<SysEmployeeEhr>().eq("empSn",empSn)
-        );
+        SysEmployeeEhr sysEmployee = sysEmployeeEhrService.getEmployeeEhr(empSn);
         if (sysEmployee == null) {
             //查网格
             SysEmployeeZ sysEmployeeZ = sysEmployeeZService.getOne(

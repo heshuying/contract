@@ -19,11 +19,72 @@
 
     <select id="selectXwCode"  parameterType="java.lang.String"
             resultType="java.lang.String">
-
         select node.xwCode from sys_employee_ehr employee
         left join sys_node_ehr node on employee.nodeCode = node.nodeCode
         where employee.empSn = #{empSn}
-
     </select>
+
+    <select id="selectRoleByUser" parameterType="java.lang.String"
+            resultType="com.haier.hailian.contract.entity.SysRole">
+        SELECT
+        role.id,
+        role.NAME AS name,
+        role.role_code AS roleCode
+        FROM
+        sys_role role
+        LEFT JOIN sys_user_role_ehr ur ON ur.role_code = role.role_code
+        WHERE
+        ur.empsn =  #{empSn,jdbcType=VARCHAR}
+    </select>
+
+    <!--现在改为查询 -->
+    <select id="selectNodeByNodeCode" parameterType="java.lang.String" resultMap="nodeEhrMap">
+        SELECT
+        t2.*, t3.ptcode,
+        t3.ptname
+        FROM
+        sys_node_ehr t2
+        LEFT JOIN sys_xiaowei_ehr t3 ON t2.xwCode = t3.xwCode
+        WHERE
+        t2.nodeManagerCode = #{empSn,jdbcType=VARCHAR}
+    </select>
+    <resultMap id="nodeEhrMap" type="com.haier.hailian.contract.entity.SysNodeEhr">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="xwCode" jdbcType="VARCHAR" property="xwcode" />
+        <result column="xwName" jdbcType="VARCHAR" property="xwname" />
+        <result column="xwMasterCode" jdbcType="VARCHAR" property="xwmastercode" />
+        <result column="xwMasterName" jdbcType="VARCHAR" property="xwmastername" />
+        <result column="ptCode" jdbcType="VARCHAR" property="ptcode" />
+        <result column="ptName" jdbcType="VARCHAR" property="ptname" />
+        <result column="buCode" jdbcType="VARCHAR" property="bucode" />
+        <result column="buName" jdbcType="VARCHAR" property="buname" />
+        <result column="xwGroupType" jdbcType="VARCHAR" property="xwgrouptype" />
+        <result column="xwGroupName" jdbcType="VARCHAR" property="xwgroupname" />
+        <result column="xwStyle" jdbcType="VARCHAR" property="xwstyle" />
+        <result column="xwStyleCode" jdbcType="VARCHAR" property="xwstylecode" />
+        <result column="ptcode" jdbcType="VARCHAR" property="ptcode" />
+        <result column="ptname" jdbcType="VARCHAR" property="ptname" />
+    </resultMap>
+
+    <!-- 根据工号查询小微 改为只查询小微主-->
+    <select id="selectXiaoweiByEmpId" parameterType="java.lang.String" resultMap="xiaoweiEhrMap">
+        SELECT * from  sys_xiaowei_ehr where xwMasterCode =#{empSn,jdbcType=VARCHAR}
+    </select>
+
+    <resultMap id="xiaoweiEhrMap" type="com.haier.hailian.contract.entity.SysXiaoweiEhr">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="xwCode" jdbcType="VARCHAR" property="xwcode" />
+        <result column="xwName" jdbcType="VARCHAR" property="xwname" />
+        <result column="xwMasterCode" jdbcType="VARCHAR" property="xwmastercode" />
+        <result column="xwMasterName" jdbcType="VARCHAR" property="xwmastername" />
+        <result column="ptCode" jdbcType="VARCHAR" property="ptcode" />
+        <result column="ptName" jdbcType="VARCHAR" property="ptname" />
+        <result column="buCode" jdbcType="VARCHAR" property="bucode" />
+        <result column="buName" jdbcType="VARCHAR" property="buname" />
+        <result column="xwGroupType" jdbcType="VARCHAR" property="xwgrouptype" />
+        <result column="xwGroupName" jdbcType="VARCHAR" property="xwgroupname" />
+        <result column="xwStyle" jdbcType="VARCHAR" property="xwstyle" />
+        <result column="xwStyleCode" jdbcType="VARCHAR" property="xwstylecode" />
+    </resultMap>
 
 </mapper>
