@@ -31,14 +31,25 @@ public class CDGrabController {
     @PostMapping(value = {"/info"})
     @ApiOperation(value = "创单节点抢单页面信息接口")
     public R queryInfo(@RequestBody CDGrabInfoRequestDto requestDto) {
-        CDGrabInfoResponseDto data= cdGrabService.queryCDGrabInfo(requestDto);
+        CDGrabInfoResponseDto data= null;
+        try {
+            data = cdGrabService.queryCDGrabInfo(requestDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            R.error("创单节点抢单页面查询发生异常：" + e.getMessage());
+        }
         return R.ok().put("data",data);
     }
 
     @PostMapping(value = {"/save"})
-    @ApiOperation(value = "创单节点抢单页面信息接口")
+    @ApiOperation(value = "创单节点抢单页面数据保存接口")
     public R saveGrab(@RequestBody CDGrabInfoSaveRequestDto requestDto) {
-//        CDGrabInfoResponseDto data= cdGrabService.queryCDGrabInfo(requestDto);
+        try {
+            cdGrabService.saveCDGrab(requestDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            R.error("创单节点抢单保存发生异常：" + e.getMessage());
+        }
         return R.ok().put("data","");
     }
 }
