@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
+import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public interface ZHrChainInfoService {
      */
     List<ZHrChainInfo> queryAllByLimit(int offset, int limit);
 
+
+    List<ZHrChainInfo> queryAll(ZHrChainInfo zHrChainInfo);
     /**
      * 新增数据
      *
@@ -61,5 +64,16 @@ public interface ZHrChainInfoService {
      * @return
      */
     R validateChainName(ValidateChainNameDTO validateChainNameDTO);
+
+
+    /**
+     * 查询连群架构用户信息
+     * @param keyWords
+     * @return
+     */
+    List<SysNodeEhr> searchUsersByKeyWords(String keyWords);
+
+
+    List<SysNodeEhr> getNodeTargetList(String nodeCodeStr);
 
 }
