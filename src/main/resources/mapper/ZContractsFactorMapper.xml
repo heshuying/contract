@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZContractsFactorDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.ZContractsFactor">
+        <id column="id" property="id" />
+        <result column="contract_id" property="contractId" />
+        <result column="factor_code" property="factorCode" />
+        <result column="factor_name" property="factorName" />
+        <result column="factor_value" property="factorValue" />
+        <result column="factor_unit" property="factorUnit" />
+        <result column="factor_directon" property="factorDirecton" />
+        <result column="region_code" property="regionCode" />
+        <result column="region_name" property="regionName" />
+        <result column="mesh_code" property="meshCode" />
+        <result column="mesh_name" property="meshName" />
+    </resultMap>
+
+</mapper>

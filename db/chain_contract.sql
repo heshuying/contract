@@ -333,223 +333,42 @@ CREATE TABLE `z_dynamic_optimization` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='动态优化表';
 
--- ----------------------------
--- Table structure for z_gambling_contracts
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts`;
-CREATE TABLE `z_gambling_contracts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `contracts_name` varchar(255) DEFAULT NULL COMMENT '合约名称',
-  `crowd_id` varchar(255) DEFAULT NULL COMMENT '人群id',
-  `crowd_name` varchar(255) DEFAULT NULL COMMENT '人群名称',
-  `crowd_scale` varchar(255) DEFAULT NULL COMMENT '人群规模',
-  `crowd_describe` varchar(255) DEFAULT NULL COMMENT '人群描述',
-  `crowd_features` varchar(255) DEFAULT NULL COMMENT '人群特征',
-  `crowd_market_share` varchar(255) DEFAULT NULL COMMENT '市场份额',
-  `chain_code` varchar(255) DEFAULT NULL COMMENT '链群编码',
-  `region_code` varchar(255) DEFAULT NULL COMMENT '地区编码',
-  `join_time` varchar(255) DEFAULT NULL COMMENT '抢入截止时间',
+
+CREATE TABLE `z_contracts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `parent_id` int(11) DEFAULT 0 COMMENT '关联id',
+  `contract_name` varchar(200) DEFAULT NULL COMMENT '合约名称',
+  `contract_type` varchar(10) DEFAULT NULL COMMENT '10链群主合约、20商圈合约、30创客合约',
+  `status` varchar(10) DEFAULT NULL COMMENT '状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期',
+  `share_space` decimal(10,4) DEFAULT NULL COMMENT '分享空间',
+  `chain_code` varchar(80) DEFAULT NULL COMMENT '链群编码',
+  `region_code` varchar(80) DEFAULT NULL COMMENT '地区编码',
+  `join_time` datetime DEFAULT NULL COMMENT '抢入截止时间',
   `start_date` datetime DEFAULT NULL COMMENT '开始时间',
   `end_date` datetime DEFAULT NULL COMMENT '结束时间',
-  `xiaowei_code` varchar(255) DEFAULT NULL,
-  `xiaowei_name` varchar(255) DEFAULT NULL,
-  `create_code` varchar(255) DEFAULT NULL COMMENT '创建人编码',
-  `create_name` varchar(255) DEFAULT NULL COMMENT '创建人姓名',
-  `create_date` datetime DEFAULT NULL COMMENT '创建日期',
-  `update_code` varchar(255) DEFAULT NULL COMMENT '更新人编码',
-  `update_name` varchar(255) DEFAULT NULL COMMENT '更新人姓名',
-  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
-  `contract_status` varchar(255) DEFAULT NULL COMMENT '合同状态   0：已过期(不可抢入） 1：有效  2：作废（主动）',
-  `contract_type` varchar(1) DEFAULT NULL COMMENT '1.爆款产品   2.新需求 3.按照系列举单  4.按型号举单',
-  `contract_group` varchar(255) DEFAULT NULL COMMENT '合同用户群,1冰箱用户，2洗衣机用户',
-  `contract_stage` varchar(255) DEFAULT NULL COMMENT '新需求合同阶段（1.体验抢单 2创单抢单）',
-  `org_type` varchar(255) DEFAULT NULL COMMENT '组织类型orgType,//1节点  2小微  3创客  4网格',
-  `demand_type` varchar(1) DEFAULT NULL COMMENT '新产品类型 1全新A/B类、2线上电商渠道C/D类、3线下渠道C/D类',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_demand
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_demand`;
-CREATE TABLE `z_gambling_contracts_demand` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `contracts_id` int(11) DEFAULT NULL COMMENT '合约id',
-  `min_price` varchar(10) DEFAULT NULL COMMENT '最小值',
-  `max_price` varchar(10) DEFAULT NULL COMMENT '最大值',
-  `demand_desc` varchar(4000) DEFAULT NULL COMMENT '需求描述',
-  `demand_count` varchar(11) DEFAULT NULL,
-  `demand_code` varchar(255) DEFAULT NULL COMMENT '需求编码',
-  `is_pbcs` varchar(10) DEFAULT NULL COMMENT '是否传PBCS，0未传 1已传',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_demand_qty
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_demand_qty`;
-CREATE TABLE `z_gambling_contracts_demand_qty` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contracts_id` int(11) DEFAULT NULL COMMENT '合约ID',
-  `region_code` varchar(255) DEFAULT NULL COMMENT '区域编码',
-  `region_name` varchar(255) DEFAULT NULL COMMENT '区域名称',
-  `qty` decimal(10,0) DEFAULT NULL COMMENT '底线销量',
-  `xiaowei_code` varchar(255) DEFAULT NULL COMMENT '小微编码',
-  `xiaowei_name` varchar(255) DEFAULT NULL COMMENT '小微名称',
-  `grab_qty` decimal(10,0) DEFAULT NULL COMMENT '抢单量',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_product_family
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_product_family`;
-CREATE TABLE `z_gambling_contracts_product_family` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `contracts_id` int(11) DEFAULT NULL COMMENT '合约id',
-  `product_family_id` varchar(255) DEFAULT NULL COMMENT '系列id',
-  `product_family_name` varchar(255) DEFAULT NULL COMMENT '系列名称',
-  `family_bottom_count` varchar(255) DEFAULT NULL COMMENT '爆款底线',
-  `product_family_count` varchar(255) DEFAULT NULL COMMENT '举单量',
-  `value_added_space` varchar(255) DEFAULT NULL COMMENT '增值空间',
-  `experience_share_ratio` varchar(255) DEFAULT NULL COMMENT '期望分享比例-体验',
-  `create_share_ratio` varchar(255) DEFAULT NULL COMMENT '期望分享比例-创单',
-  `bottom_target` varchar(255) DEFAULT NULL COMMENT '底线目标',
-  `order_target` varchar(255) DEFAULT NULL COMMENT '抢单目标',
-  `dts_share_percentage` int(2) DEFAULT NULL COMMENT 'DTS分享比例',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_product_index
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_product_index`;
-CREATE TABLE `z_gambling_contracts_product_index` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contracts_id` int(11) DEFAULT NULL COMMENT '合约id',
-  `product_family_id` int(255) DEFAULT NULL COMMENT '系类id',
-  `index_name` varchar(255) DEFAULT NULL COMMENT '指标名称',
-  `index_target` varchar(255) DEFAULT NULL,
-  `product_model_code` varchar(255) DEFAULT NULL COMMENT '产品型号编码',
-  `target_code` varchar(255) DEFAULT NULL COMMENT '指标编码',
-  `target_type` varchar(255) DEFAULT NULL COMMENT '指标类型',
-  `target_unit` varchar(255) DEFAULT NULL COMMENT '指标单位',
-  `product_model_name` varchar(255) DEFAULT NULL COMMENT '型号名称',
-  `target_to` varchar(255) DEFAULT NULL COMMENT 'target_baic的target_to字段',
-  `target_bottom_line` varchar(255) DEFAULT NULL COMMENT '目标底线',
-  `period_code` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_product_modle
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_product_modle`;
-CREATE TABLE `z_gambling_contracts_product_modle` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `contracts_id` int(11) DEFAULT NULL COMMENT '合约id',
-  `product_family_id` int(255) DEFAULT NULL COMMENT '系类id',
-  `product_model_code` varchar(255) DEFAULT NULL COMMENT '型号编码',
-  `product_model_name` varchar(255) DEFAULT NULL COMMENT '产品型号名称',
-  `product_model_price` varchar(10) DEFAULT NULL COMMENT '产品单价',
-  `product_model_cost` varchar(10) DEFAULT NULL COMMENT '产品成本',
-  `product_model_expenses` varchar(255) DEFAULT NULL COMMENT '产品费用',
-  `model_bottom_count` varchar(255) DEFAULT NULL COMMENT '底线销量',
-  `product_model_count` varchar(255) DEFAULT NULL COMMENT '举单销量',
-  `value_added_space` varchar(255) DEFAULT NULL COMMENT '增值空间(举单)',
-  `added_space_grab` varchar(255) DEFAULT NULL COMMENT '增值空间(抢单)',
-  `space_acturl` varchar(255) DEFAULT NULL COMMENT '实际',
-  `bottom_target` varchar(255) DEFAULT NULL COMMENT '底线目标',
-  `order_target` varchar(255) DEFAULT NULL COMMENT '抢单目标',
-  `exper_left_ratio` decimal(10,2) DEFAULT NULL,
-  `create_left_ratio` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for z_gambling_contracts_product_percent
--- ----------------------------
-DROP TABLE IF EXISTS `z_gambling_contracts_product_percent`;
-CREATE TABLE `z_gambling_contracts_product_percent` (
-  `ID` int(255) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `contracts_id` int(10) DEFAULT NULL COMMENT '合约ID',
-  `series` varchar(255) DEFAULT '' COMMENT '型号系列',
-  `model_code` varchar(255) DEFAULT '' COMMENT '型号编码',
-  `model_name` varchar(255) DEFAULT '' COMMENT '型号名称',
-  `xw_code` varchar(255) DEFAULT '' COMMENT '小微编码',
-  `xw_name` varchar(255) DEFAULT '' COMMENT '小微名称',
-  `percent` varchar(255) DEFAULT '' COMMENT '分享比例',
-  `lq_code` varchar(255) DEFAULT NULL COMMENT '链群编码(创单体验)',
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-
--- ----------------------------
--- Table structure for z_grab_contracts
--- ----------------------------
-DROP TABLE IF EXISTS `z_grab_contracts`;
-CREATE TABLE `z_grab_contracts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `parent_id` int(11) DEFAULT NULL COMMENT '关联合约id',
-  `pd_id` int(11) DEFAULT NULL COMMENT '关联爆品/需求id',
-  `series` varchar(100) DEFAULT NULL COMMENT '系列',
-  `type` varchar(10) DEFAULT NULL COMMENT '类别（标识是爆品/需求）',
-  `share_ratio` varchar(50) DEFAULT NULL COMMENT '分享比例',
-  `valu_added_share` varchar(50) DEFAULT NULL COMMENT '增值分享酬',
-  `grab_order_name` varchar(50) DEFAULT NULL COMMENT '抢单人姓名',
-  `grab_order_code` varchar(50) DEFAULT NULL COMMENT '抢单人编码',
-  `xw_name` varchar(100) DEFAULT NULL COMMENT '小微名称',
-  `xw_code` varchar(100) DEFAULT NULL COMMENT '小微code',
-  `grab_order_date` datetime DEFAULT NULL COMMENT '抢单时间',
-  `status` varchar(10) DEFAULT NULL COMMENT '状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出',
-  `overall_share_ratio` varchar(255) DEFAULT NULL COMMENT '市场总体分享比例',
-  `opinion` varchar(255) DEFAULT NULL COMMENT '交互意见',
-  `overall_grab_count` varchar(255) DEFAULT NULL COMMENT '抢单量',
-  `overall_grab_income` decimal(10,0) DEFAULT NULL COMMENT '抢单收入',
-  `xw_type` varchar(255) DEFAULT NULL COMMENT '小微类型(用户交互、研发、模块商等)',
-  `org_type` varchar(255) DEFAULT NULL COMMENT '组织类型//1节点  2小微  3创客  4网格',
-  `dts_share_percentage` int(255) DEFAULT NULL COMMENT 'dts分享比例',
-  `better_status` varchar(10) DEFAULT NULL COMMENT '目标优化状态：1.待优化 2 已优化',
-  `better_date` datetime DEFAULT NULL COMMENT '发布动态优化的时间',
-  `contribution` varchar(255) DEFAULT '' COMMENT '实际贡献',
-  `is_market` varchar(255) DEFAULT NULL COMMENT '是否市场0：是1：不是',
-  `grab_profit` varchar(255) DEFAULT NULL COMMENT '抢单利润',
+  `xiaowei_code` varchar(80) DEFAULT NULL COMMENT 'xw编码',
+  `create_code` varchar(80) DEFAULT NULL COMMENT '创建人编码',
+  `create_name` varchar(80) DEFAULT NULL COMMENT '创建人姓名',
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `org_code` varchar(50) DEFAULT '',
   `org_name` varchar(50) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for z_grab_contracts_his
--- ----------------------------
-DROP TABLE IF EXISTS `z_grab_contracts_his`;
-CREATE TABLE `z_grab_contracts_his` (
+CREATE TABLE `z_contracts_factor` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `parent_id` int(11) DEFAULT NULL COMMENT '关联合约id',
-  `pd_id` int(11) DEFAULT NULL COMMENT '关联爆品/需求id',
-  `series` varchar(100) DEFAULT NULL COMMENT '系列',
-  `type` varchar(10) DEFAULT NULL COMMENT '类别（标识是爆品/需求）',
-  `share_ratio` varchar(50) DEFAULT NULL COMMENT '分享比例',
-  `valu_added_share` varchar(50) DEFAULT NULL COMMENT '增值分享酬',
-  `grab_order_name` varchar(50) DEFAULT NULL COMMENT '抢单人姓名',
-  `grab_order_code` varchar(50) DEFAULT NULL COMMENT '抢单人编码',
-  `xw_name` varchar(100) DEFAULT NULL COMMENT '小微名称',
-  `xw_code` varchar(100) DEFAULT NULL COMMENT '小微code',
-  `grab_order_date` datetime DEFAULT NULL COMMENT '抢单时间',
-  `status` varchar(10) DEFAULT NULL COMMENT '状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出',
-  `overall_share_ratio` varchar(255) DEFAULT NULL COMMENT '网格总体分享比例',
-  `opinion` varchar(255) DEFAULT NULL COMMENT '交互意见',
-  `overall_grab_count` varchar(255) DEFAULT NULL COMMENT '抢单量',
-  `xw_type` varchar(255) DEFAULT NULL COMMENT '小微类型(用户交互、研发、模块商等)',
-  `org_type` varchar(255) DEFAULT NULL COMMENT '组织类型//1节点  2小微  3创客  4网格',
-  `dts_share_percentage` int(255) DEFAULT NULL COMMENT 'dts分享比例',
-  `better_status` varchar(10) DEFAULT NULL COMMENT '目标优化状态：1.待优化 2 已优化',
-  `better_date` datetime DEFAULT NULL COMMENT '发布动态优化的时间',
-  `contribution` varchar(255) DEFAULT '' COMMENT '实际贡献',
-  `grab_profit` varchar(255) DEFAULT NULL COMMENT '抢单利润',
+  `contract_id` int DEFAULT NULL COMMENT '合约ID',
+  `factor_code` varchar(80) DEFAULT NULL COMMENT '编码',
+  `factor_name` varchar(80) DEFAULT NULL COMMENT '名称',
+  `factor_value` varchar(80) DEFAULT NULL COMMENT '值',
+  `factor_unit` varchar(80) DEFAULT NULL COMMENT '单位',
+  `factor_directon` char(1) DEFAULT '1' COMMENT '1-正向；0-负向',
+  `region_code` varchar(80) DEFAULT NULL COMMENT '地区编码',
+  `region_name` varchar(80) DEFAULT NULL COMMENT '地区名称',
+  `mesh_code` varchar(80) DEFAULT NULL COMMENT '网格编码',
+  `mesh_name` varchar(80) DEFAULT NULL COMMENT '网格名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
 
 
 -- ----------------------------
