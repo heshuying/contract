@@ -3,17 +3,24 @@ package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.dao.SysNodeEhrDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
+import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +35,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZHrChainInfoDao zHrChainInfoDao;
     @Resource
     private SysNodeEhrDao sysNodeEhrDao;
+    @Resource
+    private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
 
     /**
      * 通过ID查询单条数据
@@ -116,7 +125,13 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<SysNodeEhr> getNodeTargetList(String nodeCodeStr) {
-        return null;
+    public List<ZNodeTargetPercentInfo> getNodeTargetList(String empCodeStr) {
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String dateNowStr = sdf.format(d);
+        System.out.println("格式化后的日期：" + dateNowStr);
+        String[] strings = empCodeStr.split(",");
+        List<String> list= Arrays.asList(strings);
+        return zNodeTargetPercentInfoDao.queryByKeyWorld(list,dateNowStr);
     }
 }

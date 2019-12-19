@@ -96,6 +96,14 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
 
     @TableField(exist=false)
     private List<SysNet> wanggeList;
+    /**
+     * 当前登陆用户
+     */
+    private CurrentUser currentUser;
+    /**
+     * 小微编码
+     */
+    private String xwCode;
 
     @Override
     protected Serializable pkVal() {

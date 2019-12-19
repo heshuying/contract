@@ -9,9 +9,6 @@ import lombok.Data;
  * <p>
  *  当前用户
  * </p>
- *
- * @author sunjian 01505617
- * @since 2019/6/28
  */
 @Data
 public class CurrentUser {

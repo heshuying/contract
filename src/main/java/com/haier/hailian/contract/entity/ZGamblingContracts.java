@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -50,12 +52,12 @@ public class ZGamblingContracts extends Model<ZGamblingContracts> {
     /**
      * 开始时间
      */
-    private LocalDateTime startDate;
+    private Date startDate;
 
     /**
      * 结束时间
      */
-    private LocalDateTime endDate;
+    private Date endDate;
 
     private String xiaoweiCode;
 

@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 
 import java.util.List;
 
@@ -73,7 +74,11 @@ public interface ZHrChainInfoService {
      */
     List<SysNodeEhr> searchUsersByKeyWords(String keyWords);
 
-
-    List<SysNodeEhr> getNodeTargetList(String nodeCodeStr);
+    /**
+     * 获取节点对应的目标分享比例
+     * @param empCodeStr
+     * @return
+     */
+    List<ZNodeTargetPercentInfo> getNodeTargetList(String empCodeStr);
 
 }
