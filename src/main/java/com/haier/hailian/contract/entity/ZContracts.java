@@ -72,6 +72,8 @@ public class ZContracts extends Model<ZContracts> {
      */
     private Date joinTime;
 
+    private String joinTimeStr;
+
     /**
      * 开始时间
      */
@@ -105,6 +107,12 @@ public class ZContracts extends Model<ZContracts> {
     private String orgCode;
 
     private String orgName;
+
+    private String sharePercent;
+
+    private String startDateStr;
+
+    private String endDateStr;
 
     private String sharePercent;
 

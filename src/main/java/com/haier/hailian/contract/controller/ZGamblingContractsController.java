@@ -3,8 +3,10 @@ package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.CalculateSharingDTO;
 import com.haier.hailian.contract.dto.GamblingContractDTO;
+import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,8 +38,14 @@ public class ZGamblingContractsController {
     @PostMapping(value = {"/saveGambling"})
     @ApiOperation(value = "链群主抢单（举单）信息保存")
     public R selectBottom(@RequestBody GamblingContractDTO dto) {
-        gamblingContractsService.saveGambling(dto);
-        return R.ok();
+        try {
+            gamblingContractsService.saveGambling(dto);
+            return R.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请联系管理员");
+        }
+
     }
 
     @PostMapping(value = {"/selectMarket"})
@@ -59,6 +67,13 @@ public class ZGamblingContractsController {
             return R.ok().put("grab",grab);
         }
         return R.error().put("msg","参数有误，无法计算");
+    }
+
+    @PostMapping(value = {"/selectContractList"})
+    @ApiOperation(value = "查询合约列表")
+    public R selectContractList(@RequestBody QueryContractListDTO queryDTO) {
+        List<ZContracts> contractsList = gamblingContractsService.selectContractList(queryDTO);
+        return R.ok().put("data",contractsList);
     }
 
 }

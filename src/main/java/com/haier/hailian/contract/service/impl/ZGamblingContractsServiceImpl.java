@@ -3,10 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dto.ChainGroupTargetDTO;
-import com.haier.hailian.contract.dto.CurrentUser;
-import com.haier.hailian.contract.dto.GamblingContractDTO;
-import com.haier.hailian.contract.dto.MarketTargetDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.entity.ZContracts;
@@ -19,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -43,14 +41,18 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private SysXiaoweiEhrDao sysXiaoweiEhrDao;
 
     @Override
-    public void saveGambling(GamblingContractDTO dto) {
+    public void saveGambling(GamblingContractDTO dto) throws Exception{
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         CurrentUser currentUser = sysUser.getCurrentUser();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         //1.保存链群主抢单信息到合同主表
         ZContracts contracts = new ZContracts();
         BeanUtils.copyProperties(dto,contracts);
+        contracts.setStartDate(sf.parse(dto.getStartDate()));
+        contracts.setEndDate(sf.parse(dto.getEndDate()));
+        contracts.setJoinTime(sf.parse(dto.getJoinTime()));
         contracts.setContractType("10");
         contracts.setStatus("0");
         contracts.setCreateName(sysUser.getEmpName());
@@ -119,36 +121,43 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //3.保存市场目标到目标表
         List<MarketTargetDTO> marketTargetList = dto.getMarketTargetList();
         for (MarketTargetDTO marketTarget : marketTargetList){
-            ZContractsFactor factor = new ZContractsFactor();
-            factor.setContractId(contracts.getId());
-            factor.setFactorValue(marketTarget.getIncome()+"");
-            factor.setFactorCode(Constant.FactorCode.Incom.getValue());
-            factor.setFactorName(Constant.FactorCode.Incom.getName());
-            factor.setFactorType(Constant.FactorType.Grab.getValue());
-            factor.setFactorUnit("万元");
-            factor.setRegionCode(marketTarget.getXwCode());
-            factor.setRegionName(marketTarget.getXwName());
-            factorDao.insert(factor);
-            ZContractsFactor factor1 = new ZContractsFactor();
-            factor1.setContractId(contracts.getId());
-            factor1.setFactorValue(marketTarget.getHigh()+"");
-            factor1.setFactorCode(Constant.FactorCode.HighPercent.getValue());
-            factor1.setFactorName(Constant.FactorCode.HighPercent.getName());
-            factor1.setFactorType(Constant.FactorType.Grab.getValue());
-            factor1.setFactorUnit("%");
-            factor1.setRegionCode(marketTarget.getXwCode());
-            factor1.setRegionName(marketTarget.getXwName());
-            factorDao.insert(factor1);
-            ZContractsFactor factor2 = new ZContractsFactor();
-            factor2.setContractId(contracts.getId());
-            factor2.setFactorValue(marketTarget.getLow()+"");
-            factor2.setFactorCode(Constant.FactorCode.LowPercent.getValue());
-            factor2.setFactorName(Constant.FactorCode.LowPercent.getName());
-            factor2.setFactorType(Constant.FactorType.Grab.getValue());
-            factor2.setFactorUnit("%");
-            factor2.setRegionCode(marketTarget.getXwCode());
-            factor2.setRegionName(marketTarget.getXwName());
-            factorDao.insert(factor2);
+            if(null != marketTarget.getIncome()){
+                ZContractsFactor factor = new ZContractsFactor();
+                factor.setContractId(contracts.getId());
+                factor.setFactorValue(marketTarget.getIncome()+"");
+                factor.setFactorCode(Constant.FactorCode.Incom.getValue());
+                factor.setFactorName(Constant.FactorCode.Incom.getName());
+                factor.setFactorType(Constant.FactorType.Grab.getValue());
+                factor.setFactorUnit("万元");
+                factor.setRegionCode(marketTarget.getXwCode());
+                factor.setRegionName(marketTarget.getXwName());
+                factorDao.insert(factor);
+            }
+            if(null != marketTarget.getHigh()){
+                ZContractsFactor factor1 = new ZContractsFactor();
+                factor1.setContractId(contracts.getId());
+                factor1.setFactorValue(marketTarget.getHigh()+"");
+                factor1.setFactorCode(Constant.FactorCode.HighPercent.getValue());
+                factor1.setFactorName(Constant.FactorCode.HighPercent.getName());
+                factor1.setFactorType(Constant.FactorType.Grab.getValue());
+                factor1.setFactorUnit("%");
+                factor1.setRegionCode(marketTarget.getXwCode());
+                factor1.setRegionName(marketTarget.getXwName());
+                factorDao.insert(factor1);
+            }
+            if(null != marketTarget.getLow()){
+                ZContractsFactor factor2 = new ZContractsFactor();
+                factor2.setContractId(contracts.getId());
+                factor2.setFactorValue(marketTarget.getLow()+"");
+                factor2.setFactorCode(Constant.FactorCode.LowPercent.getValue());
+                factor2.setFactorName(Constant.FactorCode.LowPercent.getName());
+                factor2.setFactorType(Constant.FactorType.Grab.getValue());
+                factor2.setFactorUnit("%");
+                factor2.setRegionCode(marketTarget.getXwCode());
+                factor2.setRegionName(marketTarget.getXwName());
+                factorDao.insert(factor2);
+            }
+
         }
     }
 
@@ -156,6 +165,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     public List<XiaoweiEhr> selectMarket() {
 
         List<XiaoweiEhr> list = sysXiaoweiEhrDao.selectMarket();
+        return list;
+    }
+
+    @Override
+    public List<ZContracts> selectContractList(QueryContractListDTO queryDTO) {
+        List<ZContracts> list = contractsDao.selectContractList(queryDTO);
         return list;
     }
 }
