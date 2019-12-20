@@ -40,6 +40,10 @@ public class DateFormatUtil {
         return null;
     }
 
+    public static void main(String[] args) {
+        System.out.println(DateFormatUtil.format(new Date(), DATE_TIME_PATTERN));
+    }
+
     /**
      * 字符串转换成日期
      * @param strDate 日期字符串
