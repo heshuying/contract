@@ -18,6 +18,8 @@ public class CDGrabInfoSaveRequestDto {
     private String targetShareMoney;
     @ApiModelProperty(value="链群目标",name="链群目标",example="400")
     private String chainGoal;
+    @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")
+    private String chainGrabGoal;
     @ApiModelProperty(value="预案标题",name="预案标题")
     private String planTitle;
     @ApiModelProperty(value="预案内容",name="预案内容")

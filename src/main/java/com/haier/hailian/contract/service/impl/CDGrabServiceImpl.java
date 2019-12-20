@@ -8,12 +8,16 @@ import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
+import com.haier.hailian.contract.util.Constant;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +34,9 @@ public class CDGrabServiceImpl implements CDGrabService {
     @Autowired
     ZReservePlanDetailDao reservePlanDetailDao;
     @Autowired
-    ZGrabContractsDao grabContractsDao;
+    ZContractsDao contractsDao;
+    @Autowired
+    ZContractsFactorDao factorDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -64,14 +70,49 @@ public class CDGrabServiceImpl implements CDGrabService {
     @Override
     @Transactional
     public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
-        ZGrabContracts grabContracts = new ZGrabContracts();
-        grabContracts.setParentId(requestDto.getContractId());
-        grabContracts.setShareRatio(requestDto.getSharePercent());
-        grabContractsDao.insert(grabContracts);
-        Integer grabId = grabContracts.getId();
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
 
+        ZContracts contracts = new ZContracts();
+        contracts.setParentId(requestDto.getContractId());
+        contracts.setJoinTime(new Date());
+        contracts.setShareSpace(new BigDecimal(requestDto.getTargetShareMoney()));
+        contracts.setSharePercent(requestDto.getSharePercent());
+        contracts.setContractType("30"); //创客合约
+        contracts.setCreateCode(currentUser.getEmpsn());
+        contracts.setCreateName(currentUser.getEmpname());
+        contracts.setCreateTime(LocalDateTime.now());
+        contracts.setXiaoweiCode(currentUser.getXwCode());
+
+        contractsDao.insert(contracts);
+        Integer contractsId = contracts.getId();
+
+        // 链群目标保存
+        ZContractsFactor contractsFactor = new ZContractsFactor();
+        contractsFactor.setContractId(contractsId);
+        contractsFactor.setFactorCode(Constant.FactorCode.Incom.getName());
+        contractsFactor.setFactorName(Constant.FactorCode.Incom.getValue());
+        contractsFactor.setFactorValue(requestDto.getChainGoal());
+        contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+        contractsFactor.setFactorUnit("元");
+        factorDao.insert(contractsFactor);
+
+        // 抢单目标保存
+        ZContractsFactor contractsFactor2 = new ZContractsFactor();
+        contractsFactor2.setContractId(contractsId);
+        contractsFactor2.setFactorCode(Constant.FactorCode.Incom.getName());
+        contractsFactor2.setFactorName(Constant.FactorCode.Incom.getValue());
+        contractsFactor2.setFactorValue(requestDto.getChainGrabGoal());
+        contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
+        contractsFactor2.setFactorUnit("元");
+        factorDao.insert(contractsFactor2);
+
+        // 保存预案信息
         ZReservePlan plan = new ZReservePlan();
-        plan.setParentId(grabId);
+        plan.setParentId(contractsId);
         plan.setTitle(requestDto.getPlanTitle());
         reservePlanDao.insert(plan);
         Integer planId = plan.getId();
