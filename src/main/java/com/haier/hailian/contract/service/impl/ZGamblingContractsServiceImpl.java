@@ -1,8 +1,13 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
 import com.haier.hailian.contract.dto.GamblingContractDTO;
+import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,6 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZGamblingContractsServiceImpl implements ZGamblingContractsService {
 
+    @Autowired
+    private SysXiaoweiEhrDao sysXiaoweiEhrDao;
 
     @Override
     public void saveGambling(GamblingContractDTO dto) {
@@ -36,5 +43,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 //            index.setContractsId(id);
 //            indexDao.insert(index);
 //        }
+    }
+
+    @Override
+    public List<XiaoweiEhr> selectMarket() {
+
+        List<XiaoweiEhr> list = sysXiaoweiEhrDao.selectMarket();
+        return list;
     }
 }

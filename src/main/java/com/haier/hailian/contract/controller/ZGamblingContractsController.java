@@ -1,8 +1,9 @@
 package com.haier.hailian.contract.controller;
 
 
-import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.GamblingContractDTO;
+import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -34,5 +37,13 @@ public class ZGamblingContractsController {
         gamblingContractsService.saveGambling(dto);
         return R.ok();
     }
+
+    @PostMapping(value = {"/selectMarket"})
+    @ApiOperation(value = "查询42市场小微的名字")
+    public R selectMarket() {
+        List<XiaoweiEhr> list = gamblingContractsService.selectMarket();
+        return R.ok().put("data",list);
+    }
+
 }
 
