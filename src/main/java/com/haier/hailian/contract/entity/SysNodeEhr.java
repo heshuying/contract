@@ -36,6 +36,7 @@ public class SysNodeEhr {
     private String ptcode;
     private String ptname;
 
-
+    //数据类型（01：ODS自动更新数据；02：自定义数据）
+    private String dataType;
 
 }
