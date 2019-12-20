@@ -115,9 +115,9 @@
         select
         id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
         from chain_contract.sys_node_ehr
-        where nodeManagerCode  like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
-        or nodeManagerName like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
-        or nodeName like CONCAT('%', #{keyWords,jdbcType=VARCHAR}, '%')
+        where nodeManagerCode  like CONCAT(CONCAT('%', #{keyWords}, '%'))
+        or nodeManagerName like CONCAT(CONCAT('%', #{keyWords}, '%'))
+        or xwName like CONCATCONCAT('%', #{keyWords}, '%'))
     </select>
 
 </mapper>

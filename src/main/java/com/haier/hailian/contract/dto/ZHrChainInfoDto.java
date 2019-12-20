@@ -15,10 +15,11 @@ import java.util.List;
 @Data
 @ApiModel(value = "ZHrChainInfoDto",description = "链群名称关键字")
 public class ZHrChainInfoDto {
-    @ApiModelProperty(value="chainName",name="链群名称")
+    public ZHrChainInfoDto(){}
     //链群编码
     private String chainCode;
     //链群名称
+    @ApiModelProperty(value="chainName",name="链群名称")
     private String chainName;
 
     private String xwCode;

@@ -12,8 +12,8 @@ import javax.annotation.Resource;
  * @author makejava
  * @since 2019-12-18 14:24:06
  */
-@RestController
-@RequestMapping("sysNodeEhr")
+//@RestController
+//@RequestMapping("sysNodeEhr")
 public class SysNodeEhrController {
     /**
      * 服务对象
@@ -27,7 +27,7 @@ public class SysNodeEhrController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("selectOne")
+//    @GetMapping("selectOne")
     public SysNodeEhr selectOne(Integer id) {
         return this.sysNodeEhrService.queryById(id);
     }

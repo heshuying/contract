@@ -55,7 +55,7 @@ public class ZHrChainInfoController {
      */
     @GetMapping("getAll")
     @ApiOperation(value = "获取所有链群名称列表")
-    public R getAll(@RequestBody @Validated @ApiParam(value = "条件查询", required = false) ZHrChainInfoDto zHrChainInfoDto) {
+    public R getAll(@RequestBody @ApiParam(value = "条件查询", required = false) @RequestParam(required = false) ZHrChainInfoDto zHrChainInfoDto) {
         try {
             ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
             List<ZHrChainInfo> list = this.zHrChainInfoService.queryAll(zHrChainInfo);
