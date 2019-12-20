@@ -26,27 +26,33 @@ public class IncrementServiceImpl implements IncrementService {
     public BigDecimal incrementMoney(CDGrabInfoSaveRequestDto requestDto) {
         BigDecimal bottom = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , "")
+                .eq("factor_code" , Constant.FactorCode.Lre)
                 .eq("factor_type" , Constant.FactorType.Bottom)).getFactorValue());
 
         BigDecimal e2e = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , "")
+                .eq("factor_code" , Constant.FactorCode.Lre)
                 .eq("factor_type" , Constant.FactorType.E2E)).getFactorValue());
 
         BigDecimal grab = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , "")
+                .eq("factor_code" , Constant.FactorCode.Lre)
                 .eq("factor_type" , Constant.FactorType.Grab)).getFactorValue());
 
 
-        BigDecimal money;
+        BigDecimal money = new BigDecimal("0");
 
 
-//        if(){
-//
-//        }
+        // 抢单利润大于  e2e 利润才有 第二阶梯  50%
+        if(grab.compareTo(e2e)>0){
+            money = grab.subtract(e2e).multiply(new BigDecimal("0.5"));
+        }
+        // 第一阶段 20%
+        money = money.add(e2e.subtract(bottom).multiply(new BigDecimal("0.2")));
 
-        return null;
+        // 分享比例5%
+        money = money.multiply(new BigDecimal("0.05"));
+
+        return money;
     }
 }
