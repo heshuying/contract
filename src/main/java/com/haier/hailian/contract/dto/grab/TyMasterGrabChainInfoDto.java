@@ -11,10 +11,11 @@ import java.math.BigDecimal;
 @Data
 @ApiModel(value = "体验链群主抢单链群信息实体类")
 public class TyMasterGrabChainInfoDto {
+    private Integer contractId;
     private String chainName;
     private String start;
     private String end;
-    private String shareQuota;
+    private BigDecimal shareQuota;
     //目标是底线收入
     private BigDecimal targetIncome;
     private BigDecimal targetHighPercent;

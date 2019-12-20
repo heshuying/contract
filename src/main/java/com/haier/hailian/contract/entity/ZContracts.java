@@ -101,7 +101,7 @@ public class ZContracts extends Model<ZContracts> {
     /**
      * 创建日期
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     private String orgCode;
 

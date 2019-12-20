@@ -8,6 +8,10 @@ public class Constant {
 
     public static String JWT_AUTH_HEADER = "Authorization";
     public static String CODE_LOGINFAIL = "401001";
+
+    public static String CODE_VALIDFAIL = "401002";
+    public static String MSG_VALIDFAIL = "数据校验失败";
+
     public static String CODE_DATA_NOTFOUND= "404001";
     public static String MSG_DATA_NOTFOUND= "数据不存在";
 
@@ -99,6 +103,14 @@ public class Constant {
          *利润额
          */
         Lre("T01017","利润额");
+        /**
+         * 高端占比
+         */
+        HighPercent("T03001","高端占比"),
+        /**
+         * 低端占比
+         */
+        LowPercent("T03002","低端占比");
 
         private String value;
         private String name;
