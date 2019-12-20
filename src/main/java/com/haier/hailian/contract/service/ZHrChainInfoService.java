@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
+import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
@@ -80,5 +81,12 @@ public interface ZHrChainInfoService {
      * @return
      */
     List<ZNodeTargetPercentInfo> getNodeTargetList(String nodeCodeStr);
+
+    /**
+     * 保存链群的全部信息
+     * @param zHrChainInfoDto
+     * @return
+     */
+    ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto);
 
 }

@@ -11,7 +11,7 @@
         <result property="masterCode" column="master_code" jdbcType="VARCHAR"/>
         <result property="masterName" column="master_name" jdbcType="VARCHAR"/>
         <result property="chainPtCode" column="chain_pt_code" jdbcType="VARCHAR"/>
-        <result property="deleted" column="deleted" jdbcType="BYTE"/>
+        <result property="deleted" column="deleted" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--查询单个-->
@@ -21,6 +21,7 @@
         from chain_contract.z_hr_chain_info
         where id = #{id}
     </select>
+
 
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZHrChainInfoMap">
@@ -108,5 +109,15 @@
     <delete id="deleteById">
         delete from chain_contract.z_hr_chain_info where id = #{id}
     </delete>
+
+
+    <!--查询单个-->
+    <select id="queryMaxOne" resultType="string">
+        select
+          chain_code
+        from chain_contract.z_hr_chain_info
+        ORDER BY id DESC
+        LIMIT 0,1
+    </select>
 
 </mapper>

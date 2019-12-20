@@ -70,4 +70,6 @@ public interface ZNodeTargetPercentInfoDao {
      */
     List<ZNodeTargetPercentInfo> queryByKeyWorld(@Param("list") List<String> list,@Param("periodCode")String periodCode);
 
+    int insertBatch(@Param("list") List<ZNodeTargetPercentInfo> list);
+
 }

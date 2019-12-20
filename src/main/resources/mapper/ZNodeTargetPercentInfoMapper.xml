@@ -136,4 +136,25 @@
         </foreach>
     </select>
 
+    <!-- 批量插入数据 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into wd_solr
+        (lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.lqCode},
+            #{item.lqName},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.xwCode},
+            #{item.xwName},
+            #{item.targetCode},
+            #{item.targetname},
+            #{item.targetLine},
+            #{item.sharePercent}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

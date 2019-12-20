@@ -41,6 +41,7 @@ public class ZHrChainInfoController {
      * @return 单条数据
      */
     @GetMapping("selectOne")
+    @ApiOperation(value = "获取链群详细信息")
     public ZHrChainInfo selectOne(Integer id) {
         return this.zHrChainInfoService.queryById(id);
     }
@@ -71,7 +72,7 @@ public class ZHrChainInfoController {
         try {
             return zHrChainInfoService.validateChainName(validateChainNameDTO);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.validateChainName,",e);
+            log.error("错误发生在ZHrChainInfoController.validateChainName,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
@@ -84,7 +85,7 @@ public class ZHrChainInfoController {
             List<SysNodeEhr> list = zHrChainInfoService.searchUsersByKeyWords(keyWords);
             return R.ok().put("data", list);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.searchUsers,",e);
+            log.error("错误发生在ZHrChainInfoController.searchUsers,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
@@ -92,12 +93,30 @@ public class ZHrChainInfoController {
 
     @PostMapping(value = {"/getNodeTarget"})
     @ApiOperation(value = "查询人员目标")
-    public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询", required = true) String empCodeStr) {
+    public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询,以逗号分割", required = true) String nodeCodeStr) {
         try {
-            List<ZNodeTargetPercentInfo> list = zHrChainInfoService.getNodeTargetList(empCodeStr);
+            List<ZNodeTargetPercentInfo> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
             return R.ok().put("data", list);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getNodeTarget,",e);
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/saveChainInfo"})
+    @ApiOperation(value = "保存链群信息")
+    public R saveChainInfo(@RequestBody @Validated @ApiParam(value = "保存链群和目标", required = true) ZHrChainInfoDto zHrChainInfoDto) {
+        try {
+            //1.校验一下名字是否重复
+            R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
+            if (res.get("code").equals(0)){
+                ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
+                return R.ok().put("data", z);
+            }
+            return res;
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }

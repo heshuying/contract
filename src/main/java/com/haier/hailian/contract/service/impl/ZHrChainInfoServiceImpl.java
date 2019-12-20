@@ -6,6 +6,7 @@ import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
+import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysNodeEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -110,8 +112,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         //判断是否存在链群关键字，不存在则添加
         String name = validateChainNameDTO.getChainName();
-        if (!name.contains("链群")){
-            name = name +"链群";
+        if (!name.contains("链群")) {
+            name = name + "链群";
         }
         zHrChainInfo.setChainName(name);
 //        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
@@ -134,8 +136,63 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         String dateNowStr = sdf.format(d);
         System.out.println("格式化后的日期：" + dateNowStr);
         String[] strings = nodeCodeStr.split(",");
-        List<String> list= Arrays.asList(strings);
-        zNodeTargetPercentInfoDao.queryByKeyWorld(list,dateNowStr);
+        List<String> list = Arrays.asList(strings);
+        zNodeTargetPercentInfoDao.queryByKeyWorld(list, dateNowStr);
         return null;
     }
+
+    @Override
+    public ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto) {
+        //1.保存链群信息
+        ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
+        //链群编码生成
+        String maxOne = zHrChainInfoDao.queryMaxOne();
+        String chainCode = frontCompWithZore(maxOne, 5, "H");
+        zHrChainInfo.setChainCode(chainCode);
+        zHrChainInfo.setChainPtCode(zHrChainInfoDto.getChainPtCode());
+        zHrChainInfo.setMasterCode(zHrChainInfoDto.getMasterCode());
+        zHrChainInfo.setMasterName(zHrChainInfoDto.getMasterName());
+        zHrChainInfo.setXwCode(zHrChainInfoDto.getXwCode());
+        zHrChainInfo.setXwName(zHrChainInfoDto.getXwName());
+        zHrChainInfo.setChainName(zHrChainInfoDto.getChainName());
+        zHrChainInfoDao.insert(zHrChainInfo);
+        List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos = new ArrayList<>();
+        //2.保存链群的目标信息
+        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
+            z.setLqCode(chainCode);
+            zNodeTargetPercentInfos.add(z);
+        }
+        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
+        //3.保存数据到链上
+        return null;
+    }
+
+
+    /**
+     * 　　* 将元数据前补零，补后的总长度为指定的长度，以字符串的形式返回
+     * 　　* @param sourceDate  编码在当前数据库中的最大值
+     * 　　* @param formatLength 编码的数字长度
+     * 　　* @param key  编码开始字母
+     * 　　* @return 重组后的数据
+     */
+
+    private static String frontCompWithZore(String sourceDate, int formatLength, String key) {
+
+        String[] strings = sourceDate.split(key);
+        int sourceNum = Integer.parseInt(strings[1]);
+        /*
+         * 0 指前面补充零
+         * formatLength 字符总长度为 formatLength
+         * d 代表为正数。
+         */
+        String num = String.format("%0" + formatLength + "d", sourceNum + 1);
+        num = key + num;
+        return num;
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println(frontCompWithZore("ACC00003", 10, "ACC"));
+    }
+
 }

@@ -60,4 +60,10 @@ public interface ZHrChainInfoDao {
      * @return 影响行数
      */
     int deleteById(Integer id);
+
+    /**
+     * id最大的那条数据的链群编码
+     * @return
+     */
+    String queryMaxOne();
 }
