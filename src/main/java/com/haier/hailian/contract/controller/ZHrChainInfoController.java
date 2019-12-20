@@ -112,6 +112,9 @@ public class ZHrChainInfoController {
             R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
             if (res.get("code").equals(0)){
                 ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
+                if (z==null){
+                    return R.error("保存出错了，请稍后重试！");
+                }
                 return R.ok().put("data", z);
             }
             return res;

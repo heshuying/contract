@@ -58,16 +58,21 @@
     </select>
 
     <!--查询网格抢单收入-->
-    <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto"
+    <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
         select  mcgo.wg_code,mcgo.wg_name,mcgo.order_amt as income,mcgo.product_code, zpi.product_stru
         FROM month_chain_group_order mcgo
-        join (select distinct jyt_code, product_line_code from sys_net where xw_code='V01560395') sn
+        join (select distinct jyt_code, product_line_code from sys_net where xw_code=#{xwCode}) sn
         on mcgo.wg_code=sn.jyt_code and mcgo.product_line_code=sn.product_line_code
-        join z_gambling_contracts_product_modle cpm on mcgo.product_code=cpm.product_model_code and cpm.contracts_id=633
-        join z_product_info zpi on cpm.product_model_code=zpi.product_model_code
-        and period_code='201910'
-        where mcgo.year='2019' and mcgo.month='10';
+        join z_product_info zpi on mcgo.product_code=zpi.product_model_code
+        and period_code in
+        <foreach collection="yearMonth" item="item" index="index" open="(" close=")"  separator="," >
+         #{item}
+        </foreach>
+        where mcgo.year=#{year} and mcgo.month IN
+        <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
+            #{item}
+        </foreach>
     </select>
 
 

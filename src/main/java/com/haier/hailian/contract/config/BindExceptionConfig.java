@@ -3,12 +3,14 @@ package com.haier.hailian.contract.config;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.sun.org.apache.regexp.internal.RE;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class BindExceptionConfig {
 
@@ -28,6 +30,7 @@ public class BindExceptionConfig {
             RException rException=(RException) e;
             return R.error(rException.getCode(),rException.getMsg());
         }else {
+            log.error(e.getMessage());
             return R.error("500",
                     "请联系管理员");
         }

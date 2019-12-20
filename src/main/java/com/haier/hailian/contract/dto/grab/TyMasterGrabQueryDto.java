@@ -11,13 +11,13 @@ import java.util.List;
  */
 @Data
 @ApiModel(value = "网格抢单查询实体类")
-public class MeshStatisticQueryDto {
+public class TyMasterGrabQueryDto {
     @ApiModelProperty(value = "小微编码", required = true)
     private String xwCode;
     @ApiModelProperty(value = "合约id", required = true)
     private Integer contractId;
-    @ApiModelProperty(value = "型号编码", required = false)
-    private String modelCode;
-    @ApiModelProperty(value = "平台编码", required = false)
-    private String ptCode;
+
+    private String year;
+    private List<String> month;
+    private List<String> yearMonth;
 }
