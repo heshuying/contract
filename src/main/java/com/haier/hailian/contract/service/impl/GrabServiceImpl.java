@@ -9,12 +9,14 @@ import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.haier.hailian.contract.entity.SysNet;
-import com.haier.hailian.contract.entity.ZGamblingContracts;
+import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZNetBottom;
-import com.haier.hailian.contract.gambling.service.ZGamblingContractsService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
 import com.haier.hailian.contract.service.SysNetService;
+import com.haier.hailian.contract.service.ZContractsFactorService;
+import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZNetBottomService;
 import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
@@ -39,48 +41,31 @@ public class GrabServiceImpl implements GrabService {
     @Autowired
     private ZNetBottomService netBottomService;
     @Autowired
-    private ZGamblingContractsService contractsService;
+    private ZContractsService contractsService;
+    @Autowired
+    private ZContractsFactorService contractsFactorService;
+
     @Override
     public TyMasterGrabChainInfoDto queryChainInfo(MeshStatisticQueryDto queryDto) {
-        ZGamblingContracts contracts =contractsService.getById(queryDto.getContractId());
+        ZContracts contracts =contractsService.getById(queryDto.getContractId());
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
 
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
-        tyMasterGrabChainInfoDto.setChainName(contracts.getContractsName());
+        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
                 DateFormatUtil.format(contracts.getEndDate()));
-        List<MeshGrabEntity> meshGrabEntities=netBottomService.queryMeshBottomIncome(queryDto);
-        double income=meshGrabEntities.stream().mapToDouble(
-                m->AmountFormat.amtStr2D(m.getIncome())
-        ).sum();
-        tyMasterGrabChainInfoDto.setTargetIncome(new BigDecimal(income));
+       List<ZContractsFactor> factors=contractsFactorService.list(
+               new QueryWrapper<ZContractsFactor>().eq("contract_id",contracts.getId())
+       );
+        //TODO 从表中取
+        tyMasterGrabChainInfoDto.setTargetIncome(BigDecimal.ZERO);
+        tyMasterGrabChainInfoDto.setTargetHighPercent(BigDecimal.ZERO);
 
-        //高端
-        List<MeshGrabEntity> high=meshGrabEntities.stream().filter(
-                f->Constant.ProductStru.High.toString().equals(f.getProductStru()))
-                .collect(Collectors.toList());
-        if(high !=null && high.size()>0){
-            BigDecimal highIncome=new BigDecimal(high.stream().mapToDouble(m->
-                    AmountFormat.amtStr2D(m.getIncome())).sum());
-            tyMasterGrabChainInfoDto.setTargetHighPercent(highIncome.divide(tyMasterGrabChainInfoDto.getTargetIncome()));
-        }else{
-            tyMasterGrabChainInfoDto.setTargetHighPercent(BigDecimal.ZERO);
-        }
-        //低端
-        List<MeshGrabEntity> low=meshGrabEntities.stream().filter(
-                f->Constant.ProductStru.Low.toString().equals(f.getProductStru()))
-                .collect(Collectors.toList());
-        if(low !=null && low.size()>0){
-            BigDecimal lowIncome=new BigDecimal(high.stream().mapToDouble(m->
-                    AmountFormat.amtStr2D(m.getIncome())).sum());
-            tyMasterGrabChainInfoDto.setTargetLowPercent(lowIncome.divide(tyMasterGrabChainInfoDto.getTargetIncome()));
-        }else{
-            tyMasterGrabChainInfoDto.setTargetLowPercent(BigDecimal.ZERO);
-        }
+        tyMasterGrabChainInfoDto.setTargetHighPercent(BigDecimal.ZERO);
         return tyMasterGrabChainInfoDto;
     }
 

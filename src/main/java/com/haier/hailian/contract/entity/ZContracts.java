@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -69,17 +71,17 @@ public class ZContracts extends Model<ZContracts> {
     /**
      * 抢入截止时间
      */
-    private LocalDateTime joinTime;
+    private Date joinTime;
 
     /**
      * 开始时间
      */
-    private LocalDateTime startDate;
+    private Date startDate;
 
     /**
      * 结束时间
      */
-    private LocalDateTime endDate;
+    private Date endDate;
 
     /**
      * xw编码
