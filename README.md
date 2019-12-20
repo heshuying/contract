@@ -9,4 +9,10 @@
 ### 测试
     10.138.26.200:3909 库名：chain_contract 用户名：chcontract_tmp/Bfds8LvadCCd
 
+# 网址
+### 测试
+    http://zzfx.hoptest.haier.net/api
+### 生产
+    http://ddzzl.haier.net/api/
+
 
