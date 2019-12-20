@@ -9,6 +9,7 @@ import com.haier.hailian.contract.service.IncrementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,9 @@ public class CDGrabController {
     public R queryInfo(@RequestBody CDGrabInfoRequestDto requestDto) {
         CDGrabInfoResponseDto data= null;
         try {
+            if(StringUtils.isBlank(requestDto.getYearMonth()) && StringUtils.isNotBlank(requestDto.getYear()) && StringUtils.isNotBlank(requestDto.getMonth())){
+                requestDto.setYearMonth(requestDto.getYear()+requestDto.getMonth());
+            }
             data = cdGrabService.queryCDGrabInfo(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
