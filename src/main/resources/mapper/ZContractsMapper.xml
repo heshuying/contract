@@ -21,6 +21,7 @@
         <result column="create_time" property="createTime" />
         <result column="org_code" property="orgCode" />
         <result column="org_name" property="orgName" />
+        <result column="share_percent" property="sharePercent" />
     </resultMap>
 
 </mapper>

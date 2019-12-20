@@ -107,6 +107,8 @@ public class ZContracts extends Model<ZContracts> {
 
     private String orgName;
 
+    private String sharePercent;
+
 
     @Override
     protected Serializable pkVal() {
