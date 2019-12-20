@@ -3,8 +3,10 @@ package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.CalculateSharingDTO;
 import com.haier.hailian.contract.dto.GamblingContractDTO;
+import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,6 +61,13 @@ public class ZGamblingContractsController {
             return R.ok().put("grab",grab);
         }
         return R.error().put("msg","参数有误，无法计算");
+    }
+
+    @PostMapping(value = {"/selectContractList"})
+    @ApiOperation(value = "查询合约列表")
+    public R selectContractList(@RequestBody QueryContractListDTO queryDTO) {
+        List<ZContracts> contractsList = gamblingContractsService.selectContractList(queryDTO);
+        return R.ok().put("data",contractsList);
     }
 
 }

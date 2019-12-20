@@ -1,7 +1,9 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.GamblingContractDTO;
+import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
+import com.haier.hailian.contract.entity.ZContracts;
 
 import java.util.List;
 
@@ -18,4 +20,6 @@ public interface ZGamblingContractsService {
     void saveGambling(GamblingContractDTO dto);
 
     List<XiaoweiEhr> selectMarket();
+
+    List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
 }

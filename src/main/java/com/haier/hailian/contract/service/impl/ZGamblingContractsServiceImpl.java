@@ -3,10 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dto.ChainGroupTargetDTO;
-import com.haier.hailian.contract.dto.CurrentUser;
-import com.haier.hailian.contract.dto.GamblingContractDTO;
-import com.haier.hailian.contract.dto.MarketTargetDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.entity.ZContracts;
@@ -156,6 +153,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     public List<XiaoweiEhr> selectMarket() {
 
         List<XiaoweiEhr> list = sysXiaoweiEhrDao.selectMarket();
+        return list;
+    }
+
+    @Override
+    public List<ZContracts> selectContractList(QueryContractListDTO queryDTO) {
+        List<ZContracts> list = contractsDao.selectContractList(queryDTO);
         return list;
     }
 }

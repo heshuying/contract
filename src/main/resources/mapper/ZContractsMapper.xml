@@ -13,8 +13,11 @@
         <result column="chain_code" property="chainCode" />
         <result column="region_code" property="regionCode" />
         <result column="join_time" property="joinTime" />
+        <result column="join_time_str" property="joinTimeStr" />
         <result column="start_date" property="startDate" />
         <result column="end_date" property="endDate" />
+        <result column="start_date_str" property="startDateStr" />
+        <result column="end_date_str" property="endDateStr" />
         <result column="xiaowei_code" property="xiaoweiCode" />
         <result column="create_code" property="createCode" />
         <result column="create_name" property="createName" />
@@ -22,5 +25,30 @@
         <result column="org_code" property="orgCode" />
         <result column="org_name" property="orgName" />
     </resultMap>
-
+    <sql id="Base_Column_List">
+        id,parent_id,contract_name,contract_type,status,share_space,chain_code,
+        region_code,join_time,DATE_FORMAT(join_time,'%Y-%m-%d %H:%m:%s') as join_time_str,start_date,DATE_FORMAT(start_date,'%Y-%m-%d %H:%m:%s') as start_date_str,
+        end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%m:%s') as end_date_str,xiaowei_code,create_code,
+        create_name,create_time,org_code,org_name
+    </sql>
+    <select id="selectContractList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        <where>
+            <if test=" chainCode != null ">
+                and chain_code = #{chainCode}
+            </if>
+            <if test=" status != null ">
+                and status = #{status}
+            </if>
+            <if test=" startDate != null ">
+                and DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d')
+            </if>
+            <if test=" endDate != null ">
+                and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
+            </if>
+            and contract_type='10'
+        </where>
+    </select>
 </mapper>
