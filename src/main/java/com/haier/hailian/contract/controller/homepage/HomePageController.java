@@ -30,33 +30,25 @@ public class HomePageController {
     @PostMapping(value = {"/contractList"})
     @ApiOperation(value = "抢入合约列表查询接口")
     public R getContractList(@RequestBody ContractListsDto contractListsDto) {
-        R r = R.ok();
         try{
             List<ContractListRes> res = homePageService.getContractList(contractListsDto);
-            r.put("data",res);
+            return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();
-            r.put("data",e.getMessage());
-            r.put("code", -1);
-            r.put("msg", "fail");
+            return R.error("获取：" + e.getMessage());
         }
-        return r;
     }
 
 
     @PostMapping(value = {"/chainGroupInfo"})
     @ApiOperation(value = "链群详情查询接口")
     public R getChainGroupInfo(@RequestBody ChainGroupInfoDto chainGroupInfoDto) {
-        R r = R.ok();
         try{
             Map<String,Object> res = homePageService.getChainGroupInfo(chainGroupInfoDto);
-            r.put("data",res);
+            return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();
-            r.put("data",e.getMessage());
-            r.put("code", -1);
-            r.put("msg", "fail");
+            return R.error("获取：" + e.getMessage());
         }
-        return r;
     }
 }
