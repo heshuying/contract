@@ -4,23 +4,22 @@
 
     <resultMap type="com.haier.hailian.contract.entity.ZNodeTargetPercentInfo" id="ZNodeTargetPercentInfoMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="lqId" column="lq_id" jdbcType="INTEGER"/>
-        <result property="nodecode" column="nodeCode" jdbcType="VARCHAR"/>
-        <result property="nodename" column="nodeName" jdbcType="VARCHAR"/>
-        <result property="empcode" column="empCode" jdbcType="VARCHAR"/>
-        <result property="empname" column="empName" jdbcType="VARCHAR"/>
-        <result property="xwcode" column="xwCode" jdbcType="VARCHAR"/>
-        <result property="xwname" column="xwName" jdbcType="VARCHAR"/>
-        <result property="targetcode" column="targetCode" jdbcType="VARCHAR"/>
+        <result property="lqCode" column="lq_code" jdbcType="VARCHAR"/>
+        <result property="lqName" column="lq_name" jdbcType="VARCHAR"/>
+        <result property="nodeCode" column="node_code" jdbcType="VARCHAR"/>
+        <result property="nodeName" column="node_Name" jdbcType="VARCHAR"/>
+        <result property="xwCode" column="xw_code" jdbcType="VARCHAR"/>
+        <result property="xwName" column="xw_name" jdbcType="VARCHAR"/>
+        <result property="targetCode" column="target_code" jdbcType="VARCHAR"/>
         <result property="targetname" column="targetName" jdbcType="VARCHAR"/>
-        <result property="targetline" column="targetLine" jdbcType="VARCHAR"/>
-        <result property="sharepercent" column="sharePercent" jdbcType="VARCHAR"/>
+        <result property="targetLine" column="target_line" jdbcType="VARCHAR"/>
+        <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_id, nodeCode, nodeName, empCode, empName, xwCode, xwName, targetCode, targetName, targetLine, sharePercent
+          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         where id = #{id}
     </select>
@@ -28,7 +27,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_id, nodeCode, nodeName, empCode, empName, xwCode, xwName, targetCode, targetName, targetLine, sharePercent
+          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         limit #{offset}, #{limit}
     </select>
@@ -36,90 +35,84 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_id, nodeCode, nodeName, empCode, empName, xwCode, xwName, targetCode, targetName, targetLine, sharePercent
+          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         <where>
             <if test="id != null">
                 and id = #{id}
             </if>
-            <if test="lqId != null">
-                and lq_id = #{lqId}
+            <if test="lqCode != null and lqCode != ''">
+                and lq_code = #{lqCode}
             </if>
-            <if test="nodecode != null and nodecode != ''">
-                and nodeCode = #{nodecode}
+            <if test="lqName != null and lqName != ''">
+                and lq_name = #{lqName}
             </if>
-            <if test="nodename != null and nodename != ''">
-                and nodeName = #{nodename}
+            <if test="nodeCode != null and nodeCode != ''">
+                and node_code = #{nodeCode}
             </if>
-            <if test="empcode != null and empcode != ''">
-                and empCode = #{empcode}
+            <if test="nodeName != null and nodeName != ''">
+                and node_Name = #{nodeName}
             </if>
-            <if test="empname != null and empname != ''">
-                and empName = #{empname}
+            <if test="xwCode != null and xwCode != ''">
+                and xw_code = #{xwCode}
             </if>
-            <if test="xwcode != null and xwcode != ''">
-                and xwCode = #{xwcode}
+            <if test="xwName != null and xwName != ''">
+                and xw_name = #{xwName}
             </if>
-            <if test="xwname != null and xwname != ''">
-                and xwName = #{xwname}
-            </if>
-            <if test="targetcode != null and targetcode != ''">
-                and targetCode = #{targetcode}
+            <if test="targetCode != null and targetCode != ''">
+                and target_code = #{targetCode}
             </if>
             <if test="targetname != null and targetname != ''">
                 and targetName = #{targetname}
             </if>
-            <if test="targetline != null and targetline != ''">
-                and targetLine = #{targetline}
+            <if test="targetLine != null and targetLine != ''">
+                and target_line = #{targetLine}
             </if>
-            <if test="sharepercent != null and sharepercent != ''">
-                and sharePercent = #{sharepercent}
+            <if test="sharePercent != null and sharePercent != ''">
+                and share_percent = #{sharePercent}
             </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_node_target_percent_info(lq_id, nodeCode, nodeName, empCode, empName, xwCode, xwName, targetCode, targetName, targetLine, sharePercent)
-        values (#{lqId}, #{nodecode}, #{nodename}, #{empcode}, #{empname}, #{xwcode}, #{xwname}, #{targetcode}, #{targetname}, #{targetline}, #{sharepercent})
+        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent)
+        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetname}, #{targetLine}, #{sharePercent})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
         update chain_contract.z_node_target_percent_info
         <set>
-            <if test="lqId != null">
-                lq_id = #{lqId},
+            <if test="lqCode != null and lqCode != ''">
+                lq_code = #{lqCode},
             </if>
-            <if test="nodecode != null and nodecode != ''">
-                nodeCode = #{nodecode},
+            <if test="lqName != null and lqName != ''">
+                lq_name = #{lqName},
             </if>
-            <if test="nodename != null and nodename != ''">
-                nodeName = #{nodename},
+            <if test="nodeCode != null and nodeCode != ''">
+                node_code = #{nodeCode},
             </if>
-            <if test="empcode != null and empcode != ''">
-                empCode = #{empcode},
+            <if test="nodeName != null and nodeName != ''">
+                node_Name = #{nodeName},
             </if>
-            <if test="empname != null and empname != ''">
-                empName = #{empname},
+            <if test="xwCode != null and xwCode != ''">
+                xw_code = #{xwCode},
             </if>
-            <if test="xwcode != null and xwcode != ''">
-                xwCode = #{xwcode},
+            <if test="xwName != null and xwName != ''">
+                xw_name = #{xwName},
             </if>
-            <if test="xwname != null and xwname != ''">
-                xwName = #{xwname},
-            </if>
-            <if test="targetcode != null and targetcode != ''">
-                targetCode = #{targetcode},
+            <if test="targetCode != null and targetCode != ''">
+                target_code = #{targetCode},
             </if>
             <if test="targetname != null and targetname != ''">
                 targetName = #{targetname},
             </if>
-            <if test="targetline != null and targetline != ''">
-                targetLine = #{targetline},
+            <if test="targetLine != null and targetLine != ''">
+                target_line = #{targetLine},
             </if>
-            <if test="sharepercent != null and sharepercent != ''">
-                sharePercent = #{sharepercent},
+            <if test="sharePercent != null and sharePercent != ''">
+                share_percent = #{sharePercent},
             </if>
         </set>
         where id = #{id}
@@ -131,14 +124,16 @@
     </delete>
 
 
-
     <!--通过实体作为筛选条件查询-->
     <select id="queryByKeyWorld" resultMap="ZNodeTargetPercentInfoMap">
-
-        select * from sys_node_ehr sne
+        select *
+        from sys_node_ehr sne
         left join z_share_percent zsp  on zsp.xw_code = sne.nodeCode
-        where  zsp.period_code='201912'
-        and nodeManagerCode in (00552486)
+        where  zsp.period_code= #{periodCode}
+        and nodeManagerCode in
+        <foreach collection="list" item="nodeCode" index="index" open="(" close=")" separator=",">
+            #{nodeCode}
+        </foreach>
     </select>
 
 </mapper>

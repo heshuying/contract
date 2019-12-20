@@ -16,9 +16,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -110,7 +108,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 //        CurrentUser currentUser = sysUser.getCurrentUser();
         //校验链群名称是否已经存在
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
-        zHrChainInfo.setChainName(validateChainNameDTO.getChainName());
+        //判断是否存在链群关键字，不存在则添加
+        String name = validateChainNameDTO.getChainName();
+        if (!name.contains("链群")){
+            name = name +"链群";
+        }
+        zHrChainInfo.setChainName(name);
 //        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
         List<ZHrChainInfo> chainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
         if (chainNames.size() > 0) {
@@ -125,13 +128,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<ZNodeTargetPercentInfo> getNodeTargetList(String empCodeStr) {
+    public List<ZNodeTargetPercentInfo> getNodeTargetList(String nodeCodeStr) {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         String dateNowStr = sdf.format(d);
         System.out.println("格式化后的日期：" + dateNowStr);
-        String[] strings = empCodeStr.split(",");
+        String[] strings = nodeCodeStr.split(",");
         List<String> list= Arrays.asList(strings);
-        return zNodeTargetPercentInfoDao.queryByKeyWorld(list,dateNowStr);
+        zNodeTargetPercentInfoDao.queryByKeyWorld(list,dateNowStr);
+        return null;
     }
 }
