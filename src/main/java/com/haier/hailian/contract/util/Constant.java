@@ -90,7 +90,15 @@ public class Constant {
         /**
          * 利润率
          */
-        Lrl("T02002","利润率");
+        Lrl("T02002","利润率"),
+        /**
+         * 毛利率
+         */
+        Mll("T02004","毛利率"),
+        /**
+         *利润额
+         */
+        Lre("T01017","利润额");
 
         private String value;
         private String name;
