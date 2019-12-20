@@ -108,8 +108,6 @@ public class ZContracts extends Model<ZContracts> {
 
     private String orgName;
 
-    private String sharePercent;
-
     private String startDateStr;
 
     private String endDateStr;
