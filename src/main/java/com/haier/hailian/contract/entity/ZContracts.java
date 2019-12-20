@@ -112,6 +112,8 @@ public class ZContracts extends Model<ZContracts> {
 
     private String endDateStr;
 
+    private String sharePercent;
+
 
     @Override
     protected Serializable pkVal() {
