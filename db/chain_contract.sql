@@ -348,6 +348,7 @@ CREATE TABLE `z_contracts` (
   `contract_type` varchar(10) DEFAULT NULL COMMENT '10链群主合约、20商圈合约、30创客合约',
   `status` varchar(10) DEFAULT NULL COMMENT '状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期',
   `share_space` decimal(10,4) DEFAULT NULL COMMENT '分享空间',
+  `share_percent` varchar(80) DEFAULT NULL COMMENT '分享比例',
   `chain_code` varchar(80) DEFAULT NULL COMMENT '链群编码',
   `region_code` varchar(80) DEFAULT NULL COMMENT '地区编码',
   `join_time` datetime DEFAULT NULL COMMENT '抢入截止时间',
@@ -359,6 +360,7 @@ CREATE TABLE `z_contracts` (
   `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `org_code` varchar(50) DEFAULT '',
   `org_name` varchar(50) DEFAULT '',
+  org_type varchar(50) DEFAULT '';
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

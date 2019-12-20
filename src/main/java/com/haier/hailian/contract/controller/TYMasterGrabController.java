@@ -25,20 +25,20 @@ public class TYMasterGrabController {
 
     @PostMapping(value = {"/chain/info"})
     @ApiOperation(value = "体验链群主抢单链群信息")
-    public R meshDetail(@RequestBody @Validated MeshStatisticQueryDto queryDTO) {
+    public R chainInfo(@RequestBody MeshStatisticQueryDto queryDTO) {
         TyMasterGrabChainInfoDto chainInfoDto=grabService.queryChainInfo(queryDTO);
         return R.ok().put("data",chainInfoDto);
     }
 
     @PostMapping(value = {"/mesh/info"})
     @ApiOperation(value = "体验链群主抢单网格明细信息")
-    public R meshStatistic(@RequestBody @Validated MeshStatisticQueryDto queryDTO) {
+    public R meshInfo(@RequestBody MeshStatisticQueryDto queryDTO) {
         MeshSummaryDto meshSummaryDto=grabService.queryMeshGrabDetail(queryDTO);
         return R.ok().put("data",meshSummaryDto);
     }
 
     @PostMapping(value = {"/grab"})
-    @ApiOperation(value = "体验链群主抢单网格明细信息")
+    @ApiOperation(value = "体验链群主抢单")
     public R grab(@RequestBody @Validated MessGambSubmitDto dto) {
         return grabService.doGrab(dto);
     }
