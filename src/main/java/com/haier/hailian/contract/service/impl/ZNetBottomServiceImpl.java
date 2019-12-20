@@ -1,6 +1,6 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
+import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.ZNetBottom;
 import com.haier.hailian.contract.dao.ZNetBottomDao;
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class ZNetBottomServiceImpl extends ServiceImpl<ZNetBottomDao, ZNetBottom> implements ZNetBottomService {
     @Override
-    public List<MeshGrabEntity> queryMeshBottomIncome(MeshStatisticQueryDto queryDto) {
+    public List<MeshGrabEntity> queryMeshBottomIncome(TyMasterGrabQueryDto queryDto) {
         return baseMapper.queryMeshBottomIncome(queryDto);
     }
 }

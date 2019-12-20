@@ -7,6 +7,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateFormatUtil {
@@ -151,5 +152,33 @@ public class DateFormatUtil {
     public static Date addDateYears(Date date, int years) {
         DateTime dateTime = new DateTime(date);
         return dateTime.plusYears(years).toDate();
+    }
+
+    /**
+     * 获取日期的YEAR值
+     *
+     * @param date 输入日期
+     * @return
+     */
+    public static int getYearOfDate(Date date) {
+        int y = 0;
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        y = cd.get(Calendar.YEAR);
+        return y;
+    }
+
+    /**
+     * 获取日期的MONTH值
+     *
+     * @param date 输入日期
+     * @return
+     */
+    public static int getMonthOfDate(Date date) {
+        int m = 0;
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        m = cd.get(Calendar.MONTH) + 1;
+        return m;
     }
 }

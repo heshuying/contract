@@ -27,7 +27,7 @@
     </resultMap>
     <!--查询网格目标收入-->
     <select id="queryMeshBottomIncome"  resultMap="wgBottomIncomeMapper"
-            parameterType="com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto">
+            parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto">
         SELECT znb.pmai_area_code as wg_code, znb.pmai_area_name as wg_name, znb.target_bottom_count as income , znb.model_code as product_code, zpi.product_stru
         FROM (select distinct jyt_code from sys_net where xw_code='V01560395') sn
         join z_net_bottom znb on sn.jyt_code=znb.pmai_area_code

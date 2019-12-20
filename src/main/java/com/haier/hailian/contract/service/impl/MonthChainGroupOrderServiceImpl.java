@@ -1,6 +1,6 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
+import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.haier.hailian.contract.dao.MonthChainGroupOrderDao;
@@ -26,7 +26,7 @@ public class MonthChainGroupOrderServiceImpl extends ServiceImpl<MonthChainGroup
     }
 
     @Override
-    public List<MeshGrabEntity> queryMeshGrabIncome(MeshStatisticQueryDto queryDto) {
+    public List<MeshGrabEntity> queryMeshGrabIncome(TyMasterGrabQueryDto queryDto) {
         return baseMapper.queryMeshGrabIncome(queryDto);
     }
 }

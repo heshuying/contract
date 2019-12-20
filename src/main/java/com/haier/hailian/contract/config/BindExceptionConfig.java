@@ -28,6 +28,7 @@ public class BindExceptionConfig {
             RException rException=(RException) e;
             return R.error(rException.getCode(),rException.getMsg());
         }else {
+
             return R.error("500",
                     "请联系管理员");
         }
