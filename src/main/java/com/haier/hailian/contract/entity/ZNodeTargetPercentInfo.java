@@ -1,47 +1,125 @@
 package com.haier.hailian.contract.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 
 /**
  * (ZNodeTargetPercentInfo)实体类
  *
  * @author makejava
- * @since 2019-12-19 11:27:24
+ * @since 2019-12-19 17:28:53
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 public class ZNodeTargetPercentInfo implements Serializable {
-    private static final long serialVersionUID = 314181001214392364L;
-
-    @TableId(value = "id", type = IdType.AUTO)
+    private static final long serialVersionUID = 302307902555996840L;
+    
     private Integer id;
-    //链群ID
-    private Integer lqId;
+    //链群编码
+    private String lqCode;
+    //链群名称
+    private String lqName;
     //节点编码
-    private String nodecode;
+    private String nodeCode;
     //节点名称
-    private String nodename;
-    //员工编码
-    private String empcode;
-    //员工姓名
-    private String empname;
+    private String nodeName;
     //小微编码
-    private String xwcode;
+    private String xwCode;
     //小微名称
-    private String xwname;
+    private String xwName;
     //目标编码
-    private String targetcode;
+    private String targetCode;
     //目标名称
     private String targetname;
     //目标线
-    private String targetline;
+    private String targetLine;
     //分享比例
-    private String sharepercent;
+    private String sharePercent;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getLqCode() {
+        return lqCode;
+    }
+
+    public void setLqCode(String lqCode) {
+        this.lqCode = lqCode;
+    }
+
+    public String getLqName() {
+        return lqName;
+    }
+
+    public void setLqName(String lqName) {
+        this.lqName = lqName;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public void setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public String getXwCode() {
+        return xwCode;
+    }
+
+    public void setXwCode(String xwCode) {
+        this.xwCode = xwCode;
+    }
+
+    public String getXwName() {
+        return xwName;
+    }
+
+    public void setXwName(String xwName) {
+        this.xwName = xwName;
+    }
+
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
+    }
+
+    public String getTargetname() {
+        return targetname;
+    }
+
+    public void setTargetname(String targetname) {
+        this.targetname = targetname;
+    }
+
+    public String getTargetLine() {
+        return targetLine;
+    }
+
+    public void setTargetLine(String targetLine) {
+        this.targetLine = targetLine;
+    }
+
+    public String getSharePercent() {
+        return sharePercent;
+    }
+
+    public void setSharePercent(String sharePercent) {
+        this.sharePercent = sharePercent;
+    }
+
 }

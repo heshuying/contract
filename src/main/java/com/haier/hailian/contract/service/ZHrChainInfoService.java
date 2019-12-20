@@ -76,9 +76,9 @@ public interface ZHrChainInfoService {
 
     /**
      * 获取节点对应的目标分享比例
-     * @param empCodeStr
+     * @param nodeCodeStr
      * @return
      */
-    List<ZNodeTargetPercentInfo> getNodeTargetList(String empCodeStr);
+    List<ZNodeTargetPercentInfo> getNodeTargetList(String nodeCodeStr);
 
 }

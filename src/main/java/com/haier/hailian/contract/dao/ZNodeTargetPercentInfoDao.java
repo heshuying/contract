@@ -1,18 +1,16 @@
 package com.haier.hailian.contract.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 
 /**
  * (ZNodeTargetPercentInfo)表数据库访问层
  *
  * @author makejava
- * @since 2019-12-19 14:04:59
+ * @since 2019-12-19 17:29:03
  */
-public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercentInfo> {
+public interface ZNodeTargetPercentInfoDao {
 
     /**
      * 通过ID查询单条数据
@@ -31,6 +29,7 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
      */
     List<ZNodeTargetPercentInfo> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
+
     /**
      * 通过实体作为筛选条件查询
      *
@@ -38,6 +37,14 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
      * @return 对象列表
      */
     List<ZNodeTargetPercentInfo> queryAll(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
+
+    /**
+     * 新增数据
+     *
+     * @param zNodeTargetPercentInfo 实例对象
+     * @return 影响行数
+     */
+    int insert(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
 
     /**
      * 修改数据
