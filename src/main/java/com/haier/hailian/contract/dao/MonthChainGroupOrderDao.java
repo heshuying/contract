@@ -1,6 +1,6 @@
 package com.haier.hailian.contract.dao;
 
-import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
+import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -34,5 +34,5 @@ public interface MonthChainGroupOrderDao extends BaseMapper<MonthChainGroupOrder
      * @param queryDto
      * @return
      */
-     List<MeshGrabEntity> queryMeshGrabIncome(MeshStatisticQueryDto queryDto);
+     List<MeshGrabEntity> queryMeshGrabIncome(TyMasterGrabQueryDto queryDto);
 }
