@@ -2,7 +2,10 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 01431594 on 2019/12/19.
@@ -12,58 +15,81 @@ public class GamblingContractDTO {
 
     private Integer id;
     /**
+     * 关联id
+     */
+    private Integer parentId;
+
+    /**
      * 合约名称
      */
-    private String contractsName;
+    private String contractName;
+
+    /**
+     * 10链群主合约、20商圈合约、30创客合约
+     */
+    private String contractType;
+
+    /**
+     * 状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期
+     */
+    private String status;
+
+    /**
+     * 分享空间
+     */
+    private BigDecimal shareSpace;
 
     /**
      * 链群编码
      */
     private String chainCode;
+
     /**
-     * 链群名称
+     * 地区编码
      */
-    private String chainName;
+    private String regionCode;
+
+    /**
+     * 抢入截止时间
+     */
+    private Date joinTime;
 
     /**
      * 开始时间
      */
-    private LocalDateTime startDate;
+    private Date startDate;
 
     /**
      * 结束时间
      */
-    private LocalDateTime endDate;
+    private Date endDate;
 
+    /**
+     * xw编码
+     */
     private String xiaoweiCode;
 
-    private String xiaoweiName;
+    /**
+     * 创建人编码
+     */
+    private String createCode;
 
     /**
-     * 合同状态   0：已过期(不可抢入） 1：有效  2：作废（主动）
+     * 创建人姓名
      */
-    private String contractStatus;
+    private String createName;
 
     /**
-     * 1.爆款产品   2.新需求 3.按照系列举单  4.按型号举单
+     * 创建日期
      */
-    private String contractType;
+    private LocalDateTime createTime;
 
-    /**
-     * 合同用户群,1冰箱用户，2洗衣机用户
-     */
-    private String contractGroup;
+    private String orgCode;
 
-    /**
-     * 组织类型orgType,//1节点  2小微  3创客  4网格
-     */
-    private String orgType;
+    private String orgName;
 
-    /**
-     * 上链关键字
-     */
-    private String hashCode;
-    
+    private List<ChainGroupTargetDTO> chainGroupTargetList;
 
+    private List<MarketTargetDTO> marketTargetList;
 
 }
