@@ -1,10 +1,8 @@
-package com.haier.hailian.contract.gambling.dto;
+package com.haier.hailian.contract.dto;
 
-import com.haier.hailian.contract.entity.ZGamblingContractsProductIndex;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Created by 01431594 on 2019/12/19.
@@ -65,8 +63,7 @@ public class GamblingContractDTO {
      * 上链关键字
      */
     private String hashCode;
-
-    private List<ZGamblingContractsProductIndex> indexList;
+    
 
 
 }

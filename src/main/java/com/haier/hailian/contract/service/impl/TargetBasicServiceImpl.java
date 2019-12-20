@@ -1,10 +1,10 @@
-package com.haier.hailian.contract.target.service.impl;
+package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.haier.hailian.contract.dao.TargetBasicDao;
 import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.target.dto.QueryBottomDTO;
-import com.haier.hailian.contract.target.service.TargetBasicService;
+import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.service.TargetBasicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

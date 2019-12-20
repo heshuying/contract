@@ -1,10 +1,10 @@
-package com.haier.hailian.contract.target.controller;
+package com.haier.hailian.contract.controller;
 
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.target.dto.QueryBottomDTO;
-import com.haier.hailian.contract.target.service.TargetBasicService;
+import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.service.TargetBasicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
