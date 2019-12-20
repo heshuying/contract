@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface ZGamblingContractsService {
 
-    void saveGambling(GamblingContractDTO dto);
+    void saveGambling(GamblingContractDTO dto) throws Exception;
 
     List<XiaoweiEhr> selectMarket();
 

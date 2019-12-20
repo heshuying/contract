@@ -38,8 +38,14 @@ public class ZGamblingContractsController {
     @PostMapping(value = {"/saveGambling"})
     @ApiOperation(value = "链群主抢单（举单）信息保存")
     public R selectBottom(@RequestBody GamblingContractDTO dto) {
-        gamblingContractsService.saveGambling(dto);
-        return R.ok();
+        try {
+            gamblingContractsService.saveGambling(dto);
+            return R.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请联系管理员");
+        }
+
     }
 
     @PostMapping(value = {"/selectMarket"})
