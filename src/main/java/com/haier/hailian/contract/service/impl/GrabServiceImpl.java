@@ -1,10 +1,12 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
 import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
 import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
+import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
@@ -124,5 +126,12 @@ public class GrabServiceImpl implements GrabService {
         summaryDto.setStruLowPercent(lowPercent.divide(new BigDecimal(meshGrabInfoDtos.size())));
 
         return summaryDto;
+    }
+
+    @Override
+    public R doGrab(MessGambSubmitDto dto) {
+        //校验是否已抢过单
+        //业务参数校验
+        return R.ok();
     }
 }

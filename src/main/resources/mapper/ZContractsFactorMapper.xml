@@ -9,6 +9,7 @@
         <result column="factor_code" property="factorCode" />
         <result column="factor_name" property="factorName" />
         <result column="factor_value" property="factorValue" />
+        <result column="factor_type" property="factorType" />
         <result column="factor_unit" property="factorUnit" />
         <result column="factor_directon" property="factorDirecton" />
         <result column="region_code" property="regionCode" />

@@ -50,6 +50,11 @@ public class ZContractsFactor extends Model<ZContractsFactor> {
     private String factorValue;
 
     /**
+     * 类型 1：底线、2：抢单、3：E2E
+     */
+    private String factorType;
+
+    /**
      * 单位
      */
     private String factorUnit;

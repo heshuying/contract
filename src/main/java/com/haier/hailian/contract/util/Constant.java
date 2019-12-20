@@ -70,4 +70,70 @@ public class Constant {
             return value;
         }
     }
+
+    /**
+     * 合约因素编码枚举对象
+     */
+    public enum FactorCode {
+        /**
+         * 收入
+         */
+        Incom("T01001","收入"),
+        /**
+         * 销量
+         */
+        Sales("T01002","销量"),
+        /**
+         * 成本
+         */
+        Cost("T01003","成本"),
+        /**
+         * 利润率
+         */
+        Lrl("T02002","利润率");
+
+        private String value;
+        private String name;
+        FactorCode(String value, String name) {
+            this.value = value;
+            this.name=name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+        public String getName() {
+            return name;
+        }
+    }
+
+    /**
+     * 合约因素类型枚举
+     */
+    public enum FactorType {
+        /**
+         * 底限
+         */
+        Bottom("01"),
+        /**
+         * 抢单
+         */
+        Grab("02"),
+        /**
+         * E2E
+         */
+        E2E("03");
+
+        private String value;
+
+        FactorType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+
 }

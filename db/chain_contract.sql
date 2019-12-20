@@ -368,6 +368,7 @@ CREATE TABLE `z_contracts_factor` (
   `factor_code` varchar(80) DEFAULT NULL COMMENT '编码',
   `factor_name` varchar(80) DEFAULT NULL COMMENT '名称',
   `factor_value` varchar(80) DEFAULT NULL COMMENT '值',
+  `factor_type` varchar(80) DEFAULT NULL COMMENT '类型',
   `factor_unit` varchar(80) DEFAULT NULL COMMENT '单位',
   `factor_directon` char(1) DEFAULT '1' COMMENT '1-正向；0-负向',
   `region_code` varchar(80) DEFAULT NULL COMMENT '地区编码',

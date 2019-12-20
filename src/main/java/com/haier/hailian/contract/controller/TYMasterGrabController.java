@@ -3,6 +3,7 @@ package com.haier.hailian.contract.controller;
 import com.haier.hailian.contract.dto.grab.MeshStatisticQueryDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
+import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.service.GrabService;
 import io.swagger.annotations.Api;
@@ -35,4 +36,12 @@ public class TYMasterGrabController {
         MeshSummaryDto meshSummaryDto=grabService.queryMeshGrabDetail(queryDTO);
         return R.ok().put("data",meshSummaryDto);
     }
+
+    @PostMapping(value = {"/grab"})
+    @ApiOperation(value = "体验链群主抢单网格明细信息")
+    public R grab(@RequestBody @Validated MessGambSubmitDto dto) {
+        return grabService.doGrab(dto);
+    }
+
+
 }

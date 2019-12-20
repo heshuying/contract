@@ -10,8 +10,9 @@ import lombok.Data;
 @Data
 @ApiModel(value = "网格抢单提交实体类")
 public class MessGambSubmitDto {
-    private String xwCode;
-    private Integer contractId;
+    MeshSummaryDto meshSummaryDto;
+    TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto;
+
     //当前操作人登陆选择的组织编码
     private String loginXwcode;
     private String loginXwName;
@@ -19,7 +20,4 @@ public class MessGambSubmitDto {
     //当前操作市场小微编码
     private String orgCode;
     private String orgName;
-    private String year;
-    private String month;
-    private String yearMonth;
 }
