@@ -40,7 +40,7 @@ public class CDGrabController {
             data = cdGrabService.queryCDGrabInfo(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
-            R.error("创单节点抢单页面查询发生异常：" + e.getMessage());
+            return R.error("创单节点抢单页面查询发生异常：" + e.getMessage());
         }
         return R.ok().put("data",data);
     }
@@ -52,7 +52,7 @@ public class CDGrabController {
             cdGrabService.saveCDGrab(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
-            R.error("创单节点抢单保存发生异常：" + e.getMessage());
+            return R.error("创单节点抢单保存发生异常：" + e.getMessage());
         }
         return R.ok().put("data","");
     }
