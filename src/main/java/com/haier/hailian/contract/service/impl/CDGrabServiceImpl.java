@@ -84,7 +84,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         contracts.setContractType("30"); //创客合约
         contracts.setCreateCode(currentUser.getEmpsn());
         contracts.setCreateName(currentUser.getEmpname());
-        contracts.setCreateTime(LocalDateTime.now());
+        contracts.setCreateTime(new Date());
         contracts.setXiaoweiCode(currentUser.getXwCode());
 
         contractsDao.insert(contracts);
