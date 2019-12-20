@@ -1,4 +1,4 @@
-package com.haier.hailian.contract.target.dto;
+package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
