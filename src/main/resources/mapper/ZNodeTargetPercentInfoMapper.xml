@@ -146,7 +146,7 @@
 
     <!-- 批量插入数据 -->
     <insert id="insertBatch" parameterType="java.util.List">
-        insert into wd_solr
+        insert into z_node_target_percent_info
         (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent)
         values
         <foreach collection="list" item="item" index="index" separator=",">

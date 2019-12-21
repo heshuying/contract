@@ -166,10 +166,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(chainCode);
+            zNodeTargetPercentInfoDao.insert(z);
             zNodeTargetPercentInfos.add(z);
         }
-        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
-        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfos);
+//        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
+//        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfos);
         //3.保存数据到链上
         return zHrChainInfoDto;
     }
