@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -72,6 +73,7 @@ public class ZContracts extends Model<ZContracts> {
      */
     private Date joinTime;
 
+    @TableField(exist = false)
     private String joinTimeStr;
 
     /**
@@ -108,8 +110,9 @@ public class ZContracts extends Model<ZContracts> {
 
     private String orgName;
 
+    @TableField(exist = false)
     private String startDateStr;
-
+    @TableField(exist = false)
     private String endDateStr;
 
     private String sharePercent;
