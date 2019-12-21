@@ -4,13 +4,11 @@ package com.haier.hailian.contract.service.impl;
 import com.haier.hailian.contract.dao.SysNodeEhrDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
+import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
-import com.haier.hailian.contract.entity.SysEmployeeEhr;
-import com.haier.hailian.contract.entity.SysNodeEhr;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
-import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -107,7 +105,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-//        CurrentUser currentUser = sysUser.getCurrentUser();
+        CurrentUser currentUser = sysUser.getCurrentUser();
         //校验链群名称是否已经存在
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         //判断是否存在链群关键字，不存在则添加
@@ -137,34 +135,44 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         System.out.println("格式化后的日期：" + dateNowStr);
         String[] strings = nodeCodeStr.split(",");
         List<String> list = Arrays.asList(strings);
-        zNodeTargetPercentInfoDao.queryByKeyWorld(list, dateNowStr);
-        return null;
+        return zNodeTargetPercentInfoDao.queryByKeyWorld(list, dateNowStr);
     }
 
     @Override
     public ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto) {
         //1.保存链群信息
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        List<SysXiaoweiEhr> list = sysUser.getXiaoweiEhrList();
+        if (list == null || list.size()==0){
+            return null;
+        }
+        SysXiaoweiEhr xiaoweiEhr = list.get(0);
         //链群编码生成
         String maxOne = zHrChainInfoDao.queryMaxOne();
         String chainCode = frontCompWithZore(maxOne, 5, "H");
         zHrChainInfo.setChainCode(chainCode);
-        zHrChainInfo.setChainPtCode(zHrChainInfoDto.getChainPtCode());
-        zHrChainInfo.setMasterCode(zHrChainInfoDto.getMasterCode());
-        zHrChainInfo.setMasterName(zHrChainInfoDto.getMasterName());
-        zHrChainInfo.setXwCode(zHrChainInfoDto.getXwCode());
-        zHrChainInfo.setXwName(zHrChainInfoDto.getXwName());
+        zHrChainInfo.setChainPtCode(xiaoweiEhr.getPtcode());
+        zHrChainInfo.setMasterCode(xiaoweiEhr.getXwmastercode());
+        zHrChainInfo.setMasterName(xiaoweiEhr.getXwmastername());
+        zHrChainInfo.setXwCode(xiaoweiEhr.getXwcode());
+        zHrChainInfo.setXwName(xiaoweiEhr.getXwname());
         zHrChainInfo.setChainName(zHrChainInfoDto.getChainName());
         zHrChainInfoDao.insert(zHrChainInfo);
         List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos = new ArrayList<>();
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(chainCode);
+            zNodeTargetPercentInfoDao.insert(z);
             zNodeTargetPercentInfos.add(z);
         }
-        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
+//        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
+//        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfos);
         //3.保存数据到链上
-        return null;
+        return zHrChainInfoDto;
     }
 
 

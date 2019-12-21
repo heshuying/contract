@@ -7,11 +7,11 @@
         <result property="lqCode" column="lq_code" jdbcType="VARCHAR"/>
         <result property="lqName" column="lq_name" jdbcType="VARCHAR"/>
         <result property="nodeCode" column="node_code" jdbcType="VARCHAR"/>
-        <result property="nodeName" column="node_Name" jdbcType="VARCHAR"/>
+        <result property="nodeName" column="node_name" jdbcType="VARCHAR"/>
         <result property="xwCode" column="xw_code" jdbcType="VARCHAR"/>
         <result property="xwName" column="xw_name" jdbcType="VARCHAR"/>
         <result property="targetCode" column="target_code" jdbcType="VARCHAR"/>
-        <result property="targetname" column="targetName" jdbcType="VARCHAR"/>
+        <result property="targetname" column="target_name" jdbcType="VARCHAR"/>
         <result property="targetLine" column="target_line" jdbcType="VARCHAR"/>
         <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
     </resultMap>
@@ -19,7 +19,7 @@
     <!--查询单个-->
     <select id="queryById" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         where id = #{id}
     </select>
@@ -27,7 +27,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         limit #{offset}, #{limit}
     </select>
@@ -35,7 +35,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
         from chain_contract.z_node_target_percent_info
         <where>
             <if test="id != null">
@@ -51,7 +51,7 @@
                 and node_code = #{nodeCode}
             </if>
             <if test="nodeName != null and nodeName != ''">
-                and node_Name = #{nodeName}
+                and node_name = #{nodeName}
             </if>
             <if test="xwCode != null and xwCode != ''">
                 and xw_code = #{xwCode}
@@ -63,7 +63,7 @@
                 and target_code = #{targetCode}
             </if>
             <if test="targetname != null and targetname != ''">
-                and targetName = #{targetname}
+                and target_name = #{targetname}
             </if>
             <if test="targetLine != null and targetLine != ''">
                 and target_line = #{targetLine}
@@ -76,7 +76,7 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent)
+        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent)
         values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetname}, #{targetLine}, #{sharePercent})
     </insert>
 
@@ -94,7 +94,7 @@
                 node_code = #{nodeCode},
             </if>
             <if test="nodeName != null and nodeName != ''">
-                node_Name = #{nodeName},
+                node_name = #{nodeName},
             </if>
             <if test="xwCode != null and xwCode != ''">
                 xw_code = #{xwCode},
@@ -106,7 +106,7 @@
                 target_code = #{targetCode},
             </if>
             <if test="targetname != null and targetname != ''">
-                targetName = #{targetname},
+                target_name = #{targetname},
             </if>
             <if test="targetLine != null and targetLine != ''">
                 target_line = #{targetLine},
@@ -126,11 +126,19 @@
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryByKeyWorld" resultMap="ZNodeTargetPercentInfoMap">
-        select *
+        select sne.nodeCode as node_code,
+        sne.nodeName as node_name,
+        sne.xwCode as xw_code,
+        sne.xwName as xw_name,
+        ztb.target_code as target_code,
+        ztb.target_name as target_name,
+        ztb.target_bottom_line as target_line,
+        zsp.percent as share_percent
         from sys_node_ehr sne
         left join z_share_percent zsp  on zsp.xw_code = sne.nodeCode
+        left join z_target_basic ztb  on ztb.target_xw_category_code = sne.nodeCode
         where  zsp.period_code= #{periodCode}
-        and nodeManagerCode in
+        and sne.nodeCode in
         <foreach collection="list" item="nodeCode" index="index" open="(" close=")" separator=",">
             #{nodeCode}
         </foreach>
@@ -138,8 +146,8 @@
 
     <!-- 批量插入数据 -->
     <insert id="insertBatch" parameterType="java.util.List">
-        insert into wd_solr
-        (lq_code, lq_name, node_code, node_Name, xw_code, xw_name, target_code, targetName, target_line, share_percent)
+        insert into z_node_target_percent_info
+        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (

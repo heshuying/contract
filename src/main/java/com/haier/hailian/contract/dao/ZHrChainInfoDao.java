@@ -1,6 +1,9 @@
 package com.haier.hailian.contract.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -9,7 +12,7 @@ import java.util.List;
  * @author makejava
  * @since 2019-12-17 14:52:17
  */
-public interface ZHrChainInfoDao {
+public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
 
     /**
      * 通过ID查询单条数据

@@ -16,4 +16,10 @@ public class CDGrabInfoResponseDto {
     private String targetShareMoney;
     @ApiModelProperty(value="链群目标",name="链群目标",example="400")
     private String chainGoal;
+    @ApiModelProperty(value="链群名称",name="链群名称")
+    private String chainName;
+    @ApiModelProperty(value="合约有效期开始",name="合约有效期开始")
+    private String startTime;
+    @ApiModelProperty(value="合约有效期结束",name="合约有效期结束")
+    private String endTime;
 }

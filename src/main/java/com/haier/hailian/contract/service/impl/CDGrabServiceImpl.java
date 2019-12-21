@@ -9,6 +9,7 @@ import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.DateFormatUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +37,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZContractsDao contractsDao;
     @Autowired
     ZContractsFactorDao factorDao;
+    @Autowired
+    ZHrChainInfoDao chainInfoDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -48,6 +50,16 @@ public class CDGrabServiceImpl implements CDGrabService {
         CurrentUser currentUser = sysUser.getCurrentUser();
         String xwCode = currentUser.getXwCode();
         String ptCode = currentUser.getPtcode();
+
+        ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
+        if(contracts != null){
+            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setChainName(chainInfos.get(0).getChainName());
+            }
+        }
 
         // 分享比例查询
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));

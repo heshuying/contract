@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,17 +51,17 @@ public class GamblingContractDTO {
     /**
      * 抢入截止时间
      */
-    private Date joinTime;
+    private String joinTime;
 
     /**
      * 开始时间
      */
-    private Date startDate;
+    private String startDate;
 
     /**
      * 结束时间
      */
-    private Date endDate;
+    private String endDate;
 
     /**
      * xw编码
