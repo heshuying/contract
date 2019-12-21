@@ -64,7 +64,7 @@
         FROM month_chain_group_order mcgo
         join (select distinct jyt_code, product_line_code from sys_net where xw_code=#{xwCode}) sn
         on mcgo.wg_code=sn.jyt_code and mcgo.product_line_code=sn.product_line_code
-        join z_product_info zpi on mcgo.product_code=zpi.product_model_code
+        join z_product_info zpi on mcgo.product_code=zpi.product_model_code and zpi.product_name='H001'
         and period_code in
         <foreach collection="yearMonth" item="item" index="index" open="(" close=")"  separator="," >
          #{item}

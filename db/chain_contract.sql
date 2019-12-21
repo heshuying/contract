@@ -785,6 +785,8 @@ CREATE TABLE `z_product_info` (
   `is_scene` varchar(10) DEFAULT '' COMMENT '是否是生态场景产品（01：是；）',
   `product_status` varchar(10) DEFAULT '' COMMENT '型号状态（01：在销；02：下市）',
   `period_code` varchar(20) DEFAULT '' COMMENT '年月',
+  xw_code varchar(50) not null default '' comment '小微编码',
+  xw_name varchar(50) not null default '' comment '小微名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

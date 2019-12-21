@@ -12,12 +12,5 @@ import lombok.Data;
 public class MessGambSubmitDto {
     MeshSummaryDto meshSummaryDto;
     TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto;
-
-    //当前操作人登陆选择的组织编码
-    private String loginXwcode;
-    private String loginXwName;
-    private String orgType;
-    //当前操作市场小微编码
-    private String orgCode;
-    private String orgName;
+    
 }
