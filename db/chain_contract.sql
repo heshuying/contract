@@ -1189,3 +1189,122 @@ CREATE TABLE `sys_emp_chain` (
   PRIMARY KEY (`id`),
   KEY `idx_empSn` (`empSn`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+-- ----------------------------
+-- Table structure for ext_lq
+-- ----------------------------
+DROP TABLE IF EXISTS `ext_lq`;
+CREATE TABLE `ext_lq` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lq_pt_code` varchar(20) DEFAULT NULL COMMENT '链群平台编码',
+  `lq_pt_name` varchar(20) DEFAULT NULL COMMENT '链群平台名称',
+  `lq_code` varchar(20) DEFAULT NULL COMMENT '链群编码',
+  `lq_name` varchar(50) DEFAULT NULL COMMENT '链群名称',
+  `h_share_quota` varchar(20) DEFAULT NULL COMMENT '高增值分享额',
+  `h_share_speed` varchar(20) DEFAULT NULL COMMENT '高增值分享额倍速',
+  `h_share_ratio` varchar(20) DEFAULT NULL COMMENT '高增值分享比例',
+  `h_share_add_value` varchar(20) DEFAULT NULL COMMENT '高增值增值空间',
+  `h_amt` varchar(20) DEFAULT NULL COMMENT '高增值收入',
+  `h_amt_up` varchar(20) DEFAULT NULL COMMENT '高增值收入增长率',
+  `h_lrv` varchar(20) DEFAULT NULL COMMENT '高增值利润率',
+  `g_amt` varchar(20) DEFAULT NULL COMMENT '抢单收入额',
+  `g_amt_up` varchar(20) DEFAULT NULL COMMENT '抢单收入增长率',
+  `g_lrv` varchar(20) DEFAULT NULL COMMENT '抢单利润率',
+  `g_share_add_value` varchar(20) DEFAULT NULL COMMENT '抢单分享增值空间',
+  `g_share_ratio` varchar(20) DEFAULT NULL COMMENT '抢单分享比例',
+  `g_share_quota` varchar(20) DEFAULT NULL COMMENT '抢单分享额',
+  `g_share_speed` varchar(20) DEFAULT NULL COMMENT '抢单分享额倍速',
+  `bottom_amt` varchar(20) DEFAULT NULL COMMENT '底线收入',
+  `bottom_add_value` varchar(20) DEFAULT NULL COMMENT '底线收入增幅',
+  `bottom_lrv` varchar(20) DEFAULT NULL COMMENT '底线收入利润率',
+  `actual_amt` varchar(20) DEFAULT NULL COMMENT '实际收入额',
+  `actual_amt_up` varchar(20) DEFAULT NULL COMMENT '实际收入增长率',
+  `actual_lrv` varchar(20) DEFAULT NULL COMMENT '实际利润率',
+  `actual_share_quota` varchar(20) DEFAULT NULL COMMENT '实际分享额',
+  `actual_share_speed` varchar(20) DEFAULT NULL COMMENT '实际分享额倍速',
+  `date` varchar(50) DEFAULT NULL COMMENT '推送数据日期',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ind_date` (`date`),
+  KEY `ind_lqcode` (`lq_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=311112 DEFAULT CHARSET=utf8;
+-- ----------------------------
+-- Table structure for ext_market
+-- ----------------------------
+DROP TABLE IF EXISTS `ext_market`;
+CREATE TABLE `ext_market` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lq_pt_code` varchar(20) DEFAULT NULL COMMENT '链群平台编码',
+  `lq_pt_name` varchar(20) DEFAULT NULL COMMENT '链群平台名称',
+  `lq_code` varchar(20) DEFAULT NULL COMMENT '链群编码',
+  `lq_name` varchar(50) DEFAULT NULL COMMENT '链群名称',
+  `region_code` varchar(20) DEFAULT NULL COMMENT '市场编码',
+  `region_name` varchar(50) DEFAULT NULL COMMENT '市场名称',
+  `h_amt` varchar(20) DEFAULT NULL COMMENT '高增值收入',
+  `h_amt_up` varchar(20) DEFAULT NULL COMMENT '高增值收入增长率',
+  `h_share_quota` varchar(20) DEFAULT NULL COMMENT '高增值分享额',
+  `g_amt` varchar(20) DEFAULT NULL COMMENT '抢单收入额',
+  `g_amt_up` varchar(20) DEFAULT NULL COMMENT '抢单收入增长率',
+  `g_share_quota` varchar(20) DEFAULT NULL COMMENT '抢单分享额',
+  `bottom_amt` varchar(20) DEFAULT NULL COMMENT '分享底线收入',
+  `bottom_amt_up` varchar(20) DEFAULT NULL COMMENT '分享底线增长率',
+  `bottom_share_quota` varchar(20) DEFAULT NULL COMMENT '增值分享底线增值分享',
+  `actual_amt` varchar(20) DEFAULT NULL COMMENT '实际收入额',
+  `actual_amt_up` varchar(20) DEFAULT NULL COMMENT '实际收入增长率',
+  `actual_lrv` varchar(20) DEFAULT NULL COMMENT '实际利润率',
+  `actual_share_quota` varchar(20) DEFAULT NULL COMMENT '实际分享额',
+  `actual_share_speed` varchar(20) DEFAULT NULL COMMENT '实际分享额倍速',
+  `date` varchar(50) DEFAULT NULL COMMENT '推送数据日期',
+  `xw_type` varchar(20) DEFAULT NULL COMMENT '0-汇总;1-链群',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ind_date` (`date`),
+  KEY `ind_lqcode` (`lq_code`),
+  KEY `idx` (`region_code`),
+  KEY `idx_tt` (`xw_type`,`lq_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=8569799 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for ext_daily_data
+-- ----------------------------
+DROP TABLE IF EXISTS `ext_daily_data`;
+CREATE TABLE `ext_daily_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `emp_sn` varchar(20) DEFAULT NULL,
+  `emp_name` varchar(20) DEFAULT NULL,
+  `xw_code` varchar(20) DEFAULT NULL,
+  `xw_name` varchar(50) DEFAULT NULL,
+  `lq_pt_code` varchar(20) DEFAULT NULL,
+  `lq_pt_name` varchar(50) DEFAULT NULL,
+  `lq_code` varchar(20) DEFAULT NULL,
+  `lq_name` varchar(20) DEFAULT NULL,
+  `region_code` varchar(20) DEFAULT NULL,
+  `region_name` varchar(20) DEFAULT NULL,
+  `h_amt` varchar(20) DEFAULT NULL,
+  `h_amt_up` varchar(20) DEFAULT NULL,
+  `h_lrv` varchar(20) DEFAULT NULL,
+  `h_share_quota` varchar(20) DEFAULT NULL,
+  `h_share_speed` varchar(20) DEFAULT NULL,
+  `g_amt` varchar(20) DEFAULT NULL,
+  `g_amt_up` varchar(20) DEFAULT NULL,
+  `g_lrv` varchar(20) DEFAULT NULL,
+  `g_share_quota` varchar(20) DEFAULT NULL,
+  `g_share_speed` varchar(20) DEFAULT NULL,
+  `actual_amt` varchar(20) DEFAULT NULL,
+  `actual_amt_up` varchar(20) DEFAULT NULL,
+  `actual_lrv` varchar(50) DEFAULT NULL,
+  `actual_share_quota` varchar(20) DEFAULT NULL,
+  `actual_share_speed` varchar(20) DEFAULT NULL,
+  `diff_share` varchar(20) DEFAULT NULL,
+  `diff_income` varchar(20) DEFAULT NULL,
+  `diff_lrv` varchar(20) DEFAULT NULL,
+  `date` varchar(20) DEFAULT NULL,
+  `contracts_id` varchar(20) DEFAULT NULL,
+  `contracts_name` varchar(50) DEFAULT NULL,
+  `xw_type` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ind_date` (`date`),
+  KEY `ind_lqcode` (`lq_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=217880 DEFAULT CHARSET=utf8;
