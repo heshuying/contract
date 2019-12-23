@@ -22,4 +22,11 @@ public interface HomePageService {
      * @return
      */
     Map<String,Object> getChainGroupInfo(ChainGroupInfoDto chainGroupInfoDto);
+
+    /**
+     * 根据链群编码获取数据
+     * @param chainGroupInfoDto
+     * @return
+     */
+    Map<String,Object> getContractData(ChainGroupInfoDto chainGroupInfoDto);
 }
