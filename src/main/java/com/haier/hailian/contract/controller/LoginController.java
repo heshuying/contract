@@ -6,6 +6,7 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.service.HacLoginService;
+import com.haier.hailian.contract.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +53,6 @@ public class LoginController {
     }
     @PostMapping(value = "/current/get")
     @ApiOperation(value = "设置当前所选用户")
-    @ApiImplicitParam(paramType = "header", name = "Authorization", value = "身份认证Token")
     public R getCurrent(HttpServletRequest request) {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
@@ -71,5 +72,17 @@ public class LoginController {
             throw new RException(e.getMessage());
         }
         return R.ok();
+    }
+
+    @GetMapping(value = "/unauthorized")
+    @ApiOperation(value = "未登陆提示401")
+    public R unauthorized() {
+        return R.error(Constant.CODE_AUTH,Constant.MSG_AUTH);
+    }
+
+    @GetMapping(value = "/forbidden")
+    @ApiOperation(value = "没权限403")
+    public R forbidden() {
+        return R.error(Constant.CODE_FORBIDDEN,Constant.MSG_FORBIDDEN);
     }
 }

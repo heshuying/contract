@@ -48,6 +48,7 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/test/**", "anon");
         filterMap.put("/contractData", "anon"); // 外部系统获取数据暂时不用校验
         filterMap.put("/favicon.ico", "anon");
         filterMap.put("/swagger/**", "anon");
@@ -55,9 +56,9 @@ public class ShiroConfig {
         filterMap.put("/swagger-ui.html", "anon");
         filterMap.put("/swagger-resources/**", "anon");
         //未登录页面
-        shiroFilterFactoryBean.setLoginUrl("/user/unauthorized");
+        shiroFilterFactoryBean.setLoginUrl("/unauthorized");
         //未授权界面;
-        shiroFilterFactoryBean.setUnauthorizedUrl("/user/forbidden");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/forbidden");
         filterMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
 

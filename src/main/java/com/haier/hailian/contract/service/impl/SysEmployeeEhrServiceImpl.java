@@ -8,9 +8,14 @@ import com.haier.hailian.contract.entity.SysRole;
 import com.haier.hailian.contract.entity.SysXiaoweiEhr;
 import com.haier.hailian.contract.service.SysEmployeeEhrService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.haier.hailian.contract.util.Constant;
 import org.springframework.stereotype.Service;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
 
 import java.util.List;
+
+import static org.web3j.crypto.Hash.sha256;
 
 /**
  * <p>
@@ -38,4 +43,6 @@ public class SysEmployeeEhrServiceImpl extends ServiceImpl<SysEmployeeEhrDao, Sy
         }
         return  employeeEhr;
     }
+
+
 }

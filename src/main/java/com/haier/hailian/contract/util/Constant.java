@@ -9,6 +9,12 @@ public class Constant {
     public static String JWT_AUTH_HEADER = "Authorization";
     public static String CODE_LOGINFAIL = "401001";
 
+    public static String CODE_AUTH = "401";
+    public static String MSG_AUTH = "鉴权失败";
+
+    public static String CODE_FORBIDDEN = "403";
+    public static String MSG_FORBIDDEN = "无权限操作";
+
     public static String CODE_VALIDFAIL = "401002";
     public static String MSG_VALIDFAIL = "数据校验失败";
 
@@ -17,6 +23,8 @@ public class Constant {
 
     public static String CODE_ERROR= "500001";
     public static String MSG_ERROR= "请联系管理员";
+
+    public static String CHAIN_SEED= "海链-baas-";
 
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；

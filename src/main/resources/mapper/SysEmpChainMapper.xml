@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.SysEmpChainDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.SysEmpChain">
+        <id column="id" property="id" />
+        <result column="empSn" property="empSn" />
+        <result column="chain_code" property="chainCode" />
+    </resultMap>
+
+    <select id="selectNoChainEmp" resultType="java.lang.String">
+            select empsN from sys_employee_ehr emp
+            where not exists (select 1 from sys_emp_chain ec where ec.empSn=emp.empSn)
+            limit 100;
+    </select>
+
+
+</mapper>
