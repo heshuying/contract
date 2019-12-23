@@ -63,7 +63,7 @@ public class HacLoginServiceImpl implements HacLoginService{
                 return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
                         .put("data", sysUser);
             }else{
-                return R.error(loginRespDto.getMessage(),Constant.CODE_LOGINFAIL);
+                return R.error(Constant.CODE_LOGINFAIL, loginRespDto.getMessage());
             }
         }catch (Exception e){
             log.info("=====Hac 登陆异常====>", e.getMessage());

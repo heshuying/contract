@@ -75,16 +75,22 @@ public class GrabServiceImpl implements GrabService {
                 .equals(f.getFactorCode())).collect(Collectors.toList());
         if(incomeFact!=null&&incomeFact.size()>0){
             tyMasterGrabChainInfoDto.setTargetIncome(AmountFormat.amtStr2BD(incomeFact.get(0).getFactorValue()));
+        }else{
+            tyMasterGrabChainInfoDto.setTargetIncome(BigDecimal.ZERO);
         }
         List<ZContractsFactor> highFact= factors.stream().filter(f->Constant.FactorCode.HighPercent.getValue()
                 .equals(f.getFactorCode())).collect(Collectors.toList());
         if(highFact!=null&&highFact.size()>0) {
             tyMasterGrabChainInfoDto.setTargetHighPercent(AmountFormat.amtStr2BD(highFact.get(0).getFactorValue()));
+        }else{
+            tyMasterGrabChainInfoDto.setTargetHighPercent(BigDecimal.ZERO);
         }
         List<ZContractsFactor> lowFact= factors.stream().filter(f->Constant.FactorCode.LowPercent.getValue()
                 .equals(f.getFactorCode())).collect(Collectors.toList());
         if(lowFact!=null&&lowFact.size()>0){
             tyMasterGrabChainInfoDto.setTargetLowPercent(AmountFormat.amtStr2BD(lowFact.get(0).getFactorValue()));
+        }else{
+            tyMasterGrabChainInfoDto.setTargetLowPercent(BigDecimal.ZERO);
         }
 
         return tyMasterGrabChainInfoDto;
@@ -157,6 +163,9 @@ public class GrabServiceImpl implements GrabService {
     @Override
     public R doGrab(MessGambSubmitDto dto) {
         //业务数据校验
+        if(dto==null||dto.getTyMasterGrabChainInfoDto()==null||dto.getMeshSummaryDto()==null){
+            throw new RException("缺少必填参数",Constant.CODE_VALIDFAIL);
+        }
         TyMasterGrabChainInfoDto chainInfoDto =dto.getTyMasterGrabChainInfoDto();
         MeshSummaryDto meshSummaryDto=dto.getMeshSummaryDto();
         if(meshSummaryDto.getIncome().compareTo(chainInfoDto.getTargetIncome())<0){

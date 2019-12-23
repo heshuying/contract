@@ -15,6 +15,9 @@ public class Constant {
     public static String CODE_DATA_NOTFOUND= "404001";
     public static String MSG_DATA_NOTFOUND= "数据不存在";
 
+    public static String CODE_ERROR= "500001";
+    public static String MSG_ERROR= "请联系管理员";
+
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；
      */
