@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -146,32 +145,44 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        List<SysXiaoweiEhr> list = sysUser.getXiaoweiEhrList();
-        if (list == null || list.size()==0){
+        CurrentUser currentUser = sysUser.getCurrentUser();
+//        List<SysXiaoweiEhr> list = sysUser.getXiaoweiEhrList();
+        if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
-        SysXiaoweiEhr xiaoweiEhr = list.get(0);
+//        SysXiaoweiEhr xiaoweiEhr = list.get(0);
         //链群编码生成
         String maxOne = zHrChainInfoDao.queryMaxOne();
         String chainCode = frontCompWithZore(maxOne, 5, "H");
+        //判断是否存在链群关键字，不存在则添加
+        String name = zHrChainInfoDto.getChainName();
+        if (!name.contains("链群")) {
+            name = name + "链群";
+        }
         zHrChainInfo.setChainCode(chainCode);
-        zHrChainInfo.setChainPtCode(xiaoweiEhr.getPtcode());
-        zHrChainInfo.setMasterCode(xiaoweiEhr.getXwmastercode());
-        zHrChainInfo.setMasterName(xiaoweiEhr.getXwmastername());
-        zHrChainInfo.setXwCode(xiaoweiEhr.getXwcode());
-        zHrChainInfo.setXwName(xiaoweiEhr.getXwname());
-        zHrChainInfo.setChainName(zHrChainInfoDto.getChainName());
+        zHrChainInfo.setChainPtCode(currentUser.getPtcode());
+        zHrChainInfo.setMasterCode(currentUser.getEmpsn());
+        zHrChainInfo.setMasterName(currentUser.getEmpname());
+        zHrChainInfo.setXwCode(currentUser.getOrgNum());
+        zHrChainInfo.setXwName(currentUser.getOrgName());
+        zHrChainInfo.setChainName(name);
         zHrChainInfoDao.insert(zHrChainInfo);
-        List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos = new ArrayList<>();
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(chainCode);
+            z.setLqName(name);
             zNodeTargetPercentInfoDao.insert(z);
-            zNodeTargetPercentInfos.add(z);
         }
-//        zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
-//        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfos);
+        zHrChainInfoDto.setId(zHrChainInfo.getId());
+        zHrChainInfoDto.setChainCode(chainCode);
+        zHrChainInfoDto.setMasterCode(currentUser.getEmpsn());
+        zHrChainInfoDto.setMasterName(currentUser.getEmpname());
+        zHrChainInfoDto.setChainPtCode(currentUser.getPtcode());
+        zHrChainInfoDto.setXwCode(currentUser.getOrgNum());
+        zHrChainInfoDto.setXwName(currentUser.getOrgName());
+        zHrChainInfoDto.setChainName(name);
         //3.保存数据到链上
+        //接口调用的时候会用到这个dto的实体类
         return zHrChainInfoDto;
     }
 

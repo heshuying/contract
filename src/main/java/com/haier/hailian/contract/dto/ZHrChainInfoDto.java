@@ -16,6 +16,7 @@ import java.util.List;
 @ApiModel(value = "ZHrChainInfoDto",description = "链群名称关键字")
 public class ZHrChainInfoDto {
     public ZHrChainInfoDto(){}
+    private int id;
     //链群编码
     private String chainCode;
     //链群名称
