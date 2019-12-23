@@ -2,12 +2,14 @@ package com.haier.hailian.contract.config.shiro;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysEmployeeZ;
 import com.haier.hailian.contract.entity.SysNet;
 import com.haier.hailian.contract.service.SysEmployeeEhrService;
 import com.haier.hailian.contract.service.SysEmployeeZService;
 import com.haier.hailian.contract.service.SysNetService;
+import com.haier.hailian.contract.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -48,7 +50,7 @@ public class HacLoginRealm extends AuthorizingRealm {
                     new QueryWrapper<SysEmployeeZ>().eq("empSn",empSn)
             );
             if(sysEmployeeZ == null){
-                throw new AuthenticationException("找不到用户");
+                throw new RException("用户"+ Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
             }else{
                 sysEmployee = new SysEmployeeEhr();
                 sysEmployee.setEmpSn(sysEmployeeZ.getEmpSN());

@@ -1180,3 +1180,12 @@ CREATE TABLE `z_people_share_ratio` (
   KEY `idx_con` (`contracts_id`),
   KEY `idx_xw` (`xw_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `sys_emp_chain`;
+CREATE TABLE `sys_emp_chain` (
+ `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `empSn` varchar(20) DEFAULT ''  COMMENT '员工工号',
+  `chain_code` varchar(80) DEFAULT '' COMMENT '员工上链id',
+  PRIMARY KEY (`id`),
+  KEY `idx_empSn` (`empSn`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
