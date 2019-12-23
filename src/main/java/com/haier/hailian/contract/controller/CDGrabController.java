@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
 import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
+import com.haier.hailian.contract.dto.grab.CDGrabViewResponseDto;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.service.IncrementService;
 import io.swagger.annotations.Api;
@@ -70,6 +71,19 @@ public class CDGrabController {
             e.printStackTrace();
             return R.error("获取：" + e.getMessage());
         }
+    }
+
+    @PostMapping(value = {"/grabview"})
+    @ApiOperation(value = "创单节点抢单页面查看接口")
+    public R grabView(@RequestBody CDGrabInfoRequestDto requestDto) {
+        CDGrabViewResponseDto data= null;
+        try {
+            data = cdGrabService.queryCDGrabView(requestDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());
+        }
+        return R.ok().put("data",data);
     }
 
 }

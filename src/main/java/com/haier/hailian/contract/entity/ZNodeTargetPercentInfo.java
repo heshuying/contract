@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 
 /**
@@ -27,7 +29,7 @@ public class ZNodeTargetPercentInfo implements Serializable {
     //目标编码
     private String targetCode;
     //目标名称
-    private String targetname;
+    private String targetName;
     //目标线
     private String targetLine;
     //分享比例
@@ -98,12 +100,12 @@ public class ZNodeTargetPercentInfo implements Serializable {
         this.targetCode = targetCode;
     }
 
-    public String getTargetname() {
-        return targetname;
+    public String getTargetName() {
+        return targetName;
     }
 
-    public void setTargetname(String targetname) {
-        this.targetname = targetname;
+    public void setTargetName(String targetName) {
+        this.targetName = targetName;
     }
 
     public String getTargetLine() {

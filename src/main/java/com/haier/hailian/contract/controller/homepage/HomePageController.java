@@ -51,4 +51,17 @@ public class HomePageController {
             return R.error("获取：" + e.getMessage());
         }
     }
+
+
+    @PostMapping(value = {"/contractData"})
+    @ApiOperation(value = "外部获取数据接口(供690等外部系统使用)")
+    public R getContractData(@RequestBody ChainGroupInfoDto chainGroupInfoDto) {
+        try{
+            Map<String,Object> res = homePageService.getContractData(chainGroupInfoDto);
+            return R.ok().put("data",res);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
 }
