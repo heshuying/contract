@@ -2,6 +2,7 @@ package com.haier.hailian.contract.config;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.util.Constant;
 import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -19,8 +20,8 @@ public class BindExceptionConfig {
             throws RException {
         FieldError  fieldError=e.getBindingResult().getFieldError();
         assert fieldError != null;
-        return R.error("400",
-                fieldError.getDefaultMessage());
+        return R.error(Constant.CODE_VALIDFAIL,
+                Constant.MSG_VALIDFAIL);
     }
 
     @ExceptionHandler(Exception.class)
@@ -31,8 +32,8 @@ public class BindExceptionConfig {
             return R.error(rException.getCode(),rException.getMsg());
         }else {
             log.error(e.getMessage());
-            return R.error("500",
-                    "请联系管理员");
+            return R.error(Constant.CODE_VALIDFAIL,
+                    Constant.MSG_VALIDFAIL);
         }
     }
 

@@ -12,5 +12,5 @@ import lombok.Data;
 public class MessGambSubmitDto {
     MeshSummaryDto meshSummaryDto;
     TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto;
-    
+
 }
