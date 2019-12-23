@@ -11,7 +11,7 @@
         <result property="xwCode" column="xw_code" jdbcType="VARCHAR"/>
         <result property="xwName" column="xw_name" jdbcType="VARCHAR"/>
         <result property="targetCode" column="target_code" jdbcType="VARCHAR"/>
-        <result property="targetname" column="target_name" jdbcType="VARCHAR"/>
+        <result property="targetName" column="target_name" jdbcType="VARCHAR"/>
         <result property="targetLine" column="target_line" jdbcType="VARCHAR"/>
         <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
     </resultMap>
@@ -62,8 +62,8 @@
             <if test="targetCode != null and targetCode != ''">
                 and target_code = #{targetCode}
             </if>
-            <if test="targetname != null and targetname != ''">
-                and target_name = #{targetname}
+            <if test="targetName != null and targetName != ''">
+                and target_name = #{targetName}
             </if>
             <if test="targetLine != null and targetLine != ''">
                 and target_line = #{targetLine}
@@ -77,7 +77,7 @@
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent)
-        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetname}, #{targetLine}, #{sharePercent})
+        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent})
     </insert>
 
     <!--通过主键修改数据-->
@@ -105,8 +105,8 @@
             <if test="targetCode != null and targetCode != ''">
                 target_code = #{targetCode},
             </if>
-            <if test="targetname != null and targetname != ''">
-                target_name = #{targetname},
+            <if test="targetName != null and targetName != ''">
+                target_name = #{targetName},
             </if>
             <if test="targetLine != null and targetLine != ''">
                 target_line = #{targetLine},
@@ -158,7 +158,7 @@
             #{item.xwCode},
             #{item.xwName},
             #{item.targetCode},
-            #{item.targetname},
+            #{item.targetName},
             #{item.targetLine},
             #{item.sharePercent}
             )
