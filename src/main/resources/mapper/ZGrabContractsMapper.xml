@@ -51,9 +51,9 @@
         select t.status,m.create_name,n.chain_code,n.chain_name,b.target_bottom_line,
         MAX(x.data) fact from z_grab_contracts t
         left join z_gambling_contracts m on t.parent_id = m.id
-        left join x_chain_info n on m.chain_code = n.lq_code
+        left join z_hr_chain_info n on m.chain_code = n.chain_code
         left join z_gambling_contracts_product_index b on b.contracts_id = t.parent_id
-        left join x_xw_actual x on x.entity = n.lq_master_xwcode
+        left join x_xw_actual x on x.entity = n.xw_code
         <![CDATA[
             where m.start_date <= #{endTime}
                 and m.start_date >= #{startTime}
