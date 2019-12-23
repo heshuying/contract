@@ -136,6 +136,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         ZContracts contracts = new ZContracts();
         contracts.setParentId(requestDto.getContractId());
         contracts.setJoinTime(new Date());
+        contracts.setStatus("0");
         contracts.setShareSpace(new BigDecimal(requestDto.getTargetShareMoney()));
         contracts.setSharePercent(requestDto.getSharePercent());
         contracts.setContractType("30"); //创客合约
