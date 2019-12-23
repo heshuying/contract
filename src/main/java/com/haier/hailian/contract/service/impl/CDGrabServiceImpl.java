@@ -77,7 +77,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode));
         if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
             responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
-            responseDto.setTargetShareMoney(targetPercentInfos.get(0).getTargetLine());
+            responseDto.setChainGoal(targetPercentInfos.get(0).getTargetLine());
         }
 
 
