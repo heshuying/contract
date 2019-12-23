@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author 19033323
  */
@@ -17,9 +19,9 @@ public class CDGrabInfoSaveRequestDto {
     @ApiModelProperty(value="达成目标预计分享酬",name="达成目标预计分享酬",example="3000")
     private String targetShareMoney;
     @ApiModelProperty(value="链群目标",name="链群目标",example="400")
-    private String chainGoal;
+    private BigDecimal chainGoal;
     @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")
-    private String chainGrabGoal;
+    private BigDecimal chainGrabGoal;
     @ApiModelProperty(value="预案标题",name="预案标题")
     private String planTitle;
     @ApiModelProperty(value="预案内容",name="预案内容")
