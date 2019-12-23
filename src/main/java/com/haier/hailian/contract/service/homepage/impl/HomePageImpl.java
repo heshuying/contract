@@ -1,15 +1,18 @@
 package com.haier.hailian.contract.service.homepage.impl;
 
-import com.haier.hailian.contract.dao.SysEmployeeEhrDao;
-import com.haier.hailian.contract.dao.XXwActualDao;
-import com.haier.hailian.contract.dao.ZGrabContractsDao;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
 import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
+import com.haier.hailian.contract.entity.XChainInfo;
+import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.sql.Wrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +25,13 @@ public class HomePageImpl implements HomePageService {
     @Autowired
     private ZGrabContractsDao zGrabContractsDao;
     @Autowired
-    private SysEmployeeEhrDao sysEmployeeEhrDao;
-    @Autowired
     private XXwActualDao xXwActualDao;
+    @Autowired
+    private ZContractsDao zContractsDao;
+    @Autowired
+    private ZContractsFactorDao zContractsFactorDao;
+    @Autowired
+    private XChainInfoDao xChainInfoDao;
 
     /**
      * 获取已抢入合约列表查询接口
@@ -88,6 +95,23 @@ public class HomePageImpl implements HomePageService {
     public Map<String, Object> getContractData(ChainGroupInfoDto chainGroupInfoDto) {
         Map<String, Object> map = new HashMap<>();
 
+        List<ZContracts> contractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , chainGroupInfoDto.getChainCode()));
+        // 合约等信息
+        map.put("contractsList" , contractsList);
+
+        // 获取合约id
+        int contractsId = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , chainGroupInfoDto.getChainCode()).eq("contract_type" , "30")).get(0).getParentId();
+        List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id" , contractsId));
+        // 目标 金额 等信息
+        map.put("factorList" , factorList);
+
+
+        XChainInfo xChainInfo = new XChainInfo();
+        xChainInfo.setLqCode(chainGroupInfoDto.getChainCode());
+        List<XChainInfo> chainInfoList = xChainInfoDao.queryAll(xChainInfo);
+
+        // 链群 组织等信息
+        map.put("chainInfoList" , chainInfoList);
 
         return map;
     }
