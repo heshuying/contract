@@ -3,9 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.CurrentUser;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
+import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.util.Constant;
@@ -87,6 +85,46 @@ public class CDGrabServiceImpl implements CDGrabService {
     }
 
     @Override
+    public CDGrabViewResponseDto queryCDGrabView(CDGrabInfoRequestDto requestDto){
+        CDGrabViewResponseDto responseDto = new CDGrabViewResponseDto();
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
+        String xwCode = currentUser.getXwCode();
+        String ptCode = currentUser.getPtcode();
+
+        ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
+        if(contracts != null){
+            responseDto.setSharePercent(contracts.getSharePercent());
+            responseDto.setTargetShareMoney(contracts.getShareSpace().toString());
+            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setChainName(chainInfos.get(0).getChainName());
+            }
+
+            List<ZContractsFactor> factorList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId()).eq("factor_code", Constant.FactorCode.Incom.getValue()));
+            if(factorList != null && !factorList.isEmpty()){
+                for(ZContractsFactor factor : factorList){
+                    if(factor.getFactorType().equalsIgnoreCase(Constant.FactorType.Bottom.getValue())){
+                        responseDto.setChainGoal(factor.getFactorValue());
+                    }else if(factor.getFactorType().equalsIgnoreCase(Constant.FactorType.Grab.getValue())){
+                        responseDto.setChainGrabGoal(factor.getFactorValue());
+                    }
+                }
+            }
+
+            List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
+            responseDto.setPlanList(planInfoList);
+        }
+
+        return responseDto;
+    }
+
+    @Override
     @Transactional
     public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
         Subject subject = SecurityUtils.getSubject();
@@ -112,8 +150,8 @@ public class CDGrabServiceImpl implements CDGrabService {
         // 链群目标保存
         ZContractsFactor contractsFactor = new ZContractsFactor();
         contractsFactor.setContractId(contractsId);
-        contractsFactor.setFactorCode(Constant.FactorCode.Incom.getName());
-        contractsFactor.setFactorName(Constant.FactorCode.Incom.getValue());
+        contractsFactor.setFactorCode(Constant.FactorCode.Incom.getValue());
+        contractsFactor.setFactorName(Constant.FactorCode.Incom.getName());
         contractsFactor.setFactorValue(requestDto.getChainGoal());
         contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
         contractsFactor.setFactorUnit("元");
@@ -122,8 +160,8 @@ public class CDGrabServiceImpl implements CDGrabService {
         // 抢单目标保存
         ZContractsFactor contractsFactor2 = new ZContractsFactor();
         contractsFactor2.setContractId(contractsId);
-        contractsFactor2.setFactorCode(Constant.FactorCode.Incom.getName());
-        contractsFactor2.setFactorName(Constant.FactorCode.Incom.getValue());
+        contractsFactor2.setFactorCode(Constant.FactorCode.Incom.getValue());
+        contractsFactor2.setFactorName(Constant.FactorCode.Incom.getName());
         contractsFactor2.setFactorValue(requestDto.getChainGrabGoal());
         contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
         contractsFactor2.setFactorUnit("元");

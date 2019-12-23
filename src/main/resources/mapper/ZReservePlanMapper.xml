@@ -10,4 +10,16 @@
         <result column="title" property="title" />
     </resultMap>
 
+    <select id="selectRoleByUser" parameterType="java.lang.String"
+            resultType="com.haier.hailian.contract.entity.SysRole">
+        SELECT
+        role.id,
+        role.NAME AS name,
+        role.role_code AS roleCode
+        FROM
+        sys_role role
+        LEFT JOIN sys_user_role_ehr ur ON ur.role_code = role.role_code
+        WHERE
+        ur.empsn =  #{empSn,jdbcType=VARCHAR}
+    </select>
 </mapper>
