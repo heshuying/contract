@@ -39,6 +39,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZContractsFactorDao factorDao;
     @Autowired
     ZHrChainInfoDao chainInfoDao;
+    @Autowired
+    ZNodeTargetPercentInfoDao targetPercentInfoDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -61,7 +63,7 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
         }
 
-        // 分享比例查询
+        /*// 分享比例查询
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
         if(resultList!=null && !resultList.isEmpty()){
             responseDto.setSharePercent(resultList.get(0).getPercent());
@@ -72,9 +74,14 @@ public class CDGrabServiceImpl implements CDGrabService {
                 .eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth()));
         if(targetList != null && !targetList.isEmpty()){
             responseDto.setTargetShareMoney(targetList.get(0).getTargetBottomLine());
+        }*/
+
+        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode));
+        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
+            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
+            responseDto.setTargetShareMoney(targetPercentInfos.get(0).getTargetLine());
         }
 
-        // 达成目标预计分享酬 todo
 
         return responseDto;
     }

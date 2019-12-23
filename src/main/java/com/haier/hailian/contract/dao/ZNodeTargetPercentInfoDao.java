@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author makejava
  * @since 2019-12-19 17:29:03
  */
-public interface ZNodeTargetPercentInfoDao {
+public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercentInfo> {
 
     /**
      * 通过ID查询单条数据
