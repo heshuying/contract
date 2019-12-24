@@ -12,10 +12,10 @@ import java.util.List;
 @Data
 @ApiModel(value = "网格抢单查询实体类")
 public class TyMasterGrabQueryDto {
-    @ApiModelProperty(value = "小微编码", required = true)
-    private String xwCode;
     @ApiModelProperty(value = "合约id", required = true)
     private Integer contractId;
+    @ApiModelProperty(value = "合约创建人", required = false)
+    private String contractOwner;
 
     private String year;
     private List<String> month;

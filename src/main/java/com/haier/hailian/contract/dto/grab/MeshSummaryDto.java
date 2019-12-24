@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @ApiModel(value = "网格抢单汇总实体类")
 public class MeshSummaryDto {
-    private String xwcode;
     private BigDecimal income;
     private BigDecimal struHighPercent;
     private BigDecimal struLowPercent;

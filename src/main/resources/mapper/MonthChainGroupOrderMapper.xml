@@ -60,19 +60,18 @@
     <!--查询网格抢单收入-->
     <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
+        select wg_code,wg_name,product_stru, sum(income) as 'income'from(
         select  mcgo.wg_code,mcgo.wg_name,mcgo.order_amt as income,mcgo.product_code, zpi.product_stru
         FROM month_chain_group_order mcgo
-        join (select distinct jyt_code, product_line_code from sys_net where xw_code=#{xwCode}) sn
-        on mcgo.wg_code=sn.jyt_code and mcgo.product_line_code=sn.product_line_code
-        join z_product_info zpi on mcgo.product_code=zpi.product_model_code and zpi.product_name='H001'
-        and period_code in
-        <foreach collection="yearMonth" item="item" index="index" open="(" close=")"  separator="," >
-         #{item}
-        </foreach>
+        join (select xw_code from sys_xw_master where master_code=#{contractOwner}) xwm
+        on mcgo.xw_code=xwm.xw_code
+        join z_product_info zpi on mcgo.product_code=zpi.product_model_code and mcgo.xw_code=zpi.xw_code
         where mcgo.year=#{year} and mcgo.month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
             #{item}
         </foreach>
+        )base
+        GROUP BY wg_code,wg_name,product_stru
     </select>
 
 

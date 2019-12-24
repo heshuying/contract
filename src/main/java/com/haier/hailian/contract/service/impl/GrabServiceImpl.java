@@ -63,7 +63,14 @@ public class GrabServiceImpl implements GrabService {
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
-        SysXwRegion xwRegion=xwRegionService.getOne(new QueryWrapper<SysXwRegion>().eq("xw_code", queryDto.getXwCode()));
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
+
+        SysXwRegion xwRegion=xwRegionService.getOne(new QueryWrapper<SysXwRegion>()
+                .eq("xw_code", currentUser.getXwCode()));
 
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
@@ -80,7 +87,7 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
        List<ZContractsFactor> factors=contractsFactorService.list(
                new QueryWrapper<ZContractsFactor>().eq("contract_id",contracts.getId())
-               .eq("region_code",queryDto.getXwCode())
+               .eq("region_code",currentUser.getXwCode())
        );
         List<ZContractsFactor> incomeFact= factors.stream().filter(f->Constant.FactorCode.Incom.getValue()
                 .equals(f.getFactorCode())).collect(Collectors.toList());
@@ -155,7 +162,6 @@ public class GrabServiceImpl implements GrabService {
 
         }
         MeshSummaryDto summaryDto=new MeshSummaryDto();
-        summaryDto.setXwcode(queryDto.getXwCode());
         summaryDto.setMeshDetail(meshGrabInfoDtos);
         BigDecimal inc=BigDecimal.ZERO,highPercent=BigDecimal.ZERO ,lowPercent=BigDecimal.ZERO;
         for (MeshGrabInfoDto tem:meshGrabInfoDtos) {
@@ -305,7 +311,7 @@ public class GrabServiceImpl implements GrabService {
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
-
+        queryDTO.setContractOwner(contracts.getCreateCode());
         int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
         int endMounth=DateFormatUtil.getMonthOfDate(contracts.getEndDate());
         if(queryDTO.getMonth()==null||queryDTO.getMonth().isEmpty()){

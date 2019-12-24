@@ -346,7 +346,7 @@ CREATE TABLE `z_contracts` (
   `parent_id` int(11) DEFAULT 0 COMMENT '关联id',
   `contract_name` varchar(200) DEFAULT NULL COMMENT '合约名称',
   `contract_type` varchar(10) DEFAULT NULL COMMENT '10链群主合约、20商圈合约、30创客合约',
-  `status` varchar(10) DEFAULT NULL COMMENT '状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期',
+  `status` varchar(10) DEFAULT NULL COMMENT '状态：0抢单中，1 已生效,4:已过期',
   `share_space` decimal(10,4) DEFAULT NULL COMMENT '分享空间',
   `share_percent` varchar(80) DEFAULT NULL COMMENT '分享比例',
   `chain_code` varchar(80) DEFAULT NULL COMMENT '链群编码',
@@ -1323,4 +1323,21 @@ CREATE TABLE `sys_xw_region` (
   KEY `ind_xw_code` (`xw_code`),
   KEY `ind_region_code` (`region_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for sys_xw_master
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_xw_master`;
+CREATE TABLE `sys_xw_master` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `xw_code` varchar(20) DEFAULT NULL COMMENT '小微编码',
+  `xw_name` varchar(50) DEFAULT NULL COMMENT '小微名称',
+  `pt_code` varchar(20) DEFAULT NULL COMMENT '平台编码',
+  `pt_name` varchar(20) DEFAULT NULL COMMENT '平台名称',
+  `master_code` varchar(20) DEFAULT NULL COMMENT '链群主编码',
+  `master_name` varchar(20) DEFAULT NULL COMMENT '链群主名称',
+  PRIMARY KEY (`id`),
+  KEY `ind_master_code` (`master_code`),
+  KEY `ind_xw_code` (`xw_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '小微和链群主关系表';
 
