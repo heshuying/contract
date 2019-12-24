@@ -56,10 +56,11 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts != null){
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
-            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
-            if(chainInfos != null && !chainInfos.isEmpty()){
-                responseDto.setChainName(chainInfos.get(0).getChainName());
-            }
+            responseDto.setChainName(contracts.getContractName());
+//            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+//            if(chainInfos != null && !chainInfos.isEmpty()){
+//                responseDto.setChainName(chainInfos.get(0).getChainName());
+//            }
         }
 
         /*// 分享比例查询
