@@ -3,6 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.CurrentUser;
+import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
@@ -55,10 +56,11 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts != null){
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
-            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
-            if(chainInfos != null && !chainInfos.isEmpty()){
-                responseDto.setChainName(chainInfos.get(0).getChainName());
-            }
+            responseDto.setChainName(contracts.getContractName());
+//            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+//            if(chainInfos != null && !chainInfos.isEmpty()){
+//                responseDto.setChainName(chainInfos.get(0).getChainName());
+//            }
         }
 
         /*// 分享比例查询
@@ -134,9 +136,15 @@ public class CDGrabServiceImpl implements CDGrabService {
         CurrentUser currentUser = sysUser.getCurrentUser();
 
         ZContracts contracts = new ZContracts();
+        contracts = contractsDao.selectById(requestDto.getContractId());
+        if(contracts==null){
+            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        }
+
+        contracts.setId(null);
         contracts.setParentId(requestDto.getContractId());
         contracts.setJoinTime(new Date());
-        contracts.setStatus("0");
+        contracts.setStatus("1");
         contracts.setShareSpace(new BigDecimal(requestDto.getTargetShareMoney()));
         contracts.setSharePercent(requestDto.getSharePercent());
         contracts.setContractType("30"); //创客合约
