@@ -53,7 +53,7 @@ public class CDGrabController {
     @ApiOperation(value = "创单节点抢单页面数据保存接口")
     public R saveGrab(@RequestBody CDGrabInfoSaveRequestDto requestDto) {
         if(requestDto.getChainGrabGoal() == null || requestDto.getChainGoal() == null || requestDto.getContractId() == null){
-            return R.error("请求参数错误，链群目标值为空");
+            return R.error("请求参数错误，有为空的字段");
         }
         if(requestDto.getChainGrabGoal().compareTo(requestDto.getChainGoal()) < 0){
             return R.error("抢单目标需要大于底线目标");
