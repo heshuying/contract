@@ -1308,3 +1308,19 @@ CREATE TABLE `ext_daily_data` (
   KEY `ind_date` (`date`),
   KEY `ind_lqcode` (`lq_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=217880 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for ext_daily_data
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_xw_region`;
+CREATE TABLE `sys_xw_region` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `xw_code` varchar(20) DEFAULT NULL,
+  `xw_name` varchar(50) DEFAULT NULL,
+  `region_code` varchar(20) DEFAULT NULL,
+  `region_name` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ind_xw_code` (`xw_code`),
+  KEY `ind_region_code` (`region_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+

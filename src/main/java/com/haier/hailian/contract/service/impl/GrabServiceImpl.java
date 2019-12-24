@@ -11,11 +11,13 @@ import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
 import com.haier.hailian.contract.service.SysNetService;
+import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.service.ZContractsFactorService;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZNetBottomService;
@@ -52,16 +54,24 @@ public class GrabServiceImpl implements GrabService {
     @Autowired
     private ZContractsFactorService contractsFactorService;
 
+    @Autowired
+    private SysXwRegionService xwRegionService;
+
     @Override
     public TyMasterGrabChainInfoDto queryChainInfo(TyMasterGrabQueryDto queryDto) {
         ZContracts contracts =contractsService.getById(queryDto.getContractId());
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
+        SysXwRegion xwRegion=xwRegionService.getOne(new QueryWrapper<SysXwRegion>().eq("xw_code", queryDto.getXwCode()));
 
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
-        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
+        String chainName=contracts.getContractName();
+        if(xwRegion!=null){
+            chainName=chainName.replace("链群","-"+xwRegion.getRegionName()+"链群");
+        }
+        tyMasterGrabChainInfoDto.setChainName(chainName);
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
