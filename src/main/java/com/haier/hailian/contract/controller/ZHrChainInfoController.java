@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.SysNodeEhr;
+import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
@@ -96,7 +97,7 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询人员目标")
     public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询,以逗号分割", required = true) String nodeCodeStr) {
         try {
-            List<ZNodeTargetPercentInfo> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
+            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);

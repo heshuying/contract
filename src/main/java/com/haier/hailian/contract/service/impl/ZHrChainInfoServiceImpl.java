@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.haier.hailian.contract.dao.SysNodeEhrDao;
+import com.haier.hailian.contract.dao.TargetBasicDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.CurrentUser;
@@ -10,6 +11,7 @@ import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZHrChainInfoDao zHrChainInfoDao;
     @Resource
     private SysNodeEhrDao sysNodeEhrDao;
+    @Resource
+    private TargetBasicDao targetBasicDao;
     @Resource
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
 
@@ -109,6 +113,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         //判断是否存在链群关键字，不存在则添加
         String name = validateChainNameDTO.getChainName();
+        if (StringUtils.isEmpty(name)){
+            return R.error("链群名称不能为空，请输入链群名称！");
+        }
         if (!name.contains("链群")) {
             name = name + "链群";
         }
@@ -127,14 +134,16 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<ZNodeTargetPercentInfo> getNodeTargetList(String nodeCodeStr) {
+    public List<TargetBasic> getNodeTargetList(String nodeCodeStr) {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         String dateNowStr = sdf.format(d);
         System.out.println("格式化后的日期：" + dateNowStr);
         String[] strings = nodeCodeStr.split(",");
-        List<String> list = Arrays.asList(strings);
-        return zNodeTargetPercentInfoDao.queryByKeyWorld(list, dateNowStr);
+//        List<String> list = Arrays.asList(strings);
+        TargetBasic targetBasic = new TargetBasic();
+        targetBasic.setTargetDiffType("001");
+        return targetBasicDao.selectTarget(targetBasic);
     }
 
     @Override
