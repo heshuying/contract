@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
 import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
+import com.haier.hailian.contract.dto.homepage.DataInfo;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,10 +55,10 @@ public class HomePageController {
 
 
     @PostMapping(value = {"/contractData"})
-    @ApiOperation(value = "外部获取数据接口(供690等外部系统使用)")
-    public R getContractData(@RequestBody ChainGroupInfoDto chainGroupInfoDto) {
+    @ApiOperation(value = "外部获取数据接口")
+    public R getContractData(@RequestBody DataInfo dataInfo) {
         try{
-            Map<String,Object> res = homePageService.getContractData(chainGroupInfoDto);
+            Map<String,Object> res = homePageService.getContractData(dataInfo);
             return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();
