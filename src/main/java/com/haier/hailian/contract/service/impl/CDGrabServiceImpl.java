@@ -153,7 +153,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         contractsFactor.setContractId(contractsId);
         contractsFactor.setFactorCode(Constant.FactorCode.Incom.getValue());
         contractsFactor.setFactorName(Constant.FactorCode.Incom.getName());
-        contractsFactor.setFactorValue(requestDto.getChainGoal());
+        contractsFactor.setFactorValue(requestDto.getChainGoal().toString());
         contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
         contractsFactor.setFactorUnit("元");
         factorDao.insert(contractsFactor);
@@ -163,7 +163,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         contractsFactor2.setContractId(contractsId);
         contractsFactor2.setFactorCode(Constant.FactorCode.Incom.getValue());
         contractsFactor2.setFactorName(Constant.FactorCode.Incom.getName());
-        contractsFactor2.setFactorValue(requestDto.getChainGrabGoal());
+        contractsFactor2.setFactorValue(requestDto.getChainGrabGoal().toString());
         contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
         contractsFactor2.setFactorUnit("元");
         factorDao.insert(contractsFactor2);

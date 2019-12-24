@@ -5,14 +5,13 @@ import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
 import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
-import com.haier.hailian.contract.entity.XChainInfo;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.sql.Wrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class HomePageImpl implements HomePageService {
     @Autowired
     private ZContractsFactorDao zContractsFactorDao;
     @Autowired
-    private XChainInfoDao xChainInfoDao;
+    private ZHrChainInfoDao zHrChainInfoDao;
 
     /**
      * 获取已抢入合约列表查询接口
@@ -47,7 +46,7 @@ public class HomePageImpl implements HomePageService {
 
         // 1. z_grab_contracts 获取抢单信息  parent_id 合约id
         // 2. 通过合约id 去 z_gambling_contracts 获取链群编码  chain_code
-        // 3. 通过chain_code 去 x_chain_info 获取 链群 和 小微信息
+        // 3. 通过chain_code 去 z_hr_chain_info 获取 链群 和 小微信息
         // 4. 通过合约id 去 z_gambling_contracts_product_index 获取对应月份预计
         // 5. 实际 - 通过x_chain_info表中的 xwcode ，去  x_xw_actual计算实际
 
@@ -105,10 +104,8 @@ public class HomePageImpl implements HomePageService {
         // 目标 金额 等信息
         map.put("factorList" , factorList);
 
-
-        XChainInfo xChainInfo = new XChainInfo();
-        xChainInfo.setLqCode(chainGroupInfoDto.getChainCode());
-        List<XChainInfo> chainInfoList = xChainInfoDao.queryAll(xChainInfo);
+        // 链群组织信息
+        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code"  , chainGroupInfoDto.getChainCode()));
 
         // 链群 组织等信息
         map.put("chainInfoList" , chainInfoList);
