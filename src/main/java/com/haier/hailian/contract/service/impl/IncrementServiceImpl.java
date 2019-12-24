@@ -51,7 +51,7 @@ public class IncrementServiceImpl implements IncrementService {
         money = money.add(e2e.subtract(bottom).multiply(new BigDecimal("0.2")));
 
         // 分享比例5%
-        money = money.multiply(new BigDecimal(requestDto.getSharePercent()));
+        money = money.multiply(new BigDecimal(requestDto.getSharePercent())).divide(new BigDecimal("100"));
 
         return money;
     }
