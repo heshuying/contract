@@ -5,13 +5,20 @@ import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
 import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
+import com.haier.hailian.contract.dto.homepage.DataInfo;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.homepage.HomePageService;
+import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,30 +93,155 @@ public class HomePageImpl implements HomePageService {
 
 
     /**
-     * 根据链群编码获取数据
-     * @param chainGroupInfoDto
+     * 外部获取数据接口
+     * @param dataInfo
      * @return
      */
     @Override
-    public Map<String, Object> getContractData(ChainGroupInfoDto chainGroupInfoDto) {
+    public Map<String, Object> getContractData(DataInfo dataInfo) {
         Map<String, Object> map = new HashMap<>();
 
-        List<ZContracts> contractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , chainGroupInfoDto.getChainCode()));
+        // 转换时间
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = DateFormatUtil.stringToDate(dataInfo.getMonth() , "yyyy-MM");
+        String startTime = format.format(date);
+        Date endDate = DateFormatUtil.addDateMonths(date , 1);
+        String endTime = format.format(endDate);
+
+        // 链群组织信息
+        ZHrChainInfo chainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code" , dataInfo.getChainCode()));
+
+        map.put("chainCode" , chainInfo.getChainCode());
+        map.put("chainName" , chainInfo.getChainName());
+        map.put("xwCode" , chainInfo.getXwCode());
+        map.put("xwName" , chainInfo.getXwName());
+        map.put("masterCode" , chainInfo.getMasterCode());
+        map.put("masterName" , chainInfo.getMasterName());
+        map.put("chainPtCode" , chainInfo.getChainPtCode());
+
+        // 合约信息
+        QueryWrapper<ZContracts> query = new QueryWrapper<ZContracts>();
+        query.eq("chain_code"  , dataInfo.getChainCode())
+                .eq("contract_type" , "10")
+                .gt("create_time" , startTime)
+                .lt("create_time" , endTime);
+        if(dataInfo.getStatus() != null && "".equals(dataInfo.getStatus())){
+            query.eq("status" , dataInfo.getStatus());
+        }
+        ZContracts zContracts = zContractsDao.selectOne(query);
+
+        map.put("contractId" , zContracts.getId());
+        map.put("contractName" , zContracts.getContractName());
+        map.put("startDate" , zContracts.getStartDate());
+        map.put("endDate" , zContracts.getEndDate());
+        map.put("createTime" , zContracts.getCreateTime());
+        map.put("regionCode" , zContracts.getRegionCode());
+        map.put("status" , zContracts.getStatus());
+
+        map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
+
+        // 获取ZContractsFactor部分信息
+        getContractsFactor(zContracts , map);
+
+
+
+        List<ZContracts> grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
+                .eq("parent_id" , zContracts.getId()));
+
+
+
+
+
+
+
+
+
+
+        List<ZContracts> contractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , dataInfo.getChainCode()));
         // 合约等信息
         map.put("contractsList" , contractsList);
 
         // 获取合约id
-        int contractsId = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , chainGroupInfoDto.getChainCode()).eq("contract_type" , "30")).get(0).getParentId();
+        int contractsId = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , dataInfo.getChainCode()).eq("contract_type" , "30")).get(0).getParentId();
         List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id" , contractsId));
         // 目标 金额 等信息
         map.put("factorList" , factorList);
 
-        // 链群组织信息
-        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code"  , chainGroupInfoDto.getChainCode()));
-
-        // 链群 组织等信息
-        map.put("chainInfoList" , chainInfoList);
 
         return map;
     }
+
+
+    /**
+     * 获取 ZContractsFactor部分信息
+     * @return
+     */
+    public Map<String , Object> getContractsFactor(ZContracts zContracts , Map<String , Object> map){
+        /**
+         * 底线目标
+         */
+        List<ZContractsFactor> bottomFactorList = zContractsFactorDao.selectList(
+                new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , zContracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
+
+        for (ZContractsFactor exp : bottomFactorList){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+                map.put("bottomTargetIncome" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+                map.put("bottomTargetProfit" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+                map.put("bottomTargetRate" , exp.getFactorValue());
+            }
+        }
+
+        /**
+         * e2e目标
+         */
+        List<ZContractsFactor> e2eFactorList = zContractsFactorDao.selectList(
+                new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , zContracts.getId())
+                        .eq("factor_type" , Constant.FactorType.E2E.getValue()));
+
+        for (ZContractsFactor exp : e2eFactorList){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+                map.put("e2eTargetIncome" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+                map.put("e2eTargetProfit" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+                map.put("e2eTargetRate" , exp.getFactorValue());
+            }
+        }
+
+        /**
+         * 抢单目标
+         */
+        List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
+                new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , zContracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+
+        for (ZContractsFactor exp : grabFactorList){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+                map.put("grabTargetIncome" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+                map.put("grabTargetProfit" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+                map.put("grabTargetRate" , exp.getFactorValue());
+            }
+        }
+
+        return map;
+    }
+
+
+
+
+
 }
