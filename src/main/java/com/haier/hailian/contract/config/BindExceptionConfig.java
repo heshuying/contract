@@ -32,8 +32,8 @@ public class BindExceptionConfig {
             return R.error(rException.getCode(),rException.getMsg());
         }else {
             log.error(e.getMessage());
-            return R.error(Constant.CODE_VALIDFAIL,
-                    Constant.MSG_VALIDFAIL);
+            return R.error(Constant.CODE_ERROR,
+                    Constant.MSG_ERROR);
         }
     }
 

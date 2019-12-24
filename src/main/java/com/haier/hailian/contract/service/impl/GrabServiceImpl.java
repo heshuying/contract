@@ -69,15 +69,15 @@ public class GrabServiceImpl implements GrabService {
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
 
-        SysXwRegion xwRegion=xwRegionService.getOne(new QueryWrapper<SysXwRegion>()
+        List<SysXwRegion> xwRegion=xwRegionService.list(new QueryWrapper<SysXwRegion>()
                 .eq("xw_code", currentUser.getXwCode()));
 
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
         String chainName=contracts.getContractName();
-        if(xwRegion!=null){
-            chainName=chainName.replace("链群","-"+xwRegion.getRegionName()+"链群");
-            tyMasterGrabChainInfoDto.setRegionCode(xwRegion.getRegionCode());
+        if(xwRegion!=null&&xwRegion.size()>0){
+            chainName=chainName.replace("链群","-"+xwRegion.get(0).getRegionName()+"链群");
+            tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
         }
         tyMasterGrabChainInfoDto.setChainName(chainName);
         tyMasterGrabChainInfoDto.setStart(
