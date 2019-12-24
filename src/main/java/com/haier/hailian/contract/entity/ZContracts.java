@@ -110,6 +110,8 @@ public class ZContracts extends Model<ZContracts> {
 
     private String orgName;
 
+    private String orgType;
+
     @TableField(exist = false)
     private String startDateStr;
     @TableField(exist = false)
