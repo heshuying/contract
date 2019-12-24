@@ -26,18 +26,18 @@ public class IncrementServiceImpl implements IncrementService {
     public BigDecimal incrementMoney(CDGrabInfoSaveRequestDto requestDto) {
         BigDecimal bottom = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , Constant.FactorCode.Lre)
-                .eq("factor_type" , Constant.FactorType.Bottom)).getFactorValue());
+                .eq("factor_code" , Constant.FactorCode.Lre.getValue())
+                .eq("factor_type" , Constant.FactorType.Bottom.getValue())).getFactorValue());
 
         BigDecimal e2e = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , Constant.FactorCode.Lre)
-                .eq("factor_type" , Constant.FactorType.E2E)).getFactorValue());
+                .eq("factor_code" , Constant.FactorCode.Lre.getValue())
+                .eq("factor_type" , Constant.FactorType.E2E.getValue())).getFactorValue());
 
         BigDecimal grab = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
-                .eq("factor_code" , Constant.FactorCode.Lre)
-                .eq("factor_type" , Constant.FactorType.Grab)).getFactorValue());
+                .eq("factor_code" , Constant.FactorCode.Lre.getValue())
+                .eq("factor_type" , Constant.FactorType.Grab.getValue())).getFactorValue());
 
 
         BigDecimal money = new BigDecimal("0");
