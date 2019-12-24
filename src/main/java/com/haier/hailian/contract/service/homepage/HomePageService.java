@@ -3,6 +3,8 @@ package com.haier.hailian.contract.service.homepage;
 import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
 import com.haier.hailian.contract.dto.homepage.ContractListRes;
 import com.haier.hailian.contract.dto.homepage.ContractListsDto;
+import com.haier.hailian.contract.dto.homepage.DataInfo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +27,8 @@ public interface HomePageService {
 
     /**
      * 根据链群编码获取数据
-     * @param chainGroupInfoDto
+     * @param dataInfo
      * @return
      */
-    Map<String,Object> getContractData(ChainGroupInfoDto chainGroupInfoDto);
+    Map<String,Object> getContractData(DataInfo dataInfo);
 }

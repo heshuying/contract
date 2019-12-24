@@ -53,6 +53,9 @@
             <if test=" chainCode != null ">
                 and chain_code = #{chainCode}
             </if>
+            <if test=" targetDiffType != null ">
+                and target_diff_type = #{targetDiffType}
+            </if>
         </where>
     </select>
 

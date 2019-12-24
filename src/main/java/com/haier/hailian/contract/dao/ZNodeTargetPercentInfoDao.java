@@ -39,13 +39,6 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
      */
     List<ZNodeTargetPercentInfo> queryAll(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
 
-    /**
-     * 新增数据
-     *
-     * @param zNodeTargetPercentInfo 实例对象
-     * @return 影响行数
-     */
-    int insert(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
 
     /**
      * 修改数据
