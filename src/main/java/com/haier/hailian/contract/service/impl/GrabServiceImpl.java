@@ -70,6 +70,7 @@ public class GrabServiceImpl implements GrabService {
         String chainName=contracts.getContractName();
         if(xwRegion!=null){
             chainName=chainName.replace("链群","-"+xwRegion.getRegionName()+"链群");
+            tyMasterGrabChainInfoDto.setRegionCode(xwRegion.getRegionCode());
         }
         tyMasterGrabChainInfoDto.setChainName(chainName);
         tyMasterGrabChainInfoDto.setStart(
@@ -209,8 +210,10 @@ public class GrabServiceImpl implements GrabService {
         contracts.setCreateTime(new Date());
         contracts.setJoinTime(new Date());
         contracts.setStatus("1");
+        contracts.setRegionCode(chainInfoDto.getRegionCode());
         contracts.setOrgCode(currentUser.getOrgNum());
         contracts.setOrgName(currentUser.getOrgName());
+        contracts.setOrgType(currentUser.getOrgType());
         contracts.setXiaoweiCode(currentUser.getXwCode());
         contractsService.save(contracts);
 

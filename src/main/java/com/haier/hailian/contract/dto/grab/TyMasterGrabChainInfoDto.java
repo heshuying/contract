@@ -16,6 +16,7 @@ public class TyMasterGrabChainInfoDto {
     private String start;
     private String end;
     private BigDecimal shareQuota;
+    private String regionCode;
     //目标是底线收入
     private BigDecimal targetIncome;
     private BigDecimal targetHighPercent;
