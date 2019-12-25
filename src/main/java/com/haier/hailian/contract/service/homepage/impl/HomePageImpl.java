@@ -152,6 +152,7 @@ public class HomePageImpl implements HomePageService {
             // 抢单信息
             GrabInfo2Outside grabInfo2Outside = new GrabInfo2Outside();
             BeanUtils.copyProperties(contracts , grabInfo2Outside);
+            grabInfo2Outside.setXiaoweiName(""); // 暂时不知道怎么取
             // 抢单factor信息
             List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
                     .eq("contract_id" , contracts.getId()));
@@ -159,6 +160,9 @@ public class HomePageImpl implements HomePageService {
                 if(factor.getFactorType().equals(Constant.FactorType.Grab.getValue())){
                     grabInfo2Outside.setGrabTargetIncom(factor.getFactorValue());
                     grabInfo2Outside.setGrabTargetUnit(factor.getFactorUnit());
+
+                    grabInfo2Outside.setGrabTargetCode(factor.getFactorCode());
+                    grabInfo2Outside.setGrabTargetName(factor.getFactorName());
                 }
                 if(factor.getFactorType().equals(Constant.FactorType.Bottom.getValue())){
                     grabInfo2Outside.setGrabTargetBottom(factor.getFactorValue());
@@ -166,8 +170,11 @@ public class HomePageImpl implements HomePageService {
             }
             grabList.add(grabInfo2Outside);
             // 预案信息
-            PlanInfoDto planInfoDto = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId())).get(0);
-            grabInfo2Outside.setGrabTargetPlan(planInfoDto.getContent());
+            List<PlanInfoDto> planInfoDtoList = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
+            if(planInfoDtoList.size() > 0 && planInfoDtoList != null){
+                grabInfo2Outside.setGrabTargetPlan(planInfoDtoList.get(0).getContent());
+            }
+
             // 并联预案信息
 
 
