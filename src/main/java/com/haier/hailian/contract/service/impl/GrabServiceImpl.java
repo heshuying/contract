@@ -143,13 +143,9 @@ public class GrabServiceImpl implements GrabService {
             ).collect(Collectors.toList());
             meshGrabDto.setMeshCode(wg);
             meshGrabDto.setMeshName(current.get(0).getMeshName());
-            double temIncome=current.stream().mapToDouble(m->
-                    AmountFormat.amtStr2D(m.getIncome())).sum();
-            meshGrabDto.setIncome(
-                    new BigDecimal(temIncome).divide(
-                            new BigDecimal("10000"),2, RoundingMode.HALF_UP
-                    )
-            );
+            BigDecimal totalIncome=new BigDecimal(current.stream().mapToDouble(m->
+                    AmountFormat.amtStr2D(m.getIncome())).sum());
+            meshGrabDto.setIncome(totalIncome);//元
             //高端
             List<MeshGrabEntity> high=current.stream().filter(
                     f->Constant.ProductStru.High.getValue().equals(f.getProductStru()))
@@ -178,6 +174,9 @@ public class GrabServiceImpl implements GrabService {
             }else{
                 meshGrabDto.setStruLowPercent(BigDecimal.ZERO);
             }
+            meshGrabDto.setIncome(meshGrabDto.getIncome().divide(
+                    new BigDecimal("10000"),2, RoundingMode.HALF_UP
+            ));//格式化万元
             meshGrabInfoDtos.add(meshGrabDto);
 
         }
