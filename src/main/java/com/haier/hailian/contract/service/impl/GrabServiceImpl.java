@@ -143,9 +143,12 @@ public class GrabServiceImpl implements GrabService {
             ).collect(Collectors.toList());
             meshGrabDto.setMeshCode(wg);
             meshGrabDto.setMeshName(current.get(0).getMeshName());
+            double temIncome=current.stream().mapToDouble(m->
+                    AmountFormat.amtStr2D(m.getIncome())).sum();
             meshGrabDto.setIncome(
-                    new BigDecimal(current.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getIncome())).sum())
+                    new BigDecimal(temIncome).divide(
+                            new BigDecimal("10000"),2, RoundingMode.HALF_UP
+                    )
             );
             //高端
             List<MeshGrabEntity> high=current.stream().filter(
@@ -154,7 +157,10 @@ public class GrabServiceImpl implements GrabService {
             if(high !=null && high.size()>0){
                 BigDecimal highIncome=new BigDecimal(high.stream().mapToDouble(m->
                         AmountFormat.amtStr2D(m.getIncome())).sum());
-                meshGrabDto.setStruHighPercent(highIncome.divide(meshGrabDto.getIncome(),4, RoundingMode.HALF_UP));
+                meshGrabDto.setStruHighPercent(highIncome
+                        .divide(meshGrabDto.getIncome(),4, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100"))
+                );
             }else{
                 meshGrabDto.setStruHighPercent(BigDecimal.ZERO);
             }
@@ -163,9 +169,12 @@ public class GrabServiceImpl implements GrabService {
                     f->Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
                     .collect(Collectors.toList());
             if(low !=null && low.size()>0){
-                BigDecimal lowIncome=new BigDecimal(high.stream().mapToDouble(m->
+                BigDecimal lowIncome=new BigDecimal(low.stream().mapToDouble(m->
                         AmountFormat.amtStr2D(m.getIncome())).sum());
-                meshGrabDto.setStruLowPercent(lowIncome.divide(meshGrabDto.getIncome(),4, RoundingMode.HALF_UP));
+                meshGrabDto.setStruLowPercent(lowIncome
+                        .divide(meshGrabDto.getIncome(),4, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100"))
+                );
             }else{
                 meshGrabDto.setStruLowPercent(BigDecimal.ZERO);
             }
@@ -182,8 +191,14 @@ public class GrabServiceImpl implements GrabService {
         }
         summaryDto.setIncome(inc);
         if(meshGrabInfoDtos!=null&&meshGrabInfoDtos.size()>0) {
-            summaryDto.setStruHighPercent(highPercent.divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP));
-            summaryDto.setStruLowPercent(lowPercent.divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP));
+            summaryDto.setStruHighPercent(highPercent
+                    .divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100"))
+            );
+            summaryDto.setStruLowPercent(lowPercent
+                    .divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100"))
+            );
         }
         return summaryDto;
     }
@@ -310,7 +325,7 @@ public class GrabServiceImpl implements GrabService {
         }
         contractsFactorService.saveBatch(factors);
 
-        chainCommonService.buildContractChain(contracts.getId());
+        // chainCommonService.buildContractChain(contracts.getId());
 
         return R.ok();
     }
