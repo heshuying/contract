@@ -79,7 +79,7 @@ public class LoginController {
     @GetMapping(value = "/unauthorized")
     @ApiOperation(value = "未登陆提示401")
     public ResponseEntity unauthorized() {
-        return new ResponseEntity(R.error(Constant.CODE_AUTH,Constant.MSG_AUTH), HttpStatus.FORBIDDEN);
+        return new ResponseEntity(R.error(Constant.CODE_AUTH,Constant.MSG_AUTH), HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(value = "/forbidden")
