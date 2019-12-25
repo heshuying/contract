@@ -9,6 +9,7 @@ import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +80,11 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
         }
 
+        List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("nodeCode", currentUser.getOrgNum());
         paraMap.put("ptCode", currentUser.getPtcode());
-        paraMap.put("yearMonth", null);
+        paraMap.put("yearMonthList", yearMonthList);
         List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTarget(paraMap);
 
         // 目标底线查询
@@ -243,5 +245,22 @@ public class CDGrabServiceImpl implements CDGrabService {
         planDetail.setParentId(planId);
         planDetail.setContent(requestDto.getPlanContent());
         reservePlanDetailDao.insert(planDetail);
+    }
+
+    private List<String> getYearMonth(String contractId){
+        String currentYear = String.valueOf(DateFormatUtil.getYearOfDate(new Date()));
+        ZContracts contracts=contractsDao.selectById(contractId);
+        if(contracts==null){
+            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        }
+        int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
+        int endMounth=DateFormatUtil.getMonthOfDate(contracts.getEndDate());
+        List<String> yearMounths=new ArrayList<>();
+
+        for(int start=mounth;start<=endMounth;start++){
+            String strMounth = start < 10 ? "0" + start : String.valueOf(start);
+            yearMounths.add(currentYear+strMounth);
+        }
+        return yearMounths;
     }
 }

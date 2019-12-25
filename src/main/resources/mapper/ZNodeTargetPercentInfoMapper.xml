@@ -187,8 +187,12 @@
             ON tpi.`node_code` = tb.`role_code`
             AND tpi.`target_code` = tb.`target_code`
         WHERE tpi.`node_code` = #{nodeCode}
-        <if test="yearMonth != null and yearMonth != ''">
-            AND tb.period_code = #{yearMonth}
+        <if test="yearMonthList != null">
+            AND tb.period_code in
+            <foreach collection="yearMonthList" open="(" close=")" separator=","
+                     item="yearMonth" index="i">
+                #{yearMonth}
+            </foreach>
         </if>
           AND tb.target_pt_code = #{ptCode}
     </select>
