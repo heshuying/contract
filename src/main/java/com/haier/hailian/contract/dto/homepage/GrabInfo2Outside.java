@@ -42,12 +42,8 @@ public class GrabInfo2Outside {
 
     private String grabTargetPlan;
 
-    private String problemCode;
-
-    private String taskCode;
-
     private String groupId;
 
-    private List<Object> details;
+    private List<PlanTeamWorkInfo> planTeamWorkInfos;
 
 }
