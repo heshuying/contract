@@ -16,6 +16,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,13 +78,13 @@ public class LoginController {
 
     @GetMapping(value = "/unauthorized")
     @ApiOperation(value = "未登陆提示401")
-    public R unauthorized() {
-        return R.error(Constant.CODE_AUTH,Constant.MSG_AUTH);
+    public ResponseEntity unauthorized() {
+        return new ResponseEntity(R.error(Constant.CODE_AUTH,Constant.MSG_AUTH), HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(value = "/forbidden")
     @ApiOperation(value = "没权限403")
-    public R forbidden() {
-        return R.error(Constant.CODE_FORBIDDEN,Constant.MSG_FORBIDDEN);
+    public ResponseEntity forbidden() {
+        return new ResponseEntity(R.error(Constant.CODE_FORBIDDEN,Constant.MSG_FORBIDDEN), HttpStatus.FORBIDDEN);
     }
 }
