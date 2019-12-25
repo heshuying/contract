@@ -1,9 +1,16 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.gson.Gson;
 import com.haier.hailian.contract.config.ChainConfig;
+import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ChainCommonService;
+import com.haier.hailian.contract.service.ZContractsFactorService;
+import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.util.chian.ChainContract;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
@@ -24,6 +31,8 @@ import org.web3j.utils.Numeric;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 19012964 on 2019/12/24.
@@ -33,7 +42,12 @@ import java.util.Collections;
 public class ChainCommonServiceImpl implements ChainCommonService{
     @Autowired
     private ChainConfig chainConfig;
+    @Autowired
+    private ZContractsService contractsService;
+    @Autowired
+    private ZContractsFactorService contractsFactorService;
 
+    private Gson gson=new Gson();
     @Override
     public String uploadJsonData(String json) {
         log.info("========json upload chain start");
@@ -79,7 +93,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
     }
 
     @Override
-    public void doChainAfterGrab(String contractId, Integer status, String dataHash) {
+    public void doChainAfterGrab(String contractId, String status, String dataHash) {
         if(dataHash.startsWith("0x")){
             dataHash=dataHash.substring(1);
         }
@@ -110,7 +124,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
             ChainContract cc = ChainContract.load("0x9307adc58cb4d47d0f43a3f30d8a1bd33797debe", web3j, CREDENTIALS, BigInteger.valueOf(0), BigInteger.valueOf(200000));
             if(cc.isValid())
             {
-                TransactionReceipt result = cc.Create(ToBytes32(contractId), BigInteger.valueOf(status),
+                TransactionReceipt result = cc.Create(ToBytes32(contractId), BigInteger.valueOf(Integer.valueOf(status)),
                         Numeric.hexStringToByteArray(dataHash)).send();
 
                 String ret=getTxByHash(web3j,"0x76d0e284f2d374b513b6abebf0963f8efb48ae4b43b0efdebfe51ad8d37c240c");
@@ -120,6 +134,31 @@ public class ChainCommonServiceImpl implements ChainCommonService{
         } catch (Exception e){
             log.error(e.getMessage());
         }
+    }
+
+    /**
+     * 构建合约链群
+     * @param contractId
+     */
+    @Override
+    public void buildContractChain(Integer contractId) {
+        try{
+            ZContracts contracts =contractsService.getById(contractId);
+            List<ZContractsFactor> factors=contractsFactorService.list(
+                    new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId)
+            );
+            Map<String , Object> data=new HashedMap();
+            data.put("contract",contracts);
+            data.put("contractFactor", factors);
+            String jsonData=gson.toJson(data);
+
+            String jsonHash=uploadJsonData(jsonData);
+
+            doChainAfterGrab(contracts.getId().toString(),contracts.getStatus(),jsonHash);
+        }catch (Exception e){
+
+        }
+
     }
 
     public static byte[] ToBytes32(String str) {

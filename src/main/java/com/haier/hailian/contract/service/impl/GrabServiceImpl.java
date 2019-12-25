@@ -14,6 +14,7 @@ import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
 import com.haier.hailian.contract.service.SysNetService;
@@ -53,6 +54,8 @@ public class GrabServiceImpl implements GrabService {
     private ZContractsService contractsService;
     @Autowired
     private ZContractsFactorService contractsFactorService;
+    @Autowired
+    private ChainCommonService chainCommonService;
 
     @Autowired
     private SysXwRegionService xwRegionService;
@@ -229,7 +232,7 @@ public class GrabServiceImpl implements GrabService {
         incomeFact.setFactorCode(Constant.FactorCode.Incom.getValue());
         incomeFact.setFactorName(Constant.FactorCode.Incom.getName());
         incomeFact.setFactorType(Constant.FactorType.Bottom.getValue());
-        incomeFact.setFactorUnit("元");
+        incomeFact.setFactorUnit(Constant.RMB_MIL);
         incomeFact.setFactorValue( chainInfoDto.getTargetIncome().toString());
         factors.add(incomeFact);
         //高端占比
@@ -298,6 +301,7 @@ public class GrabServiceImpl implements GrabService {
             factors.add(grabLowFact);
         }
         contractsFactorService.saveBatch(factors);
+        // chainCommonService.buildContractChain(contracts.getId());
 
         return R.ok();
     }

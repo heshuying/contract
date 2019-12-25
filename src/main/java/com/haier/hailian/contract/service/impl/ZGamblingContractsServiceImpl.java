@@ -8,6 +8,7 @@ import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import com.haier.hailian.contract.util.Constant;
 import org.apache.shiro.SecurityUtils;
@@ -40,6 +41,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Autowired
     private SysXiaoweiEhrDao sysXiaoweiEhrDao;
 
+    @Autowired
+    private ChainCommonService chainCommonService;
     @Override
     public void saveGambling(GamblingContractDTO dto) throws Exception{
         Subject subject = SecurityUtils.getSubject();
