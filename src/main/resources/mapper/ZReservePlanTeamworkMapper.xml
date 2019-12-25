@@ -7,6 +7,9 @@
         <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
         <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
         <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="problemType" column="problem_type" jdbcType="VARCHAR"/>
+        <result property="problemChannel" column="problem_channel" jdbcType="VARCHAR"/>
+        <result property="problemDep" column="problem_dep" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
@@ -24,6 +27,9 @@
         <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
         <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
         <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="problemType" column="problem_type" jdbcType="VARCHAR"/>
+        <result property="problemChannel" column="problem_channel" jdbcType="VARCHAR"/>
+        <result property="problemDep" column="problem_dep" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
@@ -46,7 +52,7 @@
     <!--查询单个-->
     <select id="queryById" resultMap="ZReservePlanTeamworkMap">
         select
-          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+          id, parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
         from chain_contract.z_reserve_plan_teamwork
         where id = #{id}
     </select>
@@ -54,7 +60,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZReservePlanTeamworkMap">
         select
-          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+          id, parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
         from chain_contract.z_reserve_plan_teamwork
         limit #{offset}, #{limit}
     </select>
@@ -66,6 +72,9 @@
         zrpt.parent_id,
         zrpt.problem_code,
         zrpt.problem_content,
+        zrpt.problem_type,
+        zrpt.problem_channel,
+        zrpt.problem_dep,
         zrpt.start_time,
         zrpt.end_time,
         zrpt.remind_time,
@@ -199,8 +208,8 @@
 
     <!--新增所有列-->
     <insert id="save" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name,  task_code)
-        values (#{parentId}, #{problemCode}, #{problemContent}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName}, #{taskCode})
+         insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, task_code)
+        values (#{parentId}, #{problemCode}, #{problemContent}, #{problemType}, #{problemChannel}, #{problemDep}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName},  #{taskCode})
     </insert>
 
     <!--新增所有列-->

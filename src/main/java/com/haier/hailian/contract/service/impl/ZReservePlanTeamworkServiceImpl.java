@@ -1,33 +1,19 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.alibaba.dubbo.common.json.JSONObject;
 import com.google.gson.Gson;
-import com.haier.hailian.contract.config.shiro.HacLoginToken;
-import com.haier.hailian.contract.dto.HacLoginRespDto;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.RException;
-import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
-import com.haier.hailian.contract.entity.SysEmployeeEhr;
-import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.dao.ZReservePlanTeamworkDao;
+import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
+import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
-import com.haier.hailian.contract.util.Constant;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -122,31 +108,33 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             }
         }
         // 调用ihaier的接口进行任务创建
-        /**
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String accessToken="";
-//        headers.set("Authorization", "Basic "+ Base64Utils.encodeToString(basic.getBytes()));
-        String str = "{" +
-                "\"groupName\": \"讨论组\"," +
-                "\"currentUid\":\"5b503ee9e4b02abb5318b23e\"," +
-                "\"userIds\":[" +
-                "\"5b6cea82e4b05df05b3efc2b\"," +
-                "\"5bee6706e4b073e587c144ae\"," +
-                "\"5b50428ce4b091389c3b3777\"" +
-                "]" +
-                "}";
-        HttpEntity<String> entity = new HttpEntity<String>(gson.toJson(str), headers);
-        try {
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken="+accessToken,
-                    entity, String.class);
+        OkHttpClient client = new OkHttpClient();
 
-            String value = responseEntity.getBody();
-//
-        }catch (Exception e){
-            throw new RException("异常");
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        Date date = new Date();
+        long timestamp = date.getTime();
+        RequestBody body = RequestBody.create(mediaType, "eid=102&secret=TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB&timestamp="+timestamp+"&scope=resGroupSecret");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/oauth2/token/getAccessToken")
+                .post(body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("User-Agent", "PostmanRuntime/7.15.2")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Postman-Token", "5af5b09c-ec7f-4723-b3c0-f54f0b600477,52c65978-76ce-4e8a-951c-d8c0601d42b7")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Accept-Encoding", "gzip, deflate")
+                .addHeader("Content-Length", "92")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-         **/
         return "保存成功";
     }
 }

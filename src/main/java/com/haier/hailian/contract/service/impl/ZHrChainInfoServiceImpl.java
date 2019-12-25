@@ -135,11 +135,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
     @Override
     public List<TargetBasic> getNodeTargetList(String nodeCodeStr) {
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-        String dateNowStr = sdf.format(d);
-        System.out.println("格式化后的日期：" + dateNowStr);
-        String[] strings = nodeCodeStr.split(",");
+//        Date d = new Date();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+//        String dateNowStr = sdf.format(d);
+//        System.out.println("格式化后的日期：" + dateNowStr);
+//        String[] strings = nodeCodeStr.split(",");
 //        List<String> list = Arrays.asList(strings);
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
