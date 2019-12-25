@@ -16,13 +16,11 @@ public class GrabInfo2Outside {
 
     private String orgType;
 
+    private String regionCode;
+
     private String createCode;
 
     private String createName;
-
-    private String grabTargetCode;
-
-    private String grabTargetName;
 
     private String grabTargetBottom;
 
@@ -40,8 +38,8 @@ public class GrabInfo2Outside {
 
     private String taskCode;
 
-    private List<Object> details;
-
     private String groupId;
+
+    private List<Object> details;
 
 }

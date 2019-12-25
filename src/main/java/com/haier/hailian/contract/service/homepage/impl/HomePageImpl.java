@@ -136,7 +136,6 @@ public class HomePageImpl implements HomePageService {
         map.put("startDate" , zContracts.getStartDate());
         map.put("endDate" , zContracts.getEndDate());
         map.put("createTime" , zContracts.getCreateTime());
-        map.put("regionCode" , zContracts.getRegionCode());
         map.put("status" , zContracts.getStatus());
 
         map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
@@ -174,28 +173,7 @@ public class HomePageImpl implements HomePageService {
 
 
         }
-
         map.put("grabInfo" , grabList);
-
-
-
-
-
-
-
-
-
-
-//        List<ZContracts> contractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , dataInfo.getChainCode()));
-//        // 合约等信息
-//        map.put("contractsList" , contractsList);
-//
-//        // 获取合约id
-//        int contractsId = zContractsDao.selectList(new QueryWrapper<ZContracts>().eq("chain_code"  , dataInfo.getChainCode()).eq("contract_type" , "30")).get(0).getParentId();
-//        List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id" , contractsId));
-//        // 目标 金额 等信息
-//        map.put("factorList" , factorList);
-
 
         return map;
     }
