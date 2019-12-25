@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 19033323
@@ -81,26 +79,33 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
         }
 
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("nodeCode", currentUser.getOrgNum());
+        paraMap.put("ptCode", currentUser.getPtcode());
+        paraMap.put("yearMonth", null);
+        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTarget(paraMap);
+
         // 目标底线查询
-        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", currentUser.getPtcode()).like("role_code", xwCode)
-                /*.eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth())*/.in("chain_code", chainCodeList));
+//        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", currentUser.getPtcode()).like("role_code", xwCode)
+//                /*.eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth())*/.in("chain_code", chainCodeList));
         if(targetList != null && !targetList.isEmpty()){
-            for (TargetBasic targetInfo : targetList){
+            for (CDGrabTargetEntity targetInfo : targetList){
                 CDGrabTargetDto target = new CDGrabTargetDto();
                 target.setTargetName(targetInfo.getTargetName());
                 target.setTargetCode(targetInfo.getTargetCode());
                 target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
                 target.setTargetUnit(targetInfo.getTargetUnit());
                 responseDto.getTargetList().add(target);
+                responseDto.setSharePercent(targetInfo.getSharePercent());
             }
         }
 
         // 分享比例查询
-        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode)
-                                                           .in("lq_code", chainCodeList));
-        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
-            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
-        }
+//        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode)
+//                                                           .in("lq_code", chainCodeList));
+//        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
+//            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
+//        }
 
 
         return responseDto;
@@ -130,12 +135,29 @@ public class CDGrabServiceImpl implements CDGrabService {
 
             List<ZContractsFactor> factorList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId()));
             if(factorList != null && !factorList.isEmpty()){
+                Map<String, List<ZContractsFactor>> tempMap = new HashMap<>();
                 for(ZContractsFactor factor : factorList){
+                    List<ZContractsFactor> list = tempMap.get(factor.getFactorCode());
+                    if(list == null || list.isEmpty()){
+                        list = new ArrayList<>();
+                        tempMap.put(factor.getFactorCode(), list);
+                    }
+                    list.add(factor);
+                }
+
+                for(Map.Entry<String, List<ZContractsFactor>> entity : tempMap.entrySet()){
+                    List<ZContractsFactor> factors = entity.getValue();
                     CDGrabTargetDto target = new CDGrabTargetDto();
-                    target.setTargetName(factor.getFactorName());
-                    target.setTargetCode(factor.getFactorCode());
-                    target.setChainGoal(new BigDecimal(factor.getFactorValue()));
-                    target.setTargetUnit(factor.getFactorUnit());
+                    target.setTargetName(factors.get(0).getFactorName());
+                    target.setTargetCode(factors.get(0).getFactorCode());
+                    target.setTargetUnit(factors.get(0).getFactorUnit());
+                    for(ZContractsFactor factor : factors){
+                        if(Constant.FactorType.Bottom.getValue().equals(factor.getFactorType())){
+                            target.setChainGoal(new BigDecimal(factor.getFactorValue()));
+                        }else if(Constant.FactorType.Grab.getValue().equals(factor.getFactorType())){
+                            target.setChainGrabGoal(new BigDecimal(factor.getFactorValue()));
+                        }
+                    }
                     responseDto.getTargetList().add(target);
                 }
             }
