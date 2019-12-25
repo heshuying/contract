@@ -1,15 +1,13 @@
 package com.haier.hailian.contract.controller.homepage;
 
 import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.homepage.ChainGroupInfoDto;
-import com.haier.hailian.contract.dto.homepage.ContractListRes;
-import com.haier.hailian.contract.dto.homepage.ContractListsDto;
-import com.haier.hailian.contract.dto.homepage.DataInfo;
+import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +57,18 @@ public class HomePageController {
     public R getContractData(@RequestBody DataInfo dataInfo) {
         try{
             Map<String,Object> res = homePageService.getContractData(dataInfo);
+            return R.ok().put("data",res);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
+    @GetMapping(value = {"/chainData"})
+    @ApiOperation(value = "外部获取链群组织数据接口")
+    public R getChainData() {
+        try{
+            List<ChainDataInfo> res = homePageService.getChainData() ;
             return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();
