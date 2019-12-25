@@ -191,12 +191,12 @@ public class GrabServiceImpl implements GrabService {
         summaryDto.setIncome(inc);
         if(meshGrabInfoDtos!=null&&meshGrabInfoDtos.size()>0) {
             summaryDto.setStruHighPercent(highPercent
-                    .divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"))
+                    .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP)
+
             );
             summaryDto.setStruLowPercent(lowPercent
-                    .divide(new BigDecimal(meshGrabInfoDtos.size()),4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"))
+                    .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP)
+                    
             );
         }
         return summaryDto;
