@@ -16,11 +16,19 @@ public class GrabInfo2Outside {
 
     private String orgType;
 
+    private String xiaoweiCode;
+
+    private String xiaoweiName;
+
     private String regionCode;
 
     private String createCode;
 
     private String createName;
+
+    private String grabTargetCode;
+
+    private String grabTargetName;
 
     private String grabTargetBottom;
 
