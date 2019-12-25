@@ -196,7 +196,7 @@ public class GrabServiceImpl implements GrabService {
             );
             summaryDto.setStruLowPercent(lowPercent
                     .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP)
-                    
+
             );
         }
         return summaryDto;
