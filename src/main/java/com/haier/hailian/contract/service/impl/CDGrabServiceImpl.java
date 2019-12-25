@@ -40,6 +40,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZHrChainInfoDao chainInfoDao;
     @Autowired
     ZNodeTargetPercentInfoDao targetPercentInfoDao;
+    @Autowired
+    SysXwRegionDao sysXwRegionDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -141,6 +143,13 @@ public class CDGrabServiceImpl implements CDGrabService {
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
 
+        String regionCode = "";
+        List<SysXwRegion> xwRegion=sysXwRegionDao.selectList(new QueryWrapper<SysXwRegion>()
+                .eq("xw_code", currentUser.getXwCode()));
+        if(xwRegion!=null && !xwRegion.isEmpty()){
+            regionCode = xwRegion.get(0).getRegionCode();
+        }
+
         contracts.setId(null);
         contracts.setParentId(requestDto.getContractId());
         contracts.setJoinTime(new Date());
@@ -155,6 +164,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         contracts.setOrgType(currentUser.getOrgType());
         contracts.setCreateTime(new Date());
         contracts.setXiaoweiCode(currentUser.getXwCode());
+        contracts.setRegionCode(regionCode);
 
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();

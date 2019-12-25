@@ -16,7 +16,8 @@ public class TyMasterGrabQueryDto {
     private Integer contractId;
     @ApiModelProperty(value = "合约创建人", required = false)
     private String contractOwner;
-
+    @ApiModelProperty(value = "登陆人xw编码", required = false)
+    private String loginXwCode;
     private String year;
     private List<String> month;
     private List<String> yearMonth;
