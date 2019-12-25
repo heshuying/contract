@@ -312,14 +312,14 @@ public class GrabServiceImpl implements GrabService {
 
             grabHighFact.setFactorType(Constant.FactorType.Grab.getValue());
             grabHighFact.setFactorValue(meshSummaryDto.getStruHighPercent().toString());
-            grabIncomeFact.setMeshCode(meshGrabInfo.getMeshCode());
-            grabIncomeFact.setMeshName(meshGrabInfo.getMeshName());
+            grabHighFact.setMeshCode(meshGrabInfo.getMeshCode());
+            grabHighFact.setMeshName(meshGrabInfo.getMeshName());
             factors.add(grabHighFact);
 
             grabLowFact.setFactorType(Constant.FactorType.Grab.getValue());
             grabLowFact.setFactorValue(meshSummaryDto.getStruLowPercent().toString());
-            grabIncomeFact.setMeshCode(meshGrabInfo.getMeshCode());
-            grabIncomeFact.setMeshName(meshGrabInfo.getMeshName());
+            grabLowFact.setMeshCode(meshGrabInfo.getMeshCode());
+            grabLowFact.setMeshName(meshGrabInfo.getMeshName());
             factors.add(grabLowFact);
         }
         contractsFactorService.saveBatch(factors);

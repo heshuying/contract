@@ -33,7 +33,7 @@ public class SysEmpChainServiceImpl extends ServiceImpl<SysEmpChainDao, SysEmpCh
         System.out.println("private:"+keypair.getPrivateKey().toString(16));
         System.out.println("public:"+keypair.getPublicKey().toString(16));
         System.out.println("0x" + Keys.getAddress(keypair));
-        return seedstr;
+        return "0x" + Keys.getAddress(keypair);
     }
 
     @Override
@@ -51,6 +51,7 @@ public class SysEmpChainServiceImpl extends ServiceImpl<SysEmpChainDao, SysEmpCh
                 SysEmpChain empChain=new SysEmpChain();
                 empChain.setEmpSn(empsn);
                 empChain.setChainCode(chain);
+                empChains.add(empChain);
             }
             this.saveBatch(empChains);
         }
