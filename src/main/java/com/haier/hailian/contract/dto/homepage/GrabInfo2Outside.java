@@ -20,10 +20,6 @@ public class GrabInfo2Outside {
 
     private String createName;
 
-    private String grabTargetCode;
-
-    private String grabTargetName;
-
     private String grabTargetBottom;
 
     private String grabTargetIncom;
@@ -40,8 +36,8 @@ public class GrabInfo2Outside {
 
     private String taskCode;
 
-    private List<Object> details;
-
     private String groupId;
+
+    private List<Object> details;
 
 }
