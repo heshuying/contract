@@ -124,6 +124,18 @@ public class GrabServiceImpl implements GrabService {
         }
         perfectQueryParam(queryDto);
 
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
+
+        List<SysXwRegion> xwRegion=xwRegionService.list(new QueryWrapper<SysXwRegion>()
+                .eq("xw_code", currentUser.getXwCode()));
+        if(xwRegion!=null&&xwRegion.size()>0){
+            queryDto.setLoginXwCode(xwRegion.get(0).getRegionCode());
+        }
+        
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.queryMeshGrabIncome(queryDto);
         List<String> wgCodes=meshGrabEntities.stream().map(m->m.getMeshCode())
                 .distinct().collect(Collectors.toList());
