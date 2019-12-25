@@ -7,7 +7,6 @@ import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
-import com.haier.hailian.contract.entity.ZReservePlan;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
@@ -178,6 +177,25 @@ public class HomePageImpl implements HomePageService {
         return map;
     }
 
+    /**
+     * 获取链群组织信息
+     * @return
+     */
+    @Override
+    public List<ChainDataInfo> getChainData() {
+        List<ChainDataInfo> list = new ArrayList<>();
+
+        // 链群组织信息
+        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>());
+
+        for(ZHrChainInfo zHrChainInfo : chainInfoList){
+            ChainDataInfo chainDataInfo = new ChainDataInfo();
+            BeanUtils.copyProperties(zHrChainInfo , chainDataInfo);
+            list.add(chainDataInfo);
+        }
+        return list;
+    }
+
 
     /**
      * 获取 ZContractsFactor部分信息
@@ -246,6 +264,11 @@ public class HomePageImpl implements HomePageService {
 
         return map;
     }
+
+
+
+
+
 
 
 
