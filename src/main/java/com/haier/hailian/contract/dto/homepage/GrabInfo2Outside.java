@@ -16,6 +16,8 @@ public class GrabInfo2Outside {
 
     private String orgType;
 
+    private String regionCode;
+
     private String createCode;
 
     private String createName;

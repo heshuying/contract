@@ -136,7 +136,6 @@ public class HomePageImpl implements HomePageService {
         map.put("startDate" , zContracts.getStartDate());
         map.put("endDate" , zContracts.getEndDate());
         map.put("createTime" , zContracts.getCreateTime());
-        map.put("regionCode" , zContracts.getRegionCode());
         map.put("status" , zContracts.getStatus());
 
         map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
