@@ -2,7 +2,10 @@ package com.haier.hailian.contract.controller.homepage;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.homepage.*;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.service.homepage.HomePageService;
+import com.haier.hailian.contract.service.impl.ZHrChainInfoServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,8 @@ public class HomePageController {
 
     @Autowired
     private HomePageService homePageService;
+    @Autowired
+    private ZHrChainInfoService zHrChainInfoService;
 
 
     @PostMapping(value = {"/contractList"})
@@ -56,8 +63,14 @@ public class HomePageController {
     @ApiOperation(value = "外部获取数据接口")
     public R getContractData(@RequestBody DataInfo dataInfo) {
         try{
-            Map<String,Object> res = homePageService.getContractData(dataInfo);
-            return R.ok().put("data",res);
+            List<Map<String , Object>> list = new ArrayList<>();
+            List<ZHrChainInfo> chainInfoList = zHrChainInfoService.queryAll(new ZHrChainInfo());
+            for(ZHrChainInfo zHrChainInfo : chainInfoList){
+                dataInfo.setChainCode(zHrChainInfo.getChainCode());
+                Map<String,Object> res = homePageService.getContractData(dataInfo);
+                list.add(res);
+            }
+            return R.ok().put("data",list);
         }catch (Exception e){
             e.printStackTrace();
             return R.error("获取：" + e.getMessage());
