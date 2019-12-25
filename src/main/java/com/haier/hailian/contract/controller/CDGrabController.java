@@ -1,10 +1,7 @@
 package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabViewResponseDto;
+import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.service.IncrementService;
 import io.swagger.annotations.Api;
@@ -52,11 +49,13 @@ public class CDGrabController {
     @PostMapping(value = {"/save"})
     @ApiOperation(value = "创单节点抢单页面数据保存接口")
     public R saveGrab(@RequestBody CDGrabInfoSaveRequestDto requestDto) {
-        if(requestDto.getChainGrabGoal() == null || requestDto.getChainGoal() == null || requestDto.getContractId() == null){
+        if(requestDto.getTargetList() == null || requestDto.getTargetList().isEmpty()){
             return R.error("请求参数错误，有为空的字段");
         }
-        if(requestDto.getChainGrabGoal().compareTo(requestDto.getChainGoal()) < 0){
-            return R.error("抢单目标需要大于底线目标");
+        for(CDGrabTargetDto target : requestDto.getTargetList()){
+            if(target.getChainGrabGoal().compareTo(target.getChainGoal()) < 0){
+                return R.error("抢单目标需要大于底线目标");
+            }
         }
 
         try {

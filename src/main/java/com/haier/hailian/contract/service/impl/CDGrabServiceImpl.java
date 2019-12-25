@@ -9,6 +9,7 @@ import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 19033323
@@ -42,6 +42,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZNodeTargetPercentInfoDao targetPercentInfoDao;
     @Autowired
     SysXwRegionDao sysXwRegionDao;
+    @Autowired
+    ZHrChainInfoDao zHrChainInfoDao;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -52,7 +54,6 @@ public class CDGrabServiceImpl implements CDGrabService {
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
         String xwCode = currentUser.getXwCode();
-        String ptCode = currentUser.getPtcode();
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
@@ -69,20 +70,44 @@ public class CDGrabServiceImpl implements CDGrabService {
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
         if(resultList!=null && !resultList.isEmpty()){
             responseDto.setSharePercent(resultList.get(0).getPercent());
-        }
-
-        // 目标底线查询
-        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", ptCode).like("role_code", xwCode)
-                .eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth()));
-        if(targetList != null && !targetList.isEmpty()){
-            responseDto.setTargetShareMoney(targetList.get(0).getTargetBottomLine());
         }*/
 
-        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode));
-        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
-            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
-            responseDto.setChainGoal(targetPercentInfos.get(0).getTargetLine());
+        List<String> chainCodeList = new ArrayList<>();
+        List<ZHrChainInfo> chainList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("xw_code", xwCode));
+        if(chainList != null && !chainList.isEmpty()){
+            for(ZHrChainInfo chainInfo : chainList){
+                chainCodeList.add(chainInfo.getChainCode());
+            }
         }
+
+        List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("nodeCode", currentUser.getOrgNum());
+        paraMap.put("ptCode", currentUser.getPtcode());
+        paraMap.put("yearMonthList", yearMonthList);
+        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTarget(paraMap);
+
+        // 目标底线查询
+//        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", currentUser.getPtcode()).like("role_code", xwCode)
+//                /*.eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth())*/.in("chain_code", chainCodeList));
+        if(targetList != null && !targetList.isEmpty()){
+            for (CDGrabTargetEntity targetInfo : targetList){
+                CDGrabTargetDto target = new CDGrabTargetDto();
+                target.setTargetName(targetInfo.getTargetName());
+                target.setTargetCode(targetInfo.getTargetCode());
+                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
+                target.setTargetUnit(targetInfo.getTargetUnit());
+                responseDto.getTargetList().add(target);
+                responseDto.setSharePercent(targetInfo.getSharePercent());
+            }
+        }
+
+        // 分享比例查询
+//        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode)
+//                                                           .in("lq_code", chainCodeList));
+//        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
+//            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
+//        }
 
 
         return responseDto;
@@ -110,14 +135,32 @@ public class CDGrabServiceImpl implements CDGrabService {
                 responseDto.setChainName(chainInfos.get(0).getChainName());
             }
 
-            List<ZContractsFactor> factorList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId()).eq("factor_code", Constant.FactorCode.Incom.getValue()));
+            List<ZContractsFactor> factorList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId()));
             if(factorList != null && !factorList.isEmpty()){
+                Map<String, List<ZContractsFactor>> tempMap = new HashMap<>();
                 for(ZContractsFactor factor : factorList){
-                    if(factor.getFactorType().equalsIgnoreCase(Constant.FactorType.Bottom.getValue())){
-                        responseDto.setChainGoal(factor.getFactorValue());
-                    }else if(factor.getFactorType().equalsIgnoreCase(Constant.FactorType.Grab.getValue())){
-                        responseDto.setChainGrabGoal(factor.getFactorValue());
+                    List<ZContractsFactor> list = tempMap.get(factor.getFactorCode());
+                    if(list == null || list.isEmpty()){
+                        list = new ArrayList<>();
+                        tempMap.put(factor.getFactorCode(), list);
                     }
+                    list.add(factor);
+                }
+
+                for(Map.Entry<String, List<ZContractsFactor>> entity : tempMap.entrySet()){
+                    List<ZContractsFactor> factors = entity.getValue();
+                    CDGrabTargetDto target = new CDGrabTargetDto();
+                    target.setTargetName(factors.get(0).getFactorName());
+                    target.setTargetCode(factors.get(0).getFactorCode());
+                    target.setTargetUnit(factors.get(0).getFactorUnit());
+                    for(ZContractsFactor factor : factors){
+                        if(Constant.FactorType.Bottom.getValue().equals(factor.getFactorType())){
+                            target.setChainGoal(new BigDecimal(factor.getFactorValue()));
+                        }else if(Constant.FactorType.Grab.getValue().equals(factor.getFactorType())){
+                            target.setChainGrabGoal(new BigDecimal(factor.getFactorValue()));
+                        }
+                    }
+                    responseDto.getTargetList().add(target);
                 }
             }
 
@@ -169,25 +212,27 @@ public class CDGrabServiceImpl implements CDGrabService {
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();
 
-        // 链群目标保存
-        ZContractsFactor contractsFactor = new ZContractsFactor();
-        contractsFactor.setContractId(contractsId);
-        contractsFactor.setFactorCode(Constant.FactorCode.Incom.getValue());
-        contractsFactor.setFactorName(Constant.FactorCode.Incom.getName());
-        contractsFactor.setFactorValue(requestDto.getChainGoal().toString());
-        contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-        contractsFactor.setFactorUnit("元");
-        factorDao.insert(contractsFactor);
+        for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
+            // 链群目标保存
+            ZContractsFactor contractsFactor = new ZContractsFactor();
+            contractsFactor.setContractId(contractsId);
+            contractsFactor.setFactorCode(targetDto.getTargetCode());
+            contractsFactor.setFactorName(targetDto.getTargetName());
+            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+            factorDao.insert(contractsFactor);
 
-        // 抢单目标保存
-        ZContractsFactor contractsFactor2 = new ZContractsFactor();
-        contractsFactor2.setContractId(contractsId);
-        contractsFactor2.setFactorCode(Constant.FactorCode.Incom.getValue());
-        contractsFactor2.setFactorName(Constant.FactorCode.Incom.getName());
-        contractsFactor2.setFactorValue(requestDto.getChainGrabGoal().toString());
-        contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
-        contractsFactor2.setFactorUnit("元");
-        factorDao.insert(contractsFactor2);
+            // 抢单目标保存
+            ZContractsFactor contractsFactor2 = new ZContractsFactor();
+            contractsFactor2.setContractId(contractsId);
+            contractsFactor2.setFactorCode(targetDto.getTargetCode());
+            contractsFactor2.setFactorName(targetDto.getTargetName());
+            contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
+            contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
+            contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
+            factorDao.insert(contractsFactor2);
+        }
 
         // 保存预案信息
         ZReservePlan plan = new ZReservePlan();
@@ -200,5 +245,22 @@ public class CDGrabServiceImpl implements CDGrabService {
         planDetail.setParentId(planId);
         planDetail.setContent(requestDto.getPlanContent());
         reservePlanDetailDao.insert(planDetail);
+    }
+
+    private List<String> getYearMonth(String contractId){
+        String currentYear = String.valueOf(DateFormatUtil.getYearOfDate(new Date()));
+        ZContracts contracts=contractsDao.selectById(contractId);
+        if(contracts==null){
+            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        }
+        int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
+        int endMounth=DateFormatUtil.getMonthOfDate(contracts.getEndDate());
+        List<String> yearMounths=new ArrayList<>();
+
+        for(int start=mounth;start<=endMounth;start++){
+            String strMounth = start < 10 ? "0" + start : String.valueOf(start);
+            yearMounths.add(currentYear+strMounth);
+        }
+        return yearMounths;
     }
 }

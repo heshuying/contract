@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
+import com.haier.hailian.contract.dto.homepage.PlanTeamWorkInfo;
 import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import org.apache.ibatis.annotations.Param;
@@ -76,5 +77,13 @@ public interface ZReservePlanTeamworkDao {
 
 
     int insertDetail(ZReservePlanTeamworkDetail zReservePlanTeamworkDetail);
+
+
+    /**
+     * 通过实体作为筛选条件查询
+     * @param
+     * @return 对象列表
+     */
+    List<PlanTeamWorkInfo> selectPlanInfo(@Param("contractId")int contractId);
 
 }

@@ -16,11 +16,19 @@ public class GrabInfo2Outside {
 
     private String orgType;
 
+    private String xiaoweiCode;
+
+    private String xiaoweiName;
+
     private String regionCode;
 
     private String createCode;
 
     private String createName;
+
+    private String grabTargetCode;
+
+    private String grabTargetName;
 
     private String grabTargetBottom;
 
@@ -34,12 +42,8 @@ public class GrabInfo2Outside {
 
     private String grabTargetPlan;
 
-    private String problemCode;
-
-    private String taskCode;
-
     private String groupId;
 
-    private List<Object> details;
+    private List<PlanTeamWorkInfo> planTeamWorkInfos;
 
 }

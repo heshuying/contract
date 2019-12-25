@@ -27,6 +27,12 @@ public class ZReservePlanTeamworkDto implements Serializable {
     private String problemCode;
     //问题描述
     private String problemContent;
+    //问题类型
+    private String problemType;
+    //问题来源
+    private String problemChannel;
+    //任务发起部门
+    private String problemDep;
     //开始时间
     private String startTime;
     //结束时间
@@ -39,7 +45,7 @@ public class ZReservePlanTeamworkDto implements Serializable {
     private String isImportant;
     //执行者
     private String executer;
-    //协同者
+    //抄送者
     private String teamworker;
     //创建者编码
     private String createUserCode;
