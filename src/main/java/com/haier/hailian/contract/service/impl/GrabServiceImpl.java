@@ -301,7 +301,8 @@ public class GrabServiceImpl implements GrabService {
             factors.add(grabLowFact);
         }
         contractsFactorService.saveBatch(factors);
-        // chainCommonService.buildContractChain(contracts.getId());
+
+        chainCommonService.buildContractChain(contracts.getId());
 
         return R.ok();
     }
