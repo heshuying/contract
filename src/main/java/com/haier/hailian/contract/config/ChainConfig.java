@@ -21,4 +21,10 @@ public class ChainConfig {
     private String validUrl;
     private String apiGatewayAuthAppId;
     private String apiGatewayAuthAppPassword;
+
+    private String contractUri;
+    private String contractPrivateKey;
+    private String contractPublicKeyHead;
+    private String contractPublicKeyTail;
+    private String contractAddress;
 }

@@ -26,6 +26,9 @@ public class Constant {
 
     public static String CHAIN_SEED= "海链-baas-";
 
+    public static String RMB_MIL= "万元";
+    public static String RMB_YUAN= "元";
+
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；
      */
