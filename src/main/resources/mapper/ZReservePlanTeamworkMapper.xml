@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZReservePlanTeamworkDao">
+
+    <resultMap type="com.haier.hailian.contract.entity.ZReservePlanTeamwork" id="ZReservePlanTeamworkMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
+        <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
+        <result property="isRepeat" column="is_repeat" jdbcType="VARCHAR"/>
+        <result property="isImportant" column="is_important" jdbcType="VARCHAR"/>
+        <result property="executer" column="executer" jdbcType="VARCHAR"/>
+        <result property="teamworker" column="teamworker" jdbcType="VARCHAR"/>
+        <result property="createUserCode" column="create_user_code" jdbcType="VARCHAR"/>
+        <result property="createUserName" column="create_user_name" jdbcType="VARCHAR"/>
+        <result property="createUserTime" column="create_user_time" jdbcType="TIMESTAMP"/>
+        <result property="taskCode" column="task_code" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.haier.hailian.contract.dto.ZReservePlanTeamworkDto" id="ZReservePlanTeamworkFullMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
+        <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
+        <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
+        <result property="isRepeat" column="is_repeat" jdbcType="VARCHAR"/>
+        <result property="isImportant" column="is_important" jdbcType="VARCHAR"/>
+        <result property="executer" column="executer" jdbcType="VARCHAR"/>
+        <result property="teamworker" column="teamworker" jdbcType="VARCHAR"/>
+        <result property="createUserCode" column="create_user_code" jdbcType="VARCHAR"/>
+        <result property="createUserName" column="create_user_name" jdbcType="VARCHAR"/>
+        <result property="createUserTime" column="create_user_time" jdbcType="TIMESTAMP"/>
+        <result property="taskCode" column="task_code" jdbcType="VARCHAR"/>
+        <collection property="details" javaType="List" ofType="com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail">
+            <result property="id" column="id" jdbcType="INTEGER"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+        </collection>
+
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZReservePlanTeamworkMap">
+        select
+          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+        from chain_contract.z_reserve_plan_teamwork
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZReservePlanTeamworkMap">
+        select
+          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+        from chain_contract.z_reserve_plan_teamwork
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZReservePlanTeamworkFullMap">
+        select
+        zrpt.id,
+        zrpt.parent_id,
+        zrpt.problem_code,
+        zrpt.problem_content,
+        zrpt.start_time,
+        zrpt.end_time,
+        zrpt.remind_time,
+        zrpt.is_repeat,
+        zrpt.is_important,
+        zrpt.executer,
+        zrpt.teamworker,
+        zrpt.create_user_code,
+        zrpt.create_user_name,
+        zrpt.create_user_time,
+        zrpt.task_code,
+        zrptd.id,
+        zrptd.parent_id,
+        zrptd.content
+        from chain_contract.z_reserve_plan_teamwork zrpt
+        left join z_reserve_plan_teamwork_detail zrptd on zrptd.parent_id=zrpt.id
+        <where>
+            <if test="parentId != null">
+                and zrpt.parent_id = #{parentId}
+            </if>
+            <if test="problemCode != null and problemCode != ''">
+                and zrpt.problem_code = #{problemCode}
+            </if>
+            <if test="problemContent != null and problemContent != ''">
+                and zrpt.problem_content = #{problemContent}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and zrpt.start_time = #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and zrpt.end_time = #{endTime}
+            </if>
+            <if test="remindTime != null and remindTime != ''">
+                and rzrpt.emind_time = #{remindTime}
+            </if>
+            <if test="isRepeat != null and isRepeat != ''">
+                and zrpt.is_repeat = #{isRepeat}
+            </if>
+            <if test="isImportant != null and isImportant != ''">
+                and zrpt.is_important = #{isImportant}
+            </if>
+            <if test="executer != null and executer != ''">
+                and zrpt.executer = #{executer}
+            </if>
+            <if test="teamworker != null and teamworker != ''">
+                and zrpt.teamworker = #{teamworker}
+            </if>
+            <if test="createUserCode != null and createUserCode != ''">
+                and zrpt.create_user_code = #{createUserCode}
+            </if>
+            <if test="createUserName != null and createUserName != ''">
+                and zrpt.create_user_name = #{createUserName}
+            </if>
+            <if test="createUserTime != null">
+                and zrpt.create_user_time = #{createUserTime}
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                and zrpt.task_code = #{taskCode}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code)
+        values (#{parentId}, #{problemCode}, #{problemContent}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName}, #{createUserTime}, #{taskCode})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update chain_contract.z_reserve_plan_teamwork
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="problemCode != null and problemCode != ''">
+                problem_code = #{problemCode},
+            </if>
+            <if test="problemContent != null and problemContent != ''">
+                problem_content = #{problemContent},
+            </if>
+            <if test="startTime != null and startTime != ''">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null and endTime != ''">
+                end_time = #{endTime},
+            </if>
+            <if test="remindTime != null and remindTime != ''">
+                remind_time = #{remindTime},
+            </if>
+            <if test="isRepeat != null and isRepeat != ''">
+                is_repeat = #{isRepeat},
+            </if>
+            <if test="isImportant != null and isImportant != ''">
+                is_important = #{isImportant},
+            </if>
+            <if test="executer != null and executer != ''">
+                executer = #{executer},
+            </if>
+            <if test="teamworker != null and teamworker != ''">
+                teamworker = #{teamworker},
+            </if>
+            <if test="createUserCode != null and createUserCode != ''">
+                create_user_code = #{createUserCode},
+            </if>
+            <if test="createUserName != null and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+            <if test="createUserTime != null">
+                create_user_time = #{createUserTime},
+            </if>
+            <if test="taskCode != null and taskCode != ''">
+                task_code = #{taskCode},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from chain_contract.z_reserve_plan_teamwork where id = #{id}
+    </delete>
+
+    <select id="selectCountByParentId" resultType="integer">
+        select
+          count(1)
+        from chain_contract.z_reserve_plan_teamwork
+        where parent_id = #{parentId}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name,  task_code)
+        values (#{parentId}, #{problemCode}, #{problemContent}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName}, #{taskCode})
+    </insert>
+
+    <!--新增所有列-->
+    <insert id="insertDetail" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.z_reserve_plan_teamwork_detail(parent_id, content)
+        values (#{parentId}, #{content})
+    </insert>
+
+</mapper>

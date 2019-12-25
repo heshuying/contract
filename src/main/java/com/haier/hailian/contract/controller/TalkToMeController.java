@@ -1,18 +1,17 @@
 package com.haier.hailian.contract.controller;
 
-import com.haier.hailian.contract.dto.ZReservePlanDto;
-import com.haier.hailian.contract.entity.ZReservePlanDetail;
-import com.haier.hailian.contract.service.SysNodeEhrService;
+import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
+import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
+import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,12 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping("talk")
 @Api(value = "并联协同预案", tags = {"交流群"})
+@Slf4j
 public class TalkToMeController {
     /**
      * 服务对象
      */
     @Resource
-    private SysNodeEhrService sysNodeEhrService;
+    private ZReservePlanTeamworkService zReservePlanTeamworkService;
 
     /**
      * 通过主键查询单条数据
@@ -39,36 +39,43 @@ public class TalkToMeController {
      */
     @GetMapping("getTalkCount")
     @ApiOperation(value = "获取协同预案的条数")
-    public int selectOne(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
-        return 34;
+    public R getTalkCount(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
+        try {
+            int count = zReservePlanTeamworkService.queryCountByParentId(id);
+            return R.ok().put("data", count);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getTalkCount,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
     }
-
 
     @GetMapping("getTalkList")
     @ApiOperation(value = "获取并联协同预案列表")
-    public List<ZReservePlanDto> getTalkList(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
-        List<ZReservePlanDto> list = new ArrayList<>();
-        int a =1;
-        for (int i = 0; i < 10; i++) {
-            int p = i + 1;
-            ZReservePlanDto zReservePlanDto = new ZReservePlanDto();
-            zReservePlanDto.setId(p);
-            zReservePlanDto.setOrderType("ABC");
-            zReservePlanDto.setParentId(id);
-            zReservePlanDto.setTitle("我就是问问你们第"+i+"个问题？");
-            List<ZReservePlanDetail> zReservePlanDetails = new ArrayList<>();
-            for (int j=0;j<5;j++){
-                ZReservePlanDetail zReservePlanDetail = new ZReservePlanDetail();
-                zReservePlanDetail.setContent("我告诉你答案"+a);
-                zReservePlanDetail.setParentId(p);
-                zReservePlanDetail.setId(a);
-                zReservePlanDetails.add(zReservePlanDetail);
-                a++;
-            }
-            zReservePlanDto.setDetails(zReservePlanDetails);
-            list.add(zReservePlanDto);
+    public R getTalkList(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
+        try {
+            ZReservePlanTeamwork zReservePlanTeamwork = new ZReservePlanTeamwork();
+            zReservePlanTeamwork.setParentId(id);
+            List<ZReservePlanTeamworkDto> zReservePlanTeamworkList = zReservePlanTeamworkService.queryAllByKey(zReservePlanTeamwork);
+            return R.ok().put("data", zReservePlanTeamworkList);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getTalkList,", e);
+            return R.error("系统异常，请稍后尝试！");
         }
-        return list;
+    }
+
+    @PostMapping(value = {"/saveChainInfo"})
+    @ApiOperation(value = "保存协同预案")
+    public R saveChainInfo(@RequestBody @Validated @ApiParam(value = "保存协同预案", required = true) List<ZReservePlanTeamworkDto> zReservePlanTeamworkDtoList) {
+        try {
+                String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDtoList);
+                if (z == null){
+                    return R.error("保存出错了，请稍后重试！");
+                }
+                return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
     }
 
 }
