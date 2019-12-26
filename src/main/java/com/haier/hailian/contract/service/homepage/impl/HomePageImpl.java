@@ -145,7 +145,7 @@ public class HomePageImpl implements HomePageService {
             map.put("status" , zContracts.getStatus());
 
             map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
-            map.put("groupId" , zContracts.getGroupId()); //交互组id
+            map.put("groupId" , zContracts.getGroupId()); //交互群id
 
             // 获取ZContractsFactor部分信息
             getContractsFactor(zContracts , map);
