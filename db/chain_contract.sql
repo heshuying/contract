@@ -360,7 +360,7 @@ CREATE TABLE `z_contracts` (
   `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `org_code` varchar(50) DEFAULT '',
   `org_name` varchar(50) DEFAULT '',
-  org_type varchar(50) DEFAULT '';
+  org_type varchar(50) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
