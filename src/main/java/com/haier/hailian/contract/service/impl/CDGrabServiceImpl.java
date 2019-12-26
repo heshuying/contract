@@ -187,6 +187,15 @@ public class CDGrabServiceImpl implements CDGrabService {
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
 
+        //根据小微code 和合约判断是否已抢单
+        List<ZContracts> contractList=contractsDao.selectList(new QueryWrapper<ZContracts>()
+                .eq("parent_id",requestDto.getContractId())
+                .eq("create_code",currentUser.getEmpsn())
+                .eq("contract_type", "30"));
+        if(contractList!=null){
+            throw new RException("用户已抢单");
+        }
+
         String regionCode = "";
         List<SysXwRegion> xwRegion=sysXwRegionDao.selectList(new QueryWrapper<SysXwRegion>()
                 .eq("xw_code", currentUser.getXwCode()));
