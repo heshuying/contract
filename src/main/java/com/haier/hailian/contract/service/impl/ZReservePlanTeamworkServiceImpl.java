@@ -13,7 +13,10 @@ import com.haier.hailian.contract.util.IHaierUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,9 +101,12 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     }
 
     @Override
-    public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) {
+    public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
         ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId());
+        if (zContracts ==null){
+            return null;
+        }
         zReservePlanTeamworkDto.setParentId(zContracts.getId());
         zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
         List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
@@ -108,15 +114,19 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
             zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
         }
+        //创建SimpleDateFormat对象实例并定义好转换格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime());
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
         ihaierTask.setExecutors(executors.split(","));
         String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
         ihaierTask.setCcs(ccs.split(","));
-        ihaierTask.setOpenId(zReservePlanTeamworkDto.getCreateUserCode());
+        String oid = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getCreateUserCode().split(","));
+        ihaierTask.setOpenId(oid);
         ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
-        ihaierTask.setEndDate(Long.parseLong(zReservePlanTeamworkDto.getEndTime()));
+        ihaierTask.setEndDate(date.getTime());
         ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
         ihaierTask.setNoticeTime(15);
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));

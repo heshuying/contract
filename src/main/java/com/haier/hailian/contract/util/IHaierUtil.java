@@ -22,13 +22,14 @@ public class IHaierUtil {
      *
      * @return
      */
-    private static String getAccessToken() {
+    private static String getAccessToken(String secret) {
         OkHttpClient client = new OkHttpClient();
-
+//        QQ8krXQuAuVzlRWsFoaMC5yV9chBDNsq
+//        TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         Date date = new Date();
         long timestamp = date.getTime();
-        RequestBody body = RequestBody.create(mediaType, "eid=102&secret=TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB&timestamp=" + timestamp + "&scope=resGroupSecret");
+        RequestBody body = RequestBody.create(mediaType, "eid=102&secret="+secret+"&timestamp=" + timestamp + "&scope=resGroupSecret");
         Request request = new Request.Builder()
                 .url("https://i.haier.net/gateway/oauth2/token/getAccessToken")
                 .post(body)
@@ -103,12 +104,12 @@ public class IHaierUtil {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, ihaierTask);
-        String accessToken = getAccessToken();
+        String accessToken = getAccessToken("QQ8krXQuAuVzlRWsFoaMC5yV9chBDNsq");
         if (accessToken == null) {
             return null;
         }
         Request request = new Request.Builder()
-                .url("http://yunzhijia.com/gateway/cloudwork/worktask/create?accessToken=" + accessToken)
+                .url("https://i.haier.net/gateway/cloudwork/worktask/create?accessToken=" + accessToken)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "*/*")
@@ -181,7 +182,7 @@ public class IHaierUtil {
     public static String getGroupId(String[] user) {
         OkHttpClient client = new OkHttpClient();
         String userIds = new Gson().toJson(user);
-        String accessToken = getAccessToken();
+        String accessToken = getAccessToken("TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB");
         if (accessToken == null) {
             return null;
         }
