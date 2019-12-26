@@ -17,4 +17,7 @@ import java.util.List;
 public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
+
+
+    List<ZContracts> selectUserList();
 }

@@ -55,7 +55,8 @@ public class ZReservePlanTeamworkDto implements Serializable {
     private Date createUserTime;
     //任务编码
     private String taskCode;
-
+    //群组的ID
+    private String groupId;
 
     List<ZReservePlanTeamworkDetail> details;
 

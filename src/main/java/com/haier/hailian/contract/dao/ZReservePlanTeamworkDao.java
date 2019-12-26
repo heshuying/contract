@@ -86,4 +86,8 @@ public interface ZReservePlanTeamworkDao {
      */
     List<PlanTeamWorkInfo> selectPlanInfo(@Param("contractId")int contractId);
 
+
+
+    int updateByDto(ZReservePlanTeamworkDto zReservePlanTeamworkDto);
+
 }

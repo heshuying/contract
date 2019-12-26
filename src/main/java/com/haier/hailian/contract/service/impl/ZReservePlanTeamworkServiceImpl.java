@@ -1,11 +1,15 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.google.gson.Gson;
+import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZReservePlanTeamworkDao;
 import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
+import com.haier.hailian.contract.entity.IhaierTask;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
+import com.haier.hailian.contract.util.IHaierUtil;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +31,8 @@ import java.util.List;
 public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkService {
     @Resource
     private ZReservePlanTeamworkDao zReservePlanTeamworkDao;
-    private Gson gson=new Gson();
-    @Autowired
-    private RestTemplate restTemplate;
+    @Resource
+    private ZContractsDao zContractsDao;
     /**
      * 通过ID查询单条数据
      *
@@ -98,43 +102,45 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     }
 
     @Override
-    public String saveAllInfo(List<ZReservePlanTeamworkDto> zReservePlanTeamworkDtoList) {
-        for (ZReservePlanTeamworkDto zReservePlanTeamworkDto : zReservePlanTeamworkDtoList) {
+    public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) {
             zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
             List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
             for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
                 zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
                 zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
             }
-        }
-        // 调用ihaier的接口进行任务创建
-        OkHttpClient client = new OkHttpClient();
+            // 调用ihaier的接口进行任务创建
+            IhaierTask ihaierTask = new IhaierTask();
+            String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
+            ihaierTask.setExecutors(executors.split(","));
+            String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
+            ihaierTask.setCcs(ccs.split(","));
+            ihaierTask.setOpenId(zReservePlanTeamworkDto.getCreateUserCode());
+            ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
+            ihaierTask.setEndDate(Long.parseLong(zReservePlanTeamworkDto.getEndTime()));
+            ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
+            ihaierTask.setNoticeTime(12);
+            ihaierTask.setTimingNoticeTime(1);
+            ihaierTask.setCallBackUrl("");
+            String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+            zReservePlanTeamworkDto.setTaskCode(taskId);
+            //更新taskID
+            zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
 
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        Date date = new Date();
-        long timestamp = date.getTime();
-        RequestBody body = RequestBody.create(mediaType, "eid=102&secret=TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB&timestamp="+timestamp+"&scope=resGroupSecret");
-        Request request = new Request.Builder()
-                .url("https://i.haier.net/gateway/oauth2/token/getAccessToken")
-                .post(body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("User-Agent", "PostmanRuntime/7.15.2")
-                .addHeader("Accept", "*/*")
-                .addHeader("Cache-Control", "no-cache")
-                .addHeader("Postman-Token", "5af5b09c-ec7f-4723-b3c0-f54f0b600477,52c65978-76ce-4e8a-951c-d8c0601d42b7")
-                .addHeader("Host", "i.haier.net")
-                .addHeader("Accept-Encoding", "gzip, deflate")
-                .addHeader("Content-Length", "92")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("cache-control", "no-cache")
-                .build();
 
-        try {
-            Response response = client.newCall(request).execute();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return "保存成功";
+    }
+
+    @Override
+    public String createGroup(int id) {
+        List<ZContracts> list =zContractsDao.selectUserList();
+        List<String> userList = new ArrayList<>();
+        for (ZContracts zContracts:list){
+            userList.add(zContracts.getCreateCode());
+        }
+        String[] toBeStored = new String[userList.size()];
+        userList.toArray(toBeStored);
+        String groupId = IHaierUtil.getGroupId(toBeStored);
+        return null;
     }
 }
