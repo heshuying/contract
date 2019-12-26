@@ -45,10 +45,9 @@ public class IHaierUtil {
             Response response = client.newCall(request).execute();
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
-            String accessToken = result.get("accessToken").getAsString();
-            System.out.println(accessToken);
-            return accessToken;
+            return result.get("accessToken").getAsString();
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -85,11 +84,10 @@ public class IHaierUtil {
             Response response = client.newCall(request).execute();
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
-            String accessToken = result.get("accessToken").getAsString();
-            System.out.println(accessToken);
-            return accessToken;
+            return result.get("accessToken").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
@@ -139,7 +137,7 @@ public class IHaierUtil {
         OkHttpClient client = new OkHttpClient();
         String userIds = new Gson().toJson(user);
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(mediaType, "data={\"array\":"+userIds+"}");
+        RequestBody body = RequestBody.create(mediaType, "data={\"array\":" + userIds + "}");
         Request request = new Request.Builder()
                 .url("http://apigw.haier.net/getopenid/openimport/open/person/getInfoByJobNo")
                 .post(body)
@@ -174,9 +172,9 @@ public class IHaierUtil {
     }
 
 
-
     /**
      * 创建群组
+     *
      * @param user
      * @return
      */
@@ -188,9 +186,9 @@ public class IHaierUtil {
             return null;
         }
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\"协同预案交流群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":"+userIds+"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\"协同预案交流群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":" + userIds + "}");
         Request request = new Request.Builder()
-                .url("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken="+accessToken)
+                .url("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken=" + accessToken)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -202,6 +200,8 @@ public class IHaierUtil {
             Response response = client.newCall(request).execute();
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
+            String groupId = result.get("groupId").getAsString();
+            createGG(groupId, accessToken);
             return result.get("groupId").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
@@ -209,28 +209,32 @@ public class IHaierUtil {
         return null;
     }
 
-//    public static void main(String[] args) {
-//        OkHttpClient client = new OkHttpClient();
-//
-//        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, "{\n\"currentUid\": \"b0a53de5-d586-4313-8668-96d00118220e\",\n\"groupId\": \"5e0428a3ed50e4d544944c5b\",\n\"title\": \"测试链群公告\",\n\"content\": \"测试一下\"\n}");
-//        Request request = new Request.Builder()
-//                .url("https://i.haier.net/gateway/xtinterface/notice/create?accessToken=9f5IXT4WiOCjlspvHQ00VFGHpkxAzIw0")
-//                .post(body)
-//                .addHeader("Content-Type", "application/json")
-//                .addHeader("User-Agent", "PostmanRuntime/7.15.2")
-//                .addHeader("Accept", "*/*")
-//                .addHeader("Cache-Control", "no-cache")
-//                .addHeader("Postman-Token", "b682cb13-7a40-4e58-8670-ca70b3b46e9f,77df6bb8-107e-46c1-80a6-878da430a942")
-//                .addHeader("Host", "i.haier.net")
-//                .addHeader("Accept-Encoding", "gzip, deflate")
-//                .addHeader("Content-Length", "159")
-//                .addHeader("Connection", "keep-alive")
-//                .addHeader("cache-control", "no-cache")
-//                .build();
-//
-//        Response response = client.newCall(request).execute();
-//    }
+    private static String createGG(String groupId, String accessToken) {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"currentUid\": \"5e030c81ed50999dad27824d\",\"groupId\": \"" + groupId + "\",\"title\": \"并联协同公告\",\"content\": \"请进行进一步的讨论！\"}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/xtinterface/notice/create?accessToken=" + accessToken)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            JsonObject result = json.get("data").getAsJsonObject();
+            return result.get("noticeId").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 }
