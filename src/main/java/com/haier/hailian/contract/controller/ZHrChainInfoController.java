@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -12,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +87,10 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询链群架构人员")
     public R searchUsers(@RequestBody @Validated @ApiParam(value = "查询人员", required = true) String keyWords) {
         try {
-            List<SysNodeEhr> list = zHrChainInfoService.searchUsersByKeyWords(keyWords);
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(keyWords);  //创建jsonObject对象
+            String result = json.get("keyWords").getAsString();
+            List<SysNodeEhr> list = zHrChainInfoService.searchUsersByKeyWords(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.searchUsers,", e);
