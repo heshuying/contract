@@ -69,6 +69,7 @@
         from z_contracts
         where contract_type ='10'
         and status = '1'
+        and group_id is null
     </select>
 
 
