@@ -46,9 +46,9 @@ public class ZContractsQuartz {
     }
     @Scheduled(cron="0 0/10 * * * ?")
     public void createGroup(){
-        log.info("【凌晨1点刷新合约状态任务开始】");
+        log.info("【创建合约的群组开始】");
         zReservePlanTeamworkService.createGroup();
-        log.info("【凌晨1点刷新合约状态任务结束】");
+        log.info("【创建合约的群组结束】");
     }
 
 }
