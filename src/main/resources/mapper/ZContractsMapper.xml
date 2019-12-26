@@ -60,5 +60,14 @@
         <include refid="Base_Column_List" />
         from z_contracts
         where contract_type !='10'
+        and parent_id = #{id}
+    </select>
+
+    <select id="selectByGID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where contract_type ='10'
+        and group_id = #{groupId}
     </select>
 </mapper>

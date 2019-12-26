@@ -37,8 +37,10 @@ public class ZReservePlanTeamworkDto implements Serializable {
     private String startTime;
     //结束时间
     private String endTime;
-    //提醒时间
+    //提醒时间  任务定时提醒时间(0:不提醒、1:每天、2:每工作日、3:每周、4:每两周、5:每月)
     private String remindTime;
+    //提醒类型  提醒类型：0不提醒，1截止提醒，2截止前1小时，3截止前1天
+    private String remindType;
     //是否重复：0/1 - 是/否
     private String isRepeat;
     //是否重要：0/1 - 是/否

@@ -13,6 +13,7 @@
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
+        <result property="remindType" column="remind_type" jdbcType="VARCHAR"/>
         <result property="isRepeat" column="is_repeat" jdbcType="VARCHAR"/>
         <result property="isImportant" column="is_important" jdbcType="VARCHAR"/>
         <result property="executer" column="executer" jdbcType="VARCHAR"/>

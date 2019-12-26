@@ -18,6 +18,16 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
 
+    /**
+     * 查询所有的抢单人的
+     * @return
+     */
+    List<ZContracts> selectUserList(int id);
 
-    List<ZContracts> selectUserList();
+    /**
+     * 获取合约的ID
+     * @param groupId
+     * @return
+     */
+    ZContracts selectByGID(String groupId);
 }
