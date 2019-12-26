@@ -5,13 +5,14 @@ import com.haier.hailian.contract.service.ZContractsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 /**
- * Created by 01471082 on 2019/4/25.
+ * Created by 19012964 on 2019/12/26.
  */
 @Component
 public class ZContractsQuartz {
@@ -22,11 +23,11 @@ public class ZContractsQuartz {
     /**
      * 每天零点刷新合约状态
      */
-    @Scheduled(cron="0 0/5 * * * ?")
+    @Scheduled(cron="0 0 1 * * ?")
     public void doRefreshContractStatus(){
-        log.info("【零点刷新合约状态任务开始】");
+        log.info("【凌晨1点刷新合约状态任务开始】");
         grabService.refreshContractStatusJob();
-        log.info("【零点刷新合约状态任务结束】");
+        log.info("【凌晨1点刷新合约状态任务结束】");
     }
 
 

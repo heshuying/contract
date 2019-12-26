@@ -337,7 +337,7 @@ public class GrabServiceImpl implements GrabService {
         List<ZContracts> list=contractsService.list(new QueryWrapper<ZContracts>()
                 .eq("contract_type","10")
                 .eq("status","0")
-                .lt("joinTime",new Date())
+                .lt("join_time",new Date())
         );
         List<ZContracts> updateList=new ArrayList<>();
         for (ZContracts contract:list) {
