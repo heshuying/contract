@@ -195,6 +195,7 @@
             </foreach>
         </if>
           AND tb.target_pt_code = #{ptCode}
+          AND tpi.lq_code = #{chainCode}
     </select>
 
 </mapper>

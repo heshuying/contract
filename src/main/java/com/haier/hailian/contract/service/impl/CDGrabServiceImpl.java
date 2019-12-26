@@ -85,6 +85,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         paraMap.put("nodeCode", currentUser.getOrgNum());
         paraMap.put("ptCode", currentUser.getPtcode());
         paraMap.put("yearMonthList", yearMonthList);
+        paraMap.put("chainCode", contracts.getChainCode());
         List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTarget(paraMap);
 
         // 目标底线查询
