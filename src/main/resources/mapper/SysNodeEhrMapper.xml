@@ -117,6 +117,7 @@
         from chain_contract.sys_node_ehr
         where nodeName  like CONCAT('%', #{keyWords}, '%')
         or nodeManagerCode like CONCAT('%', #{keyWords}, '%')
+        or nodeCode like CONCAT('%', #{keyWords}, '%')
         or xwName like CONCAT('%', #{keyWords}, '%')
         or nodeManagerName like CONCAT('%', #{keyWords}, '%')
     </select>
