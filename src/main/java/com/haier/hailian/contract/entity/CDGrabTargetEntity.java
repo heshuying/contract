@@ -17,5 +17,7 @@ public class CDGrabTargetEntity {
     private String targetBottomLine;
     /** 分享比例*/
     private String sharePercent;
+    /** 目标方向（1：正向；0：负向）*/
+    private String targetTo;
 
 }

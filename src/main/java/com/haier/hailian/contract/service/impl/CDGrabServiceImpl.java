@@ -97,6 +97,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 target.setTargetCode(targetInfo.getTargetCode());
                 target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
                 target.setTargetUnit(targetInfo.getTargetUnit());
+                target.setTargetTo(targetInfo.getTargetTo());
                 responseDto.getTargetList().add(target);
                 responseDto.setSharePercent(targetInfo.getSharePercent());
             }
@@ -154,6 +155,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     target.setTargetName(factors.get(0).getFactorName());
                     target.setTargetCode(factors.get(0).getFactorCode());
                     target.setTargetUnit(factors.get(0).getFactorUnit());
+                    target.setTargetTo(factors.get(0).getFactorDirecton());
                     for(ZContractsFactor factor : factors){
                         if(Constant.FactorType.Bottom.getValue().equals(factor.getFactorType())){
                             target.setChainGoal(new BigDecimal(factor.getFactorValue()));
@@ -231,6 +233,7 @@ public class CDGrabServiceImpl implements CDGrabService {
             contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
             contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
             contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
             factorDao.insert(contractsFactor);
 
             // 抢单目标保存
@@ -241,6 +244,7 @@ public class CDGrabServiceImpl implements CDGrabService {
             contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
             contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
             contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
+            contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
             factorDao.insert(contractsFactor2);
         }
 

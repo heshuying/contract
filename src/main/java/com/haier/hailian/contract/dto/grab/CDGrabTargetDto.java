@@ -19,4 +19,6 @@ public class CDGrabTargetDto {
     private BigDecimal chainGrabGoal;
     @ApiModelProperty(value="目标单位",name="目标单位",example="元")
     private String targetUnit;
+    @ApiModelProperty(value="目标方向（1：正向；0：负向）",name="目标方向")
+    private String targetTo;
 }
