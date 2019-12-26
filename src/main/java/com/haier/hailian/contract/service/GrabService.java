@@ -14,4 +14,9 @@ public interface GrabService {
     MeshSummaryDto queryMeshGrabDetail(TyMasterGrabQueryDto queryDto);
 
     R doGrab(MessGambSubmitDto dto);
+
+    /**
+     * 定时任务刷新合约状态，只刷类型为10的单
+     */
+    void refreshContractStatusJob();
 }

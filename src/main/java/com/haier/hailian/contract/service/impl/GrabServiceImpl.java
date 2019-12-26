@@ -25,6 +25,7 @@ import com.haier.hailian.contract.service.ZNetBottomService;
 import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Created by 19012964 on 2019/12/17.
  */
+@Slf4j
 @Service
 public class GrabServiceImpl implements GrabService {
     @Autowired
@@ -329,6 +331,35 @@ public class GrabServiceImpl implements GrabService {
         return R.ok();
     }
 
+    @Override
+    public void refreshContractStatusJob() {
+        //截止抢入时间 仍然处于抢入中的合约
+        List<ZContracts> list=contractsService.list(new QueryWrapper<ZContracts>()
+                .eq("contract_type","10")
+                .eq("status","0")
+                .lt("joinTime",new Date())
+        );
+        List<ZContracts> updateList=new ArrayList<>();
+        for (ZContracts contract:list) {
+            //是否存在抢单记录
+            ZContracts updateContract=new ZContracts();
+            updateContract.setId(contract.getId());
+            List<ZContracts> sub=contractsService.list(new QueryWrapper<ZContracts>()
+                    .eq("parent_id", contract.getId())
+                    .last("limit 1")
+            );
+            if(sub==null||sub.size()==0){
+                updateContract.setStatus("4");
+            }else{
+                updateContract.setStatus("1");
+            }
+            updateList.add(updateContract);
+        }
+        log.info("========刷新合约状态=====");
+        log.info("数据：{}", updateList);
+        contractsService.updateBatchById(updateList);
+
+    }
 
     private void perfectQueryParam(TyMasterGrabQueryDto queryDTO){
         if(StringUtils.isBlank(queryDTO.getYear())){
