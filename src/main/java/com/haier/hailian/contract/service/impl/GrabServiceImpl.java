@@ -223,8 +223,10 @@ public class GrabServiceImpl implements GrabService {
 
         //根据小微code 和合约判断是否已抢单
         ZContracts existsContract=contractsService.getOne(new QueryWrapper<ZContracts>()
-        .eq("parent_id",chainInfoDto.getContractId())
-        .eq("xiaowei_code",currentUser.getXwCode()));
+                .eq("parent_id",chainInfoDto.getContractId())
+                .eq("contract_type","20")
+                .eq("xiaowei_code",currentUser.getXwCode())
+        );
         if(existsContract!=null){
             throw new RException("该用户已抢单，请勿重复抢单",Constant.CODE_VALIDFAIL);
         }

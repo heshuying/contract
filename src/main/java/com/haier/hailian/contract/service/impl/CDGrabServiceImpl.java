@@ -193,7 +193,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 .eq("parent_id",requestDto.getContractId())
                 .eq("create_code",currentUser.getEmpsn())
                 .eq("contract_type", "30"));
-        if(contractList!=null){
+        if(contractList!=null && contractList.size()>0){
             throw new RException("用户已抢单");
         }
 
