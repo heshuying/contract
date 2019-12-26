@@ -43,7 +43,6 @@ public class IHaierUtil {
         try {
             JsonParser parse = new JsonParser();  //创建json解析器
             Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
             String accessToken = result.get("accessToken").getAsString();
@@ -84,7 +83,6 @@ public class IHaierUtil {
         try {
             JsonParser parse = new JsonParser();  //创建json解析器
             Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
             String accessToken = result.get("accessToken").getAsString();
@@ -176,6 +174,7 @@ public class IHaierUtil {
     }
 
 
+
     /**
      * 创建群组
      * @param user
@@ -209,6 +208,29 @@ public class IHaierUtil {
         }
         return null;
     }
+
+//    public static void main(String[] args) {
+//        OkHttpClient client = new OkHttpClient();
+//
+//        MediaType mediaType = MediaType.parse("application/json");
+//        RequestBody body = RequestBody.create(mediaType, "{\n\"currentUid\": \"b0a53de5-d586-4313-8668-96d00118220e\",\n\"groupId\": \"5e0428a3ed50e4d544944c5b\",\n\"title\": \"测试链群公告\",\n\"content\": \"测试一下\"\n}");
+//        Request request = new Request.Builder()
+//                .url("https://i.haier.net/gateway/xtinterface/notice/create?accessToken=9f5IXT4WiOCjlspvHQ00VFGHpkxAzIw0")
+//                .post(body)
+//                .addHeader("Content-Type", "application/json")
+//                .addHeader("User-Agent", "PostmanRuntime/7.15.2")
+//                .addHeader("Accept", "*/*")
+//                .addHeader("Cache-Control", "no-cache")
+//                .addHeader("Postman-Token", "b682cb13-7a40-4e58-8670-ca70b3b46e9f,77df6bb8-107e-46c1-80a6-878da430a942")
+//                .addHeader("Host", "i.haier.net")
+//                .addHeader("Accept-Encoding", "gzip, deflate")
+//                .addHeader("Content-Length", "159")
+//                .addHeader("Connection", "keep-alive")
+//                .addHeader("cache-control", "no-cache")
+//                .build();
+//
+//        Response response = client.newCall(request).execute();
+//    }
 
 
 }
