@@ -131,19 +131,22 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     }
 
     @Override
-    public String createGroup(int id) {
-        List<ZContracts> list = zContractsDao.selectUserList(id);
+    public void createGroup() {
+        List<ZContracts> list = zContractsDao.selectAllContracts();
         List<String> userList = new ArrayList<>();
         for (ZContracts zContracts : list) {
-            userList.add(zContracts.getCreateCode());
+            List<ZContracts> contracts= zContractsDao.selectUserList(zContracts.getId());
+            for (ZContracts z: contracts){
+                userList.add(z.getCreateCode());
+            }
+            String[] toBeStored = new String[userList.size()];
+            userList.toArray(toBeStored);
+            String groupId = IHaierUtil.getGroupId(toBeStored);
+            ZContracts zContractTemp = new ZContracts();
+            zContractTemp.setId(zContracts.getId());
+            zContractTemp.setGroupId(groupId);
+            zContractsDao.updateById(zContractTemp);
         }
-        String[] toBeStored = new String[userList.size()];
-        userList.toArray(toBeStored);
-        String groupId = IHaierUtil.getGroupId(toBeStored);
-        ZContracts zContracts = new ZContracts();
-        zContracts.setId(id);
-        zContracts.setGroupId(groupId);
-        zContractsDao.updateById(zContracts);
-        return null;
+
     }
 }

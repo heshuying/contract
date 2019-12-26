@@ -80,13 +80,10 @@ public class TalkToMeController {
 
     @PostMapping(value = {"/getA"})
     @ApiOperation(value = "测试URL")
-    public R getA(@RequestBody @Validated @ApiParam(value = "测试", required = true) int id) {
+    public R getA() {
         try {
-            String z = zReservePlanTeamworkService.createGroup(id);
-            if (z == null){
-                return R.error("测试出错了，请稍后重试！");
-            }
-            return R.ok().put("data", z);
+            zReservePlanTeamworkService.createGroup();
+            return R.ok();
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getA,", e);
             return R.error("系统异常，请稍后尝试！");

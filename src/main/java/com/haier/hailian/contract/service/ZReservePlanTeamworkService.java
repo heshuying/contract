@@ -78,6 +78,6 @@ public interface ZReservePlanTeamworkService {
     String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto);
 
 
-    String createGroup(int id);
+    void createGroup();
 
 }

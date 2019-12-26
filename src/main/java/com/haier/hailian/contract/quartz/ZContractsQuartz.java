@@ -1,7 +1,9 @@
 package com.haier.hailian.contract.quartz;
 
+import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.ZContractsService;
+import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class ZContractsQuartz {
     private final Logger log =  LoggerFactory.getLogger(ZContractsQuartz.class);
     @Autowired
     private GrabService grabService;
+    @Autowired
+    private ZReservePlanTeamworkService zReservePlanTeamworkService;
 
     /**
      * 每天零点刷新合约状态
@@ -40,5 +44,12 @@ public class ZContractsQuartz {
         //xCalculateLogical.doRefresh690();
         //log.info("【定时任务结束--刷新690数据】");
     }
+    @Scheduled(cron="0 0/10 * * * ?")
+    public void createGroup(){
+        log.info("【凌晨1点刷新合约状态任务开始】");
+        zReservePlanTeamworkService.createGroup();
+        log.info("【凌晨1点刷新合约状态任务结束】");
+    }
+
 }
 
