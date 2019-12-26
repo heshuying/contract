@@ -11,7 +11,9 @@ import java.util.List;
  */
 public interface ChainCommonService {
     String uploadJsonData(String json);
-    void doChainAfterGrab(String contractId, String status, String dataHash);
+    void doChainAfterGrab(ZContracts contract, String dataHash);
 
     void buildContractChain(Integer contractId);
+
+    void getContractFromChain(Integer contractId);
 }

@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
@@ -19,6 +22,8 @@ import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tuples.generated.Tuple2;
+import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import rx.Observable;
@@ -35,7 +40,7 @@ import rx.functions.Func1;
  * <p>Generated with web3j version 3.3.1.
  */
 public class ChainContract extends Contract {
-    private static final String BINARY = "608060405234801561001057600080fd5b50610537806100206000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c8063b1a4da181161005b578063b1a4da181461015c578063e9a03a0114610194578063eaeaa66c146101d6578063ec0366851461021f5761007d565b8063071d78e614610082578063288330e8146100c457806371a0d74a146100fc575b600080fd5b6100ae6004803603602081101561009857600080fd5b8101908080359060200190929190505050610257565b6040518082815260200191505060405180910390f35b6100fa600480360360408110156100da57600080fd5b81019080803590602001909291908035906020019092919050505061026f565b005b61015a600480360360c081101561011257600080fd5b810190808035906020019092919080359060200190929190803590602001909291908035906020019092919080359060200190929190803590602001909291905050506102ad565b005b6101926004803603604081101561017257600080fd5b8101908080359060200190929190803590602001909291905050506103af565b005b6101d4600480360360608110156101aa57600080fd5b810190808035906020019092919080359060200190929190803590602001909291905050506103ed565b005b610202600480360360208110156101ec57600080fd5b8101908080359060200190929190505050610482565b604051808381526020018281526020019250505060405180910390f35b6102556004803603604081101561023557600080fd5b8101908080359060200190929190803590602001909291905050506104ba565b005b60026020528060005260406000206000915090505481565b60006002600084815260200190815260200160002050602060ff1611156102a9578060026000848152602001908152602001600020819055505b5050565b83600160008881526020019081526020016000206000878152602001908152602001600020600001819055508260016000888152602001908152602001600020600087815260200190815260200160002060010181905550816001600088815260200190815260200160002060008781526020019081526020016000206003018190555080600160008881526020019081526020016000206000878152602001908152602001600020600201819055508385877f56bb19b7dff93d71338f2f81d05f931f884f341c6106a3be4dcc11f574fc75c686868660405180848152602001838152602001828152602001935050505060405180910390a4505050505050565b60006002600084815260200190815260200160002050602060ff1614156103e9578060026000848152602001908152602001600020819055505b5050565b60008084815260200190815260200160002060020160009054906101000a900460ff161561041a5761047d565b81600080858152602001908152602001600020600001819055508060008085815260200190815260200160002060010181905550600160008085815260200190815260200160002060020160006101000a81548160ff0219169083151502179055505b505050565b600080600080848152602001908152602001600020600001546000808581526020019081526020016000206001015491509150915091565b60008083815260200190815260200160002060020160009054906101000a900460ff16156104fd5780600080848152602001908152602001600020600001819055505b505056fea2646970667358221220668938044fb298ae8aed35743470742a854dfadc2d02711e956a22d83038279b64736f6c63430006000033";
+    private static final String BINARY = "6060604052341561000f57600080fd5b6103638061001e6000396000f30060606040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663071d78e68114610092578063288330e8146100ba578063950d8a72146100d5578063b1a4da18146100f7578063b7a6cc8d14610110578063da5cb8691461012f578063eaeaa66c14610171578063ec0366851461019f575b600080fd5b341561009d57600080fd5b6100a86004356101b8565b60405190815260200160405180910390f35b34156100c557600080fd5b6100d36004356024356101ca565b005b34156100e057600080fd5b6100d36004356024356044356064356084356101e0565b341561010257600080fd5b6100d360043560243561025c565b341561011b57600080fd5b6100d360043560243560443560643561026b565b341561013a57600080fd5b6101456004356102c1565b604051938452602084019290925260408084019190915290151560608301526080909101905180910390f35b341561017c57600080fd5b6101876004356102eb565b60405191825260208201526040908101905180910390f35b34156101aa57600080fd5b6100d3600435602435610308565b60026020526000908152604090205481565b60008281526002602052604090208190555b5050565b60008581526001602081905260409182902086815590810185905560038101849055600201829055849086907fa7fe58257baf82e8734af54b55b06c49af10bc6f6871f159a429a372d0dc1e21908690869086905192835260208301919091526040808301919091526060909101905180910390a35050505050565b600082905260026020526101dc565b60008381526020819052604090206003015460ff161561028a576102bb565b60008381526020819052604090208481556001808201849055600282018390556003909101805460ff191690911790555b50505050565b60006020819052908152604090208054600182015460028301546003909301549192909160ff1684565b600090815260208190526040902060018101546002909101549091565b60008281526020819052604090206003015460ff16156101dc57600091825260208290526040909120600101555600a165627a7a72305820c936659c35ca2cb3648b27681b32af01c69b34d9d0e54f2f65cbc1b5266d23b10029";
 
     protected ChainContract(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
@@ -46,110 +51,134 @@ public class ChainContract extends Contract {
     }
 
     public List<TargetLogEventResponse> getTargetLogEvents(TransactionReceipt transactionReceipt) {
-        final Event event = new Event("TargetLog", 
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(event, transactionReceipt);
+        final Event event = new Event("TargetLog",
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(event, transactionReceipt);
         ArrayList<TargetLogEventResponse> responses = new ArrayList<TargetLogEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             TargetLogEventResponse typedResponse = new TargetLogEventResponse();
             typedResponse.log = eventValues.getLog();
-            typedResponse.parentId = (byte[]) eventValues.getIndexedValues().get(0).getValue();
-            typedResponse.ccode = (byte[]) eventValues.getIndexedValues().get(1).getValue();
-            typedResponse.partCode = (byte[]) eventValues.getIndexedValues().get(2).getValue();
+            typedResponse.ccode = (byte[]) eventValues.getIndexedValues().get(0).getValue();
+            typedResponse.partCode = (byte[]) eventValues.getIndexedValues().get(1).getValue();
             typedResponse.tcode = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
             typedResponse.ttype = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
-            typedResponse.tval = (BigInteger) eventValues.getNonIndexedValues().get(2).getValue();
+            typedResponse.tval = (byte[]) eventValues.getNonIndexedValues().get(2).getValue();
             responses.add(typedResponse);
         }
         return responses;
     }
 
     public Observable<TargetLogEventResponse> targetLogEventObservable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
-        final Event event = new Event("TargetLog", 
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
+        final Event event = new Event("TargetLog",
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(event));
         return web3j.ethLogObservable(filter).map(new Func1<Log, TargetLogEventResponse>() {
             @Override
             public TargetLogEventResponse call(Log log) {
-                EventValuesWithLog eventValues = extractEventParametersWithLog(event, log);
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(event, log);
                 TargetLogEventResponse typedResponse = new TargetLogEventResponse();
                 typedResponse.log = log;
-                typedResponse.parentId = (byte[]) eventValues.getIndexedValues().get(0).getValue();
-                typedResponse.ccode = (byte[]) eventValues.getIndexedValues().get(1).getValue();
-                typedResponse.partCode = (byte[]) eventValues.getIndexedValues().get(2).getValue();
+                typedResponse.ccode = (byte[]) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.partCode = (byte[]) eventValues.getIndexedValues().get(1).getValue();
                 typedResponse.tcode = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
                 typedResponse.ttype = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
-                typedResponse.tval = (BigInteger) eventValues.getNonIndexedValues().get(2).getValue();
+                typedResponse.tval = (byte[]) eventValues.getNonIndexedValues().get(2).getValue();
                 return typedResponse;
             }
         });
     }
 
-    public RemoteCall<TransactionReceipt> ChainInfo(byte[] param0) {
+    public RemoteCall<byte[]> ChainInfo(byte[] param0) {
+        final Function function = new Function("ChainInfo",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(param0)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
+    }
+
+    public RemoteCall<TransactionReceipt> UpdataInfo(byte[] chaiID, byte[] chainInfo) {
         final Function function = new Function(
-                "ChainInfo", 
-                Arrays.<Type>asList(new Bytes32(param0)),
+                "UpdataInfo",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(chaiID),
+                        new org.web3j.abi.datatypes.generated.Bytes32(chainInfo)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> Create(byte[] ccode, BigInteger cstate, byte[] hashcode) {
+    public RemoteCall<TransactionReceipt> InsertTatget(byte[] ccode, byte[] partCode, byte[] tcode, byte[] ttype, byte[] tval) {
         final Function function = new Function(
-                "Create", 
-                Arrays.<Type>asList(new Bytes32(ccode),
-                new Uint256(cstate),
-                new Bytes32(hashcode)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteCall<TransactionReceipt> GetInfo(byte[] ccode) {
-        final Function function = new Function(
-                "GetInfo", 
-                Arrays.<Type>asList(new Bytes32(ccode)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteCall<TransactionReceipt> InsertTatget(byte[] parentId, byte[] ccode, byte[] partCode, byte[] tcode, byte[] ttype, BigInteger tval) {
-        final Function function = new Function(
-                "InsertTatget", 
-                Arrays.<Type>asList(new Bytes32(parentId),
-                new Bytes32(ccode),
-                new Bytes32(partCode),
-                new Bytes32(tcode),
-                new Bytes32(ttype),
-                new Uint256(tval)),
+                "InsertTatget",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(ccode),
+                        new org.web3j.abi.datatypes.generated.Bytes32(partCode),
+                        new org.web3j.abi.datatypes.generated.Bytes32(tcode),
+                        new org.web3j.abi.datatypes.generated.Bytes32(ttype),
+                        new org.web3j.abi.datatypes.generated.Bytes32(tval)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public RemoteCall<TransactionReceipt> SetInfo(byte[] chaiID, byte[] chainInfo) {
         final Function function = new Function(
-                "SetInfo", 
-                Arrays.<Type>asList(new Bytes32(chaiID),
-                new Bytes32(chainInfo)),
+                "SetInfo",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(chaiID),
+                        new org.web3j.abi.datatypes.generated.Bytes32(chainInfo)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> UpdataInfo(byte[] chaiID, byte[] chainInfo) {
+    public RemoteCall<TransactionReceipt> Create(byte[] parentid, byte[] ccode, BigInteger cstate, byte[] hashcode) {
         final Function function = new Function(
-                "UpdataInfo", 
-                Arrays.<Type>asList(new Bytes32(chaiID),
-                new Bytes32(chainInfo)),
+                "Create",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(parentid),
+                        new org.web3j.abi.datatypes.generated.Bytes32(ccode),
+                        new org.web3j.abi.datatypes.generated.Uint256(cstate),
+                        new org.web3j.abi.datatypes.generated.Bytes32(hashcode)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteCall<Tuple4<byte[], BigInteger, byte[], Boolean>> COf(byte[] param0) {
+        final Function function = new Function("COf",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(param0)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {},
+                        new TypeReference<Uint256>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
+        return new RemoteCall<Tuple4<byte[], BigInteger, byte[], Boolean>>(
+                new Callable<Tuple4<byte[], BigInteger, byte[], Boolean>>() {
+                    @Override
+                    public Tuple4<byte[], BigInteger, byte[], Boolean> call() throws Exception {
+                        List<Type> results = executeCallMultipleValueReturn(function);
+                        return new Tuple4<byte[], BigInteger, byte[], Boolean>(
+                                (byte[]) results.get(0).getValue(),
+                                (BigInteger) results.get(1).getValue(),
+                                (byte[]) results.get(2).getValue(),
+                                (Boolean) results.get(3).getValue());
+                    }
+                });
+    }
+
+    public RemoteCall<Tuple2<BigInteger, byte[]>> GetInfo(byte[] ccode) {
+        final Function function = new Function("GetInfo",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(ccode)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Bytes32>() {}));
+        return new RemoteCall<Tuple2<BigInteger, byte[]>>(
+                new Callable<Tuple2<BigInteger, byte[]>>() {
+                    @Override
+                    public Tuple2<BigInteger, byte[]> call() throws Exception {
+                        List<Type> results = executeCallMultipleValueReturn(function);
+                        return new Tuple2<BigInteger, byte[]>(
+                                (BigInteger) results.get(0).getValue(),
+                                (byte[]) results.get(1).getValue());
+                    }
+                });
     }
 
     public RemoteCall<TransactionReceipt> UpdateState(byte[] ccode, BigInteger cstate) {
         final Function function = new Function(
-                "UpdateState", 
-                Arrays.<Type>asList(new Bytes32(ccode),
-                new Uint256(cstate)),
+                "UpdateState",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(ccode),
+                        new org.web3j.abi.datatypes.generated.Uint256(cstate)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -173,8 +202,6 @@ public class ChainContract extends Contract {
     public static class TargetLogEventResponse {
         public Log log;
 
-        public byte[] parentId;
-
         public byte[] ccode;
 
         public byte[] partCode;
@@ -183,6 +210,6 @@ public class ChainContract extends Contract {
 
         public byte[] ttype;
 
-        public BigInteger tval;
+        public byte[] tval;
     }
 }

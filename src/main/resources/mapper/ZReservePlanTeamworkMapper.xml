@@ -49,6 +49,18 @@
 
     </resultMap>
 
+
+    <resultMap type="com.haier.hailian.contract.dto.homepage.PlanTeamWorkInfo" id="PlanTeamWorkInfo">
+        <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
+        <result property="taskCode" column="task_code" jdbcType="VARCHAR"/>
+        <collection property="details" javaType="List" ofType="com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail">
+            <result property="id" column="id" jdbcType="INTEGER"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+        </collection>
+
+    </resultMap>
+
     <!--查询单个-->
     <select id="queryById" resultMap="ZReservePlanTeamworkMap">
         select
@@ -228,4 +240,22 @@
         </set>
         where id = #{id}
     </update>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectPlanInfo" resultMap="PlanTeamWorkInfo">
+        select
+        zrpt.problem_code,
+        zrpt.task_code,
+        zrptd.id,
+        zrptd.parent_id,
+        zrptd.content
+        from chain_contract.z_reserve_plan_teamwork zrpt
+        left join z_reserve_plan_teamwork_detail zrptd on zrptd.parent_id=zrpt.id
+        <where>
+            <if test="contractId != null">
+                and zrpt.parent_id = #{contractId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

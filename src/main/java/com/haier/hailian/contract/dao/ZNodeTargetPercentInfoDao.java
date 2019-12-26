@@ -1,9 +1,11 @@
 package com.haier.hailian.contract.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.haier.hailian.contract.entity.CDGrabTargetEntity;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
+import java.util.Map;
 
 /**
  * (ZNodeTargetPercentInfo)表数据库访问层
@@ -65,5 +67,12 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<ZNodeTargetPercentInfo> queryByKeyWorld(@Param("list") List<String> list,@Param("periodCode")String periodCode);
 
     int insertBatch(@Param("list") List<ZNodeTargetPercentInfo> list);
+
+    /**
+     * 查询抢单底线目标
+     * @param paraMap
+     * @return
+     */
+    List<CDGrabTargetEntity> queryCDGrabTarget(Map<String,Object> paraMap);
 
 }

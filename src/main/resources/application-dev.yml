@@ -69,11 +69,11 @@ chain:
   validUrl: http://apigw.haier.net/chain/d2v/validate
   apiGatewayAuthAppId: 960beedb-1ab8-42e4-b4ba-ab1fdf9c281c
   apiGatewayAuthAppPassword: W00049
-  contractUri: http://10.138.93.29:8102
+  contractUri: http://10.138.66.1:8501
   contractPrivateKey: 0xa392604efc2fad9c0b3da43b5f698a2e3f270f170d859912be0d54742275c5f6
   contractPublicKeyHead: 0x506bc1dc099358e5137292f4efdd57e400f29ba5132aa5d12b18dac1c1f6aab
   contractPublicKeyTail: a645c0b7b58158babbfa6c6cd5a48aa7340a8749176b120e8516216787a13dc76
-  contractAddress: 0x1550361fc98e61a61928c540235febc00058ba8e
+  contractAddress: 0xe8108ee3d27f3a7d6365c6db91358b28b23698af
 
 # hac login Resp api
 hac:
