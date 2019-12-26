@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
 import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public interface ZReservePlanTeamworkService {
      * @param zReservePlanTeamworkDto
      * @return
      */
-    String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto);
+    String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException;
 
 
     void createGroup();
