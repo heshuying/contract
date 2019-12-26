@@ -77,4 +77,8 @@ public interface ZReservePlanTeamworkDao {
 
     int insertDetail(ZReservePlanTeamworkDetail zReservePlanTeamworkDetail);
 
+
+
+    int updateByDto(ZReservePlanTeamworkDto zReservePlanTeamworkDto);
+
 }

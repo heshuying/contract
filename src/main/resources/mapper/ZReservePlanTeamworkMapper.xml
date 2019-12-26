@@ -218,4 +218,14 @@
         values (#{parentId}, #{content})
     </insert>
 
+    <!--通过主键修改数据-->
+    <update id="updateByDto">
+        update chain_contract.z_reserve_plan_teamwork
+        <set>
+            <if test="taskCode != null and taskCode != ''">
+                task_code = #{taskCode},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

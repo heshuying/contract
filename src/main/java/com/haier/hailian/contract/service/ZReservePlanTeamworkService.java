@@ -72,9 +72,12 @@ public interface ZReservePlanTeamworkService {
 
     /**
      * 保存并联协同数据
-     * @param zReservePlanTeamworkDtoList
+     * @param zReservePlanTeamworkDto
      * @return
      */
-    String saveAllInfo(List<ZReservePlanTeamworkDto> zReservePlanTeamworkDtoList);
+    String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto);
+
+
+    String createGroup(int id);
 
 }

@@ -53,4 +53,11 @@
             and contract_type='10'
         </where>
     </select>
+
+    <select id="selectUserList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where contract_type !='10'
+    </select>
 </mapper>
