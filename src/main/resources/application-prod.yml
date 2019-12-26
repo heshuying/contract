@@ -43,7 +43,7 @@ logging:
 
  # swagger 配置
 swagger:
-  enable: false
+  enable: true
   basePackage: com.haier.dts.zzfx
   info:
     title: 增值分享API文档
