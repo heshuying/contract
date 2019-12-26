@@ -120,8 +120,7 @@ public class IHaierUtil {
             Response response = client.newCall(request).execute();
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
-            String workTaskId = result.get("workTaskId").getAsString();
-            return workTaskId;
+            return result.get("workTaskIds").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
