@@ -27,4 +27,8 @@ public class IhaierTask {
     private String[] ccs;
     //回调地址
     private String callBackUrl;
+    //渠道
+    private String channel;
+    //自渠道
+    private String createChannel;
 }

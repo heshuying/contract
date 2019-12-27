@@ -129,6 +129,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setEndDate(date.getTime());
         ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
         ihaierTask.setNoticeTime(15);
+        ihaierTask.setChannel("690");
+        ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
         ihaierTask.setCallBackUrl("http://zzfx.hoptest.haier.net");
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
