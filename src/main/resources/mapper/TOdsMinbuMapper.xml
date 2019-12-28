@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.TOdsMinbuDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.TOdsMinbu">
+        <id column="id" property="id" />
+        <result column="xwCode" property="xwCode" />
+        <result column="xwName" property="xwName" />
+        <result column="xwMasterCode" property="xwMasterCode" />
+        <result column="xwMasterName" property="xwMasterName" />
+        <result column="littleXwCode" property="littleXwCode" />
+        <result column="littleXwName" property="littleXwName" />
+        <result column="littleXwMasterCode" property="littleXwMasterCode" />
+        <result column="littleXwMasterName" property="littleXwMasterName" />
+        <result column="ptCode" property="ptCode" />
+        <result column="ptName" property="ptName" />
+        <result column="xwType3" property="xwType3" />
+        <result column="xwType5" property="xwType5" />
+        <result column="userXwCode" property="userXwCode" />
+        <result column="userXwName" property="userXwName" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+</mapper>

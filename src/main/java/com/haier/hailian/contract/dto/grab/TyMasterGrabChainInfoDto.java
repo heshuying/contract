@@ -1,9 +1,12 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.FactorDto;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by 19012964 on 2019/12/17.
@@ -17,8 +20,7 @@ public class TyMasterGrabChainInfoDto {
     private String end;
     private BigDecimal shareQuota;
     private String regionCode;
-    //目标是底线收入
-    private BigDecimal targetIncome;
-    private BigDecimal targetHighPercent;
-    private BigDecimal targetLowPercent;
+
+    List<FactorDto> factorList;
+
 }

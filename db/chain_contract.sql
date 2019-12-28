@@ -1341,3 +1341,36 @@ CREATE TABLE `sys_xw_master` (
   KEY `ind_xw_code` (`xw_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '小微和链群主关系表';
 
+CREATE TABLE `t_ods_minbu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `xwCode` varchar(100) DEFAULT NULL COMMENT '小微编码',
+  `xwName` varchar(100) DEFAULT NULL COMMENT '小微名称',
+  `xwMasterCode` varchar(100) DEFAULT NULL COMMENT '小微主工号',
+  `xwMasterName` varchar(100) DEFAULT NULL COMMENT '小微主姓名',
+  `littleXwCode` varchar(100) DEFAULT NULL COMMENT '最小作战单元编码（小小微编码）',
+  `littleXwName` varchar(100) DEFAULT NULL COMMENT '最小作战单元名称（小小微名称）',
+  `littleXwMasterCode` varchar(100) DEFAULT NULL COMMENT '最小作战单元主编码（小小微主编码）',
+  `littleXwMasterName` varchar(100) DEFAULT NULL COMMENT '最小作战单元主姓名（小小微主姓名）',
+  `ptCode` varchar(100) DEFAULT NULL COMMENT '所属平台编码',
+  `ptName` varchar(100) DEFAULT NULL COMMENT '所属平台名称',
+  `xwType3` varchar(100) DEFAULT NULL COMMENT '小微类型3（研发、服务、制造...）',
+  `xwType5` varchar(100) DEFAULT NULL COMMENT '小微类型5（创单、体验）',
+  `userXwCode` varchar(100) DEFAULT NULL COMMENT '对应用户小微编码',
+  `userXwName` varchar(100) DEFAULT NULL COMMENT '对应用户小微名称',
+	`create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+	KEY `ind_xwCode` (`xwCode`),
+	KEY `ind_littleXwCode` (`littleXwCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `t_ods_minbu_emp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `littleXwCode` varchar(100) DEFAULT NULL COMMENT '最小作战单元编码（小小微编码）',
+  `littleXwName` varchar(100) DEFAULT NULL COMMENT '最小作战单元名称（小小微名称）',
+  `littleEmpsn` varchar(100) DEFAULT NULL COMMENT '所属最小作战单元工号',
+  `littleEmpname` varchar(100) DEFAULT NULL COMMENT '所属最小作战单元姓名',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+	KEY `ind_littleXwCode` (`littleXwCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+

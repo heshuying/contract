@@ -124,7 +124,11 @@ public class Constant {
         /**
          * 低端占比
          */
-        LowPercent("T03002","低端占比");
+        LowPercent("T03002","低端占比"),
+        /**
+         * 低端占比
+         */
+        MiddPercent("T03003","中端占比");
 
         private String value;
         private String name;

@@ -17,5 +17,6 @@ public class MeshGrabInfoDto {
     private BigDecimal income;
     private BigDecimal struHighPercent;
     private BigDecimal struLowPercent;
+    private BigDecimal struMidPercent;
 
 }
