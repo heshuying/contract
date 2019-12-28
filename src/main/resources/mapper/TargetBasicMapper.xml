@@ -32,12 +32,13 @@
         <result column="role_name" property="roleName" />
         <result column="period_code" property="periodCode" />
         <result column="chain_code" property="chainCode" />
+        <result column="chain_name" property="chainName" />
     </resultMap>
     <sql id="Base_Column_List" >
         id, target_code, target_name, target_des, target_unit, target_to,
         judan_flag, target_pt_code, target_diff_type, target_dim, target_process_type, target_xw_category_code,
         target_xw_category_name,target_DSLogic_code,targe_year,target_month,target_model,target_model_code,target_bottom_line,
-        target_jd_line,target_logic,target_weight,target_region_code,target_region_name,role_code,role_name,period_code,chain_code
+        target_jd_line,target_logic,target_weight,target_region_code,target_region_name,role_code,role_name,period_code,chain_code,chain_name
     </sql>
     <select id="selectTarget" resultMap="BaseResultMap">
         select
@@ -55,6 +56,15 @@
             </if>
             <if test=" targetDiffType != null ">
                 and target_diff_type = #{targetDiffType}
+            </if>
+            <if test=" targetDim != null ">
+                and target_dim = #{targetDim}
+            </if>
+            <if test=" judanFlag != null ">
+                and judan_flag = #{judanFlag}
+            </if>
+            <if test=" periodCode != null ">
+                and period_code = #{periodCode}
             </if>
         </where>
     </select>

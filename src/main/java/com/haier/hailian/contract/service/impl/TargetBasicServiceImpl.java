@@ -32,8 +32,8 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         int month = cal.get(Calendar.MONTH )+1;
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
-        targetBasic.setTargetMonth(month+"");
-        targetBasic.setTargeYear(year+"");
+        String monthStr = month < 10 ? "0" + month : "" + month;
+        targetBasic.setPeriodCode(year+monthStr);
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         return list;
     }
