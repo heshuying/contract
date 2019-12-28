@@ -75,4 +75,11 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
      */
     List<CDGrabTargetEntity> queryCDGrabTarget(Map<String,Object> paraMap);
 
+    /**
+     * 查询抢单目标
+     * @param paraMap
+     * @return
+     */
+    List<CDGrabTargetEntity> queryCDGrabTargetNew(Map<String,Object> paraMap);
+
 }
