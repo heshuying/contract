@@ -15,4 +15,13 @@ import java.util.List;
  */
 public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<TOdsMinbu> queryMinbuByEmp(String empSn);
+
+    /**
+     * 查询结果中包含的内容
+     * @param ptCode
+     * @return
+     */
+    List<TOdsMinbu> getListByPtCode(String ptCode);
+
+    List<TOdsMinbu> getListByIsTY(String ptCode);
 }

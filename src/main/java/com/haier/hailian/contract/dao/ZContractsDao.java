@@ -53,4 +53,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     List<ContractViewDataCD> selectContractsViewForCD(String contractId);
+
+    List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
 }
