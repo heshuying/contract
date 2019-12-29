@@ -2,6 +2,7 @@ package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ContractViewDataCD;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -18,6 +19,13 @@ import java.util.List;
 public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
+
+    /**
+     * 查询体验 抢单时，列表对象，剔除已抢入的合约
+     * @param queryDto
+     * @return
+     */
+    List<ZContracts>queryTyGrabList(TyGrabListQueryDto queryDto);
 
     /**
      * 查询所有的链群主抢单记录

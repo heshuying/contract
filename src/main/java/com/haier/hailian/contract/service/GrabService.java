@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
@@ -22,5 +23,5 @@ public interface GrabService {
      */
     void refreshContractStatusJob();
 
-    List<TyMasterGrabChainInfoDto> queryChainList();
+    List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto queryDto);
 }
