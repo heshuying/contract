@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dto.homepage;
 
 
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,15 +27,18 @@ public class GrabInfo2Outside {
 
     private String createName;
 
-    private String grabTargetCode;
+    //private String grabTargetCode;
 
-    private String grabTargetName;
+    //private String grabTargetName;
 
     private String grabTargetBottom;
 
-    private String grabTargetIncom;
+    //private String grabTargetIncom;
 
-    private String grabTargetUnit;
+    //private String grabTargetUnit;
+
+    // 新增抢单拓展信息字段
+    private List<ZContractsFactor> grab2XW;
 
     private String sharePercent;
 

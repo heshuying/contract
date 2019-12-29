@@ -22,4 +22,10 @@ public interface ZGamblingContractsService {
     MarketReturnDTO selectMarket();
 
     List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
+
+    List<ZContracts> selectMyStartContract(QueryContractListDTO queryDTO);
+
+    List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
+
+    List<ZContracts> selectToGrabContract();
 }

@@ -215,4 +215,17 @@
         AND tpi.lq_code = #{chainCode}
     </select>
 
+
+    <!-- 根据最小作战单元查询其相关链群-->
+    <select id="selectChainByLittleXwCode"  resultMap="ZNodeTargetPercentInfoMap">
+        select
+        id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
+        FROM z_node_target_percent_info
+        WHERE node_code in
+        <foreach collection="xwCode" open="(" close=")" separator=","
+                 item="xwCode" index="i">
+            #{xwCode}
+        </foreach>
+    </select>
+
 </mapper>
