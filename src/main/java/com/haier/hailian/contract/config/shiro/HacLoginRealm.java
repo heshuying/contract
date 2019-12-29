@@ -66,8 +66,10 @@ public class HacLoginRealm extends AuthorizingRealm {
                 new QueryWrapper<SysNet>().eq("empSN",empSn));
         List<TOdsMinbu> minBu=minbuService.queryMinbuByEmp(empSn);
 
-        if(minBu!=null||minBu.size()>0){
+        if(minBu!=null&&minBu.size()>0){
             sysEmployee.setMinbu(minBu.get(0));
+        }else{
+            sysEmployee.setMinbu(new TOdsMinbu());
         }
         sysEmployee.setWanggeList(sysNetList);
         return new SimpleAuthenticationInfo(sysEmployee, empSn, this.getName());

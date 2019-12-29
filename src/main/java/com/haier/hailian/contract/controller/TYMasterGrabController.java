@@ -3,7 +3,6 @@ package com.haier.hailian.contract.controller;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.service.GrabService;

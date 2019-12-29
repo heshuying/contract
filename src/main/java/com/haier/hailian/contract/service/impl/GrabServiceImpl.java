@@ -1,13 +1,13 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.FactorDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
-import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
@@ -16,6 +16,7 @@ import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.MonthChainGroupOrderService;
@@ -60,6 +61,8 @@ public class GrabServiceImpl implements GrabService {
     private ZContractsFactorService contractsFactorService;
     @Autowired
     private ChainCommonService chainCommonService;
+    @Autowired
+    private ZNodeTargetPercentInfoDao nodeInfoDao;
 
     @Autowired
     private SysXwRegionService xwRegionService;
@@ -70,13 +73,32 @@ public class GrabServiceImpl implements GrabService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
         TOdsMinbu minbu = sysUser.getMinbu();
-        if(minbu==null){
+        if(minbu==null||StringUtils.isBlank(minbu.getXwType5Code())||
+                !minbu.getXwType5Code().equals("2")){
             throw new RException(Constant.MSG_NO_MINBU,Constant.CODE_NO_MINBU);
         }
-        //根据minBu查看链群的
-        return null;
+        //根据minBu查看链群的编码
+        List<String> chainCodes=nodeInfoDao.selectList(
+                new QueryWrapper<ZNodeTargetPercentInfo>().eq("node_code", minbu.getLittleXwCode())
+        ).stream().map(m->m.getLqCode()).distinct().collect(Collectors.toList());
+        List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
+        if(chainCodes!=null&&chainCodes.size()>0){
+            List<ZContracts> contractses=contractsService.list(
+                    new QueryWrapper<ZContracts>().eq("contract_type","10")
+                    .eq("status", "0")
+                    .in("chain_code", chainCodes)
+            );
+            for ( ZContracts contract: contractses
+                 ) {
+                TyMasterGrabQueryDto queryDto=new TyMasterGrabQueryDto();
+                queryDto.setContractId(contract.getId());
+                TyMasterGrabChainInfoDto grabDto=this.queryChainInfo(queryDto);
+                list.add(grabDto);
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -101,7 +123,9 @@ public class GrabServiceImpl implements GrabService {
             chainName = chainName.replace("链群", "-" + xwRegion.get(0).getRegionName() + "链群");
             tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
         }
-        tyMasterGrabChainInfoDto.setChainName(chainName);
+        tyMasterGrabChainInfoDto.setContractName(chainName);
+        tyMasterGrabChainInfoDto.setContractOwner(contracts.getContractName());
+        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
@@ -182,10 +206,8 @@ public class GrabServiceImpl implements GrabService {
             }
             grabFactors.add(grabFactor);
         }
-        List<FactorDto> allFactor=new ArrayList<>();
-        allFactor.addAll(targetFactor);
-        allFactor.addAll(grabFactors);
-        tyMasterGrabChainInfoDto.setFactorList(allFactor);
+        tyMasterGrabChainInfoDto.setTargetList(targetFactor);
+        tyMasterGrabChainInfoDto.setGrabList(grabFactors);
 
         return tyMasterGrabChainInfoDto;
     }
@@ -275,110 +297,80 @@ public class GrabServiceImpl implements GrabService {
     @Override
     public R doGrab(MessGambSubmitDto dto) {
         //业务数据校验
-        if(dto==null||dto.getTyMasterGrabChainInfoDto()==null||dto.getMeshSummaryDto()==null){
+        if(dto==null||dto.getTyMasterGrabChainInfoDto()==null
+                ||dto.getTyMasterGrabChainInfoDto().size()==0){
             throw new RException("缺少必填参数",Constant.CODE_VALIDFAIL);
         }
-        TyMasterGrabChainInfoDto chainInfoDto =dto.getTyMasterGrabChainInfoDto();
-        MeshSummaryDto meshSummaryDto=dto.getMeshSummaryDto();
-        /*
-        if(meshSummaryDto.getIncome().compareTo(chainInfoDto.getTargetIncome())<0){
-            throw new RException("抢单收入必须大于目标收入",Constant.CODE_VALIDFAIL);
-        }*/
-
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
 
-        //根据小微code 和合约判断是否已抢单
-        ZContracts existsContract=contractsService.getOne(new QueryWrapper<ZContracts>()
-                .eq("parent_id",chainInfoDto.getContractId())
-                .eq("contract_type","20")
-                .eq("xiaowei_code",currentUser.getXwCode())
-        );
-        if(existsContract!=null){
-            throw new RException("该用户已抢单，请勿重复抢单",Constant.CODE_VALIDFAIL);
+        List<TyMasterGrabChainInfoDto> list=dto.getTyMasterGrabChainInfoDto();
+        for ( TyMasterGrabChainInfoDto chainInfoDto:list
+             ) {
+            //单个合约保存
+            //根据小微code 和合约判断是否已抢单
+            ZContracts existsContract=contractsService.getOne(new QueryWrapper<ZContracts>()
+                    .eq("parent_id",chainInfoDto.getContractId())
+                    .eq("contract_type","20")
+                    .eq("xiaowei_code",currentUser.getXwCode())
+            );
+            if(existsContract!=null){
+                throw new RException("该用户已抢单，请勿重复抢单",Constant.CODE_VALIDFAIL);
+            }
+
+            ZContracts contracts=contractsService.getById(chainInfoDto.getContractId());
+            if(contracts==null){
+                throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+            }
+
+            contracts.setParentId(chainInfoDto.getContractId());
+            contracts.setId(0);
+            contracts.setContractName(chainInfoDto.getChainName());
+            contracts.setContractType("20");
+            contracts.setCreateCode(currentUser.getEmpsn());
+            contracts.setCreateName(currentUser.getEmpname());
+            contracts.setCreateTime(new Date());
+            contracts.setJoinTime(new Date());
+            contracts.setStatus("1");
+            contracts.setRegionCode(chainInfoDto.getRegionCode());
+            contracts.setOrgCode(currentUser.getOrgNum());
+            contracts.setOrgName(currentUser.getOrgName());
+            contracts.setOrgType(currentUser.getOrgType());
+            contracts.setXiaoweiCode(currentUser.getXwCode());
+            contractsService.save(contracts);
+
+            List<ZContractsFactor> factors=new ArrayList<>();
+            factors=chainInfoDto.getTargetList().stream().map(
+                    m->{
+                        ZContractsFactor factor=new ZContractsFactor();
+                        factor.setContractId(contracts.getId());
+                        factor.setFactorCode(m.getFactorCode());
+                        factor.setFactorName(m.getFactorName());
+                        factor.setFactorValue(m.getFactorValue());
+                        factor.setFactorUnit(m.getFactorUnit());
+                        return factor;
+                    }
+            ).collect(Collectors.toList());
+
+            factors.addAll(
+                    chainInfoDto.getGrabList().stream().map(
+                            m->{
+                                ZContractsFactor factor=new ZContractsFactor();
+                                factor.setContractId(contracts.getId());
+                                factor.setFactorCode(m.getFactorCode());
+                                factor.setFactorName(m.getFactorName());
+                                factor.setFactorValue(m.getFactorValue());
+                                factor.setFactorUnit(m.getFactorUnit());
+                                return factor;
+                            }
+                    ).collect(Collectors.toList())
+            );
+            contractsFactorService.saveBatch(factors);
+
         }
-
-        ZContracts contracts=contractsService.getById(chainInfoDto.getContractId());
-        if(contracts==null){
-            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
-        }
-
-        contracts.setParentId(chainInfoDto.getContractId());
-        contracts.setId(0);
-        contracts.setContractName(chainInfoDto.getChainName());
-        contracts.setContractType("20");
-        contracts.setCreateCode(currentUser.getEmpsn());
-        contracts.setCreateName(currentUser.getEmpname());
-        contracts.setCreateTime(new Date());
-        contracts.setJoinTime(new Date());
-        contracts.setStatus("1");
-        contracts.setRegionCode(chainInfoDto.getRegionCode());
-        contracts.setOrgCode(currentUser.getOrgNum());
-        contracts.setOrgName(currentUser.getOrgName());
-        contracts.setOrgType(currentUser.getOrgType());
-        contracts.setXiaoweiCode(currentUser.getXwCode());
-        contractsService.save(contracts);
-
-        List<ZContractsFactor> factors=new ArrayList<>();
-        factors=chainInfoDto.getFactorList().stream().map(
-                m->{
-                    ZContractsFactor factor=new ZContractsFactor();
-                    factor.setContractId(contracts.getId());
-                    factor.setFactorCode(m.getFactorCode());
-                    factor.setFactorName(m.getFactorName());
-                    factor.setFactorValue(m.getFactorValue());
-                    factor.setFactorUnit(m.getFactorUnit());
-                    return factor;
-                }
-        ).collect(Collectors.toList());
-
-        factors.addAll(
-                meshSummaryDto.getFactorDtos().stream().map(
-                        m->{
-                            ZContractsFactor factor=new ZContractsFactor();
-                            factor.setContractId(contracts.getId());
-                            factor.setFactorCode(m.getFactorCode());
-                            factor.setFactorName(m.getFactorName());
-                            factor.setFactorValue(m.getFactorValue());
-                            factor.setFactorUnit(m.getFactorUnit());
-                            return factor;
-                        }
-                ).collect(Collectors.toList())
-        );
-        /*
-        for (MeshGrabInfoDto meshGrabInfo: meshSummaryDto.getMeshDetail()) {
-            ZContractsFactor meshGrabIncome=new ZContractsFactor();
-            ZContractsFactor meshGrabHigh=new ZContractsFactor();
-            ZContractsFactor meshGrabLow=new ZContractsFactor();
-            BeanUtils.copyProperties(grabIncomeFact,meshGrabIncome);
-            BeanUtils.copyProperties(grabHighFact,meshGrabHigh);
-            BeanUtils.copyProperties(grabLowFact,meshGrabLow);
-
-            grabIncomeFact.setFactorType(Constant.FactorType.Grab.getValue());
-            grabIncomeFact.setFactorValue(meshGrabInfo.getIncome().toString());
-            grabIncomeFact.setMeshCode(meshGrabInfo.getMeshCode());
-            grabIncomeFact.setMeshName(meshGrabInfo.getMeshName());
-            factors.add(grabIncomeFact);
-
-            grabHighFact.setFactorType(Constant.FactorType.Grab.getValue());
-            grabHighFact.setFactorValue(meshSummaryDto.getStruHighPercent().toString());
-            grabHighFact.setMeshCode(meshGrabInfo.getMeshCode());
-            grabHighFact.setMeshName(meshGrabInfo.getMeshName());
-            factors.add(grabHighFact);
-
-            grabLowFact.setFactorType(Constant.FactorType.Grab.getValue());
-            grabLowFact.setFactorValue(meshSummaryDto.getStruLowPercent().toString());
-            grabLowFact.setMeshCode(meshGrabInfo.getMeshCode());
-            grabLowFact.setMeshName(meshGrabInfo.getMeshName());
-            factors.add(grabLowFact);
-        }
-        */
-        contractsFactorService.saveBatch(factors);
-
-        // chainCommonService.buildContractChain(contracts.getId());
 
         return R.ok();
     }
