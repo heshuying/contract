@@ -16,7 +16,7 @@ public class TyMasterGrabQueryDto {
     @ApiModelProperty(value = "合约id", required = true)
     private Integer contractId;
     @ApiModelProperty(value = "指标维度", required = true)
-    private List<FactorDto> factorDtos;
+    private List<FactorDto> factors;
     @ApiModelProperty(value = "合约创建人", required = false)
     private String contractOwner;
     @ApiModelProperty(value = "登陆人xw编码", required = false)

@@ -17,9 +17,17 @@
         <result column="ptName" property="ptName" />
         <result column="xwType3" property="xwType3" />
         <result column="xwType5" property="xwType5" />
+        <result column="xwType3Code" property="xwType3Code" />
+        <result column="xwType5Code" property="xwType5Code" />
         <result column="userXwCode" property="userXwCode" />
         <result column="userXwName" property="userXwName" />
         <result column="create_time" property="createTime" />
     </resultMap>
+
+    <select id="queryMinbuByEmp" parameterType="java.lang.String"
+            resultMap="BaseResultMap">
+        select base.* from t_ods_minbu base join t_ods_minbu_emp ome on base.littleXwCode=ome.littleXwCode
+        where ome.littleEmpsn=#{empSn}
+    </select>
 
 </mapper>

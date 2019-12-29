@@ -16,11 +16,14 @@ import java.util.List;
 public class TyMasterGrabChainInfoDto {
     private Integer contractId;
     private String chainName;
+    private String contractName;
+    private String contractOwner;
     private String start;
     private String end;
     private BigDecimal shareQuota;
     private String regionCode;
 
     List<FactorDto> factorList;
+
 
 }

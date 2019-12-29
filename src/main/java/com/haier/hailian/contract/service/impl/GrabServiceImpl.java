@@ -13,6 +13,7 @@ import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
+import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ChainCommonService;
@@ -61,11 +62,26 @@ public class GrabServiceImpl implements GrabService {
     @Autowired
     private SysXwRegionService xwRegionService;
 
+
+    @Override
+    public List<TyMasterGrabChainInfoDto> queryChainList() {
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu minbu = sysUser.getMinbu();
+        if(minbu==null){
+            throw new RException(Constant.MSG_NO_MINBU,Constant.CODE_NO_MINBU);
+        }
+        //根据minBu查看链群的
+        return null;
+    }
+
     @Override
     public TyMasterGrabChainInfoDto queryChainInfo(TyMasterGrabQueryDto queryDto) {
-        ZContracts contracts =contractsService.getById(queryDto.getContractId());
-        if(contracts==null){
-            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        ZContracts contracts = contractsService.getById(queryDto.getContractId());
+        if (contracts == null) {
+            throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
         }
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
@@ -73,14 +89,14 @@ public class GrabServiceImpl implements GrabService {
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
 
-        List<SysXwRegion> xwRegion=xwRegionService.list(new QueryWrapper<SysXwRegion>()
+        List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
                 .eq("xw_code", currentUser.getXwCode()));
 
-        TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto=new TyMasterGrabChainInfoDto();
+        TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto = new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
-        String chainName=contracts.getContractName();
-        if(xwRegion!=null&&xwRegion.size()>0){
-            chainName=chainName.replace("链群","-"+xwRegion.get(0).getRegionName()+"链群");
+        String chainName = contracts.getContractName();
+        if (xwRegion != null && xwRegion.size() > 0) {
+            chainName = chainName.replace("链群", "-" + xwRegion.get(0).getRegionName() + "链群");
             tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
         }
         tyMasterGrabChainInfoDto.setChainName(chainName);
@@ -89,27 +105,93 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setEnd(
                 DateFormatUtil.format(contracts.getEndDate()));
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
-       List<ZContractsFactor> factors=contractsFactorService.list(
-               new QueryWrapper<ZContractsFactor>().eq("contract_id",contracts.getId())
-               .eq("region_code",currentUser.getXwCode())
-       );
-        List<FactorDto> factorDtos=factors.stream().map(m->{
-            FactorDto dto=new FactorDto();
+        List<ZContractsFactor> factors = contractsFactorService.list(
+                new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
+                        .eq("region_code", currentUser.getXwCode())
+        );
+        List<FactorDto> targetFactor = factors.stream().map(m -> {
+            FactorDto dto = new FactorDto();
             dto.setFactorCode(m.getFactorCode());
             dto.setFactorName(m.getFactorName());
             dto.setFactorValue(m.getFactorValue());
             dto.setFactorUnit(m.getFactorUnit());
             dto.setHasInput(false);
-            return  dto;
+            return dto;
         }).collect(Collectors.toList());
-        tyMasterGrabChainInfoDto.setFactorList(factorDtos);
+
+        //网格抢单汇总
+        perfectQueryParam(queryDto);
+        List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
+        BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
+                AmountFormat.amtStr2D(m.getIncome())).sum());
+
+        //根据目标维度 设置抢单的维度
+        List<FactorDto> grabFactors=new ArrayList<>();
+        for (FactorDto index : targetFactor) {
+            FactorDto grabFactor=new FactorDto();
+            BeanUtils.copyProperties(index, grabFactor);
+            if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
+                index.setFactorValue(inc.toString());
+            } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
+                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
+                        Constant.ProductStru.High.getValue().equals(f.getProductStru()))
+                        .collect(Collectors.toList());
+                if(curr !=null && curr.size()>0){
+                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
+                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                    index.setFactorValue(currIncom
+                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal("100")).toString()
+                    );
+                }else{
+                    index.setFactorValue("0");
+                }
+            } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
+                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
+                        Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
+                        .collect(Collectors.toList());
+                if(curr !=null && curr.size()>0){
+                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
+                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                    index.setFactorValue(currIncom
+                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal("100")).toString()
+                    );
+                }else{
+                    index.setFactorValue("0");
+                }
+            } else if (Constant.FactorCode.MiddPercent.getValue().equals(index.getFactorCode())) {
+                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
+                        Constant.ProductStru.Midd.getValue().equals(f.getProductStru()))
+                        .collect(Collectors.toList());
+                if(curr !=null && curr.size()>0){
+                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
+                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                    index.setFactorValue(currIncom
+                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal("100")).toString()
+                    );
+                }else{
+                    index.setFactorValue("0");
+                }
+            } else {
+                index.setFactorValue("");
+                index.setHasInput(true);
+            }
+            grabFactors.add(grabFactor);
+        }
+        List<FactorDto> allFactor=new ArrayList<>();
+        allFactor.addAll(targetFactor);
+        allFactor.addAll(grabFactors);
+        tyMasterGrabChainInfoDto.setFactorList(allFactor);
 
         return tyMasterGrabChainInfoDto;
     }
 
+
     @Override
-    public MeshSummaryDto queryMeshGrabDetail(TyMasterGrabQueryDto queryDto) {
-        if(queryDto==null||queryDto.getFactorDtos()==null){
+    public List<MeshGrabInfoDto> queryMeshGrabDetail(TyMasterGrabQueryDto queryDto) {
+        if(queryDto==null){
             throw new RException("缺少必填项",Constant.CODE_VALIDFAIL);
         }
         perfectQueryParam(queryDto);
@@ -184,39 +266,8 @@ public class GrabServiceImpl implements GrabService {
             meshGrabInfoDtos.add(meshGrabDto);
 
         }
-        MeshSummaryDto summaryDto=new MeshSummaryDto();
-        summaryDto.setMeshDetail(meshGrabInfoDtos);
+        return  meshGrabInfoDtos;
 
-        BigDecimal inc=BigDecimal.ZERO,highPercent=BigDecimal.ZERO ,middPercent=BigDecimal.ZERO,lowPercent=BigDecimal.ZERO;
-        for (MeshGrabInfoDto tem:meshGrabInfoDtos) {
-            inc=inc.add(tem.getIncome());
-            highPercent=highPercent.add(tem.getStruHighPercent());
-            middPercent=middPercent.add(tem.getStruMidPercent());
-            lowPercent=lowPercent.add(tem.getStruLowPercent());
-        }
-        for(FactorDto index :queryDto.getFactorDtos()){
-            if(Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())){
-                index.setFactorValue(inc.toString());
-            }else if(Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())){
-                BigDecimal tem=highPercent
-                        .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP);
-                index.setFactorValue(tem.toString());
-            } else if(Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())){
-                BigDecimal tem=lowPercent
-                        .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP);
-                index.setFactorValue(tem.toString());
-            } else if(Constant.FactorCode.MiddPercent.getValue().equals(index.getFactorCode())){
-                BigDecimal tem=middPercent
-                        .divide(new BigDecimal(meshGrabInfoDtos.size()),2, RoundingMode.HALF_UP);
-                index.setFactorValue(tem.toString());
-            } else{
-                index.setFactorValue("");
-                index.setHasInput(true);
-            }
-        }
-        summaryDto.setFactorDtos(queryDto.getFactorDtos());
-
-        return summaryDto;
     }
 
     @Override

@@ -96,12 +96,17 @@ public class TOdsMinbu extends Model<TOdsMinbu> {
      */
     @TableField("xwType3")
     private String xwType3;
+    @TableField("xwType3Code")
+    private String xwType3Code;
 
     /**
      * 小微类型5（创单、体验）
      */
     @TableField("xwType5")
     private String xwType5;
+
+    @TableField("xwType5Code 1创单;2体验")
+    private String xwType5Code;
 
     /**
      * 对应用户小微编码

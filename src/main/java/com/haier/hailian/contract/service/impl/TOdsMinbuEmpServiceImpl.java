@@ -6,6 +6,8 @@ import com.haier.hailian.contract.service.TOdsMinbuEmpService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 /**
  * <p>
  *  服务实现类

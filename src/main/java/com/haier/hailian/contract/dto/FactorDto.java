@@ -27,6 +27,10 @@ public class FactorDto {
      * 单位
      */
     private String factorUnit;
+    /**
+     * 类型 1：底线、2：抢单、3：E2E
+     */
+    private String factorType;
 
     private Boolean hasInput;
 

@@ -2,9 +2,13 @@ package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.dao.TOdsMinbuDao;
+import com.haier.hailian.contract.entity.TOdsMinbuEmp;
 import com.haier.hailian.contract.service.TOdsMinbuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +20,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TOdsMinbuServiceImpl extends ServiceImpl<TOdsMinbuDao, TOdsMinbu> implements TOdsMinbuService {
+    @Override
+    public List<TOdsMinbu> queryMinbuByEmp(String empSn) {
+        return baseMapper.queryMinbuByEmp(empSn);
+    }
 
 }
