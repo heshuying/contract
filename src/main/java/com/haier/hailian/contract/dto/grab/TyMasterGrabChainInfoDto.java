@@ -23,7 +23,7 @@ public class TyMasterGrabChainInfoDto {
     private BigDecimal shareQuota;
     private String regionCode;
 
-    List<FactorDto> factorList;
-
+    List<FactorDto> targetList;
+    List<FactorDto> grabList;
 
 }

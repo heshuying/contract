@@ -15,4 +15,9 @@ public class QueryContractListDTO {
     private String endDate;
 
     private String status;
+
+    private String userCode;
+
+    private String[] chainCodeList;
+
 }
