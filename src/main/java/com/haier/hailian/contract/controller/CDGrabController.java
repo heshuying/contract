@@ -52,13 +52,13 @@ public class CDGrabController {
         if(requestDto.getTargetList() == null || requestDto.getTargetList().isEmpty()){
             return R.error("请求参数错误，有为空的字段");
         }
-        for(CDGrabTargetDto target : requestDto.getTargetList()){
-            if(target.getTargetTo().equals("1") && target.getChainGrabGoal().compareTo(target.getChainGoal()) < 0){
-                return R.error("抢单目标需要大于底线目标");
-            }else if(target.getTargetTo().equals("0") && target.getChainGrabGoal().compareTo(target.getChainGoal()) > 0){
-                return R.error("抢单目标需要小于底线目标");
-            }
-        }
+//        for(CDGrabTargetDto target : requestDto.getTargetList()){
+//            if(target.getTargetTo().equals("1") && target.getChainGrabGoal().compareTo(target.getChainGoal()) < 0){
+//                return R.error("抢单目标需要大于底线目标");
+//            }else if(target.getTargetTo().equals("0") && target.getChainGrabGoal().compareTo(target.getChainGoal()) > 0){
+//                return R.error("抢单目标需要小于底线目标");
+//            }
+//        }
 
         try {
             cdGrabService.saveCDGrab(requestDto);

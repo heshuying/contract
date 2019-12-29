@@ -200,4 +200,19 @@
           AND tpi.lq_code = #{chainCode}
     </select>
 
+    <!-- 查询抢单目标底线-->
+    <select id="queryCDGrabTargetNew" parameterType="map" resultMap="cdGrabTargetResultMap">
+        SELECT
+        tpi.`target_code`,
+        tpi.`target_name`,
+       /* tb.`target_unit`,
+        tb.target_to,
+        tb.`target_bottom_line`,*/
+        tpi.`share_percent`
+        FROM
+        z_node_target_percent_info tpi
+        WHERE tpi.`node_code` = #{nodeCode}
+        AND tpi.lq_code = #{chainCode}
+    </select>
+
 </mapper>

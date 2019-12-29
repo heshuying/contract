@@ -80,4 +80,18 @@
         where contract_type ='10'
         and group_id = #{groupId}
     </select>
+
+    <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
+        SELECT
+          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit, rp.`title` AS planTitle, rpd.`content` AS planContent
+        FROM
+          z_contracts zc
+          JOIN z_contracts_factor cf
+            ON cf.`contract_id` = zc.`id`
+          LEFT JOIN z_reserve_plan rp
+            ON rp.`parent_id` = zc.`id`
+          JOIN z_reserve_plan_detail rpd
+            ON rpd.`parent_id` = rp.id
+        where zc.parent_id = #{contractId}
+    </select>
 </mapper>

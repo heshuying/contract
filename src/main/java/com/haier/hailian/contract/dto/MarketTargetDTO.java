@@ -2,7 +2,7 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by 01431594 on 2019/12/20.
@@ -14,9 +14,5 @@ public class MarketTargetDTO {
 
     private String xwName;
 
-    private BigDecimal income;
-
-    private BigDecimal high;
-
-    private BigDecimal low;
+    private List<MarketTargetDTO2> targetList;
 }

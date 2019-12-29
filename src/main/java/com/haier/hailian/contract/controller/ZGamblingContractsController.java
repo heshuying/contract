@@ -1,11 +1,7 @@
 package com.haier.hailian.contract.controller;
 
 
-import com.haier.hailian.contract.dto.CalculateSharingDTO;
-import com.haier.hailian.contract.dto.GamblingContractDTO;
-import com.haier.hailian.contract.dto.QueryContractListDTO;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.entity.XiaoweiEhr;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
@@ -49,10 +45,10 @@ public class ZGamblingContractsController {
     }
 
     @PostMapping(value = {"/selectMarket"})
-    @ApiOperation(value = "查询42市场小微的名字")
+    @ApiOperation(value = "查询42市场小微的名字和商圈目标名称")
     public R selectMarket() {
-        List<XiaoweiEhr> list = gamblingContractsService.selectMarket();
-        return R.ok().put("data",list);
+        MarketReturnDTO dto = gamblingContractsService.selectMarket();
+        return R.ok().put("data",dto);
     }
 
     @PostMapping(value = {"/calculateSharing"})

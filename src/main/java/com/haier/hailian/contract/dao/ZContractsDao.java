@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dao;
 
+import com.haier.hailian.contract.dto.ContractViewDataCD;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -37,4 +38,11 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     ZContracts selectByGID(String groupId);
+
+    /**
+     * 合约详情查看（创单）
+     * @param contractId
+     * @return
+     */
+    List<ContractViewDataCD> selectContractsViewForCD(String contractId);
 }
