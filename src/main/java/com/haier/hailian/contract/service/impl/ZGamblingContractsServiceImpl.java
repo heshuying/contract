@@ -1,9 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
-import com.haier.hailian.contract.dao.TargetBasicDao;
-import com.haier.hailian.contract.dao.ZContractsDao;
-import com.haier.hailian.contract.dao.ZContractsFactorDao;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +38,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private SysXiaoweiEhrDao sysXiaoweiEhrDao;
     @Autowired
     private TargetBasicDao targetBasicDao;
+    @Autowired
+    private TOdsMinbuEmpDao tOdsMinbuEmpDao;
+    @Autowired
+    private ZNodeTargetPercentInfoDao nodeTargetPercentInfoDao;
 
     @Override
     public void saveGambling(GamblingContractDTO dto) throws Exception{
@@ -127,4 +130,60 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         List<ZContracts> list = contractsDao.selectContractList(queryDTO);
         return list;
     }
+
+    @Override
+    public List<ZContracts> selectMyStartContract(QueryContractListDTO queryDTO) {
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        queryDTO.setUserCode(sysUser.getEmpSn());
+        List<ZContracts> list = contractsDao.selectContractList(queryDTO);
+        return list;
+    }
+
+    @Override
+    public List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO) {
+
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        queryDTO.setUserCode(sysUser.getEmpSn());
+        List<ZContracts> list = contractsDao.selectMyGrabContract(queryDTO);
+        return list;
+    }
+
+    @Override
+    public List<ZContracts> selectToGrabContract() {
+        List<ZContracts> contractsList = new ArrayList<>();
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        String userCode = sysUser.getEmpSn();
+        //查询用户所属的最小作战单元
+        List<TOdsMinbuEmp> empList = tOdsMinbuEmpDao.selectList(new QueryWrapper<TOdsMinbuEmp>().eq("littleEmpsn", userCode));
+        if(null != empList && empList.size() > 0 ){
+            String xwCodeStr = "";
+            //查询最小作战单元所属的链群
+            for(TOdsMinbuEmp emp:empList){
+                xwCodeStr += emp.getLittleXwCode()+",";
+            }
+            String[] xwCode = xwCodeStr.split(",");
+            List<ZNodeTargetPercentInfo> chainList = nodeTargetPercentInfoDao.selectChainByLittleXwCode(xwCode);
+            //查询所属链群可抢入的合约
+            if(null != chainList && chainList.size()>0){
+                String chainStr = "";
+                for(ZNodeTargetPercentInfo percentInfo:chainList){
+                    chainStr += percentInfo.getLqCode()+",";
+                }
+                String[] chainCode = chainStr.split(",");
+                QueryContractListDTO dto = new QueryContractListDTO();
+                dto.setStatus("0");
+                dto.setChainCodeList(chainCode);
+                contractsList = contractsDao.selectContractList(dto);
+            }
+        }
+        return contractsList;
+    }
+
+
 }
