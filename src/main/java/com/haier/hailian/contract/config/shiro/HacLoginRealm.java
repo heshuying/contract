@@ -6,9 +6,11 @@ import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysEmployeeZ;
 import com.haier.hailian.contract.entity.SysNet;
+import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.SysEmployeeEhrService;
 import com.haier.hailian.contract.service.SysEmployeeZService;
 import com.haier.hailian.contract.service.SysNetService;
+import com.haier.hailian.contract.service.TOdsMinbuService;
 import com.haier.hailian.contract.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -32,6 +34,9 @@ public class HacLoginRealm extends AuthorizingRealm {
     private SysEmployeeZService sysEmployeeZService;
     @Autowired
     private SysNetService sysNetService;
+    @Autowired
+    private TOdsMinbuService minbuService;
+
     /**
      * 认证(登录时调用)
      * @param authenticationToken
@@ -59,6 +64,11 @@ public class HacLoginRealm extends AuthorizingRealm {
         }
         List<SysNet> sysNetList = sysNetService.list(
                 new QueryWrapper<SysNet>().eq("empSN",empSn));
+        List<TOdsMinbu> minBu=minbuService.queryMinbuByEmp(empSn);
+
+        if(minBu!=null||minBu.size()>0){
+            sysEmployee.setMinbu(minBu.get(0));
+        }
         sysEmployee.setWanggeList(sysNetList);
         return new SimpleAuthenticationInfo(sysEmployee, empSn, this.getName());
     }

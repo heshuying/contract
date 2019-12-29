@@ -21,6 +21,9 @@ public class Constant {
     public static String CODE_DATA_NOTFOUND= "404001";
     public static String MSG_DATA_NOTFOUND= "数据不存在";
 
+    public static String CODE_NO_MINBU= "404002";
+    public static String MSG_NO_MINBU= "当前列表无法查看";
+
     public static String CODE_ERROR= "500001";
     public static String MSG_ERROR= "请联系管理员";
 
@@ -124,7 +127,11 @@ public class Constant {
         /**
          * 低端占比
          */
-        LowPercent("T03002","低端占比");
+        LowPercent("T03002","低端占比"),
+        /**
+         * 低端占比
+         */
+        MiddPercent("T03003","中端占比");
 
         private String value;
         private String name;

@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.FactorDto;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -12,8 +13,6 @@ import java.util.List;
 @Data
 @ApiModel(value = "网格抢单汇总实体类")
 public class MeshSummaryDto {
-    private BigDecimal income;
-    private BigDecimal struHighPercent;
-    private BigDecimal struLowPercent;
+    List<FactorDto> factorDtos;
     List<MeshGrabInfoDto> meshDetail;
 }
