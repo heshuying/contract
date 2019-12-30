@@ -37,7 +37,7 @@
     <sql id="Base_Column_List" >
         id, target_code, target_name, target_des, target_unit, target_to,
         judan_flag, target_pt_code, target_diff_type, target_dim, target_process_type, target_xw_category_code,
-        target_xw_category_name,target_DSLogic_code,targe_year,target_month,target_model,target_model_code,target_bottom_line,
+        target_xw_category_name,target_DSLogic_code,targe_year,target_month,target_model,target_model_code,ROUND(target_bottom_line,2) as target_bottom_line,
         target_jd_line,target_logic,target_weight,target_region_code,target_region_name,role_code,role_name,period_code,chain_code,chain_name
     </sql>
     <select id="selectTarget" resultMap="BaseResultMap">
