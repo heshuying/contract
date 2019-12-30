@@ -78,7 +78,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @param contractId
      * @return
      */
-    List<TargetConfigDTO> selectContractsViewForTYSum(String contractId);
+    List<FactorConfigDTO> selectContractsViewForTYSum(String contractId);
 
     /**
      * 查询待抢入合约列表

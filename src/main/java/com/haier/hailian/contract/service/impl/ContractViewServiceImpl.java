@@ -97,7 +97,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             grabTYList.add(factor3);
         }*/
 
-        List<TargetConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
+        List<FactorConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
         result.setGrabTYList(grabTYList);
 
         return result;
