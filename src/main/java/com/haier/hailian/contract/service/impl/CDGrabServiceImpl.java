@@ -54,6 +54,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
         String xwCode = currentUser.getXwCode();
+        String littleXWCode = sysUser.getMinbu().getLittleXwCode();
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
@@ -82,7 +83,7 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
-        paraMap.put("nodeCode", currentUser.getOrgNum());
+        paraMap.put("nodeCode", littleXWCode);
         paraMap.put("ptCode", currentUser.getPtcode());
         paraMap.put("yearMonthList", yearMonthList);
         paraMap.put("chainCode", contracts.getChainCode());
@@ -97,7 +98,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 target.setTargetName(targetInfo.getTargetName());
                 target.setTargetCode(targetInfo.getTargetCode());
 //                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
-                target.setTargetUnit("");
+                target.setTargetUnit(targetInfo.getTargetUnit());
 //                target.setTargetTo(targetInfo.getTargetTo());
                 responseDto.getTargetList().add(target);
                 responseDto.setSharePercent(targetInfo.getSharePercent());

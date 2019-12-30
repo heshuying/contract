@@ -178,7 +178,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 String[] chainCode = chainStr.split(",");
                 dto.setStatus("0");
                 dto.setChainCodeList(chainCode);
-                contractsList = contractsDao.selectContractList(dto);
+                dto.setUserCode(userCode);
+                contractsList = contractsDao.selectToGrabContract(dto);
             }
         }
         return contractsList;
