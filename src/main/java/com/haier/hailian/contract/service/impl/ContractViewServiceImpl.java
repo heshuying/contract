@@ -41,6 +41,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             result.setEndDate(DateFormatUtil.format(contracts.getEndDate(),DateFormatUtil.DATE_PATTERN));
             result.setShareSpace(contracts.getShareSpace());
             result.setStatus(contracts.getStatus());
+            result.setStatusName(getStatusName(contracts.getStatus()));
         }
 
         ZHrChainInfo chain = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
@@ -82,5 +83,19 @@ public class ContractViewServiceImpl implements ContractViewService {
     public List<ContractViewDataCD> getContractViewDataCD(String contractId){
         List<ContractViewDataCD> resultList = contractsDao.selectContractsViewForCD(contractId);
         return resultList;
+    }
+
+    /**
+     * 获取合约状态名称
+     * @param status
+     * @return
+     */
+    private String getStatusName(String status){
+        switch (status){
+            case "0" : return "抢入中";
+            case "1" : return "已生效";
+            case "4" : return "已失效";
+            default: return "";
+        }
     }
 }
