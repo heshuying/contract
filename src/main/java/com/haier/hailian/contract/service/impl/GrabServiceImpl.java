@@ -151,6 +151,7 @@ public class GrabServiceImpl implements GrabService {
 
         //网格抢单汇总
         perfectQueryParam(queryDto);
+        queryDto.setLoginXwCode(currentUser.getXwCode());
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
         BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
                 AmountFormat.amtStr2D(m.getIncome())).sum());
