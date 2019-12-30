@@ -10,6 +10,7 @@ import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.util.IHaierUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -121,8 +122,10 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
         ihaierTask.setExecutors(executors.split(","));
-        String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
-        ihaierTask.setCcs(ccs.split(","));
+        if(!StringUtils.isEmpty(zReservePlanTeamworkDto.getTeamworker())){
+            String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
+            ihaierTask.setCcs(ccs.split(","));
+        }
         String oid = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getCreateUserCode().split(","));
         ihaierTask.setOpenId(oid);
         ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
@@ -137,8 +140,6 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
         zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
-
-
         return "保存成功";
     }
 
