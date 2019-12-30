@@ -194,6 +194,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
             zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
             zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+            zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
         }
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainCode(chainCode);
