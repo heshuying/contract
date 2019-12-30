@@ -44,12 +44,12 @@ logging:
  # swagger 配置
 swagger:
   enable: true
-  basePackage: com.haier.dts.zzfx
+  basePackage: com.haier.hailian.contract
   info:
     title: 增值分享API文档
     description: 增值分享API文档
     version: 1.0
-    serviceUrl: http://ddzzl.haier.net
+    serviceUrl: http://lqhy.haier.net
 
 # 短信配置
 sms-conf:

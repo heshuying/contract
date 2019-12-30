@@ -13,8 +13,8 @@
 
 # 网址
 ### 测试
-    http://zzfx.hoptest.haier.net/api
+    lqhy.hoptest.haier.net/api
 ### 生产
-    http://ddzzl.haier.net/api/
+    lqhy.haier.net/api/
 
 
