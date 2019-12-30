@@ -153,7 +153,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public List<ZContracts> selectToGrabContract() {
+    public List<ZContracts> selectToGrabContract(QueryContractListDTO dto) {
         List<ZContracts> contractsList = new ArrayList<>();
         //获取当前用户
         Subject subject = SecurityUtils.getSubject();
@@ -176,7 +176,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     chainStr += percentInfo.getLqCode()+",";
                 }
                 String[] chainCode = chainStr.split(",");
-                QueryContractListDTO dto = new QueryContractListDTO();
                 dto.setStatus("0");
                 dto.setChainCodeList(chainCode);
                 contractsList = contractsDao.selectContractList(dto);

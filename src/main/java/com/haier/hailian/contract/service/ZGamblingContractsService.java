@@ -27,5 +27,5 @@ public interface ZGamblingContractsService {
 
     List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
 
-    List<ZContracts> selectToGrabContract();
+    List<ZContracts> selectToGrabContract(QueryContractListDTO queryDTO);
 }

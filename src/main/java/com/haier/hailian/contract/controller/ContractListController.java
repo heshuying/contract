@@ -41,8 +41,8 @@ public class ContractListController {
 
     @PostMapping(value = {"/selectToGrabContract"})
     @ApiOperation(value = "查询待抢入的合约列表")
-    public R selectToGrabContract() {
-        List<ZContracts> contractsList = gamblingContractsService.selectToGrabContract();
+    public R selectToGrabContract(@RequestBody QueryContractListDTO queryDTO) {
+        List<ZContracts> contractsList = gamblingContractsService.selectToGrabContract(queryDTO);
         return R.ok().put("data",contractsList);
     }
 }
