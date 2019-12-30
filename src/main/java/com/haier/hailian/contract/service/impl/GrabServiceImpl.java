@@ -116,19 +116,14 @@ public class GrabServiceImpl implements GrabService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
-
-        List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
-                .eq("xw_code", currentUser.getXwCode()));
+        TOdsMinbu minBu = sysUser.getMinbu();
 
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto = new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
         String chainName = contracts.getContractName();
-        if (xwRegion != null && xwRegion.size() > 0) {
-            chainName = chainName.replace("链群", "-" + xwRegion.get(0).getRegionName() + "链群");
-            tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
-        }
+        chainName = chainName.replace("链群", "-" + minBu.getRegionName() + "链群");
+        tyMasterGrabChainInfoDto.setRegionCode(minBu.getRegionCode());
+
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
         tyMasterGrabChainInfoDto.setContractName(chainName);
@@ -143,7 +138,7 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
-                        .eq("region_code", currentUser.getXwCode())
+                        .eq("region_code", minBu.getXwCode())
         );
         List<FactorDto> targetFactor = factors.stream().map(m -> {
             FactorDto dto = new FactorDto();
@@ -158,7 +153,7 @@ public class GrabServiceImpl implements GrabService {
 
         //网格抢单汇总
         perfectQueryParam(queryDto);
-        queryDto.setLoginXwCode(currentUser.getXwCode());
+        queryDto.setLoginXwCode(minBu.getXwCode());
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
         BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
                 AmountFormat.amtStr2D(m.getIncome())).sum());
@@ -180,9 +175,9 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    grabFactor.setFactorValue(currIncom
+                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString()
+                            .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
                     grabFactor.setFactorValue("0");
@@ -194,9 +189,9 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    grabFactor.setFactorValue(currIncom
+                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString()
+                            .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
                     grabFactor.setFactorValue("0");
@@ -208,9 +203,9 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    grabFactor.setFactorValue(currIncom
+                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString()
+                            .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
                     grabFactor.setFactorValue("0");
@@ -239,8 +234,8 @@ public class GrabServiceImpl implements GrabService {
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
-        queryDto.setLoginXwCode(currentUser.getXwCode());
+        TOdsMinbu minbu = sysUser.getMinbu();
+        queryDto.setLoginXwCode(minbu.getXwCode());
 
 
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.queryMeshGrabIncome(queryDto);
@@ -320,7 +315,7 @@ public class GrabServiceImpl implements GrabService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
+        TOdsMinbu minbBu = sysUser.getMinbu();
 
         List<TyMasterGrabChainInfoDto> list=dto.getTyMasterGrabChainInfoDto();
         for ( TyMasterGrabChainInfoDto chainInfoDto:list
@@ -347,15 +342,15 @@ public class GrabServiceImpl implements GrabService {
             contracts.setId(0);
             contracts.setContractName(chainInfoDto.getChainName());
             contracts.setContractType("20");
-            contracts.setCreateCode(currentUser.getEmpsn());
-            contracts.setCreateName(currentUser.getEmpname());
+            contracts.setCreateCode(sysUser.getEmpSn());
+            contracts.setCreateName(sysUser.getEmpName());
             contracts.setCreateTime(new Date());
             contracts.setStatus("1");
             contracts.setRegionCode(chainInfoDto.getRegionCode());
-            contracts.setOrgCode(currentUser.getOrgNum());
-            contracts.setOrgName(currentUser.getOrgName());
-            contracts.setOrgType(currentUser.getOrgType());
-            contracts.setXiaoweiCode(currentUser.getXwCode());
+            contracts.setOrgCode(minbBu.getLittleXwCode());
+            contracts.setOrgName(minbBu.getLittleXwName());
+            contracts.setOrgType(minbBu.getXwType3Code());
+            contracts.setXiaoweiCode(minbBu.getXwCode());
             contractsService.save(contracts);
 
             List<ZContractsFactor> factors=new ArrayList<>();

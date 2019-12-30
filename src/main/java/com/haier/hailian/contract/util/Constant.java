@@ -65,6 +65,30 @@ public class Constant {
     }
 
     /**
+     * 链群状态 1创单链群； 2体验链群
+     */
+    public enum EmpRole {
+        /**
+         * 创单链群
+         */
+        CD("1"),
+        /**
+         * 体验链群
+         */
+        TY("2");
+
+        private String value;
+
+        EmpRole(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    /**
      * 链群状态 01高； 02中 ；03低
      */
     public enum ProductStru {

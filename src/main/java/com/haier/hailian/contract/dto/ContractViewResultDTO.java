@@ -32,5 +32,7 @@ public class ContractViewResultDTO {
     private List<ZContractsFactor> e2eList;
     @ApiModelProperty(value="抢单目标",name="抢单目标")
     private List<ZContractsFactor> grabList;
+    @ApiModelProperty(value="体验抢单目标",name="体验抢单目标")
+    private List<ZContractsFactor> grabTYList;
 
 }
