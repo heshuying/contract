@@ -103,7 +103,10 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询人员目标")
     public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询,以逗号分割", required = true) String nodeCodeStr) {
         try {
-            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(nodeCodeStr);  //创建jsonObject对象
+            String result = json.get("nodeCodeStr").getAsString();
+            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
