@@ -209,7 +209,6 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         contracts.setId(null);
         contracts.setParentId(requestDto.getContractId());
-        contracts.setJoinTime(new Date());
         contracts.setStatus("1");
         contracts.setShareSpace(new BigDecimal(requestDto.getTargetShareMoney()));
         contracts.setSharePercent(requestDto.getSharePercent());
