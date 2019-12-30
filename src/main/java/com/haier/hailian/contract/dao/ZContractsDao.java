@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ContractViewDataCD;
+import com.haier.hailian.contract.dto.ContractViewDataTY;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
@@ -55,4 +56,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<ContractViewDataCD> selectContractsViewForCD(String contractId);
 
     List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
+
+    List<ContractViewDataTY> selectContractsViewForTY(String contractId);
 }

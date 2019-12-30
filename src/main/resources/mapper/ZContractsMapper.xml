@@ -126,6 +126,24 @@
         where zc.parent_id = #{contractId}
     </select>
 
+    <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">
+        SELECT
+          zc.`contract_name`,
+          xw.`xwName`,
+          cf.*
+        FROM
+          z_contracts_factor cf
+          JOIN z_contracts zc
+            ON cf.`contract_id` = zc.id
+            JOIN sys_xiaowei_ehr xw ON zc.`xiaowei_code` = xw.`xwCode`
+        WHERE cf.`contract_id` IN
+          (SELECT
+            t1.id
+          FROM
+            z_contracts t1
+          WHERE t1.`parent_id` = #{contractId})
+    </select>
+
     <select id="queryTyGrabList" resultMap="BaseResultMap" >
         select * from z_contracts base where contract_type='10' and status='0'
         <if test=" startDate != null and startDate != '' ">
@@ -145,5 +163,7 @@
     parent_id=base.id and contract_type='20' and create_code=#{empSn}
     )
     </select>
+
+
 
 </mapper>

@@ -5,15 +5,18 @@ import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.ContractViewDataCD;
+import com.haier.hailian.contract.dto.ContractViewDataTY;
 import com.haier.hailian.contract.dto.ContractViewResultDTO;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
+import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,20 +60,62 @@ public class ContractViewServiceImpl implements ContractViewService {
         result.setE2eList(e2eList);
         result.setGrabList(grabList);
 
+        // 体验抢单目标
+        BigDecimal incom = BigDecimal.ZERO;
+        Integer highPercent = 0;
+        Integer lowPercent = 0;
+        List<ZContractsFactor> grabTYList = new ArrayList<>();
+        List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
+        if(factorList != null && !factorList.isEmpty()){
+            for(ContractViewDataTY factor : factorList){
+                if(Constant.FactorCode.Incom.getValue().equals(factor.getFactorCode())){
+                    incom = incom.add(new BigDecimal(factor.getFactorValue()));
+                }else if(Constant.FactorCode.HighPercent.getValue().equals(factor.getFactorCode())){
+                    highPercent = highPercent + Integer.parseInt(factor.getFactorValue());
+                }else if(Constant.FactorCode.LowPercent.getValue().equals(factor.getFactorCode())){
+                    lowPercent = lowPercent + Integer.parseInt(factor.getFactorValue());
+                }
+            }
+            highPercent = highPercent / factorList.size();
+            lowPercent = lowPercent / factorList.size();
+
+            ZContractsFactor factor1 = new ZContractsFactor();
+            factor1.setFactorName(Constant.FactorCode.Incom.getName());
+            factor1.setFactorCode(Constant.FactorCode.Incom.getValue());
+            factor1.setFactorValue(incom.toString());
+            factor1.setFactorUnit("元");
+            grabTYList.add(factor1);
+
+            ZContractsFactor factor2 = new ZContractsFactor();
+            factor2.setFactorName(Constant.FactorCode.HighPercent.getName());
+            factor2.setFactorCode(Constant.FactorCode.HighPercent.getValue());
+            factor2.setFactorValue(String.valueOf(highPercent));
+            factor2.setFactorUnit("%");
+            grabTYList.add(factor2);
+
+            ZContractsFactor factor3 = new ZContractsFactor();
+            factor3.setFactorName(Constant.FactorCode.LowPercent.getName());
+            factor3.setFactorCode(Constant.FactorCode.LowPercent.getValue());
+            factor3.setFactorValue(String.valueOf(lowPercent));
+            factor3.setFactorUnit("%");
+            grabTYList.add(factor3);
+        }
+        result.setGrabTYList(grabTYList);
+
         return result;
     }
 
     @Override
-    public Map<String, List<ZContractsFactor>> getContractViewDataTY(String contractId){
-        Map<String, List<ZContractsFactor>> resultMap = new HashMap<>();
-        List<ZContractsFactor> factorList = factorDao.selectFactorForViewTY(contractId, "02");
+    public Map<String, List<ContractViewDataTY>> getContractViewDataTY(String contractId){
+        Map<String, List<ContractViewDataTY>> resultMap = new HashMap<>();
+        List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
 
         if(factorList != null && !factorList.isEmpty()){
-            for(ZContractsFactor factor : factorList){
-                List<ZContractsFactor> factors = resultMap.get(factor.getRegionName());
+            for(ContractViewDataTY factor : factorList){
+                List<ContractViewDataTY> factors = resultMap.get(factor.getXwName());
                 if(factors == null){
                     factors = new ArrayList<>();
-                    resultMap.put(factor.getRegionName(), factors);
+                    resultMap.put(factor.getXwName(), factors);
                 }
                 factors.add(factor);
             }
