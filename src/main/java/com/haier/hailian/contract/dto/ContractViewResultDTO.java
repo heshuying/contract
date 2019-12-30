@@ -24,6 +24,8 @@ public class ContractViewResultDTO {
     private BigDecimal shareSpace;
     @ApiModelProperty(value="状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期",name="状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期")
     private String status;
+    @ApiModelProperty(value="状态名称",name="状态名称")
+    private String statusName;
     @ApiModelProperty(value="底线目标",name="底线目标")
     private List<ZContractsFactor> bottomList;
     @ApiModelProperty(value="e2e目标",name="e2e目标")
