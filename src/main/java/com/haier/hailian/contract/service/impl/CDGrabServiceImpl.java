@@ -98,7 +98,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 target.setTargetName(targetInfo.getTargetName());
                 target.setTargetCode(targetInfo.getTargetCode());
 //                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
-                target.setTargetUnit("");
+                target.setTargetUnit(targetInfo.getTargetUnit());
 //                target.setTargetTo(targetInfo.getTargetTo());
                 responseDto.getTargetList().add(target);
                 responseDto.setSharePercent(targetInfo.getSharePercent());
