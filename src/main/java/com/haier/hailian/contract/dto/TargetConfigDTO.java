@@ -8,5 +8,6 @@ public class TargetConfigDTO {
     private String targetName;
     private String targetValue;
     private String targetType;
+    private String targetUnit;
 //    private String targetValueGrab;
 }
