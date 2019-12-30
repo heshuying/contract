@@ -7,6 +7,7 @@ import com.haier.hailian.contract.dto.FactorDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
@@ -24,6 +25,7 @@ import com.haier.hailian.contract.service.SysNetService;
 import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.service.ZContractsFactorService;
 import com.haier.hailian.contract.service.ZContractsService;
+import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.service.ZNetBottomService;
 import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
@@ -69,7 +71,7 @@ public class GrabServiceImpl implements GrabService {
 
 
     @Override
-    public List<TyMasterGrabChainInfoDto> queryChainList() {
+    public List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto query) {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
@@ -84,11 +86,11 @@ public class GrabServiceImpl implements GrabService {
         ).stream().map(m->m.getLqCode()).distinct().collect(Collectors.toList());
         List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
         if(chainCodes!=null&&chainCodes.size()>0){
-            List<ZContracts> contractses=contractsService.list(
-                    new QueryWrapper<ZContracts>().eq("contract_type","10")
-                    .eq("status", "0")
-                    .in("chain_code", chainCodes)
-            );
+            query.setChainCodes(chainCodes);
+            query.setEmpSn(sysUser.getEmpSn());
+
+            List<ZContracts> contractses=contractsService.queryTyGrabList(query);
+
             for ( ZContracts contract: contractses
                  ) {
                 TyMasterGrabQueryDto queryDto=new TyMasterGrabQueryDto();
@@ -124,12 +126,14 @@ public class GrabServiceImpl implements GrabService {
             tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
         }
         tyMasterGrabChainInfoDto.setContractName(chainName);
-        tyMasterGrabChainInfoDto.setContractOwner(contracts.getContractName());
+        tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
         tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
                 DateFormatUtil.format(contracts.getEndDate()));
+        tyMasterGrabChainInfoDto.setGrabEnd(DateFormatUtil.format(contracts.getJoinTime()
+                ,DateFormatUtil.DATE_TIME_PATTERN));
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
@@ -147,6 +151,7 @@ public class GrabServiceImpl implements GrabService {
 
         //网格抢单汇总
         perfectQueryParam(queryDto);
+        queryDto.setLoginXwCode(currentUser.getXwCode());
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
         BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
                 AmountFormat.amtStr2D(m.getIncome())).sum());
@@ -157,7 +162,7 @@ public class GrabServiceImpl implements GrabService {
             FactorDto grabFactor=new FactorDto();
             BeanUtils.copyProperties(index, grabFactor);
             if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
-                index.setFactorValue(inc.toString());
+                grabFactor.setFactorValue(inc.toString());
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.High.getValue().equals(f.getProductStru()))
@@ -165,12 +170,12 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    index.setFactorValue(currIncom
+                    grabFactor.setFactorValue(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString()
                     );
                 }else{
-                    index.setFactorValue("0");
+                    grabFactor.setFactorValue("0");
                 }
             } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
@@ -179,12 +184,12 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    index.setFactorValue(currIncom
+                    grabFactor.setFactorValue(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString()
                     );
                 }else{
-                    index.setFactorValue("0");
+                    grabFactor.setFactorValue("0");
                 }
             } else if (Constant.FactorCode.MiddPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
@@ -193,16 +198,16 @@ public class GrabServiceImpl implements GrabService {
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
                             AmountFormat.amtStr2D(m.getIncome())).sum());
-                    index.setFactorValue(currIncom
+                    grabFactor.setFactorValue(currIncom
                             .divide(inc,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString()
                     );
                 }else{
-                    index.setFactorValue("0");
+                    grabFactor.setFactorValue("0");
                 }
             } else {
-                index.setFactorValue("");
-                index.setHasInput(true);
+                grabFactor.setFactorValue("");
+                grabFactor.setHasInput(true);
             }
             grabFactors.add(grabFactor);
         }
@@ -333,7 +338,6 @@ public class GrabServiceImpl implements GrabService {
             contracts.setCreateCode(currentUser.getEmpsn());
             contracts.setCreateName(currentUser.getEmpname());
             contracts.setCreateTime(new Date());
-            contracts.setJoinTime(new Date());
             contracts.setStatus("1");
             contracts.setRegionCode(chainInfoDto.getRegionCode());
             contracts.setOrgCode(currentUser.getOrgNum());

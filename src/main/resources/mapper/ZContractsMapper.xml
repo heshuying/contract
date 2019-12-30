@@ -125,4 +125,25 @@
             ON rpd.`parent_id` = rp.id
         where zc.parent_id = #{contractId}
     </select>
+
+    <select id="queryTyGrabList" resultMap="BaseResultMap" >
+        select * from z_contracts base where contract_type='10' and status='0'
+        <if test=" startDate != null and startDate != '' ">
+            and DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d')
+        </if>
+        <if test=" endDate != null and endDate != ''">
+            and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
+        </if>
+        <if test="chainCodes!=null">
+            and chain_code in
+            <foreach collection="chainCodes" item="item" index="index" open="(" close=")"  separator="," >
+                #{item}
+            </foreach>
+        </if>
+
+    and not EXISTS (select 1 from z_contracts where
+    parent_id=base.id and contract_type='20' and create_code=#{empSn}
+    )
+    </select>
+
 </mapper>

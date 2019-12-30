@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
@@ -29,8 +30,8 @@ public class TYMasterGrabController {
 
     @PostMapping(value = {"/chain/list"})
     @ApiOperation(value = "体验链群主抢单列表")
-    public R chainInfo() {
-        List<TyMasterGrabChainInfoDto> list=grabService.queryChainList();
+    public R chainInfo(@RequestBody TyGrabListQueryDto queryDto) {
+        List<TyMasterGrabChainInfoDto> list=grabService.queryChainList(queryDto);
         return R.ok().put("data",list);
     }
 
