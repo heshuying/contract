@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
-import com.haier.hailian.contract.dto.ContractViewDataCD;
-import com.haier.hailian.contract.dto.ContractViewDataTY;
-import com.haier.hailian.contract.dto.ContractViewResultDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
@@ -106,7 +104,7 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public Map<String, List<ContractViewDataTY>> getContractViewDataTY(String contractId){
+    public Map<String, List<ContractViewDataTY>> getContractViewDataTYOld(String contractId){
         Map<String, List<ContractViewDataTY>> resultMap = new HashMap<>();
         List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
 
@@ -122,6 +120,54 @@ public class ContractViewServiceImpl implements ContractViewService {
         }
 
         return resultMap;
+    }
+
+    @Override
+    public List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId){
+        List<ContractViewDataTYResultDTO> resultList = new ArrayList<>();
+        Map<String,ContractViewDataTYResultDTO> tempMap = new HashMap<>();
+
+        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
+        List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
+
+        if(factorList != null && !factorList.isEmpty()){
+            for(ContractViewDataTY factor : factorList){
+                ContractViewDataTYResultDTO resultDTO = tempMap.get(factor.getXwName());
+                if(resultDTO == null){
+                    resultDTO = new ContractViewDataTYResultDTO();
+                    resultDTO.setXwName(factor.getXwName());
+                    tempMap.put(factor.getXwName(), resultDTO);
+                }
+            }
+        }
+
+        if(factorList != null && !factorList.isEmpty()){
+            for(String xwName : tempMap.keySet()) {
+                ContractViewDataTYResultDTO resultDTO = tempMap.get(xwName);
+                List<TargetConfigDTO> targetConfigList = new ArrayList<>();
+                for (ContractViewDataTY factor : factorList) {
+                    if(xwName.equals(factor.getXwName())){
+                        resultDTO.setTargetList(targetConfigList);
+                        TargetConfigDTO targetConfigDTO = new TargetConfigDTO();
+                        targetConfigDTO.setTargetCode(factor.getFactorCode());
+                        targetConfigDTO.setTargetName(factor.getFactorName());
+                        targetConfigDTO.setTargetValue(factor.getFactorValue());
+                        targetConfigDTO.setTargetType(factor.getFactorType());
+                        targetConfigList.add(targetConfigDTO);
+                    }
+
+                }
+                resultList.add(resultDTO);
+            }
+        }
+
+        return resultList;
+    }
+
+    @Override
+    public List<TargetTitleTYDTO> getTargetTitleList(String contractId){
+        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
+        return titleList;
     }
 
 

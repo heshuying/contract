@@ -169,7 +169,25 @@
             t1.id
           FROM
             z_contracts t1
-          WHERE t1.`parent_id` = #{contractId})
+          WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
+        ORDER BY xwName, factor_code,factor_type
+    </select>
+
+    <select id="selectContractsTitleForTY" resultType="com.haier.hailian.contract.dto.TargetTitleTYDTO">
+        SELECT
+          cf.factor_code AS targetCode,
+          cf.factor_name AS targetName,
+          cf.factor_unit AS targetUnit
+        FROM
+          z_contracts_factor cf
+        WHERE cf.`contract_id` IN
+          (SELECT
+            t1.id
+          FROM
+            z_contracts t1
+          WHERE t1.contract_type = '20'
+            AND t1.`parent_id` = #{contractId})
+         GROUP BY factor_code;
     </select>
 
     <select id="queryTyGrabList" resultMap="BaseResultMap" >

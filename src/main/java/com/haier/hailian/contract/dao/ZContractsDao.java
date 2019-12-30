@@ -3,9 +3,11 @@ package com.haier.hailian.contract.dao;
 import com.haier.hailian.contract.dto.ContractViewDataCD;
 import com.haier.hailian.contract.dto.ContractViewDataTY;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
+import com.haier.hailian.contract.dto.TargetTitleTYDTO;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 
 import java.util.List;
 
@@ -63,6 +65,13 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
 
     List<ContractViewDataTY> selectContractsViewForTY(String contractId);
+
+    /**
+     * 体验抢单标题列表查询
+     * @param contractId
+     * @return
+     */
+    List<TargetTitleTYDTO> selectContractsTitleForTY(String contractId);
 
     /**
      * 查询待抢入合约列表

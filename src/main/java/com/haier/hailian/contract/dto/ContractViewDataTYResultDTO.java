@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class ContractViewDataTYResultDTO {
     private String xwName;
-    List<ContractViewDataTY> list;
+    List<TargetConfigDTO> targetList;
 }
