@@ -54,5 +54,17 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     List<ContractViewDataCD> selectContractsViewForCD(String contractId);
 
+    /**
+     * 查询已抢入合约列表
+     * @param queryDTO
+     * @return
+     */
     List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
+
+    /**
+     * 查询待抢入合约列表
+     * @param queryDTO
+     * @return
+     */
+    List<ZContracts> selectToGrabContract(QueryContractListDTO queryDTO);
 }
