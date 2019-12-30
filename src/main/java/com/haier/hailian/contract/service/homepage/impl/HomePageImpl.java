@@ -243,16 +243,16 @@ public class HomePageImpl implements HomePageService {
                         .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
 
         for (ZContractsFactor exp : bottomFactorList){
-            if(exp.getFactorCode().equals("FXDX_SHR")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
                 map.put("bottomTargetIncome" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LR")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
                 map.put("bottomTargetProfit" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_MLL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("bottomTargetRate" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LRL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("bottomTargetProfitRate" , exp.getFactorValue());
             }
         }
@@ -266,16 +266,17 @@ public class HomePageImpl implements HomePageService {
                         .eq("factor_type" , Constant.FactorType.E2E.getValue()));
 
         for (ZContractsFactor exp : e2eFactorList){
-            if(exp.getFactorCode().equals("FXDX_SHR")){
+
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
                 map.put("e2eTargetIncome" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LR")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
                 map.put("e2eTargetProfit" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_MLL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("e2eTargetRate" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LRL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("e2eTargetProfitRate" , exp.getFactorValue());
             }
         }
@@ -286,19 +287,20 @@ public class HomePageImpl implements HomePageService {
         List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
                 new QueryWrapper<ZContractsFactor>()
                         .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue())
+                        .isNull("region_code"));
 
         for (ZContractsFactor exp : grabFactorList){
-            if(exp.getFactorCode().equals("FXDX_SHR")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
                 map.put("grabTargetIncome" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LR")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
                 map.put("grabTargetProfit" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_MLL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("grabTargetRate" , exp.getFactorValue());
             }
-            if(exp.getFactorCode().equals("FXDX_LRL")){
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("grabTargetProfitRate" , exp.getFactorValue());
             }
         }
