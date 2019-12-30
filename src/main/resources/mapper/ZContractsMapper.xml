@@ -151,7 +151,7 @@
             ON rp.`parent_id` = zc.`id`
           JOIN z_reserve_plan_detail rpd
             ON rpd.`parent_id` = rp.id
-        where zc.parent_id = #{contractId}
+        where zc.parent_id = #{contractId} AND zc.contract_type = '30'
     </select>
 
     <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">
