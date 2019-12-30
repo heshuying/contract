@@ -24,4 +24,7 @@ public interface GrabService {
     void refreshContractStatusJob();
 
     List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto queryDto);
+
+    TyMasterGrabChainInfoDto queryChainInfo(Integer contractId);
+    List<MeshGrabInfoDto> queryMeshGrabDetail(Integer contractId);
 }
