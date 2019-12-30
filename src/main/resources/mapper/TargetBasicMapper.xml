@@ -70,7 +70,7 @@
                 and target_pt_code = #{targetPtCode}
             </if>
             <if test=" targetXwCategoryCode != null ">
-                and target_xw_category_code like  like CONCAT('%|', #{targetXwCategoryCode,jdbcType=VARCHAR}, '|%')
+                and target_xw_category_code like CONCAT('%|', #{targetXwCategoryCode,jdbcType=VARCHAR}, '|%')
             </if>
         </where>
     </select>

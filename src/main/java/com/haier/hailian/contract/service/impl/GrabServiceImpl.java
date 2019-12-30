@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.FactorDto;
@@ -17,6 +18,7 @@ import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.GrabService;
@@ -62,12 +64,14 @@ public class GrabServiceImpl implements GrabService {
     @Autowired
     private ZContractsFactorService contractsFactorService;
     @Autowired
-    private ChainCommonService chainCommonService;
+    private ChainCommonService chainCommonService; //上链
     @Autowired
     private ZNodeTargetPercentInfoDao nodeInfoDao;
 
     @Autowired
     private SysXwRegionService xwRegionService;
+    @Autowired
+    private ZHrChainInfoDao chainInfoDao;
 
 
     @Override
@@ -125,9 +129,11 @@ public class GrabServiceImpl implements GrabService {
             chainName = chainName.replace("链群", "-" + xwRegion.get(0).getRegionName() + "链群");
             tyMasterGrabChainInfoDto.setRegionCode(xwRegion.get(0).getRegionCode());
         }
+        ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code", contracts.getChainCode()));
         tyMasterGrabChainInfoDto.setContractName(chainName);
         tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
-        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
+        tyMasterGrabChainInfoDto.setChainName(chainInfo==null?"":chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
@@ -164,7 +170,9 @@ public class GrabServiceImpl implements GrabService {
             BeanUtils.copyProperties(index, grabFactor);
             grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
             if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
-                grabFactor.setFactorValue(inc.toString());
+                grabFactor.setFactorValue(inc.divide(
+                        new BigDecimal("10000"),2, RoundingMode.HALF_UP
+                ).toString());//格式化万
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.High.getValue().equals(f.getProductStru()))
@@ -318,6 +326,7 @@ public class GrabServiceImpl implements GrabService {
         for ( TyMasterGrabChainInfoDto chainInfoDto:list
              ) {
             //单个合约保存
+            /*
             //根据小微code 和合约判断是否已抢单
             ZContracts existsContract=contractsService.getOne(new QueryWrapper<ZContracts>()
                     .eq("parent_id",chainInfoDto.getContractId())
@@ -328,11 +337,12 @@ public class GrabServiceImpl implements GrabService {
                 throw new RException("该用户已抢单，请勿重复抢单",Constant.CODE_VALIDFAIL);
             }
 
-            ZContracts contracts=contractsService.getById(chainInfoDto.getContractId());
+
             if(contracts==null){
                 throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
             }
-
+            */
+            ZContracts contracts=contractsService.getById(chainInfoDto.getContractId());
             contracts.setParentId(chainInfoDto.getContractId());
             contracts.setId(0);
             contracts.setContractName(chainInfoDto.getChainName());
@@ -357,7 +367,7 @@ public class GrabServiceImpl implements GrabService {
                         factor.setFactorName(m.getFactorName());
                         factor.setFactorValue(m.getFactorValue());
                         factor.setFactorUnit(m.getFactorUnit());
-                        factor.setFactorType(m.getFactorType());
+                        factor.setFactorType(Constant.FactorType.Bottom.getValue());
                         factor.setMeshCode(contracts.getId().toString());//汇总
                         return factor;
                     }
@@ -372,7 +382,7 @@ public class GrabServiceImpl implements GrabService {
                                 factor.setFactorName(m.getFactorName());
                                 factor.setFactorValue(m.getFactorValue());
                                 factor.setFactorUnit(m.getFactorUnit());
-                                factor.setFactorType(m.getFactorType());
+                                factor.setFactorType(Constant.FactorType.Grab.getValue());
                                 factor.setMeshCode(contracts.getId().toString());//汇总
                                 return factor;
                             }
