@@ -145,6 +145,7 @@ public class GrabServiceImpl implements GrabService {
             dto.setFactorName(m.getFactorName());
             dto.setFactorValue(m.getFactorValue());
             dto.setFactorUnit(m.getFactorUnit());
+            dto.setFactorType(m.getFactorType());
             dto.setHasInput(false);
             return dto;
         }).collect(Collectors.toList());
@@ -161,6 +162,7 @@ public class GrabServiceImpl implements GrabService {
         for (FactorDto index : targetFactor) {
             FactorDto grabFactor=new FactorDto();
             BeanUtils.copyProperties(index, grabFactor);
+            grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
             if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
                 grabFactor.setFactorValue(inc.toString());
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
@@ -355,6 +357,8 @@ public class GrabServiceImpl implements GrabService {
                         factor.setFactorName(m.getFactorName());
                         factor.setFactorValue(m.getFactorValue());
                         factor.setFactorUnit(m.getFactorUnit());
+                        factor.setFactorType(m.getFactorType());
+                        factor.setMeshCode(contracts.getId().toString());//汇总
                         return factor;
                     }
             ).collect(Collectors.toList());
@@ -368,6 +372,8 @@ public class GrabServiceImpl implements GrabService {
                                 factor.setFactorName(m.getFactorName());
                                 factor.setFactorValue(m.getFactorValue());
                                 factor.setFactorUnit(m.getFactorUnit());
+                                factor.setFactorType(m.getFactorType());
+                                factor.setMeshCode(contracts.getId().toString());//汇总
                                 return factor;
                             }
                     ).collect(Collectors.toList())
@@ -407,6 +413,70 @@ public class GrabServiceImpl implements GrabService {
         log.info("数据：{}", updateList);
         contractsService.updateBatchById(updateList);
 
+    }
+
+    @Override
+    public TyMasterGrabChainInfoDto queryChainInfo(Integer contractId) {
+        ZContracts contracts = contractsService.getById(contractId);
+        if (contracts == null) {
+            throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
+        }
+
+        TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto = new TyMasterGrabChainInfoDto();
+        tyMasterGrabChainInfoDto.setContractId(contracts.getId());
+
+        tyMasterGrabChainInfoDto.setContractName(contracts.getContractName());
+        tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
+        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
+        tyMasterGrabChainInfoDto.setStart(
+                DateFormatUtil.format(contracts.getStartDate()));
+        tyMasterGrabChainInfoDto.setEnd(
+                DateFormatUtil.format(contracts.getEndDate()));
+        tyMasterGrabChainInfoDto.setGrabEnd(DateFormatUtil.format(contracts.getJoinTime()
+                ,DateFormatUtil.DATE_TIME_PATTERN));
+        tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
+        List<ZContractsFactor> factors = contractsFactorService.list(
+                new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
+
+        );
+        List<FactorDto> targetFactor = factors.stream().filter(m->Constant.FactorType.Bottom
+                .getValue().equals(m.getMeshCode())).map(m -> {
+            FactorDto dto = new FactorDto();
+            dto.setFactorCode(m.getFactorCode());
+            dto.setFactorName(m.getFactorName());
+            dto.setFactorValue(m.getFactorValue());
+            dto.setFactorUnit(m.getFactorUnit());
+            return dto;
+        }).collect(Collectors.toList());
+
+        //网格抢单汇总
+        List<FactorDto> grabFactors = factors.stream().filter(m->Constant.FactorType.Grab
+                .getValue().equals(m.getMeshCode())).map(m -> {
+            FactorDto dto = new FactorDto();
+            dto.setFactorCode(m.getFactorCode());
+            dto.setFactorName(m.getFactorName());
+            dto.setFactorValue(m.getFactorValue());
+            dto.setFactorUnit(m.getFactorUnit());
+            return dto;
+        }).collect(Collectors.toList());
+        tyMasterGrabChainInfoDto.setTargetList(targetFactor);
+        tyMasterGrabChainInfoDto.setGrabList(grabFactors);
+
+        return tyMasterGrabChainInfoDto;
+    }
+
+    @Override
+    public List<MeshGrabInfoDto> queryMeshGrabDetail(Integer contractId) {
+        ZContracts contracts = contractsService.getById(contractId);
+        if (contracts == null) {
+            throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
+        }
+        TyMasterGrabQueryDto queryDto=new TyMasterGrabQueryDto();
+
+        queryDto.setContractId(contracts.getParentId());
+        perfectQueryParam(queryDto);
+        queryDto.setLoginXwCode(contracts.getXiaoweiCode());
+        return this.queryMeshGrabDetail(queryDto);
     }
 
     private void perfectQueryParam(TyMasterGrabQueryDto queryDTO){

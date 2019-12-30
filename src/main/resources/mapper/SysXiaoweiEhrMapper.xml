@@ -26,7 +26,8 @@
     </sql>
     <select id="selectMarket" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+         id, xwCode,SUBSTR(substring(xwName,4) ,1 , CHAR_LENGTH(substring(xwName,4))-4) as xwName,xwMasterCode,xwMasterName,ptCode,ptName,buCode,buName,
+        xwGroupType,xwGroupName,xwStyle,xwStyleCode,xwType,xwTypeCode
         from sys_xiaowei_ehr
         where ptCode='V0156' and xwGroupType='2'
     </select>
