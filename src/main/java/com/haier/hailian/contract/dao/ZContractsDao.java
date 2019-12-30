@@ -33,6 +33,9 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     List<ZContracts> selectAllContracts();
 
+
+    List<ZContracts> selectAllContractsById(int pId);
+
     /**
      * 查询所有的抢单人的
      * @param id
@@ -45,7 +48,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @param groupId
      * @return
      */
-    ZContracts selectByGID(String groupId);
+    ZContracts selectByGID(String groupId,String userCode);
 
     /**
      * 合约详情查看（创单）

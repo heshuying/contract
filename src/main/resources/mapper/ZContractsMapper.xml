@@ -131,13 +131,21 @@
         and group_id is null
     </select>
 
+    <select id="selectAllContractsById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where parent_id =#{pId}
+    </select>
+
 
     <select id="selectByGID" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from z_contracts
-        where contract_type ='10'
+        where create_code =#{userCode}
         and group_id = #{groupId}
+        and parent_id != 0
     </select>
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">

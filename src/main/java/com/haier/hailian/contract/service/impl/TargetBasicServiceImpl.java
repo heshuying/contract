@@ -35,6 +35,14 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         String monthStr = month < 10 ? "0" + month : "" + month;
         targetBasic.setPeriodCode(year+monthStr);
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
+        for(TargetBasic targetBasic1:list){
+            if(null != targetBasic1.getTargetBottomLine()){
+                targetBasic1.setTargetBottomLine(targetBasic1.getTargetBottomLine().replaceAll("\\.0",""));
+            }
+            if(null != targetBasic1.getTargetJdLine()){
+                targetBasic1.setTargetJdLine(targetBasic1.getTargetJdLine().replaceAll("\\.0",""));
+            }
+        }
         return list;
     }
 }
