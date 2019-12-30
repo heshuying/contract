@@ -124,6 +124,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         return resultMap;
     }
 
+
     @Override
     public List<ContractViewDataCD> getContractViewDataCD(String contractId){
         List<ContractViewDataCD> resultList = contractsDao.selectContractsViewForCD(contractId);
