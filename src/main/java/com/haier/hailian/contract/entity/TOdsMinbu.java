@@ -122,6 +122,18 @@ public class TOdsMinbu extends Model<TOdsMinbu> {
     @TableField("userXwName")
     private String userXwName;
 
+    /**
+     * 区域编码
+     */
+    @TableField(exist = false)
+    private String regionCode;
+
+    /**
+     * 区域名称
+     */
+    @TableField(exist = false)
+    private String regionName;
+
     private Date createTime;
 
 

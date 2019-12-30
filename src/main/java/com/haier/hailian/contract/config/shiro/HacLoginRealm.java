@@ -6,10 +6,12 @@ import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysEmployeeZ;
 import com.haier.hailian.contract.entity.SysNet;
+import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.SysEmployeeEhrService;
 import com.haier.hailian.contract.service.SysEmployeeZService;
 import com.haier.hailian.contract.service.SysNetService;
+import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.service.TOdsMinbuService;
 import com.haier.hailian.contract.util.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ public class HacLoginRealm extends AuthorizingRealm {
     private SysNetService sysNetService;
     @Autowired
     private TOdsMinbuService minbuService;
+    @Autowired
+    private SysXwRegionService xwRegionService;
 
     /**
      * 认证(登录时调用)
@@ -67,6 +71,16 @@ public class HacLoginRealm extends AuthorizingRealm {
         List<TOdsMinbu> minBu=minbuService.queryMinbuByEmp(empSn);
 
         if(minBu!=null&&minBu.size()>0){
+            TOdsMinbu bu=minBu.get(0);
+            if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
+                //当前体验链群对应的区域
+                List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
+                        .eq("xw_code", bu.getXwCode()));
+                if (xwRegion != null && xwRegion.size() > 0) {
+                    bu.setRegionCode(xwRegion.get(0).getRegionCode());
+                    bu.setRegionName(xwRegion.get(0).getRegionName());
+                }
+            }
             sysEmployee.setMinbu(minBu.get(0));
         }else{
             sysEmployee.setMinbu(new TOdsMinbu());
