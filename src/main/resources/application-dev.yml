@@ -77,6 +77,6 @@ chain:
 
 # hac login Rest api
 hac:
-  loginUri: https://almsc.hoptest.haier.net:8899/api/service-sso/user/loginjson
+  loginUri: http://almsc.hoptest.haier.net:8899/api/service-sso/user/loginjson
   appKey: CkHorSCQuBQwNhgHiKgvPPNWsYYprmXj
   appSecret: RF9vLUON3pBS4FzeW4DtQ0oK6fUwACGW

@@ -27,4 +27,6 @@ public interface MonthChainGroupOrderService extends IService<MonthChainGroupOrd
                                       List<String> yearMonth);
 
     List<MeshGrabEntity> queryMeshGrabIncome(TyMasterGrabQueryDto queryDto);
+
+    List<MeshGrabEntity> sumStruMeshGrabIncome(TyMasterGrabQueryDto queryDto);
 }

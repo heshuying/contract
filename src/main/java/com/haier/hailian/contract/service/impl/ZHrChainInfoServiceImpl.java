@@ -1,10 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
 
-import com.haier.hailian.contract.dao.SysNodeEhrDao;
-import com.haier.hailian.contract.dao.TargetBasicDao;
-import com.haier.hailian.contract.dao.ZHrChainInfoDao;
-import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
@@ -34,6 +31,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZHrChainInfoDao zHrChainInfoDao;
     @Resource
     private SysNodeEhrDao sysNodeEhrDao;
+    @Resource
+    private TOdsMinbuDao tOdsMinbuDao;
     @Resource
     private TargetBasicDao targetBasicDao;
     @Resource
@@ -135,14 +134,18 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
     @Override
     public List<TargetBasic> getNodeTargetList(String nodeCodeStr) {
-//        Date d = new Date();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-//        String dateNowStr = sdf.format(d);
-//        System.out.println("格式化后的日期：" + dateNowStr);
-//        String[] strings = nodeCodeStr.split(",");
-//        List<String> list = Arrays.asList(strings);
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
+        targetBasic.setTargetPtCode(currentUser.getPtcode());
+        targetBasic.setTargetXwCategoryCode(nodeCodeStr);
         return targetBasicDao.selectTarget(targetBasic);
     }
 
@@ -182,6 +185,17 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             z.setLqName(name);
             zNodeTargetPercentInfoDao.insert(z);
         }
+        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtcode());
+        for (TOdsMinbu tOdsMinbu:getIsTY){
+            ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
+            zNodeTargetPercentInfo.setLqCode(chainCode);
+            zNodeTargetPercentInfo.setLqName(name);
+            zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
+            zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
+            zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
+            zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+            zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+        }
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainCode(chainCode);
         zHrChainInfoDto.setMasterCode(currentUser.getEmpsn());
@@ -193,6 +207,22 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //3.保存数据到链上
         //接口调用的时候会用到这个dto的实体类
         return zHrChainInfoDto;
+    }
+
+    @Override
+    public List<TOdsMinbu> getMinbuList() {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        CurrentUser currentUser = sysUser.getCurrentUser();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        //2获取数据库中这个平台的所有最小单元
+
+        return tOdsMinbuDao.getListByPtCode(currentUser.getPtcode());
     }
 
 

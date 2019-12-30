@@ -10,6 +10,7 @@ import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.util.IHaierUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -121,22 +122,24 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
         ihaierTask.setExecutors(executors.split(","));
-        String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
-        ihaierTask.setCcs(ccs.split(","));
+        if(!StringUtils.isEmpty(zReservePlanTeamworkDto.getTeamworker())){
+            String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
+            ihaierTask.setCcs(ccs.split(","));
+        }
         String oid = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getCreateUserCode().split(","));
         ihaierTask.setOpenId(oid);
         ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
         ihaierTask.setEndDate(date.getTime());
         ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
         ihaierTask.setNoticeTime(15);
+        ihaierTask.setChannel("690");
+        ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
-        ihaierTask.setCallBackUrl("http://zzfx.hoptest.haier.net");
+        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
         zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
-
-
         return "保存成功";
     }
 

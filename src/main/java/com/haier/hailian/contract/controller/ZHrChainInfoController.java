@@ -103,7 +103,10 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询人员目标")
     public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询,以逗号分割", required = true) String nodeCodeStr) {
         try {
-            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(nodeCodeStr);  //创建jsonObject对象
+            String result = json.get("nodeCodeStr").getAsString();
+            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
@@ -126,6 +129,22 @@ public class ZHrChainInfoController {
                 return R.ok().put("data", z);
             }
             return res;
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/getMinbuList"})
+    @ApiOperation(value = "查询最小单元")
+    public R getMinbuList() {
+        try {
+            List list = zHrChainInfoService.getMinbuList();
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
             return R.error("系统异常，请稍后尝试！");

@@ -96,6 +96,10 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
     private List<SysXiaoweiEhr> xiaoweiEhrList;
     @TableField(exist=false)
     private List<SysNet> wanggeList;
+
+    @TableField(exist = false)
+    private TOdsMinbu minbu;
+
     /**
      * 当前登陆用户
      */

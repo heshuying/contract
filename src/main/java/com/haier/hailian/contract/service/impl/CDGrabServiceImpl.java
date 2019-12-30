@@ -54,11 +54,12 @@ public class CDGrabServiceImpl implements CDGrabService {
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
         String xwCode = currentUser.getXwCode();
+        String littleXWCode = sysUser.getMinbu().getLittleXwCode();
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
-            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
-            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
+            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
@@ -82,11 +83,11 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
-        paraMap.put("nodeCode", currentUser.getOrgNum());
+        paraMap.put("nodeCode", littleXWCode);
         paraMap.put("ptCode", currentUser.getPtcode());
         paraMap.put("yearMonthList", yearMonthList);
         paraMap.put("chainCode", contracts.getChainCode());
-        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTarget(paraMap);
+        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTargetNew(paraMap);
 
         // 目标底线查询
 //        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", currentUser.getPtcode()).like("role_code", xwCode)
@@ -96,9 +97,9 @@ public class CDGrabServiceImpl implements CDGrabService {
                 CDGrabTargetDto target = new CDGrabTargetDto();
                 target.setTargetName(targetInfo.getTargetName());
                 target.setTargetCode(targetInfo.getTargetCode());
-                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
+//                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
                 target.setTargetUnit(targetInfo.getTargetUnit());
-                target.setTargetTo(targetInfo.getTargetTo());
+//                target.setTargetTo(targetInfo.getTargetTo());
                 responseDto.getTargetList().add(target);
                 responseDto.setSharePercent(targetInfo.getSharePercent());
             }
@@ -130,8 +131,8 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts != null){
             responseDto.setSharePercent(contracts.getSharePercent());
             responseDto.setTargetShareMoney(contracts.getShareSpace().toString());
-            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_TIME_PATTERN));
-            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_TIME_PATTERN));
+            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
+            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
@@ -208,7 +209,6 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         contracts.setId(null);
         contracts.setParentId(requestDto.getContractId());
-        contracts.setJoinTime(new Date());
         contracts.setStatus("1");
         contracts.setShareSpace(new BigDecimal(requestDto.getTargetShareMoney()));
         contracts.setSharePercent(requestDto.getSharePercent());
@@ -227,15 +227,15 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
             // 链群目标保存
-            ZContractsFactor contractsFactor = new ZContractsFactor();
-            contractsFactor.setContractId(contractsId);
-            contractsFactor.setFactorCode(targetDto.getTargetCode());
-            contractsFactor.setFactorName(targetDto.getTargetName());
-            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
-            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
-            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
-            factorDao.insert(contractsFactor);
+//            ZContractsFactor contractsFactor = new ZContractsFactor();
+//            contractsFactor.setContractId(contractsId);
+//            contractsFactor.setFactorCode(targetDto.getTargetCode());
+//            contractsFactor.setFactorName(targetDto.getTargetName());
+//            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+//            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+//            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+//            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
+//            factorDao.insert(contractsFactor);
 
             // 抢单目标保存
             ZContractsFactor contractsFactor2 = new ZContractsFactor();

@@ -161,21 +161,33 @@ public class HomePageImpl implements HomePageService {
                 GrabInfo2Outside grabInfo2Outside = new GrabInfo2Outside();
                 BeanUtils.copyProperties(contracts , grabInfo2Outside);
                 grabInfo2Outside.setXiaoweiName(""); // 暂时不知道怎么取
-                // 抢单factor信息
-                List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , contracts.getId()));
-                for(ZContractsFactor factor : factorList){
-                    if(factor.getFactorType().equals(Constant.FactorType.Grab.getValue())){
-                        grabInfo2Outside.setGrabTargetIncom(factor.getFactorValue());
-                        grabInfo2Outside.setGrabTargetUnit(factor.getFactorUnit());
 
-                        grabInfo2Outside.setGrabTargetCode(factor.getFactorCode());
-                        grabInfo2Outside.setGrabTargetName(factor.getFactorName());
-                    }
-                    if(factor.getFactorType().equals(Constant.FactorType.Bottom.getValue())){
-                        grabInfo2Outside.setGrabTargetBottom(factor.getFactorValue());
-                    }
+
+                // 获取抢单目标底线值
+                ZContractsFactor bottomFactor = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , contracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Bottom.getValue())
+                        .eq("factor_code" , Constant.FactorCode.Incom.getValue()));
+                if(bottomFactor != null){
+                    grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
                 }
+
+                // 抢单目标抢单值 + 高中低端占比
+                List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , contracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+
+                grabInfo2Outside.setGrab2XW(factorList);
+
+//                for(ZContractsFactor factor : factorList){
+//                    if(factor.getFactorType().equals(Constant.FactorType.Grab.getValue())){
+//                        grabInfo2Outside.setGrabTargetIncom(factor.getFactorValue());
+//                        grabInfo2Outside.setGrabTargetUnit(factor.getFactorUnit());
+//
+//                        grabInfo2Outside.setGrabTargetCode(factor.getFactorCode());
+//                        grabInfo2Outside.setGrabTargetName(factor.getFactorName());
+//                    }
+//                }
                 // 预案信息
                 List<PlanInfoDto> planInfoDtoList = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
                 if(planInfoDtoList.size() > 0 && planInfoDtoList != null){
@@ -240,6 +252,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("bottomTargetRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("bottomTargetProfitRate" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -251,6 +266,7 @@ public class HomePageImpl implements HomePageService {
                         .eq("factor_type" , Constant.FactorType.E2E.getValue()));
 
         for (ZContractsFactor exp : e2eFactorList){
+
             if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
                 map.put("e2eTargetIncome" , exp.getFactorValue());
             }
@@ -260,6 +276,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("e2eTargetRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("e2eTargetProfitRate" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -268,7 +287,8 @@ public class HomePageImpl implements HomePageService {
         List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
                 new QueryWrapper<ZContractsFactor>()
                         .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue())
+                        .isNull("region_code"));
 
         for (ZContractsFactor exp : grabFactorList){
             if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
@@ -279,6 +299,9 @@ public class HomePageImpl implements HomePageService {
             }
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("grabTargetRate" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("grabTargetProfitRate" , exp.getFactorValue());
             }
         }
 
