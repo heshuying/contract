@@ -183,10 +183,15 @@
 
     <select id="selectContractsViewForTYSum" resultType="com.haier.hailian.contract.dto.FactorConfigDTO">
         SELECT
-          cf.`factor_code` AS factorCode, cf.`factor_name` AS factorName ,cf.`factor_unit` AS factorUnit, IF(cf.factor_unit='%', SUM(cf.factor_value)/2, SUM(cf.factor_value)) AS factorValue
+          cf.`factor_code` AS factorCode, cf.`factor_name` AS factorName ,cf.`factor_unit` AS factorUnit,
+          IF(
+            cf.factor_unit = '%',
+            FORMAT(SUM(cf.factor_value) / 2, 2),
+            FORMAT(SUM(cf.factor_value), 2)
+          ) AS factorValue
         FROM
           z_contracts_factor cf
-        WHERE cf.`contract_id` IN
+        WHERE cf.factor_type='02' and cf.`contract_id` IN
           (SELECT
             t1.id
           FROM
