@@ -34,4 +34,10 @@ public class FactorDto {
 
     private Boolean hasInput;
 
+    /**
+     * 方向：gt:上；lt:下；eq:等于
+     */
+    private String direction;
+
+
 }

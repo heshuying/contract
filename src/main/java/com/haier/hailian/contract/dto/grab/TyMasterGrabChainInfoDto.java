@@ -25,5 +25,4 @@ public class TyMasterGrabChainInfoDto {
 
     List<FactorDto> factorList;
 
-
 }
