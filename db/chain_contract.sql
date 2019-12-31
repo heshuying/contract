@@ -1379,3 +1379,5 @@ CREATE TABLE `t_ods_minbu_emp` (
 	KEY `ind_littleEmpsn` (`littleEmpsn`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+ALTER table month_chain_group_order add IS_GZD	VARCHAR(20) null comment	'高中低端';
+
