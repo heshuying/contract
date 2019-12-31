@@ -135,7 +135,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setChannel("690");
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
-        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
+        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
