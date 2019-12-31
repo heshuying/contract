@@ -8,6 +8,8 @@
 # 数据库
 ### 测试
     10.138.26.200:3909 库名：chain_contract 用户名：chcontract_tmp/Bfds8LvadCCd
+### prod
+    10.135.17.239:3104 库名：chain_contract 用户名：chcontract_tmp/Bf7Dvs9hVcxds
 
 # 网址
 ### 测试

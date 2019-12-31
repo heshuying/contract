@@ -32,9 +32,17 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         int month = cal.get(Calendar.MONTH )+1;
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
-        targetBasic.setTargetMonth(month+"");
-        targetBasic.setTargeYear(year+"");
+        String monthStr = month < 10 ? "0" + month : "" + month;
+        targetBasic.setPeriodCode(year+monthStr);
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
+        for(TargetBasic targetBasic1:list){
+            if(null != targetBasic1.getTargetBottomLine()){
+                targetBasic1.setTargetBottomLine(targetBasic1.getTargetBottomLine().replaceAll("\\.0",""));
+            }
+            if(null != targetBasic1.getTargetJdLine()){
+                targetBasic1.setTargetJdLine(targetBasic1.getTargetJdLine().replaceAll("\\.0",""));
+            }
+        }
         return list;
     }
 }

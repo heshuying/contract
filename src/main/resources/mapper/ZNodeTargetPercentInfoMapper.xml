@@ -165,4 +165,68 @@
         </foreach>
     </insert>
 
+    <resultMap type="com.haier.hailian.contract.entity.CDGrabTargetEntity" id="cdGrabTargetResultMap">
+        <result property="targetCode" column="target_code" jdbcType="VARCHAR"/>
+        <result property="targetName" column="target_name" jdbcType="VARCHAR"/>
+        <result property="targetUnit" column="target_unit" jdbcType="VARCHAR"/>
+        <result property="targetTo" column="target_to" jdbcType="VARCHAR"/>
+        <result property="targetBottomLine" column="target_bottom_line" jdbcType="VARCHAR"/>
+        <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询抢单目标底线-->
+    <select id="queryCDGrabTarget" parameterType="map" resultMap="cdGrabTargetResultMap">
+        SELECT
+          tb.`target_code`,
+          tb.`target_name`,
+          tb.`target_unit`,
+          tb.target_to,
+          tb.`target_bottom_line`,
+          tpi.`share_percent`
+        FROM
+          z_node_target_percent_info tpi
+          JOIN z_target_basic tb
+            ON tpi.`node_code` = tb.`role_code`
+            AND tpi.`target_code` = tb.`target_code`
+        WHERE tpi.`node_code` = #{nodeCode}
+        <if test="yearMonthList != null">
+            AND tb.period_code in
+            <foreach collection="yearMonthList" open="(" close=")" separator=","
+                     item="yearMonth" index="i">
+                #{yearMonth}
+            </foreach>
+        </if>
+          AND tb.target_pt_code = #{ptCode}
+          AND tpi.lq_code = #{chainCode}
+    </select>
+
+    <!-- 查询抢单目标底线-->
+    <select id="queryCDGrabTargetNew" parameterType="map" resultMap="cdGrabTargetResultMap">
+        SELECT
+        tpi.`target_code`,
+        tpi.`target_name`,
+       /* tb.`target_unit`,
+        tb.target_to,
+        tb.`target_bottom_line`,*/
+        tpi.`share_percent`,
+        (SELECT DISTINCT tb.target_unit FROM z_target_basic tb WHERE tb.target_code = tpi.`target_code` limit 1) AS target_unit
+        FROM
+        z_node_target_percent_info tpi
+        WHERE tpi.`node_code` = #{nodeCode}
+        AND tpi.lq_code = #{chainCode}
+    </select>
+
+
+    <!-- 根据最小作战单元查询其相关链群-->
+    <select id="selectChainByLittleXwCode"  resultMap="ZNodeTargetPercentInfoMap">
+        select
+        id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
+        FROM z_node_target_percent_info
+        WHERE node_code in
+        <foreach collection="xwCode" open="(" close=")" separator=","
+                 item="xwCode" index="i">
+            #{xwCode}
+        </foreach>
+    </select>
+
 </mapper>

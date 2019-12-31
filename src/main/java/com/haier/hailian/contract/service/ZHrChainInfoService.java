@@ -3,10 +3,7 @@ package com.haier.hailian.contract.service;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
-import com.haier.hailian.contract.entity.SysNodeEhr;
-import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
-import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
+import com.haier.hailian.contract.entity.*;
 
 import java.util.List;
 
@@ -89,5 +86,11 @@ public interface ZHrChainInfoService {
      * @return
      */
     ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto);
+
+    /**
+     * 获取平台下战略最小单元
+     * @return
+     */
+    List<TOdsMinbu> getMinbuList();
 
 }

@@ -20,9 +20,11 @@ public class TyMasterGrabChainInfoDto {
     private String contractOwner;
     private String start;
     private String end;
+    private String grabEnd;
     private BigDecimal shareQuota;
     private String regionCode;
 
-    List<FactorDto> factorList;
+    List<FactorDto> targetList;
+    List<FactorDto> grabList;
 
 }

@@ -1,7 +1,10 @@
 package com.haier.hailian.contract.service;
 
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-12-19
  */
 public interface ZContractsService extends IService<ZContracts> {
+    List<ZContracts> queryTyGrabList(TyGrabListQueryDto queryDto);
 
 }

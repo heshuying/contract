@@ -48,8 +48,11 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/zHrChainInfo/searchUsers", "anon");
+        filterMap.put("/talk/savePlan", "anon");
         filterMap.put("/test/**", "anon");
         filterMap.put("/contractData", "anon"); // 外部系统获取数据暂时不用校验
+        filterMap.put("/chainData", "anon"); // 外部系统获取数据暂时不用校验
         filterMap.put("/favicon.ico", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/v2/api-docs", "anon");

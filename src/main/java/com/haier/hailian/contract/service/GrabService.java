@@ -2,8 +2,8 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.MeshGrabInfoDto;
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
-import com.haier.hailian.contract.dto.grab.MeshSummaryDto;
 import com.haier.hailian.contract.dto.grab.MessGambSubmitDto;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabChainInfoDto;
 
@@ -18,5 +18,13 @@ public interface GrabService {
 
     R doGrab(MessGambSubmitDto dto);
 
-    List<TyMasterGrabChainInfoDto> queryChainList();
+    /**
+     * 定时任务刷新合约状态，只刷类型为10的单
+     */
+    void refreshContractStatusJob();
+
+    List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto queryDto);
+
+    TyMasterGrabChainInfoDto queryChainInfo(Integer contractId);
+    List<MeshGrabInfoDto> queryMeshGrabDetail(Integer contractId);
 }

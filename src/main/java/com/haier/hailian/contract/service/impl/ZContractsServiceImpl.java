@@ -1,10 +1,13 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ZContractsServiceImpl extends ServiceImpl<ZContractsDao, ZContracts> implements ZContractsService {
-
+    @Override
+    public List<ZContracts> queryTyGrabList(TyGrabListQueryDto queryDto) {
+        return baseMapper.queryTyGrabList(queryDto);
+    }
 }

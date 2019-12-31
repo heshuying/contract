@@ -37,7 +37,8 @@ public class IncrementServiceImpl implements IncrementService {
         BigDecimal grab = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
-                .eq("factor_type" , Constant.FactorType.Grab.getValue())).getFactorValue());
+                .eq("factor_type" , Constant.FactorType.Grab.getValue())
+                .isNull("region_code")).getFactorValue());
 
 
         BigDecimal money = new BigDecimal("0");

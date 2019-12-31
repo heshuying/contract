@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -120,7 +122,19 @@ public class TOdsMinbu extends Model<TOdsMinbu> {
     @TableField("userXwName")
     private String userXwName;
 
-    private LocalDateTime createTime;
+    /**
+     * 区域编码
+     */
+    @TableField(exist = false)
+    private String regionCode;
+
+    /**
+     * 区域名称
+     */
+    @TableField(exist = false)
+    private String regionName;
+
+    private Date createTime;
 
 
     @Override

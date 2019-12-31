@@ -7,7 +7,6 @@ import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
-import com.haier.hailian.contract.entity.ZReservePlan;
 import com.haier.hailian.contract.service.homepage.HomePageService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
@@ -36,6 +35,8 @@ public class HomePageImpl implements HomePageService {
     private ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
     private ZReservePlanDao zReservePlanDao;
+    @Autowired
+    private ZReservePlanTeamworkDao zReservePlanTeamworkDao;
 
     /**
      * 获取已抢入合约列表查询接口
@@ -97,7 +98,7 @@ public class HomePageImpl implements HomePageService {
      */
     @Override
     public Map<String, Object> getContractData(DataInfo dataInfo) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> resMap = new HashMap<>();
 
         // 转换时间
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -109,13 +110,13 @@ public class HomePageImpl implements HomePageService {
         // 链群组织信息
         ZHrChainInfo chainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code" , dataInfo.getChainCode()));
 
-        map.put("chainCode" , chainInfo.getChainCode());
-        map.put("chainName" , chainInfo.getChainName());
-        map.put("xwCode" , chainInfo.getXwCode());
-        map.put("xwName" , chainInfo.getXwName());
-        map.put("masterCode" , chainInfo.getMasterCode());
-        map.put("masterName" , chainInfo.getMasterName());
-        map.put("chainPtCode" , chainInfo.getChainPtCode());
+        resMap.put("chainCode" , chainInfo.getChainCode());
+        resMap.put("chainName" , chainInfo.getChainName());
+        resMap.put("xwCode" , chainInfo.getXwCode());
+        resMap.put("xwName" , chainInfo.getXwName());
+        resMap.put("masterCode" , chainInfo.getMasterCode());
+        resMap.put("masterName" , chainInfo.getMasterName());
+        resMap.put("chainPtCode" , chainInfo.getChainPtCode());
 
         // 合约信息
         QueryWrapper<ZContracts> query = new QueryWrapper<ZContracts>();
@@ -126,56 +127,103 @@ public class HomePageImpl implements HomePageService {
         if(dataInfo.getStatus() != null && !"".equals(dataInfo.getStatus())){
             query.eq("status" , dataInfo.getStatus());
         }
-        if(!"".equals(dataInfo.getContractId())){
-            query.eq("id" , dataInfo.getContractId());
-        }
-        ZContracts zContracts = zContractsDao.selectOne(query);
+//        if(!"".equals(dataInfo.getContractId())){
+//            query.eq("id" , dataInfo.getContractId());
+//        }
 
-        map.put("contractId" , zContracts.getId());
-        map.put("contractName" , zContracts.getContractName());
-        map.put("startDate" , zContracts.getStartDate());
-        map.put("endDate" , zContracts.getEndDate());
-        map.put("createTime" , zContracts.getCreateTime());
-        map.put("status" , zContracts.getStatus());
+        //ZContracts zContracts = zContractsDao.selectOne(query);
 
-        map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
+        List<Map<String , Object>> mapList = new ArrayList<>();
+        List<ZContracts> zContractsList = zContractsDao.selectList(query); // 多次举单
+        for(ZContracts zContracts : zContractsList){
+            Map<String , Object> map  = new HashMap<>();
+            map.put("contractId" , zContracts.getId());
+            map.put("contractName" , zContracts.getContractName());
+            map.put("startDate" , zContracts.getStartDate());
+            map.put("endDate" , zContracts.getEndDate());
+            map.put("createTime" , zContracts.getCreateTime());
+            map.put("status" , zContracts.getStatus());
 
-        // 获取ZContractsFactor部分信息
-        getContractsFactor(zContracts , map);
+            map.put("shareSpace" , zContracts.getShareSpace()); // 增值空间
+            map.put("groupId" , zContracts.getGroupId()); //交互群id
 
-        // 获取抢单信息
-        List<ZContracts> grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
-                .eq("parent_id" , zContracts.getId()));
+            // 获取ZContractsFactor部分信息
+            getContractsFactor(zContracts , map);
 
-        // 抢单信息dto
-        List<GrabInfo2Outside> grabList = new ArrayList<>();
-        for(ZContracts contracts : grabContractsList){
-            // 抢单信息
-            GrabInfo2Outside grabInfo2Outside = new GrabInfo2Outside();
-            BeanUtils.copyProperties(contracts , grabInfo2Outside);
-            // 抢单factor信息
-            List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
-                    .eq("contract_id" , contracts.getId()));
-            for(ZContractsFactor factor : factorList){
-                if(factor.getFactorType().equals(Constant.FactorType.Grab.getValue())){
-                    grabInfo2Outside.setGrabTargetIncom(factor.getFactorValue());
-                    grabInfo2Outside.setGrabTargetUnit(factor.getFactorUnit());
+            // 获取抢单信息
+            List<ZContracts> grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
+                    .eq("parent_id" , zContracts.getId()));
+
+            // 抢单信息dto
+            List<GrabInfo2Outside> grabList = new ArrayList<>();
+            for(ZContracts contracts : grabContractsList){
+                // 抢单信息
+                GrabInfo2Outside grabInfo2Outside = new GrabInfo2Outside();
+                BeanUtils.copyProperties(contracts , grabInfo2Outside);
+                grabInfo2Outside.setXiaoweiName(""); // 暂时不知道怎么取
+
+
+                // 获取抢单目标底线值
+                ZContractsFactor bottomFactor = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , contracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Bottom.getValue())
+                        .eq("factor_code" , Constant.FactorCode.Incom.getValue()));
+                if(bottomFactor != null){
+                    grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
                 }
-                if(factor.getFactorType().equals(Constant.FactorType.Bottom.getValue())){
-                    grabInfo2Outside.setGrabTargetBottom(factor.getFactorValue());
-                }
+
+                // 抢单目标抢单值 + 高中低端占比
+                List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id" , contracts.getId())
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+
+                grabInfo2Outside.setGrab2XW(factorList);
+
+//                for(ZContractsFactor factor : factorList){
+//                    if(factor.getFactorType().equals(Constant.FactorType.Grab.getValue())){
+//                        grabInfo2Outside.setGrabTargetIncom(factor.getFactorValue());
+//                        grabInfo2Outside.setGrabTargetUnit(factor.getFactorUnit());
+//
+//                        grabInfo2Outside.setGrabTargetCode(factor.getFactorCode());
+//                        grabInfo2Outside.setGrabTargetName(factor.getFactorName());
+//                    }
+//                }
+                // 预案信息
+                List<PlanInfoDto> planInfoDtoList = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
+                    grabInfo2Outside.setGrabTargetPlanInfos(planInfoDtoList);
+
+                // 并联预案信息
+                List<PlanTeamWorkInfo> planTeamWorkInfoList = zReservePlanTeamworkDao.selectPlanInfo(contracts.getId());
+                grabInfo2Outside.setPlanTeamWorkInfos(planTeamWorkInfoList);
+
+                // 添加
+                grabList.add(grabInfo2Outside);// 添加多次抢单信息到list
             }
-            grabList.add(grabInfo2Outside);
-            // 预案信息
-            PlanInfoDto planInfoDto = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId())).get(0);
-            grabInfo2Outside.setGrabTargetPlan(planInfoDto.getContent());
-            // 并联预案信息
-
-
+            map.put("grabInfo" , grabList); // 添加多次抢单信息到map
+            mapList.add(map); //添加多次举单信息到list
         }
-        map.put("grabInfo" , grabList);
+        resMap.put("gambling" , mapList);//添加多次举单信息到map
 
-        return map;
+        return resMap;
+    }
+
+    /**
+     * 获取链群组织信息
+     * @return
+     */
+    @Override
+    public List<ChainDataInfo> getChainData() {
+        List<ChainDataInfo> list = new ArrayList<>();
+
+        // 链群组织信息
+        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>());
+
+        for(ZHrChainInfo zHrChainInfo : chainInfoList){
+            ChainDataInfo chainDataInfo = new ChainDataInfo();
+            BeanUtils.copyProperties(zHrChainInfo , chainDataInfo);
+            list.add(chainDataInfo);
+        }
+        return list;
     }
 
 
@@ -202,6 +250,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("bottomTargetRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("bottomTargetProfitRate" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -213,6 +264,7 @@ public class HomePageImpl implements HomePageService {
                         .eq("factor_type" , Constant.FactorType.E2E.getValue()));
 
         for (ZContractsFactor exp : e2eFactorList){
+
             if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
                 map.put("e2eTargetIncome" , exp.getFactorValue());
             }
@@ -222,6 +274,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("e2eTargetRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("e2eTargetProfitRate" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -230,7 +285,8 @@ public class HomePageImpl implements HomePageService {
         List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
                 new QueryWrapper<ZContractsFactor>()
                         .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+                        .eq("factor_type" , Constant.FactorType.Grab.getValue())
+                        .isNull("region_code"));
 
         for (ZContractsFactor exp : grabFactorList){
             if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
@@ -242,10 +298,18 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
                 map.put("grabTargetRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+                map.put("grabTargetProfitRate" , exp.getFactorValue());
+            }
         }
 
         return map;
     }
+
+
+
+
+
 
 
 

@@ -7,9 +7,13 @@
         <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
         <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
         <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="problemType" column="problem_type" jdbcType="VARCHAR"/>
+        <result property="problemChannel" column="problem_channel" jdbcType="VARCHAR"/>
+        <result property="problemDep" column="problem_dep" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
+        <result property="remindType" column="remind_type" jdbcType="VARCHAR"/>
         <result property="isRepeat" column="is_repeat" jdbcType="VARCHAR"/>
         <result property="isImportant" column="is_important" jdbcType="VARCHAR"/>
         <result property="executer" column="executer" jdbcType="VARCHAR"/>
@@ -24,6 +28,9 @@
         <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
         <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
         <result property="problemContent" column="problem_content" jdbcType="VARCHAR"/>
+        <result property="problemType" column="problem_type" jdbcType="VARCHAR"/>
+        <result property="problemChannel" column="problem_channel" jdbcType="VARCHAR"/>
+        <result property="problemDep" column="problem_dep" jdbcType="VARCHAR"/>
         <result property="startTime" column="start_time" jdbcType="VARCHAR"/>
         <result property="endTime" column="end_time" jdbcType="VARCHAR"/>
         <result property="remindTime" column="remind_time" jdbcType="VARCHAR"/>
@@ -43,10 +50,22 @@
 
     </resultMap>
 
+
+    <resultMap type="com.haier.hailian.contract.dto.homepage.PlanTeamWorkInfo" id="PlanTeamWorkInfo">
+        <result property="problemCode" column="problem_code" jdbcType="VARCHAR"/>
+        <result property="taskCode" column="task_code" jdbcType="VARCHAR"/>
+        <collection property="details" javaType="List" ofType="com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail">
+            <result property="id" column="id" jdbcType="INTEGER"/>
+            <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+        </collection>
+
+    </resultMap>
+
     <!--查询单个-->
     <select id="queryById" resultMap="ZReservePlanTeamworkMap">
         select
-          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+          id, parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
         from chain_contract.z_reserve_plan_teamwork
         where id = #{id}
     </select>
@@ -54,7 +73,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZReservePlanTeamworkMap">
         select
-          id, parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
+          id, parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, create_user_time, task_code
         from chain_contract.z_reserve_plan_teamwork
         limit #{offset}, #{limit}
     </select>
@@ -66,6 +85,9 @@
         zrpt.parent_id,
         zrpt.problem_code,
         zrpt.problem_content,
+        zrpt.problem_type,
+        zrpt.problem_channel,
+        zrpt.problem_dep,
         zrpt.start_time,
         zrpt.end_time,
         zrpt.remind_time,
@@ -199,8 +221,8 @@
 
     <!--新增所有列-->
     <insert id="save" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name,  task_code)
-        values (#{parentId}, #{problemCode}, #{problemContent}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName}, #{taskCode})
+         insert into chain_contract.z_reserve_plan_teamwork(parent_id, problem_code, problem_content, problem_type, problem_channel, problem_dep, start_time, end_time, remind_time, is_repeat, is_important, executer, teamworker, create_user_code, create_user_name, task_code)
+        values (#{parentId}, #{problemCode}, #{problemContent}, #{problemType}, #{problemChannel}, #{problemDep}, #{startTime}, #{endTime}, #{remindTime}, #{isRepeat}, #{isImportant}, #{executer}, #{teamworker}, #{createUserCode}, #{createUserName},  #{taskCode})
     </insert>
 
     <!--新增所有列-->
@@ -208,5 +230,33 @@
         insert into chain_contract.z_reserve_plan_teamwork_detail(parent_id, content)
         values (#{parentId}, #{content})
     </insert>
+
+    <!--通过主键修改数据-->
+    <update id="updateByDto">
+        update chain_contract.z_reserve_plan_teamwork
+        <set>
+            <if test="taskCode != null and taskCode != ''">
+                task_code = #{taskCode},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectPlanInfo" resultMap="PlanTeamWorkInfo">
+        select
+        zrpt.problem_code,
+        zrpt.task_code,
+        zrptd.id,
+        zrptd.parent_id,
+        zrptd.content
+        from chain_contract.z_reserve_plan_teamwork zrpt
+        left join z_reserve_plan_teamwork_detail zrptd on zrptd.parent_id=zrpt.id
+        <where>
+            <if test="contractId != null">
+                and zrpt.parent_id = #{contractId}
+            </if>
+        </where>
+    </select>
 
 </mapper>

@@ -87,7 +87,6 @@
         on mcgo.xw_code=xwm.xw_code
         join (select DISTINCT jyt_code, product_line_code  from sys_net where xw_code=#{loginXwCode}) sn
         on mcgo.wg_code=sn.jyt_code and mcgo.product_line_code=sn.product_line_code
-        join z_product_info zpi on mcgo.product_code=zpi.product_model_code and mcgo.xw_code=zpi.xw_code
         where mcgo.year=#{year} and mcgo.month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
             #{item}

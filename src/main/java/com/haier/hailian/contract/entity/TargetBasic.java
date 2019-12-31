@@ -169,6 +169,7 @@ public class TargetBasic extends Model<TargetBasic> {
      */
     private String chainCode;
 
+    private String chainName;
 
     @Override
     protected Serializable pkVal() {

@@ -1,33 +1,23 @@
 package com.haier.hailian.contract.service.impl;
 
-import com.alibaba.dubbo.common.json.JSONObject;
 import com.google.gson.Gson;
-import com.haier.hailian.contract.config.shiro.HacLoginToken;
-import com.haier.hailian.contract.dto.HacLoginRespDto;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.RException;
-import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
-import com.haier.hailian.contract.entity.SysEmployeeEhr;
-import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
+import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZReservePlanTeamworkDao;
+import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
+import com.haier.hailian.contract.entity.IhaierTask;
+import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
-import com.haier.hailian.contract.util.Constant;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import com.haier.hailian.contract.util.IHaierUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,9 +30,9 @@ import java.util.List;
 public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkService {
     @Resource
     private ZReservePlanTeamworkDao zReservePlanTeamworkDao;
-    private Gson gson=new Gson();
-    @Autowired
-    private RestTemplate restTemplate;
+    @Resource
+    private ZContractsDao zContractsDao;
+
     /**
      * 通过ID查询单条数据
      *
@@ -112,41 +102,73 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     }
 
     @Override
-    public String saveAllInfo(List<ZReservePlanTeamworkDto> zReservePlanTeamworkDtoList) {
-        for (ZReservePlanTeamworkDto zReservePlanTeamworkDto : zReservePlanTeamworkDtoList) {
-            zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
-            List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
-            for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
-                zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
-                zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
+    public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
+        //查询对应的合约ID
+        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
+        if (zContracts ==null){
+            return null;
+        }
+        zReservePlanTeamworkDto.setParentId(zContracts.getId());
+        zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
+        List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
+        for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
+            zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
+            zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
+        }
+        //创建SimpleDateFormat对象实例并定义好转换格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime());
+        // 调用ihaier的接口进行任务创建
+        IhaierTask ihaierTask = new IhaierTask();
+        String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
+        ihaierTask.setExecutors(executors.split(","));
+        if(!StringUtils.isEmpty(zReservePlanTeamworkDto.getTeamworker())){
+            String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
+            ihaierTask.setCcs(ccs.split(","));
+        }
+        String oid = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getCreateUserCode().split(","));
+        ihaierTask.setOpenId(oid);
+        ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
+        ihaierTask.setEndDate(date.getTime());
+        ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
+        ihaierTask.setNoticeTime(15);
+        ihaierTask.setChannel("690");
+        ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
+        ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
+        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+        String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+        zReservePlanTeamworkDto.setTaskCode(taskId);
+        //更新taskID
+        zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
+        return "保存成功";
+    }
+
+    @Override
+    public void createGroup() {
+        List<ZContracts> list = zContractsDao.selectAllContracts();
+        List<String> userList = new ArrayList<>();
+        for (ZContracts zContracts : list) {
+            List<ZContracts> contracts= zContractsDao.selectUserList(zContracts.getId());
+            for (ZContracts z: contracts){
+                userList.add(z.getCreateCode());
+            }
+            String[] toBeStored = new String[userList.size()];
+            userList.toArray(toBeStored);
+            String user = IHaierUtil.getUserOpenId(toBeStored);
+            String groupId = IHaierUtil.getGroupId(user.split(","));
+            ZContracts zContractTemp = new ZContracts();
+            zContractTemp.setId(zContracts.getId());
+            zContractTemp.setGroupId(groupId);
+            zContractsDao.updateById(zContractTemp);
+            //循环父亲ID的数据
+            List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
+            for (ZContracts z:pa){
+                ZContracts zContractTemp2 = new ZContracts();
+                zContractTemp2.setId(z.getId());
+                zContractTemp2.setGroupId(groupId);
+                zContractsDao.updateById(zContractTemp2);
             }
         }
-        // 调用ihaier的接口进行任务创建
-        /**
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String accessToken="";
-//        headers.set("Authorization", "Basic "+ Base64Utils.encodeToString(basic.getBytes()));
-        String str = "{" +
-                "\"groupName\": \"讨论组\"," +
-                "\"currentUid\":\"5b503ee9e4b02abb5318b23e\"," +
-                "\"userIds\":[" +
-                "\"5b6cea82e4b05df05b3efc2b\"," +
-                "\"5bee6706e4b073e587c144ae\"," +
-                "\"5b50428ce4b091389c3b3777\"" +
-                "]" +
-                "}";
-        HttpEntity<String> entity = new HttpEntity<String>(gson.toJson(str), headers);
-        try {
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken="+accessToken,
-                    entity, String.class);
 
-            String value = responseEntity.getBody();
-//
-        }catch (Exception e){
-            throw new RException("异常");
-        }
-         **/
-        return "保存成功";
     }
 }

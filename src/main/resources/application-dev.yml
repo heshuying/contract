@@ -75,13 +75,8 @@ chain:
   contractPublicKeyTail: a645c0b7b58158babbfa6c6cd5a48aa7340a8749176b120e8516216787a13dc76
   contractAddress: 0xe8108ee3d27f3a7d6365c6db91358b28b23698af
 
-# hac login Resp api
+# hac login Rest api
 hac:
   loginUri: http://almsc.hoptest.haier.net:8899/api/service-sso/user/loginjson
   appKey: CkHorSCQuBQwNhgHiKgvPPNWsYYprmXj
   appSecret: RF9vLUON3pBS4FzeW4DtQ0oK6fUwACGW
-
-
-
-
-

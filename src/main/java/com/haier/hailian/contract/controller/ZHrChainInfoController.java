@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -12,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +87,10 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询链群架构人员")
     public R searchUsers(@RequestBody @Validated @ApiParam(value = "查询人员", required = true) String keyWords) {
         try {
-            List<SysNodeEhr> list = zHrChainInfoService.searchUsersByKeyWords(keyWords);
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(keyWords);  //创建jsonObject对象
+            String result = json.get("keyWords").getAsString();
+            List<SysNodeEhr> list = zHrChainInfoService.searchUsersByKeyWords(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.searchUsers,", e);
@@ -97,7 +103,10 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "查询人员目标")
     public R getNodeTarget(@RequestBody @Validated @ApiParam(value = "目标查询,以逗号分割", required = true) String nodeCodeStr) {
         try {
-            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(nodeCodeStr);
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(nodeCodeStr);  //创建jsonObject对象
+            String result = json.get("nodeCodeStr").getAsString();
+            List<TargetBasic> list = zHrChainInfoService.getNodeTargetList(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
@@ -120,6 +129,22 @@ public class ZHrChainInfoController {
                 return R.ok().put("data", z);
             }
             return res;
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/getMinbuList"})
+    @ApiOperation(value = "查询最小单元")
+    public R getMinbuList() {
+        try {
+            List list = zHrChainInfoService.getMinbuList();
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
             return R.error("系统异常，请稍后尝试！");

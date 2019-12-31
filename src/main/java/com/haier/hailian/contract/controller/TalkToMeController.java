@@ -37,9 +37,9 @@ public class TalkToMeController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("getTalkCount")
+    @PostMapping("getTalkCount")
     @ApiOperation(value = "获取协同预案的条数")
-    public R getTalkCount(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
+    public R getTalkCount(@RequestBody  @Validated @ApiParam(value = "合约的ID", required = true) int id) {
         try {
             int count = zReservePlanTeamworkService.queryCountByParentId(id);
             return R.ok().put("data", count);
@@ -49,9 +49,9 @@ public class TalkToMeController {
         }
     }
 
-    @GetMapping("getTalkList")
+    @PostMapping("getTalkList")
     @ApiOperation(value = "获取并联协同预案列表")
-    public R getTalkList(@RequestBody @ApiParam(value = "合约的ID", required = true) int id) {
+    public R getTalkList(@RequestBody  @Validated @ApiParam(value = "合约的ID", required = true) int id) {
         try {
             ZReservePlanTeamwork zReservePlanTeamwork = new ZReservePlanTeamwork();
             zReservePlanTeamwork.setParentId(id);
@@ -63,17 +63,29 @@ public class TalkToMeController {
         }
     }
 
-    @PostMapping(value = {"/saveChainInfo"})
+    @PostMapping(value = {"/savePlan"})
     @ApiOperation(value = "保存协同预案")
-    public R saveChainInfo(@RequestBody @Validated @ApiParam(value = "保存协同预案", required = true) List<ZReservePlanTeamworkDto> zReservePlanTeamworkDtoList) {
+    public R savePlan(@RequestBody @Validated @ApiParam(value = "保存协同预案", required = true) ZReservePlanTeamworkDto zReservePlanTeamworkDto) {
         try {
-                String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDtoList);
+                String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDto);
                 if (z == null){
                     return R.error("保存出错了，请稍后重试！");
                 }
                 return R.ok().put("data", z);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            log.error("错误发生在ZHrChainInfoController.savePlan,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+    @PostMapping(value = {"/getA"})
+    @ApiOperation(value = "测试URL")
+    public R getA() {
+        try {
+            zReservePlanTeamworkService.createGroup();
+            return R.ok();
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getA,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }

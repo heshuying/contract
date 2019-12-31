@@ -16,6 +16,6 @@ import java.util.List;
  * @since 2019-12-19
  */
 public interface ZReservePlanDao extends BaseMapper<ZReservePlan> {
-    @Select("SELECT p.`parent_id` as contractId, p.`title`, pd.`content` FROM z_reserve_plan p INNER JOIN z_reserve_plan_detail pd ON pd.parent_id = p.`id` WHERE p.`parent_id` = #{contractId}")
+    @Select("SELECT p.`parent_id` AS contractId,p.`title`,p.`start_time` AS startTime,p.`end_time` AS endTime,p.`remind_type` AS remindType,p.`remind_time` AS remindTime,p.`is_important` AS isImportant,p.`executer` AS executer,p.`teamworker` AS teamworker,p.`create_user_code` AS createUserCode,p.`create_user_name` AS createUserName,p.`create_user_time` AS createUserTime,p.`task_code` AS taskCode,pd.`content`  FROM z_reserve_plan p INNER JOIN z_reserve_plan_detail pd ON pd.parent_id = p.`id` WHERE p.`parent_id` = #{contractId}")
     List<PlanInfoDto> selectPlanInfo(String contractId);
 }
