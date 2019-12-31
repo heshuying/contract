@@ -186,7 +186,7 @@ public class IHaierUtil {
             return null;
         }
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\"协同预案交流群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":" + userIds + "}");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\"协同预案交流群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":" + userIds + ",\"param\":{\"groupClass\":\"链群\"}}");
         Request request = new Request.Builder()
                 .url("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken=" + accessToken)
                 .post(body)

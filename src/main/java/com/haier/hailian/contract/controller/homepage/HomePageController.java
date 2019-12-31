@@ -5,7 +5,6 @@ import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.service.homepage.HomePageService;
-import com.haier.hailian.contract.service.impl.ZHrChainInfoServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
