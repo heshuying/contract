@@ -75,5 +75,5 @@ chain:
 # hac login Rest api
 hac:
   loginUri: http://hopcloud.haier.net/api/service-sso/user/loginjson
-  appKey: CkHorSCQuBQwNhgHiKgvPPNWsYYprmXj
-  appSecret: RF9vLUON3pBS4FzeW4DtQ0oK6fUwACGW
+  appKey: NmQ4YWM4NjA3MWU3NGM4M2E2NWE4MjY2YmQyMTE3OWM=
+  appSecret: OWRjYWQ1MTlmNDI1ZDFjOGUyNmU5MjBmYWRkYzkyYmM=
