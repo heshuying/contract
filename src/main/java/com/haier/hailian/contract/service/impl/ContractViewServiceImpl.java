@@ -10,9 +10,11 @@ import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +129,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         List<ContractViewDataTYResultDTO> resultList = new ArrayList<>();
         Map<String,ContractViewDataTYResultDTO> tempMap = new HashMap<>();
 
-        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
+//        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
         List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
 
         if(factorList != null && !factorList.isEmpty()){
@@ -151,7 +153,9 @@ public class ContractViewServiceImpl implements ContractViewService {
                         TargetConfigDTO targetConfigDTO = new TargetConfigDTO();
                         targetConfigDTO.setTargetCode(factor.getFactorCode());
                         targetConfigDTO.setTargetName(factor.getFactorName());
-                        targetConfigDTO.setTargetValue(factor.getFactorValue());
+                        if(StringUtils.isNotBlank(factor.getFactorValue())){
+                            targetConfigDTO.setTargetValue(new BigDecimal(factor.getFactorValue()).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                        }
                         targetConfigDTO.setTargetType(factor.getFactorType());
                         targetConfigList.add(targetConfigDTO);
                     }

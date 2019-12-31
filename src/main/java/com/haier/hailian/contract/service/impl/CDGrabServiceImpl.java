@@ -124,8 +124,6 @@ public class CDGrabServiceImpl implements CDGrabService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
-        String xwCode = currentUser.getXwCode();
-        String ptCode = currentUser.getPtcode();
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
@@ -143,6 +141,9 @@ public class CDGrabServiceImpl implements CDGrabService {
             if(factorList != null && !factorList.isEmpty()){
                 Map<String, List<ZContractsFactor>> tempMap = new HashMap<>();
                 for(ZContractsFactor factor : factorList){
+                    if(StringUtils.isNotBlank(factor.getFactorValue())){
+                        factor.setFactorValue(new BigDecimal(factor.getFactorValue()).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                    }
                     List<ZContractsFactor> list = tempMap.get(factor.getFactorCode());
                     if(list == null || list.isEmpty()){
                         list = new ArrayList<>();

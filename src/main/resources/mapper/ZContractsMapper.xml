@@ -186,8 +186,8 @@
           cf.`factor_code` AS factorCode, cf.`factor_name` AS factorName ,cf.`factor_unit` AS factorUnit,
           IF(
             cf.factor_unit = '%',
-            FORMAT(SUM(cf.factor_value) / 2, 2),
-            FORMAT(SUM(cf.factor_value), 2)
+            REPLACE(FORMAT(AVG(cf.factor_value), 2),',', ''),
+            REPLACE(FORMAT(SUM(cf.factor_value), 2),',','')
           ) AS factorValue
         FROM
           z_contracts_factor cf
