@@ -104,7 +104,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Override
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
-        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId());
+        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
         if (zContracts ==null){
             return null;
         }
@@ -160,6 +160,14 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zContractTemp.setId(zContracts.getId());
             zContractTemp.setGroupId(groupId);
             zContractsDao.updateById(zContractTemp);
+            //循环父亲ID的数据
+            List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
+            for (ZContracts z:pa){
+                ZContracts zContractTemp2 = new ZContracts();
+                zContractTemp2.setId(z.getId());
+                zContractTemp2.setGroupId(groupId);
+                zContractsDao.updateById(zContractTemp2);
+            }
         }
 
     }

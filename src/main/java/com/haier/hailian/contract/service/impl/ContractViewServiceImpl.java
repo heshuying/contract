@@ -9,12 +9,10 @@ import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
-import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +57,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         result.setGrabList(grabList);
 
         // 体验抢单目标
-        BigDecimal incom = BigDecimal.ZERO;
+       /* BigDecimal incom = BigDecimal.ZERO;
         Integer highPercent = 0;
         Integer lowPercent = 0;
         List<ZContractsFactor> grabTYList = new ArrayList<>();
@@ -97,7 +95,9 @@ public class ContractViewServiceImpl implements ContractViewService {
             factor3.setFactorValue(String.valueOf(lowPercent));
             factor3.setFactorUnit("%");
             grabTYList.add(factor3);
-        }
+        }*/
+
+        List<FactorConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
         result.setGrabTYList(grabTYList);
 
         return result;

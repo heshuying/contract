@@ -131,13 +131,21 @@
         and group_id is null
     </select>
 
+    <select id="selectAllContractsById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where parent_id =#{pId}
+    </select>
+
 
     <select id="selectByGID" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from z_contracts
-        where contract_type ='10'
+        where create_code =#{userCode}
         and group_id = #{groupId}
+        and parent_id != 0
     </select>
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
@@ -171,6 +179,20 @@
             z_contracts t1
           WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
         ORDER BY xwName, factor_code,factor_type
+    </select>
+
+    <select id="selectContractsViewForTYSum" resultType="com.haier.hailian.contract.dto.FactorConfigDTO">
+        SELECT
+          cf.`factor_code` AS factorCode, cf.`factor_name` AS factorName ,cf.`factor_unit` AS factorUnit, IF(cf.factor_unit='%', SUM(cf.factor_value)/2, SUM(cf.factor_value)) AS factorValue
+        FROM
+          z_contracts_factor cf
+        WHERE cf.`contract_id` IN
+          (SELECT
+            t1.id
+          FROM
+            z_contracts t1
+          WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
+           GROUP BY factor_code
     </select>
 
     <select id="selectContractsTitleForTY" resultType="com.haier.hailian.contract.dto.TargetTitleTYDTO">
