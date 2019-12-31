@@ -83,6 +83,11 @@ public class ZReservePlan extends Model<ZReservePlan> {
     private String teamworker;
 
     /**
+     * 发送人（多选时，号分割）
+     */
+    private String senduser;
+
+    /**
      * 创建人编码
      */
     private String createUserCode;

@@ -823,7 +823,8 @@ CREATE TABLE `z_reserve_plan` (
   `create_user_time` datetime DEFAULT NULL COMMENT '创建时间',
   `task_code` varchar(200) DEFAULT NULL COMMENT '任务编码',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8
+
 
 
 -- ----------------------------

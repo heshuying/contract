@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ApiModel(value = "创单节点抢单保存")
-public class ReservePlanDTO {
+@ApiModel(value = "预案信息")
+public class ReservePlanRequestDTO {
 
     /**
      * 标题
@@ -58,6 +58,8 @@ public class ReservePlanDTO {
     @ApiModelProperty(value="抄送人（多选时，号分割）",name="抄送人（多选时，号分割）")
     private String teamworker;
 
+    @ApiModelProperty(value="发送人（多选时，号分割）",name="发送人（多选时，号分割）")
+    private String senduser;
     /**
      * 创建人编码
      */
