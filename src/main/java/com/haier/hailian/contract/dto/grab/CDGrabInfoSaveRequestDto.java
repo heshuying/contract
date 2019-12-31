@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.ReservePlanDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,4 +30,7 @@ public class CDGrabInfoSaveRequestDto {
     private String planContent;
     @ApiModelProperty(value="目标列表",name="目标列表")
     private List<CDGrabTargetDto> targetList;
+
+    private List<ReservePlanDTO> planList;
+
 }
