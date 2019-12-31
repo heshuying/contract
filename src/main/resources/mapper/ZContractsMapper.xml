@@ -25,6 +25,7 @@
         <result column="org_code" property="orgCode" />
         <result column="org_name" property="orgName" />
         <result column="org_type" property="orgType" />
+        <result column="open_valid" property="openValid" />
         <result column="share_percent" property="sharePercent" />
     </resultMap>
     <sql id="Base_Column_List">
