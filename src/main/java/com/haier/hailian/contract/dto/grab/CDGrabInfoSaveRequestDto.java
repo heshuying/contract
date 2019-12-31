@@ -24,13 +24,13 @@ public class CDGrabInfoSaveRequestDto {
 //    private BigDecimal chainGoal;
 //    @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")
 //    private BigDecimal chainGrabGoal;
-    @ApiModelProperty(value="预案标题",name="预案标题")
-    private String planTitle;
-    @ApiModelProperty(value="预案内容",name="预案内容")
-    private String planContent;
+//    @ApiModelProperty(value="预案标题",name="预案标题")
+//    private String planTitle;
+//    @ApiModelProperty(value="预案内容",name="预案内容")
+//    private String planContent;
     @ApiModelProperty(value="目标列表",name="目标列表")
     private List<CDGrabTargetDto> targetList;
 
-    private List<ReservePlanDTO> planList;
+    private ReservePlanDTO planInfo;
 
 }
