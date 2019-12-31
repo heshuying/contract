@@ -69,7 +69,7 @@ public class TalkToMeController {
         try {
                 String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDto);
                 if (z == null){
-                    return R.error("保存出错了，请稍后重试！");
+                    return R.error("操作人不在链群中！");
                 }
                 return R.ok().put("data", z);
         } catch (Exception e) {
