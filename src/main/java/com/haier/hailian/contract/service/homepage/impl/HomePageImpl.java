@@ -190,9 +190,7 @@ public class HomePageImpl implements HomePageService {
 //                }
                 // 预案信息
                 List<PlanInfoDto> planInfoDtoList = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
-                if(planInfoDtoList.size() > 0 && planInfoDtoList != null){
-                    grabInfo2Outside.setGrabTargetPlan(planInfoDtoList.get(0).getContent());
-                }
+                    grabInfo2Outside.setGrabTargetPlanInfos(planInfoDtoList);
 
                 // 并联预案信息
                 List<PlanTeamWorkInfo> planTeamWorkInfoList = zReservePlanTeamworkDao.selectPlanInfo(contracts.getId());

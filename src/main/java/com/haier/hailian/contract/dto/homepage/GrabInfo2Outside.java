@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dto.homepage;
 
 
+import com.haier.hailian.contract.dto.grab.PlanInfoDto;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -44,7 +45,7 @@ public class GrabInfo2Outside {
 
     private BigDecimal shareSpace;
 
-    private String grabTargetPlan;
+    private List<PlanInfoDto> grabTargetPlanInfos;
 
     private String groupId;
 
