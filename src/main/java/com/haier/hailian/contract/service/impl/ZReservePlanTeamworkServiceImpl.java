@@ -116,8 +116,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
         }
         //创建SimpleDateFormat对象实例并定义好转换格式
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
