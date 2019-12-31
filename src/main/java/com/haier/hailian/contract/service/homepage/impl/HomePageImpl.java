@@ -199,7 +199,7 @@ public class HomePageImpl implements HomePageService {
                 // 添加
                 grabList.add(grabInfo2Outside);// 添加多次抢单信息到list
             }
-            map.put("grabInfo" , grabList); // 添加多次抢单信息到mao
+            map.put("grabInfo" , grabList); // 添加多次抢单信息到map
             mapList.add(map); //添加多次举单信息到list
         }
         resMap.put("gambling" , mapList);//添加多次举单信息到map
