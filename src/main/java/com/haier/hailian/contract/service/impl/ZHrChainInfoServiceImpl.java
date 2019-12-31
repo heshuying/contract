@@ -138,14 +138,15 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
-        if (currentUser == null || currentUser.getXwCode() == null){
-            return null;
-        }
+//        CurrentUser currentUser = sysUser.getCurrentUser();
+//        if (currentUser == null || currentUser.getXwCode() == null){
+//            return null;
+//        }
+        TOdsMinbu tOdsMinbu = sysUser.getMinbu();
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
-        targetBasic.setTargetPtCode(currentUser.getPtcode());
-        targetBasic.setTargetXwCategoryCode(nodeCodeStr);
+        targetBasic.setTargetPtCode(tOdsMinbu.getPtCode());
+        targetBasic.setTargetXwCategoryCode(tOdsMinbu.getXwType3Code());
         return targetBasicDao.selectTarget(targetBasic);
     }
 

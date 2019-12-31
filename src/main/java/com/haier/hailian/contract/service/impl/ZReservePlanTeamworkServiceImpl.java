@@ -116,8 +116,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
         }
         //创建SimpleDateFormat对象实例并定义好转换格式
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
@@ -135,7 +135,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setChannel("690");
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
-        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
