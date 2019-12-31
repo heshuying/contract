@@ -165,9 +165,10 @@ public class GrabServiceImpl implements GrabService {
             BeanUtils.copyProperties(index, grabFactor);
             grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
             if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
-                grabFactor.setFactorValue(inc.divide(
+                BigDecimal incBill=inc.divide(
                         new BigDecimal("10000"),2, RoundingMode.HALF_UP
-                ).toString());//格式化万
+                );
+                grabFactor.setFactorValue(incBill.toString());//格式化万
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.High.getValue().equals(f.getProductStru()))
@@ -182,6 +183,8 @@ public class GrabServiceImpl implements GrabService {
                 }else{
                     grabFactor.setFactorValue("0");
                 }
+                grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
+                        grabFactor.getFactorValue()));
             } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
@@ -214,6 +217,9 @@ public class GrabServiceImpl implements GrabService {
                 grabFactor.setFactorValue("");
                 grabFactor.setHasInput(true);
             }
+            grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
+                    grabFactor.getFactorValue()));
+
             grabFactors.add(grabFactor);
         }
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
@@ -222,6 +228,18 @@ public class GrabServiceImpl implements GrabService {
         return tyMasterGrabChainInfoDto;
     }
 
+    private String compareTarget(String target, String grab){
+        BigDecimal bdTarget=new BigDecimal(target);
+        BigDecimal bdGrab=new BigDecimal(grab);
+
+        if(bdGrab.compareTo(bdTarget)>0){
+            return Constant.CompareResult.GT.getValue();
+        }else if(bdGrab.compareTo(bdTarget)==0){
+            return Constant.CompareResult.EQ.getValue();
+        }else{
+            return  Constant.CompareResult.LT.getValue();
+        }
+    }
 
     @Override
     public List<MeshGrabInfoDto> queryMeshGrabDetail(TyMasterGrabQueryDto queryDto) {

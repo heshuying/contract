@@ -32,6 +32,8 @@ public class Constant {
     public static String RMB_MIL= "万元";
     public static String RMB_YUAN= "元";
 
+
+
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；
      */
@@ -80,6 +82,25 @@ public class Constant {
         private String value;
 
         EmpRole(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * 抢单和目标比较： gt:上；lt:下；eq:等于
+     */
+    public enum CompareResult {
+        GT("gt"),
+        LT("lt"),
+        EQ("eq");
+
+        private String value;
+
+        CompareResult(String value) {
             this.value = value;
         }
 
