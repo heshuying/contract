@@ -811,8 +811,20 @@ CREATE TABLE `z_reserve_plan` (
   `parent_id` int(11) DEFAULT NULL COMMENT '抢入主表关联id',
   `order_type` varchar(20) DEFAULT NULL COMMENT '单属性',
   `title` varchar(4000) DEFAULT NULL COMMENT '标题',
+  `start_time` datetime DEFAULT NULL COMMENT '任务开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '任务结束时间',
+  `remind_type` int(11) DEFAULT NULL COMMENT '提醒类型：0不提醒，1截止提醒，2截止前1小时，3截止前1天',
+  `remind_time` int(11) DEFAULT NULL COMMENT '提醒时间，0不提醒，1每工作日，2每日，3每周，4每两周，5每月',
+  `is_important` int(11) DEFAULT NULL COMMENT '是否重要：0/1 - 是/否',
+  `executer` varchar(400) DEFAULT NULL COMMENT '执行人（多选时，逗号分隔）',
+  `teamworker` varchar(400) DEFAULT NULL COMMENT '抄送人（多选时，号分割）',
+  `create_user_code` varchar(100) DEFAULT NULL COMMENT '创建人编码',
+  `create_user_name` varchar(100) DEFAULT NULL COMMENT '创建人名字',
+  `create_user_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `task_code` varchar(200) DEFAULT NULL COMMENT '任务编码',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8
+
 
 -- ----------------------------
 -- Table structure for z_reserve_plan_detail

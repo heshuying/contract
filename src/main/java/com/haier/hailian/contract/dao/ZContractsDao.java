@@ -1,9 +1,6 @@
 package com.haier.hailian.contract.dao;
 
-import com.haier.hailian.contract.dto.ContractViewDataCD;
-import com.haier.hailian.contract.dto.ContractViewDataTY;
-import com.haier.hailian.contract.dto.QueryContractListDTO;
-import com.haier.hailian.contract.dto.TargetTitleTYDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -36,6 +33,9 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     List<ZContracts> selectAllContracts();
 
+
+    List<ZContracts> selectAllContractsById(int pId);
+
     /**
      * 查询所有的抢单人的
      * @param id
@@ -48,7 +48,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @param groupId
      * @return
      */
-    ZContracts selectByGID(String groupId);
+    ZContracts selectByGID(String groupId,String userCode);
 
     /**
      * 合约详情查看（创单）
@@ -72,6 +72,13 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     List<TargetTitleTYDTO> selectContractsTitleForTY(String contractId);
+
+    /**
+     * 体验抢单汇总
+     * @param contractId
+     * @return
+     */
+    List<FactorConfigDTO> selectContractsViewForTYSum(String contractId);
 
     /**
      * 查询待抢入合约列表

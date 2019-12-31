@@ -104,7 +104,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Override
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
-        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId());
+        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
         if (zContracts ==null){
             return null;
         }
@@ -135,7 +135,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setChannel("690");
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
-        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
+        ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
@@ -160,6 +160,14 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zContractTemp.setId(zContracts.getId());
             zContractTemp.setGroupId(groupId);
             zContractsDao.updateById(zContractTemp);
+            //循环父亲ID的数据
+            List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
+            for (ZContracts z:pa){
+                ZContracts zContractTemp2 = new ZContracts();
+                zContractTemp2.setId(z.getId());
+                zContractTemp2.setGroupId(groupId);
+                zContractsDao.updateById(zContractTemp2);
+            }
         }
 
     }
