@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -48,12 +50,12 @@ public class ZReservePlan extends Model<ZReservePlan> {
     /**
      * 任务开始时间
      */
-    private LocalDateTime startTime;
+    private Date startTime;
 
     /**
      * 任务结束时间
      */
-    private LocalDateTime endTime;
+    private Date endTime;
 
     /**
      * 提醒类型：0不提醒，1截止提醒，2截止前1小时，3截止前1天
@@ -93,7 +95,7 @@ public class ZReservePlan extends Model<ZReservePlan> {
     /**
      * 创建时间
      */
-    private LocalDateTime createUserTime;
+    private Date createUserTime;
 
     /**
      * 任务编码
