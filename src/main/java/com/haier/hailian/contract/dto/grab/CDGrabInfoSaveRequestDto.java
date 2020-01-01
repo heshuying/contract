@@ -30,6 +30,6 @@ public class CDGrabInfoSaveRequestDto {
     @ApiModelProperty(value="目标列表",name="目标列表")
     private List<CDGrabTargetDto> targetList;
     @ApiModelProperty(value="预案信息",name="预案信息")
-    private ReservePlanRequestDTO planInfo;
+    private List<ReservePlanRequestDTO> planInfo;
 
 }

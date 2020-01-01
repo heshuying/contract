@@ -3,10 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.dao.*;
-import com.haier.hailian.contract.dto.CurrentUser;
-import com.haier.hailian.contract.dto.RException;
-import com.haier.hailian.contract.dto.ReservePlanDetailDTO;
-import com.haier.hailian.contract.dto.ReservePlanResultDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
@@ -276,47 +273,47 @@ public class CDGrabServiceImpl implements CDGrabService {
             factorDao.insert(contractsFactor2);
         }
 
-        if(requestDto.getPlanInfo() != null){
-            ZReservePlan plan = new ZReservePlan();
-            ZReservePlanDetail planDetail = new ZReservePlanDetail();
-            BeanUtils.copyProperties(requestDto.getPlanInfo(), plan);
-            plan.setParentId(contractsId);
-            plan.setCreateUserCode(currentUser.getEmpsn());
-            plan.setCreateUserName(currentUser.getEmpname());
-            plan.setCreateUserTime(new Date());
-            plan.setSenduser(currentUser.getEmpsn());
-            for(ReservePlanDetailDTO detail : requestDto.getPlanInfo().getPlanDetail()){
-                plan.setTitle(detail.getTitle());
-                planDetail.setContent(detail.getContent());
-                reservePlanDao.insert(plan);
-                planDetail.setParentId(plan.getId());
-                reservePlanDetailDao.insert(planDetail);
+        if(requestDto.getPlanInfo() != null && !requestDto.getPlanInfo().isEmpty()){
+            for(ReservePlanRequestDTO planInfo : requestDto.getPlanInfo()){
+                ZReservePlan plan = new ZReservePlan();
+                ZReservePlanDetail planDetail = new ZReservePlanDetail();
+                BeanUtils.copyProperties(planInfo, plan);
+                plan.setParentId(contractsId);
+                plan.setCreateUserCode(currentUser.getEmpsn());
+                plan.setCreateUserName(currentUser.getEmpname());
+                plan.setCreateUserTime(new Date());
+                plan.setSenduser(currentUser.getEmpsn());
+                for(ReservePlanDetailDTO detail : planInfo.getPlanDetail()){
+                    plan.setTitle(detail.getTitle());
+                    planDetail.setContent(detail.getContent());
+                    reservePlanDao.insert(plan);
+                    planDetail.setParentId(plan.getId());
+                    reservePlanDetailDao.insert(planDetail);
 
-                // 调用ihaier的接口进行任务创建
-                IhaierTask ihaierTask = new IhaierTask();
-                String executors = IHaierUtil.getUserOpenId(requestDto.getPlanInfo().getExecuter().split(","));
-                ihaierTask.setExecutors(executors.split(","));
-                if(!StringUtils.isEmpty(requestDto.getPlanInfo().getTeamworker())){
-                    String ccs = IHaierUtil.getUserOpenId(requestDto.getPlanInfo().getTeamworker().split(","));
-                    ihaierTask.setCcs(ccs.split(","));
+                    // 调用ihaier的接口进行任务创建
+                    IhaierTask ihaierTask = new IhaierTask();
+                    String executors = IHaierUtil.getUserOpenId(planInfo.getExecuter().split(","));
+                    ihaierTask.setExecutors(executors.split(","));
+                    if(!StringUtils.isEmpty(planInfo.getTeamworker())){
+                        String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));
+                        ihaierTask.setCcs(ccs.split(","));
+                    }
+                    String oid = IHaierUtil.getUserOpenId(planInfo.getCreateUserCode().split(","));
+                    ihaierTask.setOpenId(oid);
+                    ihaierTask.setContent(detail.getContent());
+                    ihaierTask.setEndDate(planInfo.getEndTime().getTime());
+                    ihaierTask.setImportant(planInfo.getIsImportant());
+                    ihaierTask.setNoticeTime(15);
+                    ihaierTask.setChannel("690");
+    //                ihaierTask.setCreateChannel(“”);
+                    ihaierTask.setTimingNoticeTime(planInfo.getRemindTime());
+                    ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+                    String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+                    plan.setTaskCode(taskId);
+                    //更新taskID
+                    reservePlanDao.updateById(plan);
                 }
-                String oid = IHaierUtil.getUserOpenId(requestDto.getPlanInfo().getCreateUserCode().split(","));
-                ihaierTask.setOpenId(oid);
-                ihaierTask.setContent(detail.getContent());
-                ihaierTask.setEndDate(requestDto.getPlanInfo().getEndTime().getTime());
-                ihaierTask.setImportant(requestDto.getPlanInfo().getIsImportant());
-                ihaierTask.setNoticeTime(15);
-                ihaierTask.setChannel("690");
-//                ihaierTask.setCreateChannel(“”);
-                ihaierTask.setTimingNoticeTime(requestDto.getPlanInfo().getRemindTime());
-                ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
-                String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
-                plan.setTaskCode(taskId);
-                //更新taskID
-                reservePlanDao.updateById(plan);
             }
-
-
 
         }
     }
