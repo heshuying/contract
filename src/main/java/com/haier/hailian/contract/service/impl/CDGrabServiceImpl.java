@@ -282,7 +282,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 plan.setCreateUserCode(currentUser.getEmpsn());
                 plan.setCreateUserName(currentUser.getEmpname());
                 plan.setCreateUserTime(new Date());
-                plan.setSenduser(currentUser.getEmpsn());
+                plan.setSenduser(planInfo.getSenduser());
                 for(ReservePlanDetailDTO detail : planInfo.getPlanDetail()){
                     plan.setTitle(detail.getTitle());
                     planDetail.setContent(detail.getContent());
