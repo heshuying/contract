@@ -172,29 +172,30 @@ public class CDGrabServiceImpl implements CDGrabService {
                 }
             }
 
-            List<ReservePlanResultDTO> reservePlanDTOList = new ArrayList<>();
-            List<ReservePlanDetailDTO> reservePlanDetailDTOList = new ArrayList<>();
-            List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
+            List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfoGroup(String.valueOf(contracts.getId()));
             if(planInfoList != null && !planInfoList.isEmpty()){
-                ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
-                reservePlanDTO.setCreateUserCode(planInfoList.get(0).getCreateUserCode());
-                reservePlanDTO.setCreateUserName(planInfoList.get(0).getCreateUserName());
-                reservePlanDTO.setStartTime(DateFormatUtil.format(planInfoList.get(0).getStartTime(),DateFormatUtil.DATE_PATTERN));
-                reservePlanDTO.setEndTime(DateFormatUtil.format(planInfoList.get(0).getEndTime(),DateFormatUtil.DATE_PATTERN));
-                reservePlanDTO.setExecuter(planInfoList.get(0).getExecuter());
-                reservePlanDTO.setIsImportant(planInfoList.get(0).getIsImportant());
-                reservePlanDTO.setRemindTime(planInfoList.get(0).getRemindTime());
-                reservePlanDTO.setRemindType(planInfoList.get(0).getRemindType());
                 for(PlanInfoDto planInfo : planInfoList){
-                    ReservePlanDetailDTO reservePlanDetailDTO = new ReservePlanDetailDTO();
-                    reservePlanDetailDTO.setTitle(planInfo.getTitle());
-                    reservePlanDetailDTO.setContent(planInfo.getContent());
-                    reservePlanDetailDTOList.add(reservePlanDetailDTO);
+                    ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
+                    reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
+                    reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
+                    reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));
+                    reservePlanDTO.setEndTime(DateFormatUtil.format(planInfo.getEndTime(),DateFormatUtil.DATE_PATTERN));
+                    reservePlanDTO.setExecuter(planInfo.getExecuter());
+                    reservePlanDTO.setIsImportant(planInfo.getIsImportant());
+                    reservePlanDTO.setRemindTime(planInfo.getRemindTime());
+                    reservePlanDTO.setRemindType(planInfo.getRemindType());
+                    List<PlanInfoDto> planInfoDetails = reservePlanDao.selectPlanInfoSub(String.valueOf(contracts.getId()), planInfo.getOrderType());
+                    if(planInfoDetails != null){
+                        for(PlanInfoDto planDetail : planInfoDetails){
+                            ReservePlanDetailDTO reservePlanDetailDTO = new ReservePlanDetailDTO();
+                            reservePlanDetailDTO.setTitle(planDetail.getTitle());
+                            reservePlanDetailDTO.setContent(planDetail.getContent());
+                            reservePlanDTO.getPlanDetail().add(reservePlanDetailDTO);
+                        }
+                    }
+                    responseDto.getPlanList().add(reservePlanDTO);
                 }
-                reservePlanDTO.setPlanDetail(reservePlanDetailDTOList);
-                reservePlanDTOList.add(reservePlanDTO);
             }
-            responseDto.setPlanList(reservePlanDTOList);
         }
 
         return responseDto;
@@ -274,6 +275,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
 
         if(requestDto.getPlanInfo() != null && !requestDto.getPlanInfo().isEmpty()){
+            int index = 1;
             for(ReservePlanRequestDTO planInfo : requestDto.getPlanInfo()){
                 ZReservePlan plan = new ZReservePlan();
                 ZReservePlanDetail planDetail = new ZReservePlanDetail();
@@ -283,6 +285,8 @@ public class CDGrabServiceImpl implements CDGrabService {
                 plan.setCreateUserName(currentUser.getEmpname());
                 plan.setCreateUserTime(new Date());
                 plan.setSenduser(planInfo.getSenduser());
+                plan.setExecuter(currentUser.getEmpsn());
+                plan.setOrderType(String.valueOf(index));
                 for(ReservePlanDetailDTO detail : planInfo.getPlanDetail()){
                     plan.setTitle(detail.getTitle());
                     planDetail.setContent(detail.getContent());
@@ -292,8 +296,7 @@ public class CDGrabServiceImpl implements CDGrabService {
 
                     // 调用ihaier的接口进行任务创建
                     IhaierTask ihaierTask = new IhaierTask();
-                    String executors = IHaierUtil.getUserOpenId(planInfo.getExecuter().split(","));
-                    ihaierTask.setExecutors(executors.split(","));
+                    ihaierTask.setExecutors(new String[]{currentUser.getEmpsn()});
                     if(!StringUtils.isEmpty(planInfo.getTeamworker())){
                         String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));
                         ihaierTask.setCcs(ccs.split(","));
@@ -313,6 +316,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     //更新taskID
                     reservePlanDao.updateById(plan);
                 }
+                index++;
             }
 
         }

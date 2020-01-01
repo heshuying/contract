@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,6 @@ public class ReservePlanResultDTO {
     private String createUserName;
 
     @ApiModelProperty(value="预案标题内容列表",name="预案标题内容列表")
-    private List<ReservePlanDetailDTO> planDetail;
+    private List<ReservePlanDetailDTO> planDetail = new ArrayList<>();
 
 }
