@@ -251,28 +251,30 @@ public class CDGrabServiceImpl implements CDGrabService {
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();
 
-        for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
-            // 链群目标保存
-//            ZContractsFactor contractsFactor = new ZContractsFactor();
-//            contractsFactor.setContractId(contractsId);
-//            contractsFactor.setFactorCode(targetDto.getTargetCode());
-//            contractsFactor.setFactorName(targetDto.getTargetName());
-//            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
-//            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-//            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
-//            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
-//            factorDao.insert(contractsFactor);
+        if(requestDto.getTargetList() != null){
+            for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
+                // 链群目标保存
+    //            ZContractsFactor contractsFactor = new ZContractsFactor();
+    //            contractsFactor.setContractId(contractsId);
+    //            contractsFactor.setFactorCode(targetDto.getTargetCode());
+    //            contractsFactor.setFactorName(targetDto.getTargetName());
+    //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+    //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+    //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+    //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
+    //            factorDao.insert(contractsFactor);
 
-            // 抢单目标保存
-            ZContractsFactor contractsFactor2 = new ZContractsFactor();
-            contractsFactor2.setContractId(contractsId);
-            contractsFactor2.setFactorCode(targetDto.getTargetCode());
-            contractsFactor2.setFactorName(targetDto.getTargetName());
-            contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
-            contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
-            contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
-            contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
-            factorDao.insert(contractsFactor2);
+                // 抢单目标保存
+                ZContractsFactor contractsFactor2 = new ZContractsFactor();
+                contractsFactor2.setContractId(contractsId);
+                contractsFactor2.setFactorCode(targetDto.getTargetCode());
+                contractsFactor2.setFactorName(targetDto.getTargetName());
+                contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
+                contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
+                contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
+                contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
+                factorDao.insert(contractsFactor2);
+            }
         }
 
         if(requestDto.getPlanInfo() != null && !requestDto.getPlanInfo().isEmpty()){
