@@ -119,7 +119,6 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             name = name + "链群";
         }
         zHrChainInfo.setChainName(name);
-//        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
         List<ZHrChainInfo> chainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
         if (chainNames.size() > 0) {
             return R.error("链群名称已经存在");
@@ -137,11 +136,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
-//        CurrentUser currentUser = sysUser.getCurrentUser();
-//        if (currentUser == null || currentUser.getXwCode() == null){
-//            return null;
-//        }
+        /*
+         * 根据当前登陆人的最小单元进行匹配平台以及登陆人对应的最小单元的角色进行竞争力目标的查询
+         */
         TOdsMinbu tOdsMinbu = sysUser.getMinbu();
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
@@ -159,13 +156,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
-//        List<SysXiaoweiEhr> list = sysUser.getXiaoweiEhrList();
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
-//        SysXiaoweiEhr xiaoweiEhr = list.get(0);
         //链群编码生成
         String maxOne = zHrChainInfoDao.queryMaxOne();
+        //生成编码的方法
         String chainCode = frontCompWithZore(maxOne, 5, "H");
         //判断是否存在链群关键字，不存在则添加
         String name = zHrChainInfoDto.getChainName();
@@ -186,6 +182,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             z.setLqName(name);
             zNodeTargetPercentInfoDao.insert(z);
         }
+        //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
         List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtcode());
         for (TOdsMinbu tOdsMinbu:getIsTY){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
@@ -205,7 +202,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setXwCode(currentUser.getOrgNum());
         zHrChainInfoDto.setXwName(currentUser.getOrgName());
         zHrChainInfoDto.setChainName(name);
-        //3.保存数据到链上
+        //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         return zHrChainInfoDto;
     }
@@ -249,9 +246,4 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         return num;
 
     }
-
-    public static void main(String[] args) {
-        System.out.println(frontCompWithZore("ACC00003", 10, "ACC"));
-    }
-
 }

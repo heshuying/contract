@@ -24,8 +24,8 @@ public class IHaierUtil {
      */
     private static String getAccessToken(String secret) {
         OkHttpClient client = new OkHttpClient();
-//        QQ8krXQuAuVzlRWsFoaMC5yV9chBDNsq
-//        TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB
+//        QQ8krXQuAuVzlRWsFoaMC5yV9chBDNsq  创建任务的时候使用
+//        TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB  创建群组的时候使用
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         Date date = new Date();
         long timestamp = date.getTime();
@@ -209,6 +209,12 @@ public class IHaierUtil {
         return null;
     }
 
+    /**
+     * 创建公告使用，后期如果不需要进行创建的时候可以删除掉。
+     * @param groupId
+     * @param accessToken
+     * @return
+     */
     private static String createGG(String groupId, String accessToken) {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
