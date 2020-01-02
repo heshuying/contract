@@ -88,6 +88,21 @@ public class ZReservePlan extends Model<ZReservePlan> {
     private String senduser;
 
     /**
+     * 执行人页面显示
+     */
+    private String executerView;
+
+    /**
+     * 发送人页面显示
+     */
+    private String senduserView;
+
+    /**
+     * 抄送人页面显示
+     */
+    private String teamworkerView;
+
+    /**
      * 创建人编码
      */
     private String createUserCode;

@@ -60,6 +60,16 @@ public class ReservePlanRequestDTO {
 
     @ApiModelProperty(value="发送人（多选时，号分割）",name="发送人（多选时，号分割）")
     private String senduser;
+
+    @ApiModelProperty(value="执行人页面显示",name="执行人页面显示")
+    private String executerView;
+
+    @ApiModelProperty(value="发送人页面显示",name="发送人页面显示")
+    private String senduserView;
+
+    @ApiModelProperty(value="抄送人页面显示",name="抄送人页面显示")
+    private String teamworkerView;
+
     /**
      * 创建人编码
      */

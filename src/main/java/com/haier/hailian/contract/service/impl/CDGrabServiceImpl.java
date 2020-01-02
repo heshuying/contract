@@ -176,6 +176,7 @@ public class CDGrabServiceImpl implements CDGrabService {
             if(planInfoList != null && !planInfoList.isEmpty()){
                 for(PlanInfoDto planInfo : planInfoList){
                     ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
+                    BeanUtils.copyProperties(planInfo, reservePlanDTO);
                     reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
                     reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
                     reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));

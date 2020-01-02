@@ -817,13 +817,18 @@ CREATE TABLE `z_reserve_plan` (
   `remind_time` int(11) DEFAULT NULL COMMENT '提醒时间，0不提醒，1每工作日，2每日，3每周，4每两周，5每月',
   `is_important` int(11) DEFAULT NULL COMMENT '是否重要：0/1 - 是/否',
   `executer` varchar(400) DEFAULT NULL COMMENT '执行人（多选时，逗号分隔）',
+  `senduser` varchar(400) DEFAULT NULL COMMENT '发送人（多选时，号分割）',
   `teamworker` varchar(400) DEFAULT NULL COMMENT '抄送人（多选时，号分割）',
+  `executer_view` varchar(400) DEFAULT NULL COMMENT '执行人页面显示',
+  `senduser_view` varchar(400) DEFAULT NULL COMMENT '发送人页面显示',
+  `teamworker_view` varchar(400) DEFAULT NULL COMMENT '抄送人页面显示',
   `create_user_code` varchar(100) DEFAULT NULL COMMENT '创建人编码',
   `create_user_name` varchar(100) DEFAULT NULL COMMENT '创建人名字',
   `create_user_time` datetime DEFAULT NULL COMMENT '创建时间',
   `task_code` varchar(200) DEFAULT NULL COMMENT '任务编码',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8
+
 
 
 

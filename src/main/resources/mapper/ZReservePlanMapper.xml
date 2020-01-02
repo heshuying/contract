@@ -14,7 +14,11 @@
         <result column="remind_time" property="remindTime" />
         <result column="is_important" property="isImportant" />
         <result column="executer" property="executer" />
+        <result column="senduser" property="senduser" />
         <result column="teamworker" property="teamworker" />
+        <result column="executer_view" property="executerView" />
+        <result column="senduser_view" property="senduserView" />
+        <result column="teamworker_view" property="teamworkerView" />
         <result column="create_user_code" property="createUserCode" />
         <result column="create_user_name" property="createUserName" />
         <result column="create_user_time" property="createUserTime" />
