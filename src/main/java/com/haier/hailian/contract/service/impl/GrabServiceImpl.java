@@ -160,14 +160,16 @@ public class GrabServiceImpl implements GrabService {
 
         //根据目标维度 设置抢单的维度
         List<FactorDto> grabFactors=new ArrayList<>();
+        String tip="";
         for (FactorDto index : targetFactor) {
             FactorDto grabFactor=new FactorDto();
             BeanUtils.copyProperties(index, grabFactor);
             grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
             if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
-                grabFactor.setFactorValue(inc.divide(
+                BigDecimal incBill=inc.divide(
                         new BigDecimal("10000"),2, RoundingMode.HALF_UP
-                ).toString());//格式化万
+                );
+                grabFactor.setFactorValue(incBill.toString());//格式化万
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.High.getValue().equals(f.getProductStru()))
@@ -182,6 +184,8 @@ public class GrabServiceImpl implements GrabService {
                 }else{
                     grabFactor.setFactorValue("0");
                 }
+                grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
+                        grabFactor.getFactorValue()));
             } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
                         Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
@@ -214,14 +218,43 @@ public class GrabServiceImpl implements GrabService {
                 grabFactor.setFactorValue("");
                 grabFactor.setHasInput(true);
             }
+            grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
+                    grabFactor.getFactorValue()));
+            if(Constant.CompareResult.LT.getValue().equals(grabFactor.getDirection())){
+
+                if(StringUtils.isBlank(tip)){
+                    tip=grabFactor.getFactorName();
+                }else{
+                    tip=tip+"、"+grabFactor.getFactorName();
+                }
+            }
+
             grabFactors.add(grabFactor);
         }
+        if(StringUtils.isNoneBlank(tip)){
+            //存在抢入小于目标
+            tyMasterGrabChainInfoDto.setCanSubmit(false);
+            tyMasterGrabChainInfoDto.setErrorMsg("抢单"+tip+"指标小于底线值");
+        }
+
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
         tyMasterGrabChainInfoDto.setGrabList(grabFactors);
 
         return tyMasterGrabChainInfoDto;
     }
 
+    private String compareTarget(String target, String grab){
+        BigDecimal bdTarget=new BigDecimal(target);
+        BigDecimal bdGrab=new BigDecimal(grab);
+
+        if(bdGrab.compareTo(bdTarget)>0){
+            return Constant.CompareResult.GT.getValue();
+        }else if(bdGrab.compareTo(bdTarget)==0){
+            return Constant.CompareResult.EQ.getValue();
+        }else{
+            return  Constant.CompareResult.LT.getValue();
+        }
+    }
 
     @Override
     public List<MeshGrabInfoDto> queryMeshGrabDetail(TyMasterGrabQueryDto queryDto) {
