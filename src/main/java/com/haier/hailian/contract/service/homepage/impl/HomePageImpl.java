@@ -172,10 +172,10 @@ public class HomePageImpl implements HomePageService {
                     grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
                 }
 
-                // 抢单目标抢单值 + 高中低端占比
+                // 抢单目标抢单值 + 高中低端占比  /  抢单目标底线值
                 List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , contracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+                        .eq("contract_id" , contracts.getId()));
+                //.eq("factor_type" , Constant.FactorType.Grab.getValue())
 
                 grabInfo2Outside.setGrab2XW(factorList);
 
