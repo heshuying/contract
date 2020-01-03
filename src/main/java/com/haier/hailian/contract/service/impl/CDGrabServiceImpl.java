@@ -1,17 +1,19 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.gson.Gson;
 import com.haier.hailian.contract.dao.*;
-import com.haier.hailian.contract.dto.CurrentUser;
-import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,8 +126,6 @@ public class CDGrabServiceImpl implements CDGrabService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
-        String xwCode = currentUser.getXwCode();
-        String ptCode = currentUser.getPtcode();
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
@@ -143,6 +143,9 @@ public class CDGrabServiceImpl implements CDGrabService {
             if(factorList != null && !factorList.isEmpty()){
                 Map<String, List<ZContractsFactor>> tempMap = new HashMap<>();
                 for(ZContractsFactor factor : factorList){
+                    if(StringUtils.isNotBlank(factor.getFactorValue())){
+                        factor.setFactorValue(new BigDecimal(factor.getFactorValue()).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                    }
                     List<ZContractsFactor> list = tempMap.get(factor.getFactorCode());
                     if(list == null || list.isEmpty()){
                         list = new ArrayList<>();
@@ -169,8 +172,31 @@ public class CDGrabServiceImpl implements CDGrabService {
                 }
             }
 
-            List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
-            responseDto.setPlanList(planInfoList);
+            List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfoGroup(String.valueOf(contracts.getId()));
+            if(planInfoList != null && !planInfoList.isEmpty()){
+                for(PlanInfoDto planInfo : planInfoList){
+                    ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
+                    BeanUtils.copyProperties(planInfo, reservePlanDTO);
+                    reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
+                    reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
+                    reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));
+                    reservePlanDTO.setEndTime(DateFormatUtil.format(planInfo.getEndTime(),DateFormatUtil.DATE_PATTERN));
+                    reservePlanDTO.setExecuter(planInfo.getExecuter());
+                    reservePlanDTO.setIsImportant(planInfo.getIsImportant());
+                    reservePlanDTO.setRemindTime(planInfo.getRemindTime());
+                    reservePlanDTO.setRemindType(planInfo.getRemindType());
+                    List<PlanInfoDto> planInfoDetails = reservePlanDao.selectPlanInfoSub(String.valueOf(contracts.getId()), planInfo.getOrderType());
+                    if(planInfoDetails != null){
+                        for(PlanInfoDto planDetail : planInfoDetails){
+                            ReservePlanDetailDTO reservePlanDetailDTO = new ReservePlanDetailDTO();
+                            reservePlanDetailDTO.setTitle(planDetail.getTitle());
+                            reservePlanDetailDTO.setContent(planDetail.getContent());
+                            reservePlanDTO.getPlanDetail().add(reservePlanDetailDTO);
+                        }
+                    }
+                    responseDto.getPlanList().add(reservePlanDTO);
+                }
+            }
         }
 
         return responseDto;
@@ -225,41 +251,78 @@ public class CDGrabServiceImpl implements CDGrabService {
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();
 
-        for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
-            // 链群目标保存
-//            ZContractsFactor contractsFactor = new ZContractsFactor();
-//            contractsFactor.setContractId(contractsId);
-//            contractsFactor.setFactorCode(targetDto.getTargetCode());
-//            contractsFactor.setFactorName(targetDto.getTargetName());
-//            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
-//            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-//            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
-//            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
-//            factorDao.insert(contractsFactor);
+        if(requestDto.getTargetList() != null){
+            for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
+                // 链群目标保存
+    //            ZContractsFactor contractsFactor = new ZContractsFactor();
+    //            contractsFactor.setContractId(contractsId);
+    //            contractsFactor.setFactorCode(targetDto.getTargetCode());
+    //            contractsFactor.setFactorName(targetDto.getTargetName());
+    //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+    //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+    //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+    //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
+    //            factorDao.insert(contractsFactor);
 
-            // 抢单目标保存
-            ZContractsFactor contractsFactor2 = new ZContractsFactor();
-            contractsFactor2.setContractId(contractsId);
-            contractsFactor2.setFactorCode(targetDto.getTargetCode());
-            contractsFactor2.setFactorName(targetDto.getTargetName());
-            contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
-            contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
-            contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
-            contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
-            factorDao.insert(contractsFactor2);
+                // 抢单目标保存
+                ZContractsFactor contractsFactor2 = new ZContractsFactor();
+                contractsFactor2.setContractId(contractsId);
+                contractsFactor2.setFactorCode(targetDto.getTargetCode());
+                contractsFactor2.setFactorName(targetDto.getTargetName());
+                contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
+                contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
+                contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
+                contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
+                factorDao.insert(contractsFactor2);
+            }
         }
 
-        // 保存预案信息
-        ZReservePlan plan = new ZReservePlan();
-        plan.setParentId(contractsId);
-        plan.setTitle(requestDto.getPlanTitle());
-        reservePlanDao.insert(plan);
-        Integer planId = plan.getId();
+        if(requestDto.getPlanInfo() != null && !requestDto.getPlanInfo().isEmpty()){
+            int index = 1;
+            for(ReservePlanRequestDTO planInfo : requestDto.getPlanInfo()){
+                ZReservePlan plan = new ZReservePlan();
+                ZReservePlanDetail planDetail = new ZReservePlanDetail();
+                BeanUtils.copyProperties(planInfo, plan);
+                plan.setParentId(contractsId);
+                plan.setCreateUserCode(currentUser.getEmpsn());
+                plan.setCreateUserName(currentUser.getEmpname());
+                plan.setCreateUserTime(new Date());
+                plan.setSenduser(planInfo.getSenduser());
+                plan.setExecuter(currentUser.getEmpsn());
+                plan.setOrderType(String.valueOf(index));
+                for(ReservePlanDetailDTO detail : planInfo.getPlanDetail()){
+                    plan.setTitle(detail.getTitle());
+                    planDetail.setContent(detail.getContent());
+                    reservePlanDao.insert(plan);
+                    planDetail.setParentId(plan.getId());
+                    reservePlanDetailDao.insert(planDetail);
 
-        ZReservePlanDetail planDetail = new ZReservePlanDetail();
-        planDetail.setParentId(planId);
-        planDetail.setContent(requestDto.getPlanContent());
-        reservePlanDetailDao.insert(planDetail);
+                    // 调用ihaier的接口进行任务创建
+                    IhaierTask ihaierTask = new IhaierTask();
+                    ihaierTask.setExecutors(new String[]{currentUser.getEmpsn()});
+                    if(!StringUtils.isEmpty(planInfo.getTeamworker())){
+                        String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));
+                        ihaierTask.setCcs(ccs.split(","));
+                    }
+                    String oid = IHaierUtil.getUserOpenId(planInfo.getCreateUserCode().split(","));
+                    ihaierTask.setOpenId(oid);
+                    ihaierTask.setContent(detail.getContent());
+                    ihaierTask.setEndDate(planInfo.getEndTime().getTime());
+                    ihaierTask.setImportant(planInfo.getIsImportant());
+                    ihaierTask.setNoticeTime(15);
+                    ihaierTask.setChannel("690");
+    //                ihaierTask.setCreateChannel(“”);
+                    ihaierTask.setTimingNoticeTime(planInfo.getRemindTime());
+                    ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+                    String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+                    plan.setTaskCode(taskId);
+                    //更新taskID
+                    reservePlanDao.updateById(plan);
+                }
+                index++;
+            }
+
+        }
     }
 
     private List<String> getYearMonth(String contractId){

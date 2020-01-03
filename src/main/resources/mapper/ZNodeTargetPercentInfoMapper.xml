@@ -209,7 +209,7 @@
         tb.target_to,
         tb.`target_bottom_line`,*/
         tpi.`share_percent`,
-        (SELECT DISTINCT tb.target_unit FROM z_target_basic tb WHERE tb.target_code = tpi.`target_code`) AS target_unit
+        (SELECT DISTINCT tb.target_unit FROM z_target_basic tb WHERE tb.target_code = tpi.`target_code` limit 1) AS target_unit
         FROM
         z_node_target_percent_info tpi
         WHERE tpi.`node_code` = #{nodeCode}

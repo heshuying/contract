@@ -104,7 +104,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Override
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
-        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId());
+        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
         if (zContracts ==null){
             return null;
         }
@@ -116,8 +116,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
         }
         //创建SimpleDateFormat对象实例并定义好转换格式
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
         String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
@@ -160,6 +160,14 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             zContractTemp.setId(zContracts.getId());
             zContractTemp.setGroupId(groupId);
             zContractsDao.updateById(zContractTemp);
+            //循环父亲ID的数据
+            List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
+            for (ZContracts z:pa){
+                ZContracts zContractTemp2 = new ZContracts();
+                zContractTemp2.setId(z.getId());
+                zContractTemp2.setGroupId(groupId);
+                zContractsDao.updateById(zContractTemp2);
+            }
         }
 
     }

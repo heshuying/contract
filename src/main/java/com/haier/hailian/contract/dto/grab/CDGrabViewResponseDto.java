@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.ReservePlanResultDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class CDGrabViewResponseDto {
     @ApiModelProperty(value="合约有效期结束",name="合约有效期结束")
     private String endTime;
     @ApiModelProperty(value="预案信息",name="预案信息")
-    private List<PlanInfoDto> planList = new ArrayList<>();
+    private List<ReservePlanResultDTO> planList = new ArrayList<>();
     @ApiModelProperty(value="目标列表",name="目标列表")
     private List<CDGrabTargetDto> targetList = new ArrayList<>();
 }

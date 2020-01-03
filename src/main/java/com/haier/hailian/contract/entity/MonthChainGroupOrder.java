@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -122,7 +124,7 @@ public class MonthChainGroupOrder extends Model<MonthChainGroupOrder> {
 
     private Integer submitEmp;
 
-    private LocalDateTime submitTime;
+    private Date submitTime;
 
     /**
      * 达成目标需协同问题-产品竞争力
@@ -173,6 +175,8 @@ public class MonthChainGroupOrder extends Model<MonthChainGroupOrder> {
      * 备用字段，暂不送数
      */
     private String add10;
+
+    private String isGzd;
 
 
     @Override

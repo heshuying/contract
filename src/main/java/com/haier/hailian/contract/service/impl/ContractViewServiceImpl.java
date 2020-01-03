@@ -9,8 +9,8 @@ import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
-import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +59,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         result.setGrabList(grabList);
 
         // 体验抢单目标
-        BigDecimal incom = BigDecimal.ZERO;
+       /* BigDecimal incom = BigDecimal.ZERO;
         Integer highPercent = 0;
         Integer lowPercent = 0;
         List<ZContractsFactor> grabTYList = new ArrayList<>();
@@ -97,7 +97,9 @@ public class ContractViewServiceImpl implements ContractViewService {
             factor3.setFactorValue(String.valueOf(lowPercent));
             factor3.setFactorUnit("%");
             grabTYList.add(factor3);
-        }
+        }*/
+
+        List<FactorConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
         result.setGrabTYList(grabTYList);
 
         return result;
@@ -127,7 +129,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         List<ContractViewDataTYResultDTO> resultList = new ArrayList<>();
         Map<String,ContractViewDataTYResultDTO> tempMap = new HashMap<>();
 
-        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
+//        List<TargetTitleTYDTO> titleList = contractsDao.selectContractsTitleForTY(contractId);
         List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
 
         if(factorList != null && !factorList.isEmpty()){
@@ -151,7 +153,9 @@ public class ContractViewServiceImpl implements ContractViewService {
                         TargetConfigDTO targetConfigDTO = new TargetConfigDTO();
                         targetConfigDTO.setTargetCode(factor.getFactorCode());
                         targetConfigDTO.setTargetName(factor.getFactorName());
-                        targetConfigDTO.setTargetValue(factor.getFactorValue());
+                        if(StringUtils.isNotBlank(factor.getFactorValue())){
+                            targetConfigDTO.setTargetValue(new BigDecimal(factor.getFactorValue()).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                        }
                         targetConfigDTO.setTargetType(factor.getFactorType());
                         targetConfigList.add(targetConfigDTO);
                     }
