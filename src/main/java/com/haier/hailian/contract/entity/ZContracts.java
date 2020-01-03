@@ -123,8 +123,6 @@ public class ZContracts extends Model<ZContracts> {
     @TableField(exist = false)
     private String endDateStr;
 
-    private String openValid;
-
     private String sharePercent;
 
     private String groupId;
