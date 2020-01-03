@@ -160,6 +160,7 @@ public class GrabServiceImpl implements GrabService {
 
         //根据目标维度 设置抢单的维度
         List<FactorDto> grabFactors=new ArrayList<>();
+        String tip="";
         for (FactorDto index : targetFactor) {
             FactorDto grabFactor=new FactorDto();
             BeanUtils.copyProperties(index, grabFactor);
@@ -220,12 +221,22 @@ public class GrabServiceImpl implements GrabService {
             grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
                     grabFactor.getFactorValue()));
             if(Constant.CompareResult.LT.getValue().equals(grabFactor.getDirection())){
-                //存在抢入小于目标
-                tyMasterGrabChainInfoDto.setCanSubmit(false);
-                tyMasterGrabChainInfoDto.setErrorMsg("抢单"+grabFactor.getFactorName()+"小于底线值");
+
+                if(StringUtils.isBlank(tip)){
+                    tip=grabFactor.getFactorName();
+                }else{
+                    tip=tip+"、"+grabFactor.getFactorName();
+                }
             }
+
             grabFactors.add(grabFactor);
         }
+        if(StringUtils.isNoneBlank(tip)){
+            //存在抢入小于目标
+            tyMasterGrabChainInfoDto.setCanSubmit(false);
+            tyMasterGrabChainInfoDto.setErrorMsg("抢单"+tip+"指标小于底线值");
+        }
+
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
         tyMasterGrabChainInfoDto.setGrabList(grabFactors);
 
