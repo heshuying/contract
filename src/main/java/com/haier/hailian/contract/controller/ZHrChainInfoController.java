@@ -130,7 +130,7 @@ public class ZHrChainInfoController {
             }
             return res;
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            log.error("错误发生在ZHrChainInfoController.saveChainInfo,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
@@ -146,7 +146,7 @@ public class ZHrChainInfoController {
             }
             return R.ok().put("data", list);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            log.error("错误发生在ZHrChainInfoController.getMinbuList,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }

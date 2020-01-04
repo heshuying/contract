@@ -35,5 +35,7 @@ public class ZHrChainInfo implements Serializable {
     private String chainPtCode;
     //是否删除
     private int deleted;
+    //群组ID
+    private String groupId;
 
 }

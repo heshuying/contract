@@ -242,5 +242,41 @@ public class IHaierUtil {
         return null;
     }
 
+    /**
+     * 群组中加入新的成员
+     * @param users
+     * @param groupId
+     * @return
+     */
+    public String joinGroup(String groupId, String[] users){
+        String user = IHaierUtil.getUserOpenId(users);
+        String userIds = new Gson().toJson(user.split(","));
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+        String accessToken = getAccessToken("TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB");
+        RequestBody body = RequestBody.create(mediaType, "{\"currentUid\": \"5e030c81ed50999dad27824d\",\"groupId\": "+groupId+",\"userIds\":"+userIds+"}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/xtinterface/group/addGroupUser?accessToken=" + accessToken)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            JsonObject result = json.get("data").getAsJsonObject();
+            return result.get("groupId").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
