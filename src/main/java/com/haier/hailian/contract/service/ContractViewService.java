@@ -19,4 +19,6 @@ public interface ContractViewService {
     List<ContractViewDataCD> getContractViewDataCD(String contractId);
 
     String getContractSize(String contractId);
+
+    Integer getContractSize2(String contractId);
 }

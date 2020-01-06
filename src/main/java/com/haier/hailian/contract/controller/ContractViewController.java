@@ -41,7 +41,8 @@ public class ContractViewController {
     public R getContractInfoTY(@PathVariable String contractId) {
         List<TargetTitleTYDTO> resultTitle = contractViewService.getTargetTitleList(contractId);
         List<ContractViewDataTYResultDTO> result = contractViewService.getContractViewDataTY(contractId);
-        return R.ok().put("data",result).put("title", resultTitle).put("grabPercent", result.size() + "/42");
+        Integer size = contractViewService.getContractSize2(contractId);
+        return R.ok().put("data",result).put("title", resultTitle).put("grabPercent", result.size() + "/" + size);
     }
 
 }

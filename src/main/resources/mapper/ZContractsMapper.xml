@@ -248,6 +248,14 @@
 
     </select>
 
+    <select id="getContractSize2" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        z_node_target_percent_info node
+        where node.share_percent is null and node.lq_code in (select chain_code from z_contracts where id=#{contractId})
+
+    </select>
+
 
 
 </mapper>

@@ -10,6 +10,7 @@ import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -188,6 +189,13 @@ public class ContractViewServiceImpl implements ContractViewService {
                 .eq("contract_type" , "30"));
         Integer target = contractsDao.getContractSize(contractId);
         return fact + "/" + target;
+    }
+
+
+    @Override
+    public Integer getContractSize2(String contractId) {
+        Integer target = contractsDao.getContractSize2(contractId);
+        return target;
     }
 
     /**
