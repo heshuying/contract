@@ -44,7 +44,7 @@ public class ZContractsQuartz {
         //xCalculateLogical.doRefresh690();
         //log.info("【定时任务结束--刷新690数据】");
     }
-    @Scheduled(cron="0 0/10 * * * ?")
+//    @Scheduled(cron="0 0/10 * * * ?")
     public void createGroup(){
         log.info("【创建合约的群组开始】");
         zReservePlanTeamworkService.createGroup();

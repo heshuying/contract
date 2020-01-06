@@ -201,8 +201,8 @@ public class IHaierUtil {
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
             String groupId = result.get("groupId").getAsString();
-            createGG(groupId, accessToken);
-            return result.get("groupId").getAsString();
+//            createGG(groupId, accessToken);
+            return groupId;
         } catch (IOException e) {
             e.printStackTrace();
         }

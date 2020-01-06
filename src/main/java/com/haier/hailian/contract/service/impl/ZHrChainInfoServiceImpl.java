@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -145,6 +146,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
+    @Transactional
     public ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto) {
         //1.保存链群信息
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
@@ -202,14 +204,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
-        String[] toBeStored = new String[]{currentUser.getEmpsn()};
+        String[] toBeStored = new String[]{currentUser.getEmpsn(),"01065417"};
         String user = IHaierUtil.getUserOpenId(toBeStored);
         String groupId = IHaierUtil.getGroupId(user.split(","));
         //更新链群的群组ID字段
         ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
         zHrChainInfo1.setId(zHrChainInfo.getId());
         zHrChainInfo1.setGroupId(groupId);
-        zHrChainInfoDao.update(zHrChainInfo1);
+        zHrChainInfoDao.update(zHrChainInfo1 );
         return zHrChainInfoDto;
     }
 
