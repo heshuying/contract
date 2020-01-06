@@ -10,11 +10,9 @@ import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.DateFormatUtil;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
