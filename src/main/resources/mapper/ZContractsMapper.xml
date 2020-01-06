@@ -150,7 +150,7 @@
     </select>
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
-        SELECT
+        SELECT DISTINCT
           zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit, rp.`title` AS planTitle, rpd.`content` AS planContent
         FROM
           z_contracts zc

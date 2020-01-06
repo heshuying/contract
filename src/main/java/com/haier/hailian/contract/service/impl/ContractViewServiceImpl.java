@@ -181,6 +181,13 @@ public class ContractViewServiceImpl implements ContractViewService {
         return resultList;
     }
 
+    @Override
+    public Integer getContractSize(String contractId) {
+        Integer size = contractsDao.selectCount(new QueryWrapper<ZContracts>()
+                .eq("parent_id" , contractId));
+        return size;
+    }
+
     /**
      * 获取合约状态名称
      * @param status
