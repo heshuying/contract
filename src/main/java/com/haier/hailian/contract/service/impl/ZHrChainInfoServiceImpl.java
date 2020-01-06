@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -175,10 +176,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setXwName(currentUser.getOrgName());
         zHrChainInfo.setChainName(name);
         zHrChainInfoDao.insert(zHrChainInfo);
+        List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(chainCode);
             z.setLqName(name);
+            minbuList.add(z.getNodeCode());
             zNodeTargetPercentInfoDao.insert(z);
         }
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
@@ -204,7 +207,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
-        String[] toBeStored = new String[]{currentUser.getEmpsn(),"01065417"};
+        List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtcode(),minbuList);
+        codeList.add(currentUser.getEmpsn());
+        String[] toBeStored = new String[codeList.size()];
+        codeList.toArray(toBeStored);
         String user = IHaierUtil.getUserOpenId(toBeStored);
         String groupId = IHaierUtil.getGroupId(user.split(","));
         //更新链群的群组ID字段
