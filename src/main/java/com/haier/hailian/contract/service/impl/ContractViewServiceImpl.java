@@ -184,7 +184,9 @@ public class ContractViewServiceImpl implements ContractViewService {
     @Override
     public Integer getContractSize(String contractId) {
         Integer size = contractsDao.selectCount(new QueryWrapper<ZContracts>()
-                .eq("parent_id" , contractId));
+                .eq("parent_id" , contractId)
+                .eq("contract_type" , "30"));
+        //Integer size = contractsDao.getContractSize(contractId).size();
         return size;
     }
 

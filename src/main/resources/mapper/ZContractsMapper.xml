@@ -240,4 +240,14 @@
 
 
 
+    <select id="getContractSize" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
+        SELECT DISTINCT
+          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName
+        FROM
+          z_contracts zc
+        where zc.parent_id = #{contractId} AND zc.contract_type = '30'
+    </select>
+
+
+
 </mapper>
