@@ -240,12 +240,12 @@
 
 
 
-    <select id="getContractSize" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
-        SELECT DISTINCT
-          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName
+    <select id="getContractSize" resultType="java.lang.Integer">
+        SELECT count(*)
         FROM
-          z_contracts zc
-        where zc.parent_id = #{contractId} AND zc.contract_type = '30'
+        z_node_target_percent_info node
+        where node.share_percent is not null and node.lq_code in (select chain_code from z_contracts where id=#{contractId})
+
     </select>
 
 

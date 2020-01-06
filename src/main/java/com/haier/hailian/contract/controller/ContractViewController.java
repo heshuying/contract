@@ -32,8 +32,8 @@ public class ContractViewController {
     @ApiOperation(value = "合约创单数据查询")
     public R getContractInfoCD(@PathVariable String contractId) {
         List<ContractViewDataCD> resultList = contractViewService.getContractViewDataCD(contractId);
-        Integer size = contractViewService.getContractSize(contractId);
-        return R.ok().put("data",resultList).put("grabPercent", size + "/20");
+        String rate = contractViewService.getContractSize(contractId);
+        return R.ok().put("data",resultList).put("grabPercent", rate);
     }
 
     @GetMapping(value = {"/getContractInfoTY/{contractId}"})

@@ -90,5 +90,5 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     /**
      * 获取创单节点抢入合约
      */
-    List<ContractViewDataCD> getContractSize(String contractId);
+    Integer getContractSize(String contractId);
 }
