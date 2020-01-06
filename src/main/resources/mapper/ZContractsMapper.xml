@@ -110,7 +110,11 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and create_code=#{userCode}
+                parent_id=base.id and contract_type in ('20','30') and org_code in
+                <foreach collection="littleXwCode" open="(" close=")" separator=","
+                         item="littleXwCode" index="i">
+                    #{littleXwCode}
+                </foreach>
                 )
             and contract_type='10' and status = '0'
         </where>
