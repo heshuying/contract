@@ -25,14 +25,16 @@
         <result column="org_code" property="orgCode" />
         <result column="org_name" property="orgName" />
         <result column="org_type" property="orgType" />
+        <result column="open_valid" property="openValid" />
         <result column="share_percent" property="sharePercent" />
         <result column="group_id" property="groupId" />
+        <result column="open_valid" property="openValid" />
     </resultMap>
     <sql id="Base_Column_List">
         id,parent_id,contract_name,contract_type,status,share_space,chain_code,
         region_code,join_time,DATE_FORMAT(join_time,'%Y-%m-%d %H:%i:%s') as join_time_str,start_date,DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') as start_date_str,
         end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,xiaowei_code,create_code,
-        create_name,create_time,org_code,org_name,org_type,group_id
+        create_name,create_time,org_code,org_name,org_type,group_id,open_valid
     </sql>
     <select id="selectContractList" resultMap="BaseResultMap">
         select
@@ -179,6 +181,25 @@
             z_contracts t1
           WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
         ORDER BY xwName, factor_code,factor_type
+    </select>
+
+    <select id="selectContractsViewForTYSum" resultType="com.haier.hailian.contract.dto.FactorConfigDTO">
+        SELECT
+          cf.`factor_code` AS factorCode, cf.`factor_name` AS factorName ,cf.`factor_unit` AS factorUnit,
+          IF(
+            cf.factor_unit = '%',
+            REPLACE(FORMAT(AVG(cf.factor_value), 2),',', ''),
+            REPLACE(FORMAT(SUM(cf.factor_value), 2),',','')
+          ) AS factorValue
+        FROM
+          z_contracts_factor cf
+        WHERE cf.factor_type='02' and cf.`contract_id` IN
+          (SELECT
+            t1.id
+          FROM
+            z_contracts t1
+          WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
+           GROUP BY factor_code
     </select>
 
     <select id="selectContractsTitleForTY" resultType="com.haier.hailian.contract.dto.TargetTitleTYDTO">

@@ -112,6 +112,12 @@ public class ZContracts extends Model<ZContracts> {
 
     private String orgType;
 
+    /**
+     * 校验闸口开关0：关闭；1：开启
+     */
+    private String openValid;
+
+
     @TableField(exist = false)
     private String startDateStr;
     @TableField(exist = false)

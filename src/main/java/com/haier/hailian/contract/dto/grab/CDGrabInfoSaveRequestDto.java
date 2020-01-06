@@ -1,10 +1,10 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.ReservePlanRequestDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -23,10 +23,13 @@ public class CDGrabInfoSaveRequestDto {
 //    private BigDecimal chainGoal;
 //    @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")
 //    private BigDecimal chainGrabGoal;
-    @ApiModelProperty(value="预案标题",name="预案标题")
-    private String planTitle;
-    @ApiModelProperty(value="预案内容",name="预案内容")
-    private String planContent;
+//    @ApiModelProperty(value="预案标题",name="预案标题")
+//    private String planTitle;
+//    @ApiModelProperty(value="预案内容",name="预案内容")
+//    private String planContent;
     @ApiModelProperty(value="目标列表",name="目标列表")
     private List<CDGrabTargetDto> targetList;
+    @ApiModelProperty(value="预案信息",name="预案信息")
+    private List<ReservePlanRequestDTO> planInfo;
+
 }

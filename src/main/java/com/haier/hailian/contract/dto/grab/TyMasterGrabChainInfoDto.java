@@ -24,6 +24,9 @@ public class TyMasterGrabChainInfoDto {
     private BigDecimal shareQuota;
     private String regionCode;
 
+    private Boolean canSubmit;
+    private String errorMsg;
+
     List<FactorDto> targetList;
     List<FactorDto> grabList;
 

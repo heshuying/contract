@@ -132,6 +132,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+
         /*
          * 根据当前登陆人的最小单元进行匹配平台以及登陆人对应的最小单元的角色进行竞争力目标的查询
          */

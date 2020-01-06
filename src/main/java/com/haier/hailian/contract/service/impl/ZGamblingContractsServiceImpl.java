@@ -65,6 +65,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         contracts.setOrgName(currentUser.getOrgName());
         contracts.setOrgCode(currentUser.getOrgNum());
         contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
+        contracts.setOpenValid(dto.getOpenValid());
         contractsDao.insert(contracts);
         //2.保存链群目标到目标表
         List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();

@@ -8,6 +8,21 @@
         <result column="parent_id" property="parentId" />
         <result column="order_type" property="orderType" />
         <result column="title" property="title" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="remind_type" property="remindType" />
+        <result column="remind_time" property="remindTime" />
+        <result column="is_important" property="isImportant" />
+        <result column="executer" property="executer" />
+        <result column="senduser" property="senduser" />
+        <result column="teamworker" property="teamworker" />
+        <result column="executer_view" property="executerView" />
+        <result column="senduser_view" property="senduserView" />
+        <result column="teamworker_view" property="teamworkerView" />
+        <result column="create_user_code" property="createUserCode" />
+        <result column="create_user_name" property="createUserName" />
+        <result column="create_user_time" property="createUserTime" />
+        <result column="task_code" property="taskCode" />
     </resultMap>
 
     <select id="selectRoleByUser" parameterType="java.lang.String"

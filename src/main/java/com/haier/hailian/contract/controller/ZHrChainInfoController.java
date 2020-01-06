@@ -2,19 +2,19 @@ package com.haier.hailian.contract.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
-import com.haier.hailian.contract.entity.SysNodeEhr;
-import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
-import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +63,15 @@ public class ZHrChainInfoController {
         try {
             ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
 //            System.out.println(zHrChainInfoDto.getChainName());
+            /**
+             * by liuyq  2020年1月3日 10:11:28  增加当前登录人校验 
+             */
+            Subject subject = SecurityUtils.getSubject();
+            //获取当前用户
+            SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+            CurrentUser currentUser = sysUser.getCurrentUser();
+            // 必须是当前登录人链群
+            zHrChainInfo.setMasterCode(currentUser.getEmpsn());
             List<ZHrChainInfo> list = this.zHrChainInfoService.queryAll(zHrChainInfo);
             return R.ok().put("data", list);
         } catch (Exception e) {

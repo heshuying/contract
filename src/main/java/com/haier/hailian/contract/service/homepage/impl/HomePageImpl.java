@@ -172,10 +172,10 @@ public class HomePageImpl implements HomePageService {
                     grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
                 }
 
-                // 抢单目标抢单值 + 高中低端占比
+                // 抢单目标抢单值 + 高中低端占比  /  抢单目标底线值
                 List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , contracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue()));
+                        .eq("contract_id" , contracts.getId()));
+                //.eq("factor_type" , Constant.FactorType.Grab.getValue())
 
                 grabInfo2Outside.setGrab2XW(factorList);
 
@@ -190,9 +190,7 @@ public class HomePageImpl implements HomePageService {
 //                }
                 // 预案信息
                 List<PlanInfoDto> planInfoDtoList = zReservePlanDao.selectPlanInfo(String.valueOf(contracts.getId()));
-                if(planInfoDtoList.size() > 0 && planInfoDtoList != null){
-                    grabInfo2Outside.setGrabTargetPlan(planInfoDtoList.get(0).getContent());
-                }
+                    grabInfo2Outside.setGrabTargetPlanInfos(planInfoDtoList);
 
                 // 并联预案信息
                 List<PlanTeamWorkInfo> planTeamWorkInfoList = zReservePlanTeamworkDao.selectPlanInfo(contracts.getId());
@@ -201,7 +199,7 @@ public class HomePageImpl implements HomePageService {
                 // 添加
                 grabList.add(grabInfo2Outside);// 添加多次抢单信息到list
             }
-            map.put("grabInfo" , grabList); // 添加多次抢单信息到mao
+            map.put("grabInfo" , grabList); // 添加多次抢单信息到map
             mapList.add(map); //添加多次举单信息到list
         }
         resMap.put("gambling" , mapList);//添加多次举单信息到map

@@ -34,6 +34,10 @@ public class GamblingContractDTO {
     private String status;
 
     /**
+     * 开放校验闸口，0：不开启；1开启
+     */
+    private String openValid;
+    /**
      * 分享空间
      */
     private BigDecimal shareSpace;
