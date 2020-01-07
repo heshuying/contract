@@ -48,6 +48,7 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/zHrChainInfo/searchUsers", "anon");
         filterMap.put("/talk/savePlan", "anon");
         filterMap.put("/test/**", "anon");

@@ -1,12 +1,15 @@
 package com.haier.hailian.contract.controller;
 
+import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.IhaierLoginUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -47,10 +50,10 @@ public class LoginController {
 
     @PostMapping(value = "/current/set")
     @ApiOperation(value = "设置当前所选用户")
-    public R setCurrent(@RequestBody @Validated @ApiParam(value = "设置当前用户", required = true) CurrentUser currentUser) {
+    public R setCurrent(@RequestBody @Validated @ApiParam(value = "设置当前用户", required = true) TOdsMinbu currentUser) {
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        sysUser.setCurrentUser(currentUser);
+        sysUser.setMinbu(currentUser);
         return R.ok().put("data",sysUser);
     }
     @PostMapping(value = "/current/get")
@@ -60,8 +63,8 @@ public class LoginController {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
-        return R.ok().put("data",sysUser.getCurrentUser());
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        return R.ok().put("data",currentUser);
     }
 
     @PostMapping(value = "/logout")
@@ -86,5 +89,34 @@ public class LoginController {
     @ApiOperation(value = "没权限403")
     public ResponseEntity forbidden() {
         return new ResponseEntity(R.error(Constant.CODE_FORBIDDEN,Constant.MSG_FORBIDDEN), HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping(value = {"/ihaierLogin"})
+    @ApiOperation(value = "登录")
+    public R ihaierLogin(String ticket,HttpServletResponse response) {
+
+        String accessToken = IhaierLoginUtil.getAccessToken();
+        if(!"".equals(accessToken)){
+            String jobNo = IhaierLoginUtil.getUser(ticket,accessToken);
+            if(!"".equals(jobNo)){
+                try {
+                    HacLoginToken token = new HacLoginToken(jobNo);
+                    Subject subject = SecurityUtils.getSubject();
+                    subject.login(token);
+                    SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+                    //报文头
+                    response.setHeader(JWT_AUTH_HEADER, subject.getSession().getId().toString());
+                    return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
+                            .put("data", sysUser);
+                } catch (AuthenticationException e) {
+                    log.error("User {} login fail, Reason:{}", jobNo, e.getMessage());
+                    return R.error(Constant.CODE_LOGINFAIL, e.getMessage());
+                }
+            }else{
+                return R.error(Constant.CODE_LOGINFAIL, "登录失败");
+            }
+        }else{
+            return R.error(Constant.CODE_LOGINFAIL, "登录失败");
+        }
     }
 }

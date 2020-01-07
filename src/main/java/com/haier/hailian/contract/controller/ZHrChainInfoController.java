@@ -69,9 +69,8 @@ public class ZHrChainInfoController {
             Subject subject = SecurityUtils.getSubject();
             //获取当前用户
             SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-            CurrentUser currentUser = sysUser.getCurrentUser();
             // 必须是当前登录人链群
-            zHrChainInfo.setMasterCode(currentUser.getEmpsn());
+            zHrChainInfo.setMasterCode(sysUser.getEmpSn());
             List<ZHrChainInfo> list = this.zHrChainInfoService.queryAll(zHrChainInfo);
             return R.ok().put("data", list);
         } catch (Exception e) {

@@ -92,7 +92,7 @@ public class GrabServiceImpl implements GrabService {
         if(chainCodes!=null&&chainCodes.size()>0){
             query.setChainCodes(chainCodes);
             query.setEmpSn(sysUser.getEmpSn());
-
+            query.setLoginBuCode(minbu.getLittleXwCode());
             List<ZContracts> contractses=contractsService.queryTyGrabList(query);
 
             for ( ZContracts contract: contractses
