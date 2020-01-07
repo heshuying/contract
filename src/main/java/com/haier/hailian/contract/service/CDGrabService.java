@@ -18,4 +18,6 @@ public interface CDGrabService {
 
     @Transactional
     void saveCDGrab(CDGrabInfoSaveRequestDto requestDto);
+
+    Integer updateCancelGrab(String contractId);
 }
