@@ -69,19 +69,27 @@ public class CDGrabServiceImpl implements CDGrabService {
 //            }
         }
 
+        List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+        if(chainInfos != null && !chainInfos.isEmpty()){
+            responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
+            responseDto.setMasterName(chainInfos.get(0).getMasterName());
+            responseDto.setXwCode(chainInfos.get(0).getXwCode());
+            responseDto.setXwName(chainInfos.get(0).getXwName());
+        }
+
         /*// 分享比例查询
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
         if(resultList!=null && !resultList.isEmpty()){
             responseDto.setSharePercent(resultList.get(0).getPercent());
         }*/
 
-        List<String> chainCodeList = new ArrayList<>();
-        List<ZHrChainInfo> chainList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("xw_code", xwCode));
-        if(chainList != null && !chainList.isEmpty()){
-            for(ZHrChainInfo chainInfo : chainList){
-                chainCodeList.add(chainInfo.getChainCode());
-            }
-        }
+//        List<String> chainCodeList = new ArrayList<>();
+//        List<ZHrChainInfo> chainList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("xw_code", xwCode));
+//        if(chainList != null && !chainList.isEmpty()){
+//            for(ZHrChainInfo chainInfo : chainList){
+//                chainCodeList.add(chainInfo.getChainCode());
+//            }
+//        }
 
         List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
