@@ -89,14 +89,14 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
      */
     private String notesmail;
 
-    /*
+
     @TableField(exist=false)
     private List<SysRole> roles;
     @TableField(exist=false)
     private List<SysNodeEhr> nodeEhrList;
     @TableField(exist=false)
     private List<SysXiaoweiEhr> xiaoweiEhrList;
-    */
+
     @TableField(exist=false)
     private List<SysNet> wanggeList;
 

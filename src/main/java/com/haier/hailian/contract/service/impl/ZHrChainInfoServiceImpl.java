@@ -155,7 +155,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
+        TOdsMinbu currentUser = sysUser.getMinbu();
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
@@ -169,11 +169,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             name = name + "链群";
         }
         zHrChainInfo.setChainCode(chainCode);
-        zHrChainInfo.setChainPtCode(currentUser.getPtcode());
-        zHrChainInfo.setMasterCode(currentUser.getEmpsn());
-        zHrChainInfo.setMasterName(currentUser.getEmpname());
-        zHrChainInfo.setXwCode(currentUser.getOrgNum());
-        zHrChainInfo.setXwName(currentUser.getOrgName());
+        zHrChainInfo.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfo.setMasterCode(sysUser.getEmpSn());
+        zHrChainInfo.setMasterName(sysUser.getEmpName());
+        zHrChainInfo.setXwCode(currentUser.getLittleXwCode());
+        zHrChainInfo.setXwName(currentUser.getLittleXwName());
         zHrChainInfo.setChainName(name);
         zHrChainInfoDao.insert(zHrChainInfo);
         List<String> minbuList = new ArrayList<>();
@@ -185,7 +185,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             zNodeTargetPercentInfoDao.insert(z);
         }
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtcode());
+        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTY){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(chainCode);
@@ -198,17 +198,17 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainCode(chainCode);
-        zHrChainInfoDto.setMasterCode(currentUser.getEmpsn());
-        zHrChainInfoDto.setMasterName(currentUser.getEmpname());
-        zHrChainInfoDto.setChainPtCode(currentUser.getPtcode());
-        zHrChainInfoDto.setXwCode(currentUser.getOrgNum());
-        zHrChainInfoDto.setXwName(currentUser.getOrgName());
+        zHrChainInfoDto.setMasterCode(sysUser.getEmpSn());
+        zHrChainInfoDto.setMasterName(sysUser.getEmpName());
+        zHrChainInfoDto.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfoDto.setXwCode(currentUser.getXwCode());
+        zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
-        List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtcode(),minbuList);
-        codeList.add(currentUser.getEmpsn());
+        List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),minbuList);
+        codeList.add(sysUser.getEmpSn());
         String[] toBeStored = new String[codeList.size()];
         codeList.toArray(toBeStored);
         String user = IHaierUtil.getUserOpenId(toBeStored);
@@ -228,13 +228,13 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
+        TOdsMinbu currentUser = sysUser.getMinbu();
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
         //2获取数据库中这个平台的所有最小单元
 
-        return tOdsMinbuDao.getListByPtCode(currentUser.getPtcode());
+        return tOdsMinbuDao.getListByPtCode(currentUser.getPtCode());
     }
 
 
