@@ -105,7 +105,24 @@ public class CDGrabController {
             cdGrabService.updateCancelGrab(String.valueOf(requestDto.getContractId()));
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单保存发生异常：" + e.getMessage());
+            return R.error("创单节点抢单撤销更新发生异常：" + e.getMessage());
+        }
+
+        return R.ok().put("data","");
+    }
+
+    @PostMapping(value = {"/kickoff"})
+    @ApiOperation(value = "创单节点抢单页踢出接口")
+    public R kickoff(@RequestBody CDGrabInfoRequestDto requestDto) {
+        if(requestDto == null || requestDto.getContractId() == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+
+        try {
+            cdGrabService.updateKickOff(String.valueOf(requestDto.getContractId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点踢出更新发生异常：" + e.getMessage());
         }
 
         return R.ok().put("data","");

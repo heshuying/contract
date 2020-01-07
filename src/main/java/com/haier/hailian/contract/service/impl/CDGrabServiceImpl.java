@@ -359,6 +359,22 @@ public class CDGrabServiceImpl implements CDGrabService {
         return contractsDao.updateById(contracts);
     }
 
+    /**
+     * 更新为已踢出
+     * @param contractId
+     * @return
+     */
+    @Override
+    public Integer updateKickOff(String contractId){
+        ZContracts contracts = contractsDao.selectById(contractId);
+        if(contracts == null){
+            throw new RException("合约不存在，合约id：" + contractId);
+        }
+
+        contracts.setStatus("3"); // 设置为已踢出
+        return contractsDao.updateById(contracts);
+    }
+
     private List<String> getYearMonth(String contractId){
         String currentYear = String.valueOf(DateFormatUtil.getYearOfDate(new Date()));
         ZContracts contracts=contractsDao.selectById(contractId);

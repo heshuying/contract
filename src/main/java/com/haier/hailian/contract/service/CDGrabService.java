@@ -20,4 +20,6 @@ public interface CDGrabService {
     void saveCDGrab(CDGrabInfoSaveRequestDto requestDto);
 
     Integer updateCancelGrab(String contractId);
+
+    Integer updateKickOff(String contractId);
 }
