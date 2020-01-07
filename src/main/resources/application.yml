@@ -9,7 +9,7 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active: dev
 
 #mybatis
 mybatis-plus:
