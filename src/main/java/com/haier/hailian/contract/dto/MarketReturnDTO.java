@@ -1,7 +1,7 @@
 package com.haier.hailian.contract.dto;
 
+import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.XiaoweiEhr;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class MarketReturnDTO {
-    private List<XiaoweiEhr> market;
+    private List<TOdsMinbu> market;
     private List<TargetBasic> targetRequired;
     private List<TargetBasic> target;
 
