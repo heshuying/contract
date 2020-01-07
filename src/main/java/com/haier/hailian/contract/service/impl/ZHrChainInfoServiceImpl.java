@@ -2,7 +2,6 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.haier.hailian.contract.dao.*;
-import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -199,8 +198,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setMasterCode(sysUser.getEmpSn());
         zHrChainInfoDto.setMasterName(sysUser.getEmpName());
         zHrChainInfoDto.setChainPtCode(currentUser.getPtCode());
-        zHrChainInfoDto.setXwCode(currentUser.getLittleXwCode());
-        zHrChainInfoDto.setXwName(currentUser.getLittleXwName());
+        zHrChainInfoDto.setXwCode(currentUser.getXwCode());
+        zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类

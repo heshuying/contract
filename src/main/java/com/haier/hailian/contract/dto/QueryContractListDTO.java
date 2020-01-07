@@ -20,4 +20,6 @@ public class QueryContractListDTO {
 
     private String[] chainCodeList;
 
+    private String[] littleXwCode;
+
 }

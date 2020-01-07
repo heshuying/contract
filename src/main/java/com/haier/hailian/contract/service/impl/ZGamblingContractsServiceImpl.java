@@ -48,7 +48,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        CurrentUser currentUser = sysUser.getCurrentUser();
+        TOdsMinbu currentUser = sysUser.getMinbu();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         //1.保存链群主抢单信息到合同主表
         ZContracts contracts = new ZContracts();
@@ -62,8 +62,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         contracts.setCreateCode(sysUser.getEmpSn());
         contracts.setCreateTime(new Date());
         contracts.setXiaoweiCode(currentUser.getXwCode());
-        contracts.setOrgName(currentUser.getOrgName());
-        contracts.setOrgCode(currentUser.getOrgNum());
+        contracts.setOrgName(currentUser.getLittleXwName());
+        contracts.setOrgCode(currentUser.getLittleXwCode());
         contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
         contracts.setOpenValid(dto.getOpenValid());
         contractsDao.insert(contracts);
@@ -180,6 +180,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 dto.setStatus("0");
                 dto.setChainCodeList(chainCode);
                 dto.setUserCode(userCode);
+                dto.setLittleXwCode(xwCode);
                 contractsList = contractsDao.selectToGrabContract(dto);
             }
         }

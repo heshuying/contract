@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface ContractViewService {
     List<TargetTitleTYDTO> getTargetTitleList(String contractId);
 
     List<ContractViewDataCD> getContractViewDataCD(String contractId);
+
+    String getContractSize(String contractId);
+
+    Integer getContractSize2(String contractId);
 }
