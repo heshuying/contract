@@ -1,13 +1,16 @@
 package com.haier.hailian.contract.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.HacLoginService;
+import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.IhaierLoginUtil;
 import io.swagger.annotations.Api;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by 19012964 on 2019/12/16.
@@ -39,7 +43,8 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController {
     @Autowired
     private HacLoginService hacLoginService;
-
+    @Autowired
+    private SysXwRegionService xwRegionService;
     public static String JWT_AUTH_HEADER = "Authorization";
 
     @PostMapping(value = {"/login"})
@@ -53,7 +58,22 @@ public class LoginController {
     public R setCurrent(@RequestBody @Validated @ApiParam(value = "设置当前用户", required = true) TOdsMinbu currentUser) {
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        sysUser.setMinbu(currentUser);
+        List<TOdsMinbu> minBu=sysUser.getMinbuList();
+
+        if(minBu!=null&&minBu.size()>0){
+            TOdsMinbu bu=minBu.get(0);
+            if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
+                //当前体验链群对应的区域
+                List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
+                        .eq("xw_code", bu.getXwCode()));
+                if (xwRegion != null && xwRegion.size() > 0) {
+                    bu.setRegionCode(xwRegion.get(0).getRegionCode());
+                    bu.setRegionName(xwRegion.get(0).getRegionName());
+                }
+            }
+            sysUser.setMinbu(bu);
+        }
+        // sysUser.setMinbu(currentUser);
         return R.ok().put("data",sysUser);
     }
     @PostMapping(value = "/current/get")
