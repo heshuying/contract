@@ -42,6 +42,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private TOdsMinbuEmpDao tOdsMinbuEmpDao;
     @Autowired
     private ZNodeTargetPercentInfoDao nodeTargetPercentInfoDao;
+    @Autowired
+    private TOdsMinbuDao tOdsMinbuDao;
 
     @Override
     public void saveGambling(GamblingContractDTO dto) throws Exception{
@@ -111,7 +113,15 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
         MarketReturnDTO dto = new MarketReturnDTO();
         //查询42个市场小微
-        List<XiaoweiEhr> list = sysXiaoweiEhrDao.selectMarket();
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        String ptCode = currentUser.getPtCode();
+        TOdsMinbu tOdsMinbu = new TOdsMinbu();
+        tOdsMinbu.setPtCode(ptCode);
+        tOdsMinbu.setXwType3Code("4");
+        tOdsMinbu.setXwType5Code("2");
+        List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
         dto.setMarket(list);
         TargetBasic targetBasic = new TargetBasic();
         //查询链群主举单时商圈的必填目标

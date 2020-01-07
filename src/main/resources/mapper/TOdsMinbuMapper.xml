@@ -52,5 +52,12 @@
         </foreach>
     </select>
 
+    <select id="selectMarket"  resultMap="BaseResultMap">
+        select  id,xwCode,SUBSTR(substring(xwName,4) ,1 , CHAR_LENGTH(substring(xwName,4))-4) as xwName,xwMasterCode,xwMasterName,littleXwCode,littleXwName,littleXwMasterCode,littleXwMasterName,
+                 ptCode,ptName,xwType3,xwType5,xwType3Code,xwType5Code,userXwCode,userXwName,create_time
+        from t_ods_minbu
+        where ptCode=#{ptCode} and xwType5Code = #{xwType5Code} and xwType3Code = #{xwType3Code}
+    </select>
+
 
 </mapper>
