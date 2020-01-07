@@ -218,7 +218,10 @@ public class CDGrabServiceImpl implements CDGrabService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         TOdsMinbu currentUser = sysUser.getMinbu();
-
+        if(currentUser==null||StringUtils.isBlank(currentUser.getXwType5Code())||
+                !currentUser.getXwType5Code().equals("1")){
+            throw new RException(Constant.MSG_NO_MINBU,Constant.CODE_NO_MINBU);
+        }
         ZContracts contracts = new ZContracts();
         contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts==null){
