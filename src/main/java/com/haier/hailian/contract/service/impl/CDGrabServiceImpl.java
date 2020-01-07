@@ -262,6 +262,18 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         if(requestDto.getTargetList() != null){
             for(CDGrabTargetDto targetDto : requestDto.getTargetList()){
+                if(targetDto.getChainGrabGoal() != null){
+                    // 抢单目标保存
+                    ZContractsFactor contractsFactor2 = new ZContractsFactor();
+                    contractsFactor2.setContractId(contractsId);
+                    contractsFactor2.setFactorCode(targetDto.getTargetCode());
+                    contractsFactor2.setFactorName(targetDto.getTargetName());
+                    contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
+                    contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
+                    contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
+                    contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
+                    factorDao.insert(contractsFactor2);
+                }
                 // 链群目标保存
     //            ZContractsFactor contractsFactor = new ZContractsFactor();
     //            contractsFactor.setContractId(contractsId);
@@ -273,16 +285,6 @@ public class CDGrabServiceImpl implements CDGrabService {
     //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
     //            factorDao.insert(contractsFactor);
 
-                // 抢单目标保存
-                ZContractsFactor contractsFactor2 = new ZContractsFactor();
-                contractsFactor2.setContractId(contractsId);
-                contractsFactor2.setFactorCode(targetDto.getTargetCode());
-                contractsFactor2.setFactorName(targetDto.getTargetName());
-                contractsFactor2.setFactorValue(targetDto.getChainGrabGoal().toString());
-                contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
-                contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
-                contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
-                factorDao.insert(contractsFactor2);
             }
         }
 
