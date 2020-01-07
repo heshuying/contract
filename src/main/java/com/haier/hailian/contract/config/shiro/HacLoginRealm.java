@@ -69,8 +69,9 @@ public class HacLoginRealm extends AuthorizingRealm {
         List<SysNet> sysNetList = sysNetService.list(
                 new QueryWrapper<SysNet>().eq("empSN",empSn));
         List<TOdsMinbu> minBu=minbuService.queryMinbuByEmp(empSn);
+        sysEmployee.setMinbuList(minBu);
 
-        if(minBu!=null&&minBu.size()>0){
+        if(minBu!=null&&minBu.size()==1){
             TOdsMinbu bu=minBu.get(0);
             if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
                 //当前体验链群对应的区域
@@ -82,8 +83,6 @@ public class HacLoginRealm extends AuthorizingRealm {
                 }
             }
             sysEmployee.setMinbu(minBu.get(0));
-        }else{
-            sysEmployee.setMinbu(new TOdsMinbu());
         }
         sysEmployee.setWanggeList(sysNetList);
         return new SimpleAuthenticationInfo(sysEmployee, empSn, this.getName());
