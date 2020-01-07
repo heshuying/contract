@@ -37,5 +37,7 @@ public class ZHrChainInfo implements Serializable {
     private int deleted;
     //群组ID
     private String groupId;
+    //定位
+    private String fixedPosition;
 
 }

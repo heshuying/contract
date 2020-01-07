@@ -13,12 +13,13 @@
         <result property="chainPtCode" column="chain_pt_code" jdbcType="VARCHAR"/>
         <result property="deleted" column="deleted" jdbcType="INTEGER"/>
         <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
+        <result property="fixedPosition" column="fixed_position" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position
         from chain_contract.z_hr_chain_info
         where id = #{id}
     </select>
@@ -27,7 +28,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position
         from chain_contract.z_hr_chain_info
         limit #{offset}, #{limit}
     </select>
@@ -35,7 +36,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position
         from chain_contract.z_hr_chain_info
         <where>
             <if test="id != null">
@@ -70,8 +71,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted)
-        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted})
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position)
+        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition})
     </insert>
 
     <!--通过主键修改数据-->
@@ -104,6 +105,9 @@
             </if>
             <if test="groupId != null">
                 group_id = #{groupId},
+            </if>
+            <if test="fixedPosition != null">
+                fixed_position = #{fixedPosition},
             </if>
         </set>
         where id = #{id}
