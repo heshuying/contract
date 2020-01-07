@@ -82,7 +82,7 @@ public class HacLoginRealm extends AuthorizingRealm {
                     bu.setRegionName(xwRegion.get(0).getRegionName());
                 }
             }
-            sysEmployee.setMinbu(minBu.get(0));
+            sysEmployee.setMinbu(bu);
         }
         sysEmployee.setWanggeList(sysNetList);
         return new SimpleAuthenticationInfo(sysEmployee, empSn, this.getName());
