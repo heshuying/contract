@@ -300,6 +300,10 @@ public class CDGrabServiceImpl implements CDGrabService {
 
                     // 调用ihaier的接口进行任务创建
                     IhaierTask ihaierTask = new IhaierTask();
+                    if(StringUtils.isNotBlank(currentUser.getEmpsn())){
+                        String executor = IHaierUtil.getUserOpenId(new String[]{currentUser.getEmpsn()});
+                        ihaierTask.setExecutors(executor.split(","));
+                    }
                     ihaierTask.setExecutors(new String[]{currentUser.getEmpsn()});
                     if(!StringUtils.isEmpty(planInfo.getTeamworker())){
                         String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));
