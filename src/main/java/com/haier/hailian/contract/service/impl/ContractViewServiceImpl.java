@@ -13,7 +13,6 @@ import com.haier.hailian.contract.util.DateFormatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -179,6 +178,22 @@ public class ContractViewServiceImpl implements ContractViewService {
     public List<ContractViewDataCD> getContractViewDataCD(String contractId){
         List<ContractViewDataCD> resultList = contractsDao.selectContractsViewForCD(contractId);
         return resultList;
+    }
+
+    @Override
+    public String getContractSize(String contractId) {
+        Integer fact = contractsDao.selectCount(new QueryWrapper<ZContracts>()
+                .eq("parent_id" , contractId)
+                .eq("contract_type" , "30"));
+        Integer target = contractsDao.getContractSize(contractId);
+        return fact + "/" + target;
+    }
+
+
+    @Override
+    public Integer getContractSize2(String contractId) {
+        Integer target = contractsDao.getContractSize2(contractId);
+        return target;
     }
 
     /**

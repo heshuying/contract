@@ -110,7 +110,11 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and create_code=#{userCode}
+                parent_id=base.id and contract_type in ('20','30') and org_code in
+                <foreach collection="littleXwCode" open="(" close=")" separator=","
+                         item="littleXwCode" index="i">
+                    #{littleXwCode}
+                </foreach>
                 )
             and contract_type='10' and status = '0'
         </where>
@@ -151,7 +155,7 @@
     </select>
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
-        SELECT
+        SELECT DISTINCT
           zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit, rp.`title` AS planTitle, rpd.`content` AS planContent
         FROM
           z_contracts zc
@@ -237,6 +241,24 @@
         and not EXISTS (select 1 from z_contracts where
         parent_id=base.id and contract_type='20' and org_code=#{loginBuCode}
         )
+    </select>
+
+
+
+    <select id="getContractSize" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        z_node_target_percent_info node
+        where node.share_percent is not null and node.lq_code in (select chain_code from z_contracts where id=#{contractId})
+
+    </select>
+
+    <select id="getContractSize2" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        z_node_target_percent_info node
+        where node.share_percent is null and node.lq_code in (select chain_code from z_contracts where id=#{contractId})
+
     </select>
 
 

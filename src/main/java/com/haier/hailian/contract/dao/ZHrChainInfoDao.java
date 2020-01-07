@@ -40,13 +40,6 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
      */
     List<ZHrChainInfo> queryAll(ZHrChainInfo zHrChainInfo);
 
-    /**
-     * 新增数据
-     *
-     * @param zHrChainInfo 实例对象
-     * @return 影响行数
-     */
-    int insert(ZHrChainInfo zHrChainInfo);
 
     /**
      * 修改数据

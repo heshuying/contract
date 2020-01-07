@@ -78,7 +78,9 @@ public interface ZReservePlanTeamworkService {
      */
     String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException;
 
-
+    /**
+     * 定时任务进行创建聊天群组
+     */
     void createGroup();
 
 }

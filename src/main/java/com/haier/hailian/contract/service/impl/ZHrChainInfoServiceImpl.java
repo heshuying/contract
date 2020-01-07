@@ -8,13 +8,16 @@ import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
+import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -103,11 +106,6 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
     @Override
     public R validateChainName(ValidateChainNameDTO validateChainNameDTO) {
-        Subject subject = SecurityUtils.getSubject();
-        //获取当前用户
-        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
-        CurrentUser currentUser = sysUser.getCurrentUser();
         //校验链群名称是否已经存在
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         //判断是否存在链群关键字，不存在则添加
@@ -119,7 +117,6 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             name = name + "链群";
         }
         zHrChainInfo.setChainName(name);
-//        zHrChainInfo.setCdMasterEmpsn(sysUser.getEmpSn());
         List<ZHrChainInfo> chainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
         if (chainNames.size() > 0) {
             return R.error("链群名称已经存在");
@@ -137,11 +134,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
-//        CurrentUser currentUser = sysUser.getCurrentUser();
-//        if (currentUser == null || currentUser.getXwCode() == null){
-//            return null;
-//        }
+
+        /*
+         * 根据当前登陆人的最小单元进行匹配平台以及登陆人对应的最小单元的角色进行竞争力目标的查询
+         */
         TOdsMinbu tOdsMinbu = sysUser.getMinbu();
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
@@ -151,6 +147,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
+    @Transactional
     public ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto) {
         //1.保存链群信息
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
@@ -159,13 +156,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //获取用户首页选中的用户
         CurrentUser currentUser = sysUser.getCurrentUser();
-//        List<SysXiaoweiEhr> list = sysUser.getXiaoweiEhrList();
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
-//        SysXiaoweiEhr xiaoweiEhr = list.get(0);
         //链群编码生成
         String maxOne = zHrChainInfoDao.queryMaxOne();
+        //生成编码的方法
         String chainCode = frontCompWithZore(maxOne, 5, "H");
         //判断是否存在链群关键字，不存在则添加
         String name = zHrChainInfoDto.getChainName();
@@ -180,12 +176,15 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setXwName(currentUser.getOrgName());
         zHrChainInfo.setChainName(name);
         zHrChainInfoDao.insert(zHrChainInfo);
+        List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(chainCode);
             z.setLqName(name);
+            minbuList.add(z.getNodeCode());
             zNodeTargetPercentInfoDao.insert(z);
         }
+        //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
         List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtcode());
         for (TOdsMinbu tOdsMinbu:getIsTY){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
@@ -205,8 +204,20 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setXwCode(currentUser.getOrgNum());
         zHrChainInfoDto.setXwName(currentUser.getOrgName());
         zHrChainInfoDto.setChainName(name);
-        //3.保存数据到链上
+        //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
+        //4.新增创建群组，在创建链群的时候创建
+        List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtcode(),minbuList);
+        codeList.add(currentUser.getEmpsn());
+        String[] toBeStored = new String[codeList.size()];
+        codeList.toArray(toBeStored);
+        String user = IHaierUtil.getUserOpenId(toBeStored);
+        String groupId = IHaierUtil.getGroupId(user.split(","));
+        //更新链群的群组ID字段
+        ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
+        zHrChainInfo1.setId(zHrChainInfo.getId());
+        zHrChainInfo1.setGroupId(groupId);
+        zHrChainInfoDao.update(zHrChainInfo1 );
         return zHrChainInfoDto;
     }
 
@@ -236,7 +247,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
      */
 
     private static String frontCompWithZore(String sourceDate, int formatLength, String key) {
-
+        if (sourceDate==null){
+            sourceDate="H00000";
+        }
         String[] strings = sourceDate.split(key);
         int sourceNum = Integer.parseInt(strings[1]);
         /*
@@ -249,9 +262,4 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         return num;
 
     }
-
-    public static void main(String[] args) {
-        System.out.println(frontCompWithZore("ACC00003", 10, "ACC"));
-    }
-
 }

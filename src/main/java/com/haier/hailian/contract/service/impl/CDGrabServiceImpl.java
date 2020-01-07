@@ -241,12 +241,13 @@ public class CDGrabServiceImpl implements CDGrabService {
         contracts.setContractType("30"); //创客合约
         contracts.setCreateCode(currentUser.getEmpsn());
         contracts.setCreateName(currentUser.getEmpname());
-        contracts.setOrgCode(currentUser.getOrgNum());
-        contracts.setOrgName(currentUser.getOrgName());
-        contracts.setOrgType(currentUser.getOrgType());
         contracts.setCreateTime(new Date());
-        contracts.setXiaoweiCode(currentUser.getXwCode());
         contracts.setRegionCode(regionCode);
+
+        contracts.setOrgCode(sysUser.getMinbu().getLittleXwCode());
+        contracts.setOrgName(sysUser.getMinbu().getLittleXwName());
+        contracts.setOrgType(sysUser.getMinbu().getXwType3Code());
+        contracts.setXiaoweiCode(sysUser.getMinbu().getXwCode());
 
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();
@@ -299,6 +300,10 @@ public class CDGrabServiceImpl implements CDGrabService {
 
                     // 调用ihaier的接口进行任务创建
                     IhaierTask ihaierTask = new IhaierTask();
+                    if(StringUtils.isNotBlank(currentUser.getEmpsn())){
+                        String executor = IHaierUtil.getUserOpenId(new String[]{currentUser.getEmpsn()});
+                        ihaierTask.setExecutors(executor.split(","));
+                    }
                     ihaierTask.setExecutors(new String[]{currentUser.getEmpsn()});
                     if(!StringUtils.isEmpty(planInfo.getTeamworker())){
                         String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));

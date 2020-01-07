@@ -12,6 +12,7 @@ import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -102,6 +103,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     }
 
     @Override
+    @Transactional
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
         ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
