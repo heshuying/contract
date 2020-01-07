@@ -241,12 +241,13 @@ public class CDGrabServiceImpl implements CDGrabService {
         contracts.setContractType("30"); //创客合约
         contracts.setCreateCode(currentUser.getEmpsn());
         contracts.setCreateName(currentUser.getEmpname());
-        contracts.setOrgCode(currentUser.getOrgNum());
-        contracts.setOrgName(currentUser.getOrgName());
-        contracts.setOrgType(currentUser.getOrgType());
         contracts.setCreateTime(new Date());
-        contracts.setXiaoweiCode(currentUser.getXwCode());
         contracts.setRegionCode(regionCode);
+
+        contracts.setOrgCode(sysUser.getMinbu().getLittleXwCode());
+        contracts.setOrgName(sysUser.getMinbu().getLittleXwName());
+        contracts.setOrgType(sysUser.getMinbu().getXwType3Code());
+        contracts.setXiaoweiCode(sysUser.getMinbu().getXwCode());
 
         contractsDao.insert(contracts);
         Integer contractsId = contracts.getId();
