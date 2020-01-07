@@ -63,19 +63,21 @@ public class CDGrabServiceImpl implements CDGrabService {
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
+
+            List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
+                responseDto.setMasterName(chainInfos.get(0).getMasterName());
+                responseDto.setXwCode(chainInfos.get(0).getXwCode());
+                responseDto.setXwName(chainInfos.get(0).getXwName());
+            }
+
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
 //                responseDto.setChainName(chainInfos.get(0).getChainName());
 //            }
         }
 
-        List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
-        if(chainInfos != null && !chainInfos.isEmpty()){
-            responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
-            responseDto.setMasterName(chainInfos.get(0).getMasterName());
-            responseDto.setXwCode(chainInfos.get(0).getXwCode());
-            responseDto.setXwName(chainInfos.get(0).getXwName());
-        }
 
         /*// 分享比例查询
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
@@ -142,6 +144,14 @@ public class CDGrabServiceImpl implements CDGrabService {
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
+
+            List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
+                responseDto.setMasterName(chainInfos.get(0).getMasterName());
+                responseDto.setXwCode(chainInfos.get(0).getXwCode());
+                responseDto.setXwName(chainInfos.get(0).getXwName());
+            }
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
 //                responseDto.setChainName(chainInfos.get(0).getChainName());
