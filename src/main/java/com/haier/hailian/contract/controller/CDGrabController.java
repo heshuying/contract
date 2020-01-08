@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author 19033323
@@ -61,7 +62,11 @@ public class CDGrabController {
 //        }
 
         try {
-            cdGrabService.saveCDGrab(requestDto);
+            if("1".equals(requestDto.getIsUpdate())){
+                cdGrabService.updateCDGrab(requestDto);
+            }else {
+                cdGrabService.saveCDGrab(requestDto);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return R.error("创单节点抢单保存发生异常：" + e.getMessage());
@@ -126,6 +131,19 @@ public class CDGrabController {
         }
 
         return R.ok().put("data","");
+    }
+
+    @PostMapping(value = {"/grabHistoryView"})
+    @ApiOperation(value = "创单节点抢单页面查看接口")
+    public R grabHistoryView(@RequestBody CDGrabInfoRequestDto requestDto) {
+        List<CDGrabHistoryResponseDto> data= null;
+        try {
+            data = cdGrabService.queryCDGrabHistoryView(requestDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());
+        }
+        return R.ok().put("data",data);
     }
 
 }
