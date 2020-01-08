@@ -85,7 +85,7 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             and create_code = #{userCode}
-            and status != '6'
+            and status = '1'
             and contract_type in ('20','30')
         </where>
     </select>
@@ -111,7 +111,7 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and org_code in
+                parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code in
                 <foreach collection="littleXwCode" open="(" close=")" separator=","
                          item="littleXwCode" index="i">
                     #{littleXwCode}
