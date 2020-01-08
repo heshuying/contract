@@ -85,7 +85,8 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             and create_code = #{userCode}
-            and contract_type in ('20','30');
+            and status != '6'
+            and contract_type in ('20','30')
         </where>
     </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
