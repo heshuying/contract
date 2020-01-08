@@ -427,7 +427,7 @@ public class GrabServiceImpl implements GrabService {
                 String groupId=chainInfo.getGroupId();
                 String[] users=new String[]{sysUser.getEmpSn()};
                 IHaierUtil.joinGroup(groupId, users);
-            }
+        }
 
         }
 

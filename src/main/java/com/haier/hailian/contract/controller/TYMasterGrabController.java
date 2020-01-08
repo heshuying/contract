@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public class TYMasterGrabController {
         return R.ok().put("data",list);
     }
 
-    @PostMapping(value = {"/chain/my/{contractId}"})
+    @GetMapping(value = {"/chain/my/{contractId}"})
     @ApiOperation(value = "体检链群主查看抢入之后的详情信息")
     public R chainInfo(@PathVariable(value = "contractId") Integer contractId) {
         TyMasterGrabChainInfoDto info=grabService.queryChainInfo(contractId);
