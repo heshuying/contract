@@ -237,6 +237,8 @@ public class CDGrabServiceImpl implements CDGrabService {
                             .eq("xiaowei_code", contracts.getXiaoweiCode())
                             .eq("create_code", contracts.getCreateCode())
                             .eq("org_code", contracts.getOrgCode())
+                            .eq("contract_type", "30")
+                            .ne("status", "5")
                             .orderByAsc("status"));
             if(contractList == null){
                 return resultList;
