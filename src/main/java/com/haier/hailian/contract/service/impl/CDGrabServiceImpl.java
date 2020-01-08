@@ -327,7 +327,6 @@ public class CDGrabServiceImpl implements CDGrabService {
                         String executor = IHaierUtil.getUserOpenId(new String[]{sysUser.getEmpSn()});
                         ihaierTask.setExecutors(executor.split(","));
                     }
-//                    ihaierTask.setExecutors(new String[]{sysUser.getEmpSn()});
                     if(!StringUtils.isEmpty(planInfo.getTeamworker())){
                         String ccs = IHaierUtil.getUserOpenId(planInfo.getTeamworker().split(","));
                         ihaierTask.setCcs(ccs.split(","));
