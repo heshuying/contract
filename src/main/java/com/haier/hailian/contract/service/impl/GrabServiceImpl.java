@@ -32,6 +32,7 @@ import com.haier.hailian.contract.service.ZNetBottomService;
 import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import com.haier.hailian.contract.util.IHaierUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -351,6 +352,7 @@ public class GrabServiceImpl implements GrabService {
         TOdsMinbu minbBu = sysUser.getMinbu();
 
         List<TyMasterGrabChainInfoDto> list=dto.getTyMasterGrabChainInfoDto();
+        //循环待抢入的举单合约
         for ( TyMasterGrabChainInfoDto chainInfoDto:list
              ) {
             //单个合约保存
@@ -373,7 +375,7 @@ public class GrabServiceImpl implements GrabService {
             ZContracts contracts=contractsService.getById(chainInfoDto.getContractId());
             contracts.setParentId(chainInfoDto.getContractId());
             contracts.setId(0);
-            contracts.setContractName(chainInfoDto.getChainName());
+            contracts.setContractName(chainInfoDto.getContractName());
             contracts.setContractType("20");
             contracts.setCreateCode(sysUser.getEmpSn());
             contracts.setCreateName(sysUser.getEmpName());
@@ -417,6 +419,15 @@ public class GrabServiceImpl implements GrabService {
                     ).collect(Collectors.toList())
             );
             contractsFactorService.saveBatch(factors);
+
+            //加入群组
+            ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                    .eq("chain_code", contracts.getChainCode()));
+            if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())){
+                String groupId=chainInfo.getGroupId();
+                String[] users=new String[]{sysUser.getEmpSn()};
+                //IHaierUtil.joinGroup(groupId, users);
+            }
 
         }
 
