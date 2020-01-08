@@ -11,13 +11,12 @@ import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 19033323
@@ -133,9 +132,28 @@ public class ContractViewServiceImpl implements ContractViewService {
 
 
     @Override
-    public List<ContractViewDataCD> getContractViewDataCD(String contractId){
-        List<ContractViewDataCD> resultList = contractsDao.selectContractsViewForCD(contractId);
-        return resultList;
+    public Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId){
+        List<ContractViewDataCDResponseDTO> resultList = new ArrayList<>();
+        List<ContractViewDataCD> list = contractsDao.selectContractsViewForCD(contractId);
+        Map<String, ContractViewDataCDResponseDTO> resultMap = new HashMap<String, ContractViewDataCDResponseDTO>();
+
+        if(list != null && !list.isEmpty()){
+            for(ContractViewDataCD item : list){
+                ContractViewDataCDResponseDTO data = new ContractViewDataCDResponseDTO();
+                data = resultMap.get(item.getNodeCode());
+                if(data == null){
+                    data = new ContractViewDataCDResponseDTO();
+                    BeanUtils.copyProperties(item, data);
+                    resultMap.put(item.getNodeCode(), data);
+                }
+
+                TargetViewDTO targetViewDTO = new TargetViewDTO();
+                BeanUtils.copyProperties(item, targetViewDTO);
+                data.getTargetList().add(targetViewDTO);
+            }
+        }
+
+        return resultMap.values();
     }
 
     @Override
