@@ -26,4 +26,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<TOdsMinbu> getListByIsTY(String ptCode);
 
     List<String> getListByCodeList(String ptCode,List<String> list);
+
+    List<TOdsMinbu> selectMarket(TOdsMinbu tOdsMinbu);
 }
