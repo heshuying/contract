@@ -2,7 +2,6 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.haier.hailian.contract.dao.*;
-import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -16,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -174,6 +170,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setMasterName(sysUser.getEmpName());
         zHrChainInfo.setXwCode(currentUser.getLittleXwCode());
         zHrChainInfo.setXwName(currentUser.getLittleXwName());
+        zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
         zHrChainInfo.setChainName(name);
         zHrChainInfoDao.insert(zHrChainInfo);
         List<String> minbuList = new ArrayList<>();

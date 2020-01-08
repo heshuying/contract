@@ -33,5 +33,9 @@ public class ZHrChainInfoDto {
     //链群平台code
     private String chainPtCode;
     //链群对应的节点分享比例和目标数据
+    //群组ID
+    private String groupId;
+    //定位
+    private String fixedPosition;
     private List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos ;
 }

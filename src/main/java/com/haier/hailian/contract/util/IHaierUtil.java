@@ -248,7 +248,7 @@ public class IHaierUtil {
      * @param groupId
      * @return
      */
-    public String joinGroup(String groupId, String[] users){
+    public static String joinGroup(String groupId, String[] users){
         String user = IHaierUtil.getUserOpenId(users);
         String userIds = new Gson().toJson(user.split(","));
         OkHttpClient client = new OkHttpClient();
@@ -265,7 +265,6 @@ public class IHaierUtil {
                 .addHeader("Connection", "keep-alive")
                 .addHeader("cache-control", "no-cache")
                 .build();
-
         try {
             JsonParser parse = new JsonParser();  //创建json解析器
             Response response = client.newCall(request).execute();
