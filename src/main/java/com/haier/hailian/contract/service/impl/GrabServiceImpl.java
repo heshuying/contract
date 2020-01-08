@@ -489,7 +489,7 @@ public class GrabServiceImpl implements GrabService {
 
         );
         List<FactorDto> targetFactor = factors.stream().filter(m->Constant.FactorType.Bottom
-                .getValue().equals(m.getMeshCode())).map(m -> {
+                .getValue().equals(m.getFactorType())).map(m -> {
             FactorDto dto = new FactorDto();
             dto.setFactorCode(m.getFactorCode());
             dto.setFactorName(m.getFactorName());
@@ -500,7 +500,7 @@ public class GrabServiceImpl implements GrabService {
 
         //网格抢单汇总
         List<FactorDto> grabFactors = factors.stream().filter(m->Constant.FactorType.Grab
-                .getValue().equals(m.getMeshCode())).map(m -> {
+                .getValue().equals(m.getFactorType())).map(m -> {
             FactorDto dto = new FactorDto();
             dto.setFactorCode(m.getFactorCode());
             dto.setFactorName(m.getFactorName());
