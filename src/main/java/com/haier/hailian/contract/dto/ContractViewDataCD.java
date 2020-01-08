@@ -13,6 +13,6 @@ public class ContractViewDataCD {
     private String targetName;
     private String targetValue;
     private String targetUnit;
-    private String planTitle;
-    private String planContent;
+//    private String planTitle;
+//    private String planContent;
 }

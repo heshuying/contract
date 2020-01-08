@@ -346,7 +346,7 @@ CREATE TABLE `z_contracts` (
   `parent_id` int(11) DEFAULT 0 COMMENT '关联id',
   `contract_name` varchar(200) DEFAULT NULL COMMENT '合约名称',
   `contract_type` varchar(10) DEFAULT NULL COMMENT '10链群主合约、20商圈合约、30创客合约',
-  `status` varchar(10) DEFAULT NULL COMMENT '状态：0抢单中，1 已生效,4:已过期',
+  `status` varchar(10) DEFAULT NULL COMMENT '状态：0抢单中，1 已生效,4:已过期,5:已撤销,6:已删除',
   `share_space` decimal(10,4) DEFAULT NULL COMMENT '分享空间',
   `share_percent` varchar(80) DEFAULT NULL COMMENT '分享比例',
   `chain_code` varchar(80) DEFAULT NULL COMMENT '链群编码',
