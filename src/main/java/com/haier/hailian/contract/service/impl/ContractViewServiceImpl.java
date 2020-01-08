@@ -51,53 +51,11 @@ public class ContractViewServiceImpl implements ContractViewService {
         }
 
         List<ZContractsFactor> bottomList = factorDao.selectFactorForView(contractId, "01");
-        List<ZContractsFactor> e2eList = factorDao.selectFactorForView(contractId, "03");
-        List<ZContractsFactor> grabList = factorDao.selectFactorForView(contractId, "02");
         result.setBottomList(bottomList);
+        List<ZContractsFactor> e2eList = factorDao.selectFactorForView(contractId, "03");
         result.setE2eList(e2eList);
+        List<ZContractsFactor> grabList = factorDao.selectFactorForView(contractId, "02");
         result.setGrabList(grabList);
-
-        // 体验抢单目标
-       /* BigDecimal incom = BigDecimal.ZERO;
-        Integer highPercent = 0;
-        Integer lowPercent = 0;
-        List<ZContractsFactor> grabTYList = new ArrayList<>();
-        List<ContractViewDataTY> factorList = contractsDao.selectContractsViewForTY(contractId);
-        if(factorList != null && !factorList.isEmpty()){
-            for(ContractViewDataTY factor : factorList){
-                if(Constant.FactorCode.Incom.getValue().equals(factor.getFactorCode())){
-                    incom = incom.add(new BigDecimal(factor.getFactorValue()));
-                }else if(Constant.FactorCode.HighPercent.getValue().equals(factor.getFactorCode())){
-                    highPercent = highPercent + Integer.parseInt(factor.getFactorValue());
-                }else if(Constant.FactorCode.LowPercent.getValue().equals(factor.getFactorCode())){
-                    lowPercent = lowPercent + Integer.parseInt(factor.getFactorValue());
-                }
-            }
-            highPercent = highPercent / factorList.size();
-            lowPercent = lowPercent / factorList.size();
-
-            ZContractsFactor factor1 = new ZContractsFactor();
-            factor1.setFactorName(Constant.FactorCode.Incom.getName());
-            factor1.setFactorCode(Constant.FactorCode.Incom.getValue());
-            factor1.setFactorValue(incom.toString());
-            factor1.setFactorUnit("元");
-            grabTYList.add(factor1);
-
-            ZContractsFactor factor2 = new ZContractsFactor();
-            factor2.setFactorName(Constant.FactorCode.HighPercent.getName());
-            factor2.setFactorCode(Constant.FactorCode.HighPercent.getValue());
-            factor2.setFactorValue(String.valueOf(highPercent));
-            factor2.setFactorUnit("%");
-            grabTYList.add(factor2);
-
-            ZContractsFactor factor3 = new ZContractsFactor();
-            factor3.setFactorName(Constant.FactorCode.LowPercent.getName());
-            factor3.setFactorCode(Constant.FactorCode.LowPercent.getValue());
-            factor3.setFactorValue(String.valueOf(lowPercent));
-            factor3.setFactorUnit("%");
-            grabTYList.add(factor3);
-        }*/
-
         List<FactorConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
         result.setGrabTYList(grabTYList);
 
@@ -206,6 +164,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             case "0" : return "抢入中";
             case "1" : return "已生效";
             case "4" : return "已失效";
+            case "5" : return "已撤销";
+            case "6" : return "已删除";
             default: return "";
         }
     }
