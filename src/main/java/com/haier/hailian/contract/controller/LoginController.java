@@ -58,22 +58,26 @@ public class LoginController {
     public R setCurrent(@RequestBody @Validated @ApiParam(value = "设置当前用户", required = true) TOdsMinbu currentUser) {
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        List<TOdsMinbu> minBu=sysUser.getMinbuList();
+        if(currentUser==null) {
+            List<TOdsMinbu> minBu = sysUser.getMinbuList();
 
-        if(minBu!=null&&minBu.size()>0){
-            TOdsMinbu bu=minBu.get(0);
-            if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
-                //当前体验链群对应的区域
-                List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
-                        .eq("xw_code", bu.getXwCode()));
-                if (xwRegion != null && xwRegion.size() > 0) {
-                    bu.setRegionCode(xwRegion.get(0).getRegionCode());
-                    bu.setRegionName(xwRegion.get(0).getRegionName());
+            if (minBu != null && minBu.size() > 0) {
+                TOdsMinbu bu = minBu.get(0);
+                if (Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())) {
+                    //当前体验链群对应的区域
+                    List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
+                            .eq("xw_code", bu.getXwCode()));
+                    if (xwRegion != null && xwRegion.size() > 0) {
+                        bu.setRegionCode(xwRegion.get(0).getRegionCode());
+                        bu.setRegionName(xwRegion.get(0).getRegionName());
+                    }
                 }
+                sysUser.setMinbu(bu);
             }
-            sysUser.setMinbu(bu);
+        }else{
+            sysUser.setMinbu(currentUser);
         }
-        // sysUser.setMinbu(currentUser);
+
         return R.ok().put("data",sysUser);
     }
     @PostMapping(value = "/current/get")
