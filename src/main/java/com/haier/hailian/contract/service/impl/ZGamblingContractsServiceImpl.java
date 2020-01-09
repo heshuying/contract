@@ -30,12 +30,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Autowired
     private ZContractsDao contractsDao;
-
     @Autowired
     private ZContractsFactorDao factorDao;
-
-    @Autowired
-    private SysXiaoweiEhrDao sysXiaoweiEhrDao;
     @Autowired
     private TargetBasicDao targetBasicDao;
     @Autowired
@@ -44,6 +40,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private ZNodeTargetPercentInfoDao nodeTargetPercentInfoDao;
     @Autowired
     private TOdsMinbuDao tOdsMinbuDao;
+    @Autowired
+    private ZProductChainDao productChainDao;
+    @Autowired
+    private ZContractsProductDao contractsProductDao;
+
 
     @Override
     public void saveGambling(GamblingContractDTO dto) throws Exception{
@@ -105,6 +106,16 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     factor.setRegionName(marketTarget.getXwName());
                     factorDao.insert(factor);
                 }
+        }
+        //4 保存产品系列目标到合约产品表
+        List<ContractProductDTO> productList = dto.getProductList();
+        for (ContractProductDTO productDTO : productList){
+            ZContractsProduct contractsProduct = new ZContractsProduct();
+            contractsProduct.setContractId(contracts.getId());
+            contractsProduct.setProductSeries(productDTO.getProductSeries());
+            contractsProduct.setQtyYear(productDTO.getQtyYear());
+            contractsProduct.setQtyMonth(productDTO.getQtyMonth());
+            contractsProductDao.insert(contractsProduct);
         }
     }
 
@@ -195,6 +206,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
         }
         return contractsList;
+    }
+
+    @Override
+    public List<ZProductChain> selectProductSeries(QueryProductChainDTO dto) {
+        return productChainDao.selectList(new QueryWrapper<ZProductChain>().eq("chain_code",dto.getChainCode()));
     }
 
 

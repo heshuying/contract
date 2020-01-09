@@ -1,11 +1,9 @@
 package com.haier.hailian.contract.service;
 
-import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabViewResponseDto;
+import com.haier.hailian.contract.dto.grab.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,6 +14,15 @@ public interface CDGrabService {
 
     CDGrabViewResponseDto queryCDGrabView(CDGrabInfoRequestDto requestDto);
 
+    List<CDGrabHistoryResponseDto> queryCDGrabHistoryView(CDGrabInfoRequestDto requestDto);
+
     @Transactional
     void saveCDGrab(CDGrabInfoSaveRequestDto requestDto);
+
+    @Transactional
+    void updateCDGrab(CDGrabInfoSaveRequestDto requestDto);
+
+    Integer updateCancelGrab(String contractId);
+
+    Integer updateKickOff(String contractId);
 }

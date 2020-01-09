@@ -3,7 +3,9 @@ package com.haier.hailian.contract.service;
 import com.haier.hailian.contract.dto.GamblingContractDTO;
 import com.haier.hailian.contract.dto.MarketReturnDTO;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
+import com.haier.hailian.contract.dto.QueryProductChainDTO;
 import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZProductChain;
 
 import java.util.List;
 
@@ -28,4 +30,6 @@ public interface ZGamblingContractsService {
     List<ZContracts> selectMyGrabContract(QueryContractListDTO queryDTO);
 
     List<ZContracts> selectToGrabContract(QueryContractListDTO queryDTO);
+
+    List<ZProductChain> selectProductSeries(QueryProductChainDTO dto);
 }

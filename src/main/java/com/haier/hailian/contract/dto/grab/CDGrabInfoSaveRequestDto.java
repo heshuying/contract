@@ -13,6 +13,8 @@ import java.util.List;
 @Data
 @ApiModel(value = "创单节点抢单保存")
 public class CDGrabInfoSaveRequestDto {
+    @ApiModelProperty(value="是否更新：0 保存 1 更新, 默认 0",name="是否更新：0 保存 1 更新, 默认 0")
+    private String isUpdate = "0";
     @ApiModelProperty(value="合约id",name="合约id")
     private Integer contractId;
     @ApiModelProperty(value="分享比例",name="分享比例",example="5%")

@@ -85,7 +85,8 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             and create_code = #{userCode}
-            and contract_type in ('20','30');
+            and status = '1'
+            and contract_type in ('20','30')
         </where>
     </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
@@ -110,7 +111,7 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and org_code in
+                parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code in
                 <foreach collection="littleXwCode" open="(" close=")" separator=","
                          item="littleXwCode" index="i">
                     #{littleXwCode}
@@ -156,15 +157,11 @@
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
         SELECT DISTINCT
-          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit, rp.`title` AS planTitle, rpd.`content` AS planContent
+          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit
         FROM
           z_contracts zc
           JOIN z_contracts_factor cf
             ON cf.`contract_id` = zc.`id`
-          LEFT JOIN z_reserve_plan rp
-            ON rp.`parent_id` = zc.`id`
-          JOIN z_reserve_plan_detail rpd
-            ON rpd.`parent_id` = rp.id
         where zc.parent_id = #{contractId} AND zc.contract_type = '30'
     </select>
 
