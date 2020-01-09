@@ -157,12 +157,40 @@
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
         SELECT DISTINCT
-          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit
+          node.id,
+          node.node_code AS nodeCode,
+          node.node_name AS nodeName,
+          IFNULL(t2.`contract_name`, '-') AS contractName,
+          IFNULL(t2.`factor_name`, '-') AS targetName,
+          IFNULL(t2.`factor_value`, '-') AS targetValue,
+          IFNULL(t2.`factor_unit`, '-') AS targetUnit
         FROM
-          z_contracts zc
-          JOIN z_contracts_factor cf
-            ON cf.`contract_id` = zc.`id`
-        where zc.parent_id = #{contractId} AND zc.contract_type = '30'
+          (SELECT
+            node.*
+          FROM
+            z_node_target_percent_info node
+          WHERE node.share_percent IS NOT NULL
+            AND node.lq_code IN
+            (SELECT
+              chain_code
+            FROM
+              z_contracts
+            WHERE id = #{contractId})) node
+          LEFT JOIN
+            (SELECT
+              zc.`contract_name`,
+              zc.`org_code`,
+              zc.`org_name`,
+              cf.`factor_name`,
+              cf.`factor_value`,
+              cf.`factor_unit`
+            FROM
+              z_contracts zc
+              JOIN z_contracts_factor cf
+                ON cf.`contract_id` = zc.`id`
+            WHERE zc.parent_id = #{contractId}
+              AND zc.contract_type = '30') t2
+            ON node.`node_code` = t2.org_code
     </select>
 
     <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">
