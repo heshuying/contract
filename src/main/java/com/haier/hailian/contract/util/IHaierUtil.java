@@ -7,7 +7,9 @@ import com.google.gson.JsonParser;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by J.wind
@@ -254,7 +256,7 @@ public class IHaierUtil {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         String accessToken = getAccessToken("TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB");
-        RequestBody body = RequestBody.create(mediaType, "{\"currentUid\": \"5e030c81ed50999dad27824d\",\"groupId\": "+groupId+",\"userIds\":"+userIds+"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"currentUid\": \"5e030c81ed50999dad27824d\",\"groupId\": \""+groupId+"\",\"userIds\":"+userIds+"}");
         Request request = new Request.Builder()
                 .url("https://i.haier.net/gateway/xtinterface/group/addGroupUser?accessToken=" + accessToken)
                 .post(body)
@@ -271,6 +273,117 @@ public class IHaierUtil {
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             JsonObject result = json.get("data").getAsJsonObject();
             return result.get("groupId").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     *  获取成员列表
+     * @param groupId
+     * @return
+     * 5dde5470ed5058bc7be18de8
+     */
+    public static List<String> groupUsers(String groupId){
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+        String accessToken = getAccessToken("TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB");
+        RequestBody body = RequestBody.create(mediaType, "{\"currentUid\": \"5e030c81ed50999dad27824d\",\"groupId\": \""+groupId+"\"}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/xtinterface/group/groupUsers?accessToken=" + accessToken)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            JsonObject result = json.get("data").getAsJsonObject();
+            List<String> list = new ArrayList<>();
+            JsonArray jsonElements = result.get("participantIds").getAsJsonArray();
+            for (int i=0;i<jsonElements.size();i++){
+                list.add(jsonElements.get(i).getAsString());
+            }
+            return list;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+    /**
+     * 获取聊天token
+     * @return
+     * 5dde5470ed5058bc7be18de8
+     */
+    private static String getTalkToken(){
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\n    \"oId\": \"5e030c81ed50999dad27824d\"\n}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/openaccess/user/getXTTokenByoId")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            String result = json.get("data").getAsString();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * 删除群组中的用户
+     * @param groupId
+     * @param users
+     * @return
+     */
+    public static Boolean removeUser(String groupId,String[] users){
+        OkHttpClient client = new OkHttpClient();
+        String user = IHaierUtil.getUserOpenId(users);
+        String userIds = new Gson().toJson(user.split(","));
+        String token = getTalkToken();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupId\": \""+groupId+"\",\"userId\": "+userIds+"}");
+        Request request = new Request.Builder()
+                .url("http://i.haier.net/xuntong/ecLite/convers/v2/delGroupUser.action")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("openToken", token)
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            boolean result = json.get("success").getAsBoolean();
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
         }

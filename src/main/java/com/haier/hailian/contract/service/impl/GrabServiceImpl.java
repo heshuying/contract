@@ -81,15 +81,23 @@ public class GrabServiceImpl implements GrabService {
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         //TOdsMinbu minbu = sysUser.getMinbu();
         List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
+        if(StringUtils.isNoneBlank(queryDto.getStartDate())){
+            queryDto.setStartDate(queryDto.getStartDate()+" 00:00:00");
+        }
+        if(StringUtils.isNoneBlank(queryDto.getEndDate())){
+            queryDto.setEndDate(queryDto.getEndDate()+" 23:59:59");
+        }
         List<ZContracts> contracts=contractsService.list(
                 new QueryWrapper<ZContracts>()
                 .eq("create_code",sysUser.getEmpSn())
                 .eq("contract_type","20")
                 .eq("status",1)
                 .ge(StringUtils.isNoneBlank(queryDto.getStartDate()),
-                        "start_date",DateFormatUtil.stringToDate(queryDto.getStartDate()+" 00:00:00",DateFormatUtil.DATE_TIME_PATTERN) )
+                        "start_date",
+                        DateFormatUtil.stringToDate(queryDto.getStartDate(),DateFormatUtil.DATE_TIME_PATTERN) )
                 .le(StringUtils.isNoneBlank(queryDto.getEndDate()),
-                        "end_date",DateFormatUtil.stringToDate(queryDto.getEndDate()+" 23:59:59",DateFormatUtil.DATE_TIME_PATTERN))
+                        "end_date",
+                        DateFormatUtil.stringToDate(queryDto.getEndDate(),DateFormatUtil.DATE_TIME_PATTERN))
         );
 
         for ( ZContracts contract: contracts

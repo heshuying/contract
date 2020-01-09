@@ -3,6 +3,7 @@ package com.haier.hailian.contract.controller;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
 import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
+import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +31,8 @@ public class TalkToMeController {
      */
     @Resource
     private ZReservePlanTeamworkService zReservePlanTeamworkService;
+    @Resource
+    private CDGrabService cdGrabService;
 
     /**
      * 通过主键查询单条数据
@@ -80,9 +83,10 @@ public class TalkToMeController {
 
     @PostMapping(value = {"/getA"})
     @ApiOperation(value = "测试URL")
-    public R getA() {
+    //166
+    public R getA(String id) {
         try {
-            zReservePlanTeamworkService.createGroup();
+            cdGrabService.test(id);
             return R.ok();
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getA,", e);
