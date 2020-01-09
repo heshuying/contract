@@ -39,6 +39,13 @@ public class TYMasterGrabController {
         return R.ok().put("data",list);
     }
 
+    @PostMapping(value = {"/chain/list/my"})
+    @ApiOperation(value = "体检链群主查看已抢入列表")
+    public R chainList(@RequestBody TyGrabListQueryDto queryDto) {
+        List<TyMasterGrabChainInfoDto> list=grabService.queryMyChainList(queryDto);
+        return R.ok().put("data",list);
+    }
+
     @GetMapping(value = {"/chain/my/{contractId}"})
     @ApiOperation(value = "体检链群主查看抢入之后的详情信息")
     public R chainInfo(@PathVariable(value = "contractId") Integer contractId) {

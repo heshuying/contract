@@ -74,6 +74,29 @@ public class GrabServiceImpl implements GrabService {
     @Autowired
     private ZHrChainInfoDao chainInfoDao;
 
+    @Override
+    public List<TyMasterGrabChainInfoDto> queryMyChainList(TyGrabListQueryDto queryDto) {
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //TOdsMinbu minbu = sysUser.getMinbu();
+        List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
+        List<ZContracts> contracts=contractsService.list(
+                new QueryWrapper<ZContracts>()
+                .eq("create_code",sysUser.getEmpSn())
+                .eq("contract_type","20")
+                .eq("status",1)
+                .ge(StringUtils.isNoneBlank(queryDto.getStartDate()),"start_date",queryDto.getStartDate())
+                .le(StringUtils.isNoneBlank(queryDto.getEndDate()),"end_date",queryDto.getEndDate())
+        );
+
+        for ( ZContracts contract: contracts
+                ) {
+            TyMasterGrabChainInfoDto grabDto=this.queryChainInfo(contract.getId());
+            list.add(grabDto);
+        }
+        return list;
+    }
 
     @Override
     public List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto query) {
@@ -476,7 +499,9 @@ public class GrabServiceImpl implements GrabService {
 
         tyMasterGrabChainInfoDto.setContractName(contracts.getContractName());
         tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
-        tyMasterGrabChainInfoDto.setChainName(contracts.getContractName());
+        ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code", contracts.getChainCode()));
+        tyMasterGrabChainInfoDto.setChainName(chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
@@ -485,8 +510,9 @@ public class GrabServiceImpl implements GrabService {
                 ,DateFormatUtil.DATE_TIME_PATTERN));
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
         List<ZContractsFactor> factors = contractsFactorService.list(
-                new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
-
+                new QueryWrapper<ZContractsFactor>()
+                        .eq("contract_id", contracts.getId())
+                .eq("mesh_code",contracts.getId())
         );
         List<FactorDto> targetFactor = factors.stream().filter(m->Constant.FactorType.Bottom
                 .getValue().equals(m.getFactorType())).map(m -> {
@@ -508,6 +534,14 @@ public class GrabServiceImpl implements GrabService {
             dto.setFactorUnit(m.getFactorUnit());
             return dto;
         }).collect(Collectors.toList());
+
+        for(FactorDto currGrab : grabFactors){
+            FactorDto currBottom=targetFactor.stream()
+                    .filter(m->m.getFactorCode().equals(currGrab.getFactorCode()))
+                    .findAny().get();
+            currGrab.setDirection(this.compareTarget(currBottom.getFactorValue(),
+                    currGrab.getFactorValue()));
+        }
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
         tyMasterGrabChainInfoDto.setGrabList(grabFactors);
 
