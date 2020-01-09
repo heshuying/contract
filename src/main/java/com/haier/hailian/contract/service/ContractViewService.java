@@ -13,7 +13,7 @@ public interface ContractViewService {
 
     Map<String, List<ContractViewDataTY>> getContractViewDataTYOld(String contractId);
 
-    List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId);
+    List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId, String orderType);
 
     List<TargetTitleTYDTO> getTargetTitleList(String contractId);
 
