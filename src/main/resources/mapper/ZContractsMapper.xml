@@ -134,8 +134,8 @@
         <include refid="Base_Column_List" />
         from z_contracts
         where contract_type ='10'
-        and status = '1'
-        and group_id is null
+        and status = #{status}
+--         and group_id is null
     </select>
 
     <select id="selectAllContractsById" resultMap="BaseResultMap">
@@ -171,10 +171,11 @@
               )
             )
           ) AS nodeName,
-          IFNULL(t2.`contract_name`, '-') AS contractName,
-          IFNULL(t2.`factor_name`, '-') AS targetName,
-          IFNULL(t2.`factor_value`, '-') AS targetValue,
-          IFNULL(t2.`factor_unit`, '-') AS targetUnit
+          t2.contractId,
+          IFNULL(t2.`contract_name`, '未抢入') AS contractName,
+          IFNULL(t2.`factor_name`, '未抢入') AS targetName,
+          IFNULL(t2.`factor_value`, '未抢入') AS targetValue,
+          IFNULL(t2.`factor_unit`, '未抢入') AS targetUnit
         FROM
           (SELECT
             node.*
@@ -189,6 +190,7 @@
             WHERE id = #{contractId})) node
           LEFT JOIN
             (SELECT
+              zc.id AS contractId,
               zc.`contract_name`,
               zc.`org_code`,
               zc.`org_name`,

@@ -31,7 +31,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * 查询所有的链群主抢单记录
      * @return
      */
-    List<ZContracts> selectAllContracts();
+    List<ZContracts> selectAllContracts(String status);
 
 
     List<ZContracts> selectAllContractsById(int pId);

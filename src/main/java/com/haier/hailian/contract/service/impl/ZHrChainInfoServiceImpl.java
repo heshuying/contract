@@ -44,9 +44,27 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
      * @return 实例对象
      */
     @Override
+    public ZNodeTargetPercentInfo queryByNodeId(Integer id) {
+        return this.zNodeTargetPercentInfoDao.queryById(id);
+    }
+
+    @Override
     public ZHrChainInfo queryById(Integer id) {
         return this.zHrChainInfoDao.queryById(id);
     }
+
+    @Override
+    public ZHrChainInfoDto queryAllById(Integer id) {
+        ZHrChainInfoDto zHrChainInfoDto = new ZHrChainInfoDto();
+        ZHrChainInfo zHrChainInfo = this.zHrChainInfoDao.queryById(id);
+        zHrChainInfoDto.setId(zHrChainInfo.getId());
+        zHrChainInfoDto.setChainName(zHrChainInfo.getChainName());
+        ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
+        zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
+        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(zNodeTargetPercentInfo));
+        return zHrChainInfoDto;
+    }
+
 
     /**
      * 查询多条数据
@@ -232,6 +250,21 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //2获取数据库中这个平台的所有最小单元
 
         return tOdsMinbuDao.getListByPtCode(currentUser.getPtCode());
+    }
+
+    @Override
+    public int updateChainInfo(ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
+        return zNodeTargetPercentInfoDao.update(zNodeTargetPercentInfo);
+    }
+
+    @Override
+    public int deleteChainInfo(Integer id) {
+        return zNodeTargetPercentInfoDao.deleteById(id);
+    }
+
+    @Override
+    public String getDepVCode(String userCode) {
+        return zHrChainInfoDao.getDepVCode(userCode);
     }
 
 

@@ -393,15 +393,15 @@ public class CDGrabServiceImpl implements CDGrabService {
                     factorDao.insert(contractsFactor2);
                 }
                 // 链群目标保存
-    //            ZContractsFactor contractsFactor = new ZContractsFactor();
-    //            contractsFactor.setContractId(contractsId);
-    //            contractsFactor.setFactorCode(targetDto.getTargetCode());
-    //            contractsFactor.setFactorName(targetDto.getTargetName());
-    //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
-    //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-    //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
-    //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
-    //            factorDao.insert(contractsFactor);
+                //            ZContractsFactor contractsFactor = new ZContractsFactor();
+                //            contractsFactor.setContractId(contractsId);
+                //            contractsFactor.setFactorCode(targetDto.getTargetCode());
+                //            contractsFactor.setFactorName(targetDto.getTargetName());
+                //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+                //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+                //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+                //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
+                //            factorDao.insert(contractsFactor);
 
             }
         }
@@ -444,7 +444,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     ihaierTask.setImportant(planInfo.getIsImportant());
                     ihaierTask.setNoticeTime(15);
                     ihaierTask.setChannel("690");
-    //                ihaierTask.setCreateChannel(“”);
+                    //                ihaierTask.setCreateChannel(“”);
                     ihaierTask.setTimingNoticeTime(planInfo.getRemindTime());
                     ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
                     String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
@@ -455,6 +455,39 @@ public class CDGrabServiceImpl implements CDGrabService {
                 index++;
             }
 
+        }
+    }
+
+    @Override
+    public void test(String contractId) {
+        List<ZReservePlan> planInfo = reservePlanDao.selectList(new QueryWrapper<ZReservePlan>()
+                .eq("parent_id", contractId));
+        for (ZReservePlan detail : planInfo) {
+            // 调用ihaier的接口进行任务创建
+            IhaierTask ihaierTask = new IhaierTask();
+            String executor = IHaierUtil.getUserOpenId(detail.getExecuter().split(","));
+            ihaierTask.setExecutors(executor.split(","));
+            if (!StringUtils.isEmpty(detail.getTeamworker())) {
+                String ccs = IHaierUtil.getUserOpenId(detail.getTeamworker().split(","));
+                ihaierTask.setCcs(ccs.split(","));
+            }
+            String oid = IHaierUtil.getUserOpenId(detail.getCreateUserCode().split(","));
+            ihaierTask.setOpenId(oid);
+            ZReservePlanDetail zReservePlanDetail = reservePlanDetailDao.selectOne(new QueryWrapper<ZReservePlanDetail>()
+                    .eq("parent_id", detail.getId()));
+            ihaierTask.setContent(zReservePlanDetail.getContent());
+            ihaierTask.setEndDate(detail.getEndTime().getTime());
+            ihaierTask.setImportant(detail.getIsImportant());
+            ihaierTask.setChannel("690");
+            ihaierTask.setNoticeTime(15);
+            ihaierTask.setTimingNoticeTime(detail.getRemindTime());
+            ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+            String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+            PlanInfoDto temp = new PlanInfoDto();
+            temp.setTaskCode(taskId);
+            temp.setId(detail.getId());
+            //更新taskID
+            reservePlanDao.updateById(detail);
         }
     }
 

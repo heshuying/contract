@@ -7,6 +7,7 @@ import lombok.Data;
  */
 @Data
 public class ContractViewDataCD {
+    private String contractId;
     private String contractName;
     private String nodeCode;
     private String nodeName;
