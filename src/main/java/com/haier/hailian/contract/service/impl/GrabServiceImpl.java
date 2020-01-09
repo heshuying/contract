@@ -86,8 +86,10 @@ public class GrabServiceImpl implements GrabService {
                 .eq("create_code",sysUser.getEmpSn())
                 .eq("contract_type","20")
                 .eq("status",1)
-                .ge(StringUtils.isNoneBlank(queryDto.getStartDate()),"start_date",queryDto.getStartDate())
-                .le(StringUtils.isNoneBlank(queryDto.getEndDate()),"end_date",queryDto.getEndDate())
+                .ge(StringUtils.isNoneBlank(queryDto.getStartDate()),
+                        "start_date",DateFormatUtil.stringToDate(queryDto.getStartDate()+" 00:00:00",DateFormatUtil.DATE_TIME_PATTERN) )
+                .le(StringUtils.isNoneBlank(queryDto.getEndDate()),
+                        "end_date",DateFormatUtil.stringToDate(queryDto.getEndDate()+" 23:59:59",DateFormatUtil.DATE_TIME_PATTERN))
         );
 
         for ( ZContracts contract: contracts
