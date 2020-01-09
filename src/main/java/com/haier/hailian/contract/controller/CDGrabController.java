@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author 19033323
@@ -61,7 +62,11 @@ public class CDGrabController {
 //        }
 
         try {
-            cdGrabService.saveCDGrab(requestDto);
+            if("1".equals(requestDto.getIsUpdate())){
+                cdGrabService.updateCDGrab(requestDto);
+            }else {
+                cdGrabService.saveCDGrab(requestDto);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return R.error("创单节点抢单保存发生异常：" + e.getMessage());
@@ -87,6 +92,53 @@ public class CDGrabController {
         CDGrabViewResponseDto data= null;
         try {
             data = cdGrabService.queryCDGrabView(requestDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());
+        }
+        return R.ok().put("data",data);
+    }
+
+    @PostMapping(value = {"/cancel"})
+    @ApiOperation(value = "创单节点抢单页撤销接口")
+    public R cancel(@RequestBody CDGrabInfoRequestDto requestDto) {
+        if(requestDto == null || requestDto.getContractId() == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+
+        try {
+            cdGrabService.updateCancelGrab(String.valueOf(requestDto.getContractId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点抢单撤销更新发生异常：" + e.getMessage());
+        }
+
+        return R.ok().put("data","");
+    }
+
+    @PostMapping(value = {"/kickoff"})
+    @ApiOperation(value = "创单节点抢单页踢出接口")
+    public R kickoff(@RequestBody CDGrabInfoRequestDto requestDto) {
+        if(requestDto == null || requestDto.getContractId() == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+
+        try {
+            cdGrabService.updateKickOff(String.valueOf(requestDto.getContractId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("创单节点踢出更新发生异常：" + e.getMessage());
+        }
+
+        return R.ok().put("data","");
+    }
+
+    @PostMapping(value = {"/grabHistoryView"})
+    @ApiOperation(value = "创单节点抢单页面查看接口")
+    public R grabHistoryView(@RequestBody CDGrabInfoRequestDto requestDto) {
+        List<CDGrabHistoryResponseDto> data= null;
+        try {
+            data = cdGrabService.queryCDGrabHistoryView(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());

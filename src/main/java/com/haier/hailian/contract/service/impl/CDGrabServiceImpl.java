@@ -63,19 +63,21 @@ public class CDGrabServiceImpl implements CDGrabService {
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
+
+            List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
+                responseDto.setMasterName(chainInfos.get(0).getMasterName());
+                responseDto.setXwCode(chainInfos.get(0).getXwCode());
+                responseDto.setXwName(chainInfos.get(0).getXwName());
+            }
+
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
 //                responseDto.setChainName(chainInfos.get(0).getChainName());
 //            }
         }
 
-        List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
-        if(chainInfos != null && !chainInfos.isEmpty()){
-            responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
-            responseDto.setMasterName(chainInfos.get(0).getMasterName());
-            responseDto.setXwCode(chainInfos.get(0).getXwCode());
-            responseDto.setXwName(chainInfos.get(0).getXwName());
-        }
 
         /*// 分享比例查询
         List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
@@ -210,6 +212,110 @@ public class CDGrabServiceImpl implements CDGrabService {
         return responseDto;
     }
 
+    /**
+     * 查询抢单历史记录
+     * @param requestDto
+     * @return
+     */
+    @Override
+    public List<CDGrabHistoryResponseDto> queryCDGrabHistoryView(CDGrabInfoRequestDto requestDto){
+        List<CDGrabHistoryResponseDto> resultList = new ArrayList<>();
+
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+
+        ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
+        if(contracts != null){
+//            responseDto.setSharePercent(contracts.getSharePercent());
+//            responseDto.setTargetShareMoney(contracts.getShareSpace().toString());
+//            responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
+//            responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
+//            responseDto.setChainName(contracts.getContractName());
+            List<ZContracts> contractList = contractsDao.selectList(
+                    new QueryWrapper<ZContracts>().eq("parent_id", contracts.getParentId())
+                            .eq("xiaowei_code", contracts.getXiaoweiCode())
+                            .eq("create_code", contracts.getCreateCode())
+                            .eq("org_code", contracts.getOrgCode())
+                            .eq("contract_type", "30")
+                            .ne("status", "5")
+                            .orderByAsc("status"));
+            if(contractList == null){
+                return resultList;
+            }
+            for(ZContracts item : contractList){
+                CDGrabHistoryResponseDto responseDto = new CDGrabHistoryResponseDto();
+                responseDto.setGrabId(String.valueOf(item.getId()));
+                responseDto.setStatus(item.getStatus());
+                responseDto.setCreateTime(DateFormatUtil.format(item.getCreateTime(), DateFormatUtil.DATE_TIME_PATTERN));
+                List<ZContractsFactor> factorList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id", item.getId()));
+                if(factorList != null && !factorList.isEmpty()){
+                    Map<String, List<ZContractsFactor>> tempMap = new HashMap<>();
+                    for(ZContractsFactor factor : factorList){
+                        if(StringUtils.isNotBlank(factor.getFactorValue())){
+                            factor.setFactorValue(new BigDecimal(factor.getFactorValue()).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                        }
+                        List<ZContractsFactor> list = tempMap.get(factor.getFactorCode());
+                        if(list == null || list.isEmpty()){
+                            list = new ArrayList<>();
+                            tempMap.put(factor.getFactorCode(), list);
+                        }
+                        list.add(factor);
+                    }
+
+                    for(Map.Entry<String, List<ZContractsFactor>> entity : tempMap.entrySet()){
+                        List<ZContractsFactor> factors = entity.getValue();
+                        CDGrabTargetDto target = new CDGrabTargetDto();
+                        target.setTargetName(factors.get(0).getFactorName());
+                        target.setTargetCode(factors.get(0).getFactorCode());
+                        target.setTargetUnit(factors.get(0).getFactorUnit());
+                        target.setTargetTo(factors.get(0).getFactorDirecton());
+                        for(ZContractsFactor factor : factors){
+                            if(Constant.FactorType.Bottom.getValue().equals(factor.getFactorType())){
+                                target.setChainGoal(new BigDecimal(factor.getFactorValue()));
+                            }else if(Constant.FactorType.Grab.getValue().equals(factor.getFactorType())){
+                                target.setChainGrabGoal(new BigDecimal(factor.getFactorValue()));
+                            }
+                        }
+                        responseDto.getTargetList().add(target);
+                    }
+                }
+
+                List<PlanInfoDto> planInfoList = reservePlanDao.selectPlanInfoGroup(String.valueOf(item.getId()));
+                if(planInfoList != null && !planInfoList.isEmpty()){
+                    for(PlanInfoDto planInfo : planInfoList){
+                        ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
+                        BeanUtils.copyProperties(planInfo, reservePlanDTO);
+                        reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
+                        reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
+                        reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));
+                        reservePlanDTO.setEndTime(DateFormatUtil.format(planInfo.getEndTime(),DateFormatUtil.DATE_PATTERN));
+                        reservePlanDTO.setExecuter(planInfo.getExecuter());
+                        reservePlanDTO.setIsImportant(planInfo.getIsImportant());
+                        reservePlanDTO.setRemindTime(planInfo.getRemindTime());
+                        reservePlanDTO.setRemindType(planInfo.getRemindType());
+                        List<PlanInfoDto> planInfoDetails = reservePlanDao.selectPlanInfoSub(String.valueOf(item.getId()), planInfo.getOrderType());
+                        if(planInfoDetails != null){
+                            for(PlanInfoDto planDetail : planInfoDetails){
+                                ReservePlanDetailDTO reservePlanDetailDTO = new ReservePlanDetailDTO();
+                                reservePlanDetailDTO.setTitle(planDetail.getTitle());
+                                reservePlanDetailDTO.setContent(planDetail.getContent());
+                                reservePlanDTO.getPlanDetail().add(reservePlanDetailDTO);
+                            }
+                        }
+                        responseDto.getPlanList().add(reservePlanDTO);
+                    }
+                }
+
+                resultList.add(responseDto);
+            }
+        }
+
+        return resultList;
+    }
+
     @Override
     @Transactional
     public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
@@ -232,7 +338,8 @@ public class CDGrabServiceImpl implements CDGrabService {
         List<ZContracts> contractList=contractsDao.selectList(new QueryWrapper<ZContracts>()
                 .eq("parent_id",requestDto.getContractId())
                 .eq("create_code",sysUser.getEmpSn())
-                .eq("contract_type", "30"));
+                .eq("contract_type", "30")
+                .notIn("status", "3", "5", "6"));
         if(contractList!=null && contractList.size()>0){
             throw new RException("用户已抢单");
         }
@@ -345,20 +452,20 @@ public class CDGrabServiceImpl implements CDGrabService {
 
     @Override
     public void test(String contractId) {
-        List<ZReservePlan>  planInfo = reservePlanDao.selectList(new QueryWrapper<ZReservePlan>()
+        List<ZReservePlan> planInfo = reservePlanDao.selectList(new QueryWrapper<ZReservePlan>()
                 .eq("parent_id", contractId));
-        for(ZReservePlan detail : planInfo){
+        for (ZReservePlan detail : planInfo) {
             // 调用ihaier的接口进行任务创建
             IhaierTask ihaierTask = new IhaierTask();
             String executor = IHaierUtil.getUserOpenId(detail.getExecuter().split(","));
             ihaierTask.setExecutors(executor.split(","));
-            if(!StringUtils.isEmpty(detail.getTeamworker())){
+            if (!StringUtils.isEmpty(detail.getTeamworker())) {
                 String ccs = IHaierUtil.getUserOpenId(detail.getTeamworker().split(","));
                 ihaierTask.setCcs(ccs.split(","));
             }
             String oid = IHaierUtil.getUserOpenId(detail.getCreateUserCode().split(","));
             ihaierTask.setOpenId(oid);
-            ZReservePlanDetail zReservePlanDetail =reservePlanDetailDao.selectOne(new QueryWrapper<ZReservePlanDetail>()
+            ZReservePlanDetail zReservePlanDetail = reservePlanDetailDao.selectOne(new QueryWrapper<ZReservePlanDetail>()
                     .eq("parent_id", detail.getId()));
             ihaierTask.setContent(zReservePlanDetail.getContent());
             ihaierTask.setEndDate(detail.getEndTime().getTime());
@@ -374,7 +481,64 @@ public class CDGrabServiceImpl implements CDGrabService {
             //更新taskID
             reservePlanDao.updateById(detail);
         }
+    }
 
+    @Transactional
+    public void updateCDGrab(CDGrabInfoSaveRequestDto requestDto){
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if(currentUser==null||StringUtils.isBlank(currentUser.getXwType5Code())||
+                !currentUser.getXwType5Code().equals("1")){
+            throw new RException(Constant.MSG_NO_MINBU,Constant.CODE_NO_MINBU);
+        }
+
+        ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
+        if(contracts==null){
+            throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
+        }
+
+        contracts.setStatus("6"); //设置状态为已删除
+        contractsDao.updateById(contracts);
+
+        // 保存新记录
+        requestDto.setContractId(contracts.getParentId());
+        requestDto.setIsUpdate("0");
+        saveCDGrab(requestDto);
+    }
+
+    /**
+     * 更新为已撤销
+     * @param contractId
+     * @return
+     */
+    @Override
+    public Integer updateCancelGrab(String contractId){
+        ZContracts contracts = contractsDao.selectById(contractId);
+        if(contracts == null){
+            throw new RException("合约不存在，合约id：" + contractId);
+        }
+
+        contracts.setStatus("5"); // 设置为已撤销
+        return contractsDao.updateById(contracts);
+    }
+
+    /**
+     * 更新为已踢出
+     * @param contractId
+     * @return
+     */
+    @Override
+    public Integer updateKickOff(String contractId){
+        ZContracts contracts = contractsDao.selectById(contractId);
+        if(contracts == null){
+            throw new RException("合约不存在，合约id：" + contractId);
+        }
+
+        contracts.setStatus("3"); // 设置为已踢出
+        return contractsDao.updateById(contracts);
     }
 
     private List<String> getYearMonth(String contractId){
@@ -393,4 +557,5 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
         return yearMounths;
     }
+
 }

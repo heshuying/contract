@@ -85,7 +85,8 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             and create_code = #{userCode}
-            and contract_type in ('20','30');
+            and status = '1'
+            and contract_type in ('20','30')
         </where>
     </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
@@ -110,7 +111,7 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and org_code in
+                parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code in
                 <foreach collection="littleXwCode" open="(" close=")" separator=","
                          item="littleXwCode" index="i">
                     #{littleXwCode}
@@ -156,16 +157,54 @@
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
         SELECT DISTINCT
-          zc.`contract_name` AS contractName, zc.`org_code` AS nodeCode, zc.`org_name` AS nodeName, cf.`factor_name` AS targetName, cf.`factor_value` AS targetValue, cf.`factor_unit` AS targetUnit, rp.`title` AS planTitle, rpd.`content` AS planContent
+          node.id,
+          node.node_code AS nodeCode,
+          IF(
+            t2.create_name IS NULL,
+            node.node_name,
+            (
+              CONCAT(
+                node.node_name,
+                '(',
+                t2.create_name,
+                ')'
+              )
+            )
+          ) AS nodeName,
+          t2.contractId,
+          IFNULL(t2.`contract_name`, '未抢入') AS contractName,
+          IFNULL(t2.`factor_name`, '未抢入') AS targetName,
+          IFNULL(t2.`factor_value`, '未抢入') AS targetValue,
+          IFNULL(t2.`factor_unit`, '未抢入') AS targetUnit
         FROM
-          z_contracts zc
-          JOIN z_contracts_factor cf
-            ON cf.`contract_id` = zc.`id`
-          LEFT JOIN z_reserve_plan rp
-            ON rp.`parent_id` = zc.`id`
-          JOIN z_reserve_plan_detail rpd
-            ON rpd.`parent_id` = rp.id
-        where zc.parent_id = #{contractId} AND zc.contract_type = '30'
+          (SELECT
+            node.*
+          FROM
+            z_node_target_percent_info node
+          WHERE node.share_percent IS NOT NULL
+            AND node.lq_code IN
+            (SELECT
+              chain_code
+            FROM
+              z_contracts
+            WHERE id = #{contractId})) node
+          LEFT JOIN
+            (SELECT
+              zc.id AS contractId,
+              zc.`contract_name`,
+              zc.`org_code`,
+              zc.`org_name`,
+              zc.`create_name`,
+              cf.`factor_name`,
+              cf.`factor_value`,
+              cf.`factor_unit`
+            FROM
+              z_contracts zc
+              JOIN z_contracts_factor cf
+                ON cf.`contract_id` = zc.`id`
+            WHERE zc.parent_id = #{contractId}
+              AND zc.contract_type = '30') t2
+            ON node.`node_code` = t2.org_code
     </select>
 
     <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">
@@ -237,7 +276,6 @@
                 #{item}
             </foreach>
         </if>
-
         and not EXISTS (select 1 from z_contracts where
         parent_id=base.id and contract_type='20' and org_code=#{loginBuCode}
         )

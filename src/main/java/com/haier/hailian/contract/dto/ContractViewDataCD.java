@@ -7,12 +7,13 @@ import lombok.Data;
  */
 @Data
 public class ContractViewDataCD {
+    private String contractId;
     private String contractName;
     private String nodeCode;
     private String nodeName;
     private String targetName;
     private String targetValue;
     private String targetUnit;
-    private String planTitle;
-    private String planContent;
+//    private String planTitle;
+//    private String planContent;
 }

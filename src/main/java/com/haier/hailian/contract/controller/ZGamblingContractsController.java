@@ -3,6 +3,7 @@ package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZProductChain;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,6 +73,24 @@ public class ZGamblingContractsController {
         List<ZContracts> contractsList = gamblingContractsService.selectContractList(queryDTO);
         return R.ok().put("data",contractsList);
     }
+
+    @PostMapping(value = {"/selectProductSeries"})
+    @ApiOperation(value = "根据链群编码查询产品系列")
+    public R selectProductSeries(@RequestBody QueryProductChainDTO dto) {
+        List<ZProductChain> list = gamblingContractsService.selectProductSeries(dto);
+        List<ContractProductDTO> productList = new ArrayList<>();
+        for(ZProductChain productChain : list){
+            ContractProductDTO productDTO = new ContractProductDTO();
+            productDTO.setProductSeries(productChain.getProductSeries());
+            productDTO.setQtyMonth(null);
+            productDTO.setQtyYear(null);
+            productList.add(productDTO);
+        }
+        return R.ok().put("data",productList);
+    }
+
+
+
 
 }
 

@@ -346,7 +346,7 @@ CREATE TABLE `z_contracts` (
   `parent_id` int(11) DEFAULT 0 COMMENT '关联id',
   `contract_name` varchar(200) DEFAULT NULL COMMENT '合约名称',
   `contract_type` varchar(10) DEFAULT NULL COMMENT '10链群主合约、20商圈合约、30创客合约',
-  `status` varchar(10) DEFAULT NULL COMMENT '状态：0抢单中，1 已生效,4:已过期',
+  `status` varchar(10) DEFAULT NULL COMMENT '状态：0抢单中，1 已生效,4:已过期,5:已撤销,6:已删除',
   `share_space` decimal(10,4) DEFAULT NULL COMMENT '分享空间',
   `share_percent` varchar(80) DEFAULT NULL COMMENT '分享比例',
   `chain_code` varchar(80) DEFAULT NULL COMMENT '链群编码',
@@ -1399,3 +1399,28 @@ CREATE TABLE `t_ods_minbu_emp` (
 
 ALTER table month_chain_group_order add IS_GZD	VARCHAR(20) null comment	'高中低端';
 
+-- ----------------------------
+-- Table structure for z_contracts_product
+-- ----------------------------
+DROP TABLE IF EXISTS `z_contracts_product`;
+CREATE TABLE `z_contracts_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `contract_id` varchar(255) DEFAULT NULL COMMENT '举单合约ID',
+  `product_series` varchar(255) DEFAULT NULL COMMENT '产品系列',
+  `qty_year` int(11) DEFAULT NULL COMMENT '年度数量',
+  `qty_month` int(11) DEFAULT NULL COMMENT '月度数量',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for z_product_chain
+-- ----------------------------
+DROP TABLE IF EXISTS `z_product_chain`;
+CREATE TABLE `z_product_chain` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_series` varchar(255) DEFAULT NULL COMMENT '产品系列',
+  `model_name` varchar(255) DEFAULT NULL COMMENT '型号名称',
+  `model_code` varchar(255) DEFAULT NULL COMMENT '型号编码',
+  `chain_code` varchar(255) DEFAULT NULL COMMENT '链群编码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

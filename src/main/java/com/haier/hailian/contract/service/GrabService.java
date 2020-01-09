@@ -23,7 +23,20 @@ public interface GrabService {
      */
     void refreshContractStatusJob();
 
+    /**
+     * 查询可抢入合约
+     * @param queryDto
+     * @return
+     */
     List<TyMasterGrabChainInfoDto> queryChainList(TyGrabListQueryDto queryDto);
+
+    /**
+     * 查询已抢入合约
+     * @param queryDto
+     * @return
+     */
+    List<TyMasterGrabChainInfoDto> queryMyChainList(TyGrabListQueryDto queryDto);
+
 
     TyMasterGrabChainInfoDto queryChainInfo(Integer contractId);
     List<MeshGrabInfoDto> queryMeshGrabDetail(Integer contractId);
