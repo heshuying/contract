@@ -38,11 +38,11 @@ public class ContractViewController {
         return R.ok().put("data",resultList).put("grabPercent", rate);
     }
 
-    @GetMapping(value = {"/getContractInfoTY/{contractId}"})
+    @GetMapping(value = {"/getContractInfoTY/{contractId}/{orderType}"})
     @ApiOperation(value = "合约体验数据查询")
-    public R getContractInfoTY(@PathVariable String contractId) {
+    public R getContractInfoTY(@PathVariable String contractId, @PathVariable String orderType) {
         List<TargetTitleTYDTO> resultTitle = contractViewService.getTargetTitleList(contractId);
-        List<ContractViewDataTYResultDTO> result = contractViewService.getContractViewDataTY(contractId);
+        List<ContractViewDataTYResultDTO> result = contractViewService.getContractViewDataTY(contractId, orderType);
         Integer size = contractViewService.getContractSize2(contractId);
         return R.ok().put("data",result).put("title", resultTitle).put("grabPercent", result.size() + "/" + size);
     }

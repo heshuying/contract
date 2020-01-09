@@ -81,7 +81,7 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId){
+    public List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId, String orderType){
         List<ContractViewDataTYResultDTO> resultList = new ArrayList<>();
         Map<String,ContractViewDataTYResultDTO> tempMap = new HashMap<>();
 
@@ -117,7 +117,36 @@ public class ContractViewServiceImpl implements ContractViewService {
                     }
 
                 }
+
+                if(targetConfigList == null || targetConfigList.isEmpty()){
+                    resultDTO.setDiff(0);
+                }
+                int diff = 0;
+                for(int i=0; i<targetConfigList.size(); i=i+2){
+                    if(i >= targetConfigList.size()-1){
+                        break;
+                    }
+                    if(new BigDecimal(targetConfigList.get(i+1).getTargetValue()).compareTo(new BigDecimal(targetConfigList.get(i).getTargetValue())) < 0){
+                        diff++;
+                    }
+                }
+                resultDTO.setDiff(diff);
                 resultList.add(resultDTO);
+            }
+            if("desc".equals(orderType)){
+                Collections.sort(resultList, new Comparator<ContractViewDataTYResultDTO>() {
+                    @Override
+                    public int compare(ContractViewDataTYResultDTO o1, ContractViewDataTYResultDTO o2) {
+                        return o2.getDiff() - o1.getDiff();
+                    }
+                });
+            }else{
+                Collections.sort(resultList, new Comparator<ContractViewDataTYResultDTO>() {
+                    @Override
+                    public int compare(ContractViewDataTYResultDTO o1, ContractViewDataTYResultDTO o2) {
+                        return o1.getDiff() - o2.getDiff();
+                    }
+                });
             }
         }
 
