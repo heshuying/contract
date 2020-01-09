@@ -10,8 +10,8 @@ public class IhaierLoginUtil {
     /**********************************ihaier单点登录开始************************************/
     //获取token接口url
     static String accessTokenUrl = "https://i.haier.net/gateway/oauth2/token/getAccessToken";
-    static String appid = "500000062";
-    static String secret = "soD1RrGvu48MFxIYPg1E";
+    static String appid = "500000237";
+    static String secret = "6MngO9QxehEhkMjxGPVB";
     static String scope = "app";
     //获取用户上下文接口url
     static String gatewayUrl= "https://i.haier.net/gateway/ticket/user/acquirecontext?accessToken=";
