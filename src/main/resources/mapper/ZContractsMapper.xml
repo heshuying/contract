@@ -170,6 +170,7 @@
               )
             )
           ) AS nodeName,
+          t2.contractId,
           IFNULL(t2.`contract_name`, '-') AS contractName,
           IFNULL(t2.`factor_name`, '-') AS targetName,
           IFNULL(t2.`factor_value`, '-') AS targetValue,
@@ -188,6 +189,7 @@
             WHERE id = #{contractId})) node
           LEFT JOIN
             (SELECT
+              zc.id AS contractId,
               zc.`contract_name`,
               zc.`org_code`,
               zc.`org_name`,
