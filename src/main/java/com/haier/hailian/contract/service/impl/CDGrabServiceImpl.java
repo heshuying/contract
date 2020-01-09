@@ -144,6 +144,14 @@ public class CDGrabServiceImpl implements CDGrabService {
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setChainName(contracts.getContractName());
+
+            List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+            if(chainInfos != null && !chainInfos.isEmpty()){
+                responseDto.setMasterCode(chainInfos.get(0).getMasterCode());
+                responseDto.setMasterName(chainInfos.get(0).getMasterName());
+                responseDto.setXwCode(chainInfos.get(0).getXwCode());
+                responseDto.setXwName(chainInfos.get(0).getXwName());
+            }
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
 //                responseDto.setChainName(chainInfos.get(0).getChainName());
@@ -385,15 +393,15 @@ public class CDGrabServiceImpl implements CDGrabService {
                     factorDao.insert(contractsFactor2);
                 }
                 // 链群目标保存
-    //            ZContractsFactor contractsFactor = new ZContractsFactor();
-    //            contractsFactor.setContractId(contractsId);
-    //            contractsFactor.setFactorCode(targetDto.getTargetCode());
-    //            contractsFactor.setFactorName(targetDto.getTargetName());
-    //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
-    //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
-    //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
-    //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
-    //            factorDao.insert(contractsFactor);
+                //            ZContractsFactor contractsFactor = new ZContractsFactor();
+                //            contractsFactor.setContractId(contractsId);
+                //            contractsFactor.setFactorCode(targetDto.getTargetCode());
+                //            contractsFactor.setFactorName(targetDto.getTargetName());
+                //            contractsFactor.setFactorValue(targetDto.getChainGoal().toString());
+                //            contractsFactor.setFactorType(Constant.FactorType.Bottom.getValue());
+                //            contractsFactor.setFactorUnit(targetDto.getTargetUnit());
+                //            contractsFactor.setFactorDirecton(targetDto.getTargetTo());
+                //            factorDao.insert(contractsFactor);
 
             }
         }
@@ -436,7 +444,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     ihaierTask.setImportant(planInfo.getIsImportant());
                     ihaierTask.setNoticeTime(15);
                     ihaierTask.setChannel("690");
-    //                ihaierTask.setCreateChannel(“”);
+                    //                ihaierTask.setCreateChannel(“”);
                     ihaierTask.setTimingNoticeTime(planInfo.getRemindTime());
                     ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
                     String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
@@ -483,6 +491,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
     }
 
+    @Override
     @Transactional
     public void updateCDGrab(CDGrabInfoSaveRequestDto requestDto){
         Subject subject = SecurityUtils.getSubject();
@@ -557,5 +566,4 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
         return yearMounths;
     }
-
 }
