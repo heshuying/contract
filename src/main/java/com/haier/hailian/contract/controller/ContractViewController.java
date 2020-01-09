@@ -1,15 +1,17 @@
 package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.*;
-import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ContractViewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 19033323
@@ -31,7 +33,7 @@ public class ContractViewController {
     @GetMapping(value = {"/getContractInfoCD/{contractId}"})
     @ApiOperation(value = "合约创单数据查询")
     public R getContractInfoCD(@PathVariable String contractId) {
-        List<ContractViewDataCD> resultList = contractViewService.getContractViewDataCD(contractId);
+        Collection<ContractViewDataCDResponseDTO> resultList = contractViewService.getContractViewDataCD(contractId);
         String rate = contractViewService.getContractSize(contractId);
         return R.ok().put("data",resultList).put("grabPercent", rate);
     }
