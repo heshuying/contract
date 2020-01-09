@@ -50,6 +50,7 @@ public class ShiroConfig {
         filterMap.put("/login", "anon");
         filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/zHrChainInfo/searchUsers", "anon");
+        filterMap.put("/talk/getA", "anon");
         filterMap.put("/talk/savePlan", "anon");
         filterMap.put("/test/**", "anon");
         filterMap.put("/contractData", "anon"); // 外部系统获取数据暂时不用校验

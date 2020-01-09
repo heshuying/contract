@@ -343,6 +343,40 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
     }
 
+    @Override
+    public void test(String contractId) {
+        List<ZReservePlan>  planInfo = reservePlanDao.selectList(new QueryWrapper<ZReservePlan>()
+                .eq("parent_id", contractId));
+        for(ZReservePlan detail : planInfo){
+            // 调用ihaier的接口进行任务创建
+            IhaierTask ihaierTask = new IhaierTask();
+            String executor = IHaierUtil.getUserOpenId(detail.getExecuter().split(","));
+            ihaierTask.setExecutors(executor.split(","));
+            if(!StringUtils.isEmpty(detail.getTeamworker())){
+                String ccs = IHaierUtil.getUserOpenId(detail.getTeamworker().split(","));
+                ihaierTask.setCcs(ccs.split(","));
+            }
+            String oid = IHaierUtil.getUserOpenId(detail.getCreateUserCode().split(","));
+            ihaierTask.setOpenId(oid);
+            ZReservePlanDetail zReservePlanDetail =reservePlanDetailDao.selectOne(new QueryWrapper<ZReservePlanDetail>()
+                    .eq("parent_id", detail.getId()));
+            ihaierTask.setContent(zReservePlanDetail.getContent());
+            ihaierTask.setEndDate(detail.getEndTime().getTime());
+            ihaierTask.setImportant(detail.getIsImportant());
+            ihaierTask.setChannel("690");
+            ihaierTask.setNoticeTime(15);
+            ihaierTask.setTimingNoticeTime(detail.getRemindTime());
+            ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/callBack");
+            String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+            PlanInfoDto temp = new PlanInfoDto();
+            temp.setTaskCode(taskId);
+            temp.setId(detail.getId());
+            //更新taskID
+            reservePlanDao.updateById(detail);
+        }
+
+    }
+
     private List<String> getYearMonth(String contractId){
         String currentYear = String.valueOf(DateFormatUtil.getYearOfDate(new Date()));
         ZContracts contracts=contractsDao.selectById(contractId);
