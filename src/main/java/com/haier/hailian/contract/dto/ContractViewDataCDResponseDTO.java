@@ -10,6 +10,7 @@ public class ContractViewDataCDResponseDTO {
     private String contractName;
     private String nodeCode;
     private String nodeName;
+    private String contractId;
 
     private List<TargetViewDTO> targetList = new ArrayList<>();
 }
