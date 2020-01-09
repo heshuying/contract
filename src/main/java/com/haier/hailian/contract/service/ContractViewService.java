@@ -1,8 +1,6 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.*;
-import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZContractsFactor;
 
 import java.util.Collection;
 import java.util.List;
