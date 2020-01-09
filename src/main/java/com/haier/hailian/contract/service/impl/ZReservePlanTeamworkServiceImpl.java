@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -147,7 +148,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
 
     @Override
     public void createGroup() {
-        List<ZContracts> list = zContractsDao.selectAllContracts();
+        List<ZContracts> list = zContractsDao.selectAllContracts("1");
         List<String> userList = new ArrayList<>();
         for (ZContracts zContracts : list) {
             List<ZContracts> contracts= zContractsDao.selectUserList(zContracts.getId());
@@ -172,5 +173,46 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             }
         }
 
+    }
+
+    @Override
+    public void createContracts() {
+        //查询所有的进行中的合约
+        List<ZContracts> list = zContractsDao.selectAllContracts("0");
+        for (ZContracts zContracts : list) {
+            //判断是否达成和约
+            long nowDate = (new Date()).getTime();
+            if (zContracts.getJoinTime().getTime() <= nowDate) {
+                //比对是否存在群组中
+                List<String> userList = IHaierUtil.groupUsers(zContracts.getGroupId());
+                if (userList == null){
+                    System.out.println("出错了");
+                    return;
+                }
+                //暂存合约的用户列表
+                List<String> zCUserList = new ArrayList<>();
+                List<String> tempList = new ArrayList<>();
+                //循环父亲ID的数据
+                List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
+                for (ZContracts z : pa) {
+                    zCUserList.add(z.getCreateCode());
+                }
+                String[] toBeStored = new String[zCUserList.size()];
+                userList.toArray(toBeStored);
+                String user = IHaierUtil.getUserOpenId(toBeStored);
+                String[] userOpenId = user.split(",");
+                for (String st : userList) {
+                    boolean is = Arrays.asList(userOpenId).contains(st);
+                    if (!is) {
+                        tempList.add(st);
+                    }
+                }
+                System.out.println("群组中不包含以下的成员：" + tempList);
+                ZContracts zContractTemp2 = new ZContracts();
+                zContractTemp2.setId(zContracts.getId());
+                zContractTemp2.setStatus("1");
+                zContractsDao.updateById(zContractTemp2);
+            }
+        }
     }
 }

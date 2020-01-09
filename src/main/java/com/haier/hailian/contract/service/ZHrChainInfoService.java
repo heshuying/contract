@@ -21,7 +21,16 @@ public interface ZHrChainInfoService {
      * @param id 主键
      * @return 实例对象
      */
+    ZNodeTargetPercentInfo queryByNodeId(Integer id);
+
     ZHrChainInfo queryById(Integer id);
+
+    /**
+     * 根据链群查询数据
+     * @param id
+     * @return
+     */
+    ZHrChainInfoDto queryAllById(Integer id);
 
     /**
      * 查询多条数据
@@ -92,5 +101,26 @@ public interface ZHrChainInfoService {
      * @return
      */
     List<TOdsMinbu> getMinbuList();
+
+    /**
+     * 更新
+     * @param zNodeTargetPercentInfo
+     * @return
+     */
+    int updateChainInfo(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
+
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    int deleteChainInfo(Integer id);
+
+    /**
+     *
+     * @param userCode
+     * @return
+     */
+    String getDepVCode(String userCode);
 
 }

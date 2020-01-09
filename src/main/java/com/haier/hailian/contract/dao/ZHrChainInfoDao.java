@@ -62,4 +62,6 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
      * @return
      */
     String queryMaxOne();
+
+    String getDepVCode(String userCode);
 }

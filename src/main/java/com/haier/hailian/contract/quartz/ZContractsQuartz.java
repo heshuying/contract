@@ -51,5 +51,11 @@ public class ZContractsQuartz {
         log.info("【创建合约的群组结束】");
     }
 
+//    @Scheduled(cron="0 0/10 * * * ?")
+    public void createContracts(){
+        log.info("【合约达成开始】");
+        zReservePlanTeamworkService.createContracts();
+        log.info("【合约达成结束】");
+    }
 }
 

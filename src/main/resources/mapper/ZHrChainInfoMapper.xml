@@ -128,4 +128,12 @@
         LIMIT 0,1
     </select>
 
+
+    <select id="getDepVCode" resultType="string">
+        select
+        xwCode
+        from chain_contract.sys_node_ehr
+        where nodeManagerCode = #{userCode}
+    </select>
+
 </mapper>

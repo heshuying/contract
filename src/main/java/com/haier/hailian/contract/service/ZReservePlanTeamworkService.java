@@ -83,4 +83,8 @@ public interface ZReservePlanTeamworkService {
      */
     void createGroup();
 
+    /**
+     * 定时任务进行创建聊天群组
+     */
+    void createContracts();
 }

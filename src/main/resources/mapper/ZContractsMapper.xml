@@ -133,8 +133,8 @@
         <include refid="Base_Column_List" />
         from z_contracts
         where contract_type ='10'
-        and status = '1'
-        and group_id is null
+        and status = #{status}
+--         and group_id is null
     </select>
 
     <select id="selectAllContractsById" resultMap="BaseResultMap">

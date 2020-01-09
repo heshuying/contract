@@ -2,6 +2,7 @@ package com.haier.hailian.contract.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
@@ -45,11 +46,22 @@ public class ZHrChainInfoController {
      * @return 单条数据
      */
     @GetMapping("selectOne")
-    @ApiOperation(value = "获取链群详细信息")
-    public ZHrChainInfo selectOne(Integer id) {
-        return this.zHrChainInfoService.queryById(id);
+    @ApiOperation(value = "获取链群最小单元详细信息")
+    public ZNodeTargetPercentInfo selectOne(Integer id) {
+        return this.zHrChainInfoService.queryByNodeId(id);
     }
 
+    /**
+     * 通过主键查询单条数据
+     *
+     * @param id 主键
+     * @return 单条数据
+     */
+    @GetMapping("getInfo")
+    @ApiOperation(value = "获取链群信息")
+    public ZHrChainInfoDto getInfo(Integer id) {
+        return this.zHrChainInfoService.queryAllById(id);
+    }
 
     /**
      * 获取所有链群名称列表(后期修改上链)
@@ -158,4 +170,41 @@ public class ZHrChainInfoController {
             return R.error("系统异常，请稍后尝试！");
         }
     }
+
+    @PostMapping(value = {"/updateChainInfo"})
+    @ApiOperation(value = "更新链群信息")
+    public R updateChainInfo(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
+        try {
+                int z = zHrChainInfoService.updateChainInfo(zNodeTargetPercentInfo);
+                if (z==0){
+                    return R.error("更新出错了，请稍后重试！");
+                }
+                return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateChainInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+    @PostMapping(value = {"/delChainInfo"})
+    @ApiOperation(value = "删除链群信息")
+    public R delChainInfo(@RequestBody @Validated @ApiParam(value = "删除链群和目标", required = true) ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
+        try {
+            int z = zHrChainInfoService.deleteChainInfo(zNodeTargetPercentInfo.getId());
+            if (z==0){
+                return R.error("删除出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.delChainInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+    @GetMapping("getDepVCode")
+    @ApiOperation(value = "获取用户的部门编码")
+    public ZNodeTargetPercentInfo getDepVCode(Integer id) {
+        return this.zHrChainInfoService.queryByNodeId(id);
+    }
+
 }
