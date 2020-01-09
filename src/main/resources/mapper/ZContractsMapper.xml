@@ -158,7 +158,18 @@
         SELECT DISTINCT
           node.id,
           node.node_code AS nodeCode,
-          node.node_name AS nodeName,
+          IF(
+            t2.create_name IS NULL,
+            node.node_name,
+            (
+              CONCAT(
+                node.node_name,
+                '(',
+                t2.create_name,
+                ')'
+              )
+            )
+          ) AS nodeName,
           IFNULL(t2.`contract_name`, '-') AS contractName,
           IFNULL(t2.`factor_name`, '-') AS targetName,
           IFNULL(t2.`factor_value`, '-') AS targetValue,
@@ -180,6 +191,7 @@
               zc.`contract_name`,
               zc.`org_code`,
               zc.`org_name`,
+              zc.`create_name`,
               cf.`factor_name`,
               cf.`factor_value`,
               cf.`factor_unit`
