@@ -219,6 +219,7 @@
               JOIN z_contracts_factor cf
                 ON cf.`contract_id` = zc.`id`
             WHERE zc.parent_id = #{contractId}
+              AND zc.`status` = '1'
               AND zc.contract_type = '30') t2
             ON node.`node_code` = t2.org_code
     </select>
@@ -238,7 +239,7 @@
             t1.id
           FROM
             z_contracts t1
-          WHERE t1.contract_type = '20' AND t1.`parent_id` = #{contractId})
+          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId})
         ORDER BY xwName, factor_code,factor_type
     </select>
 
@@ -274,6 +275,7 @@
           FROM
             z_contracts t1
           WHERE t1.contract_type = '20'
+            AND t1.`status` = '1'
             AND t1.`parent_id` = #{contractId})
          GROUP BY factor_code;
     </select>
