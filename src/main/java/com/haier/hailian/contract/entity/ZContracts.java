@@ -122,6 +122,10 @@ public class ZContracts extends Model<ZContracts> {
     private String startDateStr;
     @TableField(exist = false)
     private String endDateStr;
+    @TableField(exist = false)
+    private String status2;//0 不可优化 1.可优化
+    @TableField(exist = false)
+    private String status3;//0 不可撤销 1.可撤销
 
     private String sharePercent;
 

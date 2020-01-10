@@ -177,6 +177,18 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
         List<ZContracts> list = contractsDao.selectContractList(queryDTO);
+        //查询还没有抢入、抢入未截止的合约
+        String contractIds = contractsDao.selectContractToUpdate()+",";
+        if(null != list && list.size() > 0){
+            for(ZContracts zContracts:list){
+                int id = zContracts.getId();
+                if(contractIds.indexOf(id+",")>0){
+                    zContracts.setStatus2("1");
+                }else {
+                    zContracts.setStatus2("0");
+                }
+            }
+        }
         return list;
     }
 
@@ -188,6 +200,22 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
         List<ZContracts> list = contractsDao.selectMyGrabContract(queryDTO);
+        if(null != list && list.size() > 0){
+            for(ZContracts zContracts:list){
+                Date endDate = zContracts.getEndDate();
+                Date joinTime = zContracts.getJoinTime();
+                if(joinTime.after(new Date())){
+                    zContracts.setStatus2("1");
+                }else {
+                    zContracts.setStatus2("0");
+                }
+                if(endDate.after(new Date())){
+                    zContracts.setStatus3("1");
+                }else {
+                    zContracts.setStatus3("0");
+                }
+            }
+        }
         return list;
     }
 
