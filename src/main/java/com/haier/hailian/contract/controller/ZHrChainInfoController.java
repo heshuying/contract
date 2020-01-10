@@ -47,8 +47,12 @@ public class ZHrChainInfoController {
      */
     @GetMapping("selectOne")
     @ApiOperation(value = "获取链群最小单元详细信息")
-    public ZNodeTargetPercentInfo selectOne(Integer id) {
-        return this.zHrChainInfoService.queryByNodeId(id);
+    public R selectOne(Integer id) {
+        try {
+            return R.ok().put("data", this.zHrChainInfoService.queryByNodeId(id));
+        } catch (Exception e) {
+            return R.error("系统异常，请稍后尝试！");
+        }
     }
 
     /**
@@ -59,8 +63,12 @@ public class ZHrChainInfoController {
      */
     @GetMapping("getInfo")
     @ApiOperation(value = "获取链群信息")
-    public ZHrChainInfoDto getInfo(Integer id) {
-        return this.zHrChainInfoService.queryAllById(id);
+    public R getInfo(Integer id) {
+        try {
+            return R.ok().put("data", this.zHrChainInfoService.queryAllById(id));
+        } catch (Exception e) {
+            return R.error("系统异常，请稍后尝试！");
+        }
     }
 
     /**
@@ -203,8 +211,13 @@ public class ZHrChainInfoController {
 
     @GetMapping("getDepVCode")
     @ApiOperation(value = "获取用户的部门编码")
-    public ZNodeTargetPercentInfo getDepVCode(Integer id) {
-        return this.zHrChainInfoService.queryByNodeId(id);
+    public String getDepVCode(String userCode) {
+        try {
+            return this.zHrChainInfoService.getDepVCode(userCode);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
