@@ -107,17 +107,17 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Transactional
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
-        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
-        if (zContracts ==null){
-            return null;
-        }
-        zReservePlanTeamworkDto.setParentId(zContracts.getId());
-        zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
-        List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
-        for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
-            zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
-            zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
-        }
+//        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
+//        if (zContracts ==null){
+//            return null;
+//        }
+//        zReservePlanTeamworkDto.setParentId(zContracts.getId());
+//        zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
+//        List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
+//        for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
+//            zReservePlanTeamworkDetail.setParentId(zReservePlanTeamworkDto.getId());
+//            zReservePlanTeamworkDao.insertDetail(zReservePlanTeamworkDetail);
+//        }
         //创建SimpleDateFormat对象实例并定义好转换格式
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
@@ -142,7 +142,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
-        zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
+        //zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
         return "保存成功";
     }
 
