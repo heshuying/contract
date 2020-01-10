@@ -456,6 +456,15 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
 
         }
+
+        //加入群组
+        ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code", contracts.getChainCode()));
+        if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())) {
+            String groupId = chainInfo.getGroupId();
+            String[] users = new String[]{sysUser.getEmpSn()};
+            IHaierUtil.joinGroup(groupId, users);
+        }
     }
 
     @Override
