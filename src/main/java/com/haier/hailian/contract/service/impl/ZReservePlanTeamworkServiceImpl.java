@@ -158,7 +158,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             String[] toBeStored = new String[userList.size()];
             userList.toArray(toBeStored);
             String user = IHaierUtil.getUserOpenId(toBeStored);
-            String groupId = IHaierUtil.getGroupId(user.split(","));
+            String groupId = IHaierUtil.getGroupId(user.split(","),zContracts.getContractName());
             ZContracts zContractTemp = new ZContracts();
             zContractTemp.setId(zContracts.getId());
             zContractTemp.setGroupId(groupId);

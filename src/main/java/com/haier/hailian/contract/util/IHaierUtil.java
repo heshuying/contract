@@ -180,7 +180,7 @@ public class IHaierUtil {
      * @param user
      * @return
      */
-    public static String getGroupId(String[] user) {
+    public static String getGroupId(String[] user,String lqName) {
         OkHttpClient client = new OkHttpClient();
         String userIds = new Gson().toJson(user);
         String accessToken = getAccessToken("TUW0n1TAW8FYkALRHBS7OfYFQP9GezvB");
@@ -188,7 +188,7 @@ public class IHaierUtil {
             return null;
         }
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\"协同预案交流群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":" + userIds + ",\"param\":{\"groupClass\":\"链群\"}}");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\""+lqName+"自驱动交互群\",\"currentUid\":\"5e030c81ed50999dad27824d\",\"userIds\":" + userIds + ",\"param\":{\"groupClass\":\"链群\"}}");
         Request request = new Request.Builder()
                 .url("https://i.haier.net/gateway/xtinterface/group/createGroup?accessToken=" + accessToken)
                 .post(body)
