@@ -162,7 +162,7 @@
     </select>
 
     <select id="selectContractsViewForCD" resultType="com.haier.hailian.contract.dto.ContractViewDataCD">
-        SELECT DISTINCT
+        SELECT
           node.id,
           node.node_code AS nodeCode,
           IF(
@@ -201,6 +201,7 @@
               zc.`org_code`,
               zc.`org_name`,
               zc.`create_name`,
+              cf.`factor_code`,
               cf.`factor_name`,
               cf.`factor_value`,
               cf.`factor_unit`
@@ -210,7 +211,7 @@
                 ON cf.`contract_id` = zc.`id`
             WHERE zc.parent_id = #{contractId}
               AND zc.contract_type = '30') t2
-            ON node.`node_code` = t2.org_code
+            ON node.`node_code` = t2.org_code AND node.target_code = t2.factor_code
     </select>
 
     <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">
