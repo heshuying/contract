@@ -156,7 +156,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
         targetBasic.setTargetPtCode(tOdsMinbu.getPtCode());
-        targetBasic.setTargetXwCategoryCode(tOdsMinbu.getXwType3Code());
+        targetBasic.setRoleCode(tOdsMinbu.getXwCode());
         return targetBasicDao.selectTarget(targetBasic);
     }
 
