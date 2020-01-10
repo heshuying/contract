@@ -36,6 +36,15 @@
         end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,xiaowei_code,create_code,
         create_name,create_time,org_code,org_name,org_type,group_id,open_valid
     </sql>
+    <select id="selectContractToUpdate" resultType="java.lang.String">
+        select GROUP_CONCAT(id) from z_contracts base
+        where contract_type=10
+        and status = '0'
+        and not EXISTS (
+            select 1 from z_contracts where
+                        parent_id=base.id and contract_type in ('20','30') and status = '1'
+        )
+    </select>
     <select id="selectByContractId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
