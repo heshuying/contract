@@ -456,6 +456,15 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
 
         }
+
+        //加入群组
+        ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code", contracts.getChainCode()));
+        if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())) {
+            String groupId = chainInfo.getGroupId();
+            String[] users = new String[]{sysUser.getEmpSn()};
+            IHaierUtil.joinGroup(groupId, users);
+        }
     }
 
     @Override
@@ -509,6 +518,14 @@ public class CDGrabServiceImpl implements CDGrabService {
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
 
+        if(!"1".equals(contracts.getStatus())){
+            throw new RException("未抢入成功不可以优化");
+        }
+
+        if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
+            throw new RException("已过结束时间不可以优化");
+        }
+
         contracts.setStatus("6"); //设置状态为已删除
         contractsDao.updateById(contracts);
 
@@ -530,6 +547,14 @@ public class CDGrabServiceImpl implements CDGrabService {
             throw new RException("合约不存在，合约id：" + contractId);
         }
 
+        if(!"1".equals(contracts.getStatus())){
+            throw new RException("未抢入成功不可以撤销");
+        }
+
+        if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
+            throw new RException("已过结束时间不可以撤销");
+        }
+
         contracts.setStatus("5"); // 设置为已撤销
         return contractsDao.updateById(contracts);
     }
@@ -544,6 +569,14 @@ public class CDGrabServiceImpl implements CDGrabService {
         ZContracts contracts = contractsDao.selectById(contractId);
         if(contracts == null){
             throw new RException("合约不存在，合约id：" + contractId);
+        }
+
+        if(!"1".equals(contracts.getStatus())){
+            throw new RException("未抢入成功不可以踢出");
+        }
+
+        if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
+            throw new RException("已过结束时间不可以踢出");
         }
 
         contracts.setStatus("3"); // 设置为已踢出
