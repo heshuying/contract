@@ -195,14 +195,14 @@ public class CDGrabServiceImpl implements CDGrabService {
                 for(PlanInfoDto planInfo : planInfoList){
                     ReservePlanResultDTO reservePlanDTO = new ReservePlanResultDTO();
                     BeanUtils.copyProperties(planInfo, reservePlanDTO);
-                    reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
-                    reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
-                    reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));
-                    reservePlanDTO.setEndTime(DateFormatUtil.format(planInfo.getEndTime(),DateFormatUtil.DATE_PATTERN));
-                    reservePlanDTO.setExecuter(planInfo.getExecuter());
-                    reservePlanDTO.setIsImportant(planInfo.getIsImportant());
-                    reservePlanDTO.setRemindTime(planInfo.getRemindTime());
-                    reservePlanDTO.setRemindType(planInfo.getRemindType());
+//                    reservePlanDTO.setCreateUserCode(planInfo.getCreateUserCode());
+//                    reservePlanDTO.setCreateUserName(planInfo.getCreateUserName());
+//                    reservePlanDTO.setStartTime(DateFormatUtil.format(planInfo.getStartTime(),DateFormatUtil.DATE_PATTERN));
+//                    reservePlanDTO.setEndTime(DateFormatUtil.format(planInfo.getEndTime(),DateFormatUtil.DATE_PATTERN));
+//                    reservePlanDTO.setExecuter(planInfo.getExecuter());
+//                    reservePlanDTO.setIsImportant(planInfo.getIsImportant());
+//                    reservePlanDTO.setRemindTime(planInfo.getRemindTime());
+//                    reservePlanDTO.setRemindType(planInfo.getRemindType());
                     List<PlanInfoDto> planInfoDetails = reservePlanDao.selectPlanInfoSub(String.valueOf(contracts.getId()), planInfo.getOrderType());
                     if(planInfoDetails != null){
                         for(PlanInfoDto planDetail : planInfoDetails){
