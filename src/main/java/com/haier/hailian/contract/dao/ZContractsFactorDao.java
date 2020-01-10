@@ -21,4 +21,11 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
 
     @Select("SELECT * FROM z_contracts_factor cf WHERE cf.`contract_id` = #{contractId} AND cf.`region_code` IS NOT NULL AND cf.`factor_type` = #{factorType};")
     List<ZContractsFactor> selectFactorForViewTY(String contractId, String factorType);
+
+    /**
+     * 根据举单ID查询链群目标
+     * @param contractId
+     * @return
+     */
+    List<ChainGroupTargetDTO> selectChainFactorByContractId(Integer contractId);
 }

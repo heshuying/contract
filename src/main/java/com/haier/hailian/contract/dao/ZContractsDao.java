@@ -1,10 +1,9 @@
 package com.haier.hailian.contract.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.haier.hailian.contract.entity.ZContractsFactor;
 
 import java.util.List;
 
@@ -96,4 +95,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * 获取市场抢入合约
      */
     Integer getContractSize2(String contractId);
+
+    ZContracts selectByContractId(Integer contractId);
 }

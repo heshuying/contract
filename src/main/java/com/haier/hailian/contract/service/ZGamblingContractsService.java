@@ -32,4 +32,6 @@ public interface ZGamblingContractsService {
     List<ZContracts> selectToGrabContract(QueryContractListDTO queryDTO);
 
     List<ZProductChain> selectProductSeries(QueryProductChainDTO dto);
+
+    GamblingContractDTO selectContractById(Integer contractId);
 }
