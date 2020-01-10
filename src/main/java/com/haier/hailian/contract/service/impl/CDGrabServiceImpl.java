@@ -526,6 +526,10 @@ public class CDGrabServiceImpl implements CDGrabService {
             throw new RException("已过结束时间不可以优化");
         }
 
+        if(contracts.getJoinTime() != null && new Date().getTime() > contracts.getJoinTime().getTime()){
+            throw new RException("已过抢入截止时间不可以优化");
+        }
+
         contracts.setStatus("6"); //设置状态为已删除
         contractsDao.updateById(contracts);
 
