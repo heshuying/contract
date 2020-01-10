@@ -18,4 +18,23 @@
         <result column="mesh_name" property="meshName" />
     </resultMap>
 
+    <resultMap id="ResultMap1" type="com.haier.hailian.contract.dto.ChainGroupTargetDTO">
+        <result column="factor_code" property="targetCode" />
+        <result column="factor_name" property="targetName" />
+        <result column="factor_unit" property="targetUnit" />
+        <result column="bottom" property="bottom" />
+        <result column="E2E" property="E2E" />
+        <result column="grab" property="grab" />
+    </resultMap>
+
+    <select id="selectChainFactorByContractId" resultMap="ResultMap1">
+        select factor_code,factor_name,factor_unit,MAX(CASE factor_type WHEN '01' THEN factor_value  END ) bottom,
+                MAX(CASE factor_type WHEN '02' THEN factor_value  END ) grab,
+                MAX(CASE factor_type WHEN '03' THEN factor_value  END ) E2E
+        from z_contracts_factor
+        where region_code is NULL
+        and contract_id = #{contractId}
+        GROUP BY factor_code;
+    </select>
+
 </mapper>

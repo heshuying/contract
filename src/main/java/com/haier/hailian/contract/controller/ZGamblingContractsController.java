@@ -8,10 +8,7 @@ import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,6 +87,12 @@ public class ZGamblingContractsController {
     }
 
 
+    @GetMapping(value = {"/selectContractById/{contractId}"})
+    @ApiOperation(value = "根据合约ID查询链群主抢单详情")
+    public R selectContractById(@PathVariable(value = "contractId") Integer contractId) {
+        GamblingContractDTO dto = gamblingContractsService.selectContractById(contractId);
+        return R.ok().put("data",dto);
+    }
 
 
 }
