@@ -79,6 +79,7 @@
                 </foreach>
             </if>
             and contract_type='10'
+            order by id desc
         </where>
     </select>
 
@@ -102,6 +103,7 @@
             and create_code = #{userCode}
             and status = '1'
             and contract_type in ('20','30')
+            order by id desc
         </where>
     </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
@@ -133,7 +135,7 @@
                 </foreach>
                 )
             and contract_type='10' and status = '0'
-
+            order by id desc
         </where>
     </select>
     <select id="selectKickedOutContract" resultMap="BaseResultMap">
@@ -160,6 +162,7 @@
             </foreach>
             )
             and contract_type='10' and status = '1'
+            order by id desc
         </where>
     </select>
 
