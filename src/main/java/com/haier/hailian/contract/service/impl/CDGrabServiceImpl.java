@@ -249,7 +249,8 @@ public class CDGrabServiceImpl implements CDGrabService {
                             .eq("org_code", contracts.getOrgCode())
                             .eq("contract_type", "30")
                             .ne("status", "5")
-                            .orderByAsc("status"));
+                            .ne("status", "3")
+                            .orderByAsc("id"));
             if(contractList == null){
                 return resultList;
             }
