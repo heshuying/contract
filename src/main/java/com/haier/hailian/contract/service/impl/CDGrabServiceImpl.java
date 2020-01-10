@@ -322,7 +322,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     reservePlanDetailDao.insert(planDetail);
 
                     // 调用ihaier的接口进行任务创建
-                    IhaierTask ihaierTask = new IhaierTask();
+                    /*IhaierTask ihaierTask = new IhaierTask();
                     if(StringUtils.isNotBlank(sysUser.getEmpSn())){
                         String executor = IHaierUtil.getUserOpenId(new String[]{sysUser.getEmpSn()});
                         ihaierTask.setExecutors(executor.split(","));
@@ -344,7 +344,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
                     plan.setTaskCode(taskId);
                     //更新taskID
-                    reservePlanDao.updateById(plan);
+                    reservePlanDao.updateById(plan);*/
                 }
                 index++;
             }
