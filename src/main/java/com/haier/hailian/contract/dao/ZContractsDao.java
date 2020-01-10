@@ -109,4 +109,10 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     String selectContractToUpdate();
 
+    /**
+     * 查询被踢出的、抢入已截止、在有效期内的合约
+     * @param dto
+     * @return
+     */
+    List<ZContracts> selectKickedOutContract(QueryContractListDTO dto);
 }
