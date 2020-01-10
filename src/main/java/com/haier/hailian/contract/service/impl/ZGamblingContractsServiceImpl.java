@@ -55,21 +55,35 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         //1.保存链群主抢单信息到合同主表
         ZContracts contracts = new ZContracts();
-        BeanUtils.copyProperties(dto,contracts);
-        contracts.setStartDate(sf.parse(dto.getStartDate()));
-        contracts.setEndDate(sf.parse(dto.getEndDate()));
-        contracts.setJoinTime(sf.parse(dto.getJoinTime()));
-        contracts.setContractType("10");
-        contracts.setStatus("0");
-        contracts.setCreateName(sysUser.getEmpName());
-        contracts.setCreateCode(sysUser.getEmpSn());
-        contracts.setCreateTime(new Date());
-        contracts.setXiaoweiCode(currentUser.getXwCode());
-        contracts.setOrgName(currentUser.getLittleXwName());
-        contracts.setOrgCode(currentUser.getLittleXwCode());
-        contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
-        contracts.setOpenValid(dto.getOpenValid());
-        contractsDao.insert(contracts);
+        if(null == dto.getId() || dto.getId() == 0){
+           //ID 为空时为新增
+            BeanUtils.copyProperties(dto,contracts);
+            contracts.setStartDate(sf.parse(dto.getStartDate()));
+            contracts.setEndDate(sf.parse(dto.getEndDate()));
+            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setContractType("10");
+            contracts.setStatus("0");
+            contracts.setCreateName(sysUser.getEmpName());
+            contracts.setCreateCode(sysUser.getEmpSn());
+            contracts.setCreateTime(new Date());
+            contracts.setXiaoweiCode(currentUser.getXwCode());
+            contracts.setOrgName(currentUser.getLittleXwName());
+            contracts.setOrgCode(currentUser.getLittleXwCode());
+            contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
+            contracts.setOpenValid(dto.getOpenValid());
+            contractsDao.insert(contracts);
+        }else{
+           //ID 不为0时，为修改
+            contracts = contractsDao.selectByContractId(dto.getId());
+            contracts.setStartDate(sf.parse(dto.getStartDate()));
+            contracts.setEndDate(sf.parse(dto.getEndDate()));
+            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setShareSpace(dto.getShareSpace());
+            contractsDao.updateById(contracts);
+            //修改时删除原有目标
+            factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",dto.getId()));
+            contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",dto.getId()));
+        }
         //2.保存链群目标到目标表
         List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
         for(ChainGroupTargetDTO chainGroupTarget:chainGroupTargetList){
@@ -109,14 +123,17 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         }
         //4 保存产品系列目标到合约产品表
         List<ContractProductDTO> productList = dto.getProductList();
-        for (ContractProductDTO productDTO : productList){
-            ZContractsProduct contractsProduct = new ZContractsProduct();
-            contractsProduct.setContractId(contracts.getId());
-            contractsProduct.setProductSeries(productDTO.getProductSeries());
-            contractsProduct.setQtyYear(productDTO.getQtyYear());
-            contractsProduct.setQtyMonth(productDTO.getQtyMonth());
-            contractsProductDao.insert(contractsProduct);
+        if(null != productList){
+            for (ContractProductDTO productDTO : productList){
+                ZContractsProduct contractsProduct = new ZContractsProduct();
+                contractsProduct.setContractId(contracts.getId());
+                contractsProduct.setProductSeries(productDTO.getProductSeries());
+                contractsProduct.setQtyYear(productDTO.getQtyYear());
+                contractsProduct.setQtyMonth(productDTO.getQtyMonth());
+                contractsProductDao.insert(contractsProduct);
+            }
         }
+
     }
 
     @Override
@@ -211,6 +228,71 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Override
     public List<ZProductChain> selectProductSeries(QueryProductChainDTO dto) {
         return productChainDao.selectList(new QueryWrapper<ZProductChain>().eq("chain_code",dto.getChainCode()));
+    }
+
+    @Override
+    public GamblingContractDTO selectContractById(Integer contractId) {
+        GamblingContractDTO dto = new GamblingContractDTO();
+        //1.查询抢单主表数据
+        ZContracts contracts = contractsDao.selectByContractId(contractId);
+        dto.setContractName(contracts.getContractName());
+        dto.setJoinTime(contracts.getJoinTimeStr());
+        dto.setStartDate(contracts.getStartDateStr());
+        dto.setEndDate(contracts.getEndDateStr());
+        //2.查询链群目标
+        List<ChainGroupTargetDTO> chainList = factorDao.selectChainFactorByContractId(contractId);
+        dto.setChainGroupTargetList(chainList);
+        //3.查询42市场的目标
+        List<ZContractsFactor> maketList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId).isNotNull("region_code").orderByAsc("id"));
+        List<MarketTargetDTO> marketTargetList = new ArrayList<>();
+        if(null != maketList && maketList.size()>0){
+            MarketTargetDTO marketTargetDTO = new MarketTargetDTO();
+            List<MarketTargetDTO2> targetList = new ArrayList<>();
+            String reginCode = "";
+            for(int i=0;i<maketList.size();i++){
+                ZContractsFactor zContractsFactor = maketList.get(i);
+                if(i==0){
+                    reginCode = zContractsFactor.getRegionCode();
+                }
+                if(reginCode.equals(zContractsFactor.getRegionCode())){
+                    MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
+                    marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
+                    marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
+                    marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
+                    marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                    targetList.add(marketTargetDTO2);
+                    marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
+                    marketTargetDTO.setXwName(zContractsFactor.getRegionName());
+                }else {
+                    marketTargetDTO.setTargetList(targetList);
+                    marketTargetList.add(marketTargetDTO);
+                    marketTargetDTO = new MarketTargetDTO();
+                    targetList = new ArrayList<>();
+                    reginCode = zContractsFactor.getRegionCode();
+                    MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
+                    marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
+                    marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
+                    marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
+                    marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                    targetList.add(marketTargetDTO2);
+                    marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
+                    marketTargetDTO.setXwName(zContractsFactor.getRegionName());
+                }
+            }
+            marketTargetDTO.setTargetList(targetList);
+            marketTargetList.add(marketTargetDTO);
+        }
+        dto.setMarketTargetList(marketTargetList);
+        //4.查询产品目标
+        List<ZContractsProduct> productList = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId));
+        List<ContractProductDTO> productDTOs = new ArrayList<>();
+        for(ZContractsProduct product : productList){
+            ContractProductDTO productDTO = new ContractProductDTO();
+            BeanUtils.copyProperties(product,productDTO);
+            productDTOs.add(productDTO);
+        }
+        dto.setProductList(productDTOs);
+        return dto;
     }
 
 

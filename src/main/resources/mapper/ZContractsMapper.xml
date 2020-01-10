@@ -36,6 +36,12 @@
         end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,xiaowei_code,create_code,
         create_name,create_time,org_code,org_name,org_type,group_id,open_valid
     </sql>
+    <select id="selectByContractId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where id = #{contractId}
+    </select>
     <select id="selectContractList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
