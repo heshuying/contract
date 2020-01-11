@@ -68,9 +68,7 @@
             <if test="targetLine != null and targetLine != ''">
                 and target_line = #{targetLine}
             </if>
-            <if test="sharePercent != null and sharePercent != ''">
-                and share_percent = #{sharePercent}
-            </if>
+                and share_percent is not null
         </where>
     </select>
 
@@ -111,7 +109,9 @@
             <if test="targetLine != null and targetLine != ''">
                 target_line = #{targetLine},
             </if>
-            and share_percent is not null
+           <if test="sharePercent != null and sharePercent != ''">
+                share_percent = #{sharePercent},
+            </if>
         </set>
         where id = #{id}
     </update>
