@@ -57,7 +57,7 @@ public class CDGrabController {
 //            if(target.getTargetTo().equals("1") && target.getChainGrabGoal().compareTo(target.getChainGoal()) < 0){
 //                return R.error("抢单目标需要大于底线目标");
 //            }else if(target.getTargetTo().equals("0") && target.getChainGrabGoal().compareTo(target.getChainGoal()) > 0){
-//                return R.error("抢单目标需要小于底线目标");
+//                return R.error("抢单目标需要小于底线目标");  
 //            }
 //        }
 
