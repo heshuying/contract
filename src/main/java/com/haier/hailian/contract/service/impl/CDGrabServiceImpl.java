@@ -518,17 +518,14 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
-
         if(!"1".equals(contracts.getStatus())){
-            throw new RException("未抢入成功不可以优化");
+            throw new RException("优化失败：未抢入成功不可以优化");
         }
-
         if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
-            throw new RException("已过结束时间不可以优化");
+            throw new RException("优化失败：已过结束时间不可以优化");
         }
-
         if(contracts.getJoinTime() != null && new Date().getTime() > contracts.getJoinTime().getTime()){
-            throw new RException("已过抢入截止时间不可以优化");
+            throw new RException("优化失败：已过抢入截止时间不可以优化");
         }
 
         contracts.setStatus("6"); //设置状态为已删除
@@ -553,11 +550,10 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
 
         if(!"1".equals(contracts.getStatus())){
-            throw new RException("未抢入成功不可以撤销");
+            throw new RException("撤销失败：未抢入成功不可以撤销");
         }
-
         if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
-            throw new RException("已过结束时间不可以撤销");
+            throw new RException("撤销失败：已过结束时间不可以撤销");
         }
 
         contracts.setStatus("5"); // 设置为已撤销
@@ -575,13 +571,11 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts == null){
             throw new RException("合约不存在，合约id：" + contractId);
         }
-
         if(!"1".equals(contracts.getStatus())){
-            throw new RException("未抢入成功不可以踢出");
+            throw new RException("踢出失败：未抢入成功不可以踢出");
         }
-
         if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
-            throw new RException("已过结束时间不可以踢出");
+            throw new RException("踢出失败：已过合约结束时间，所以踢出失败。");
         }
 
         contracts.setStatus("3"); // 设置为已踢出
