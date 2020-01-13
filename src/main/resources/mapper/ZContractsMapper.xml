@@ -154,7 +154,7 @@
             and org_code = #{littleXwCode}
             )
             and NOT EXISTS (
-            select 1 from z_contractsn
+            select 1 from z_contracts
             where parent_id=base.id and contract_type in ('20','30') and status = '1'
             and org_code = #{littleXwCode}
             )
