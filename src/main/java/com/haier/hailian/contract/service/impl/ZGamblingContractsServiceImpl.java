@@ -227,36 +227,29 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         String userCode = sysUser.getEmpSn();
         //查询用户所属的最小作战单元
-        List<TOdsMinbuEmp> empList = tOdsMinbuEmpDao.selectList(new QueryWrapper<TOdsMinbuEmp>().eq("littleEmpsn", userCode));
-        if(null != empList && empList.size() > 0 ){
-            String xwCodeStr = "";
-            //查询最小作战单元所属的链群
-            for(TOdsMinbuEmp emp:empList){
-                xwCodeStr += emp.getLittleXwCode()+",";
+        String xwCode = sysUser.getMinbu().getLittleXwCode();
+        List<ZNodeTargetPercentInfo> chainList = nodeTargetPercentInfoDao.selectChainByLittleXwCode(xwCode);
+        //查询所属链群可抢入的合约
+        if(null != chainList && chainList.size()>0){
+            String chainStr = "";
+            for(ZNodeTargetPercentInfo percentInfo:chainList){
+                chainStr += percentInfo.getLqCode()+",";
             }
-            String[] xwCode = xwCodeStr.split(",");
-            List<ZNodeTargetPercentInfo> chainList = nodeTargetPercentInfoDao.selectChainByLittleXwCode(xwCode);
-            //查询所属链群可抢入的合约
-            if(null != chainList && chainList.size()>0){
-                String chainStr = "";
-                for(ZNodeTargetPercentInfo percentInfo:chainList){
-                    chainStr += percentInfo.getLqCode()+",";
-                }
-                String[] chainCode = chainStr.split(",");
-                dto.setStatus("0");
-                dto.setChainCodeList(chainCode);
-                dto.setUserCode(userCode);
-                dto.setLittleXwCode(xwCode);
-                //查询抢入未截止的可抢合约
-                contractsList = contractsDao.selectToGrabContract(dto);
-                //查询抢入已截止但是本作战单元被踢出的可抢合约
-                List<ZContracts> list = contractsDao.selectKickedOutContract(dto);
-                if(null == contractsList) contractsList = new ArrayList<>();
-                if(null != list && list.size()>0){
-                    contractsList.addAll(list);
-                }
+            String[] chainCode = chainStr.split(",");
+            dto.setStatus("0");
+            dto.setChainCodeList(chainCode);
+            dto.setUserCode(userCode);
+            dto.setLittleXwCode(xwCode);
+            //查询抢入未截止的可抢合约
+            contractsList = contractsDao.selectToGrabContract(dto);
+            //查询抢入已截止但是本作战单元被踢出的可抢合约
+            List<ZContracts> list = contractsDao.selectKickedOutContract(dto);
+            if(null == contractsList) contractsList = new ArrayList<>();
+            if(null != list && list.size()>0){
+                contractsList.addAll(list);
             }
         }
+
         return contractsList;
     }
 

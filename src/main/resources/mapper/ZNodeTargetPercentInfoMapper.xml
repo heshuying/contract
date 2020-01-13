@@ -220,11 +220,7 @@
         select
         id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
         FROM z_node_target_percent_info
-        WHERE node_code in
-        <foreach collection="xwCode" open="(" close=")" separator=","
-                 item="xwCode" index="i">
-            #{xwCode}
-        </foreach>
+        WHERE node_code = #{xwCode}
     </select>
 
 </mapper>

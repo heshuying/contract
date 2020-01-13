@@ -42,7 +42,7 @@ public class CDGrabController {
             data = cdGrabService.queryCDGrabInfo(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单页面查询发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
         return R.ok().put("data",data);
     }
@@ -57,7 +57,7 @@ public class CDGrabController {
 //            if(target.getTargetTo().equals("1") && target.getChainGrabGoal().compareTo(target.getChainGoal()) < 0){
 //                return R.error("抢单目标需要大于底线目标");
 //            }else if(target.getTargetTo().equals("0") && target.getChainGrabGoal().compareTo(target.getChainGoal()) > 0){
-//                return R.error("抢单目标需要小于底线目标");
+//                return R.error("抢单目标需要小于底线目标");  
 //            }
 //        }
 
@@ -69,7 +69,7 @@ public class CDGrabController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单保存发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
         return R.ok().put("data","");
     }
@@ -94,7 +94,7 @@ public class CDGrabController {
             data = cdGrabService.queryCDGrabView(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
         return R.ok().put("data",data);
     }
@@ -110,7 +110,7 @@ public class CDGrabController {
             cdGrabService.updateCancelGrab(String.valueOf(requestDto.getContractId()));
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单撤销更新发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
 
         return R.ok().put("data","");
@@ -127,7 +127,7 @@ public class CDGrabController {
             cdGrabService.updateKickOff(String.valueOf(requestDto.getContractId()));
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点踢出更新发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
 
         return R.ok().put("data","");
@@ -141,7 +141,7 @@ public class CDGrabController {
             data = cdGrabService.queryCDGrabHistoryView(requestDto);
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("创单节点抢单查看页面发生异常：" + e.getMessage());
+            return R.error(e.getMessage());
         }
         return R.ok().put("data",data);
     }

@@ -128,11 +128,7 @@
                 </foreach>
             </if>
             and not EXISTS (select 1 from z_contracts where
-                parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code in
-                <foreach collection="littleXwCode" open="(" close=")" separator=","
-                         item="littleXwCode" index="i">
-                    #{littleXwCode}
-                </foreach>
+                parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code = #{littleXwCode}
                 )
             and contract_type='10' and status = '0'
             order by id desc
@@ -155,11 +151,12 @@
             and EXISTS (
             select 1 from z_contracts
             where parent_id=base.id and contract_type in ('20','30') and status = '3'
-            and org_code in
-            <foreach collection="littleXwCode" open="(" close=")" separator=","
-                     item="littleXwCode" index="i">
-                #{littleXwCode}
-            </foreach>
+            and org_code = #{littleXwCode}
+            )
+            and NOT EXISTS (
+            select 1 from z_contracts
+            where parent_id=base.id and contract_type in ('20','30') and status = '1'
+            and org_code = #{littleXwCode}
             )
             and contract_type='10' and status = '1'
             order by id desc
