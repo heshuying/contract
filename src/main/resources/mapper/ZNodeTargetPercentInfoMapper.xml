@@ -68,7 +68,7 @@
             <if test="targetLine != null and targetLine != ''">
                 and target_line = #{targetLine}
             </if>
-            and share_percent is not null
+                and share_percent is not null
         </where>
     </select>
 

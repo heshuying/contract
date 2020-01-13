@@ -177,6 +177,18 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
         List<ZContracts> list = contractsDao.selectContractList(queryDTO);
+        //查询还没有抢入、抢入未截止的合约
+        String contractIds = contractsDao.selectContractToUpdate()+",";
+        if(null != list && list.size() > 0){
+            for(ZContracts zContracts:list){
+                int id = zContracts.getId();
+                if(contractIds.indexOf(id+",")>0){
+                    zContracts.setStatus2("1");
+                }else {
+                    zContracts.setStatus2("0");
+                }
+            }
+        }
         return list;
     }
 
@@ -188,6 +200,22 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
         List<ZContracts> list = contractsDao.selectMyGrabContract(queryDTO);
+        if(null != list && list.size() > 0){
+            for(ZContracts zContracts:list){
+                Date endDate = zContracts.getEndDate();
+                Date joinTime = zContracts.getJoinTime();
+                if(joinTime.after(new Date())){
+                    zContracts.setStatus2("1");
+                }else {
+                    zContracts.setStatus2("0");
+                }
+                if(endDate.after(new Date())){
+                    zContracts.setStatus3("1");
+                }else {
+                    zContracts.setStatus3("0");
+                }
+            }
+        }
         return list;
     }
 
@@ -219,7 +247,14 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 dto.setChainCodeList(chainCode);
                 dto.setUserCode(userCode);
                 dto.setLittleXwCode(xwCode);
+                //查询抢入未截止的可抢合约
                 contractsList = contractsDao.selectToGrabContract(dto);
+                //查询抢入已截止但是本作战单元被踢出的可抢合约
+                List<ZContracts> list = contractsDao.selectKickedOutContract(dto);
+                if(null == contractsList) contractsList = new ArrayList<>();
+                if(null != list && list.size()>0){
+                    contractsList.addAll(list);
+                }
             }
         }
         return contractsList;
@@ -239,11 +274,13 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         dto.setJoinTime(contracts.getJoinTimeStr());
         dto.setStartDate(contracts.getStartDateStr());
         dto.setEndDate(contracts.getEndDateStr());
+        dto.setShareSpace(contracts.getShareSpace());
+        dto.setChainCode(contracts.getChainCode());
         //2.查询链群目标
         List<ChainGroupTargetDTO> chainList = factorDao.selectChainFactorByContractId(contractId);
         dto.setChainGroupTargetList(chainList);
         //3.查询42市场的目标
-        List<ZContractsFactor> maketList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId).isNotNull("region_code").orderByAsc("id"));
+        List<ZContractsFactor> maketList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId).isNotNull("region_code").orderByAsc("region_code").orderByAsc("factor_code"));
         List<MarketTargetDTO> marketTargetList = new ArrayList<>();
         if(null != maketList && maketList.size()>0){
             MarketTargetDTO marketTargetDTO = new MarketTargetDTO();

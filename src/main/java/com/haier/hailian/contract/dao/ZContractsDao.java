@@ -96,5 +96,23 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     Integer getContractSize2(String contractId);
 
+    /**
+     * 根据合约ID查询合约详情
+     * @param contractId
+     * @return
+     */
     ZContracts selectByContractId(Integer contractId);
+
+    /**
+     * 查询未抢入、可优化的合约ID
+     * @return
+     */
+    String selectContractToUpdate();
+
+    /**
+     * 查询被踢出的、抢入已截止、在有效期内的合约
+     * @param dto
+     * @return
+     */
+    List<ZContracts> selectKickedOutContract(QueryContractListDTO dto);
 }
