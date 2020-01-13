@@ -77,7 +77,7 @@ public class TalkToMeController {
                 return R.ok().put("data", z);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.savePlan,", e);
-            return R.error("系统异常，请稍后尝试！");
+            return R.error("操作出问题了，请联系管理员！");
         }
     }
 

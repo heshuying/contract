@@ -36,6 +36,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private TargetBasicDao targetBasicDao;
     @Resource
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
+    //hr发版后放开
+//    @Reference(version = "ehr2.0", registry = "registry2", check = false)
+//    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
+//    ChainGroupClient chainGroupClient;
 
     /**
      * 通过ID查询单条数据
@@ -182,6 +186,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (!name.contains("链群")) {
             name = name + "链群";
         }
+        //hr接口获取编码
+//        String code = chainGroupClient.getChainGroupCode(name);
+
         zHrChainInfo.setChainCode(chainCode);
         zHrChainInfo.setChainPtCode(currentUser.getPtCode());
         zHrChainInfo.setMasterCode(sysUser.getEmpSn());

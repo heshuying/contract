@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.entity;
 
+import com.google.gson.JsonObject;
 import lombok.Data;
 
 /**
@@ -34,5 +35,5 @@ public class IhaierTask {
     //任务创建者
     private String createJobNo;
 
-    private String extData;
+    private JsonObject extData;
 }

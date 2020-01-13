@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * (ZHrChainInfo)实体类
@@ -39,5 +40,6 @@ public class ZHrChainInfo implements Serializable {
     private String groupId;
     //定位
     private String fixedPosition;
+    private Date createDate;
 
 }

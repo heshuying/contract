@@ -1,6 +1,8 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZReservePlanTeamworkDao;
@@ -145,17 +147,23 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
         ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
-        ihaierTask.setExtData("{" +
+        String extData = "{" +
                 "        \"searchKey\": \"并联协同预案\"," +
                 "        \"jsonData\": {" +
                 "            \"systemSource\": \""+zReservePlanTeamworkDto.getProblemChannel()+"\"," +
                 "            \"problemSource\": \""+zReservePlanTeamworkDto.getProblemType()+"\"," +
                 "            \"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
+                "            \"problemId\": \""+zReservePlanTeamworkDto.getProblemCode()+"\"," +
                 "            \"problem\": \""+zReservePlanTeamworkDto.getProblemContent()+"\"" +
                 "        }" +
-                "    }");
-
+                "    }";
+        JsonParser parse = new JsonParser();  //创建json解析器
+        JsonObject json = (JsonObject) parse.parse(extData);
+        ihaierTask.setExtData(json);
         String taskId = IHaierUtil.createTask(new Gson().toJson(ihaierTask));
+        if (taskId == null){
+            return "保存失败,并联协同群组不存在！";
+        }
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
         zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
