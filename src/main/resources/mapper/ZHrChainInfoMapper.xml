@@ -63,6 +63,9 @@
             <if test="chainPtCode != null and chainPtCode != ''">
                 and chain_pt_code = #{chainPtCode}
             </if>
+            <if test="groupId != null and groupId != ''">
+                and group_id = #{groupId}
+            </if>
             <if test="deleted != null">
                 and deleted = #{deleted}
             </if>

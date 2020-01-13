@@ -226,8 +226,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         codeList.add(sysUser.getEmpSn());
         String[] toBeStored = new String[codeList.size()];
         codeList.toArray(toBeStored);
-        String user = IHaierUtil.getUserOpenId(toBeStored);
-        String groupId = IHaierUtil.getGroupId(user.split(","),name);
+        String groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
         //更新链群的群组ID字段
         ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
         zHrChainInfo1.setId(zHrChainInfo.getId());

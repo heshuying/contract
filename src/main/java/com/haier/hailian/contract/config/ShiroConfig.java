@@ -44,12 +44,12 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> filterMap = new LinkedHashMap<>();
-
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
         filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/zHrChainInfo/searchUsers", "anon");
+        filterMap.put("/zHrChainInfo/getDepVCode", "anon");
         filterMap.put("/talk/getA", "anon");
         filterMap.put("/talk/savePlan", "anon");
         filterMap.put("/test/**", "anon");

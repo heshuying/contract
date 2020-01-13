@@ -2,12 +2,10 @@ package com.haier.hailian.contract.service.impl;
 
 import com.google.gson.Gson;
 import com.haier.hailian.contract.dao.ZContractsDao;
+import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZReservePlanTeamworkDao;
 import com.haier.hailian.contract.dto.ZReservePlanTeamworkDto;
-import com.haier.hailian.contract.entity.IhaierTask;
-import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
-import com.haier.hailian.contract.entity.ZReservePlanTeamworkDetail;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +32,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     private ZReservePlanTeamworkDao zReservePlanTeamworkDao;
     @Resource
     private ZContractsDao zContractsDao;
+    @Resource
+    private ZHrChainInfoDao zHrChainInfoDao;
 
     /**
      * 通过ID查询单条数据
@@ -106,12 +106,18 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Override
     @Transactional
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
-        //查询对应的合约ID
-        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
-        if (zContracts ==null){
-            return null;
+//        //查询对应的合约ID
+//        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
+//        if (zContracts ==null){
+//            return null;
+//        }
+//        zReservePlanTeamworkDto.setParentId(zContracts.getId());
+        ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
+        zHrChainInfo.setGroupId(zReservePlanTeamworkDto.getGroupId());
+        List<ZHrChainInfo> zHrChainInfos = zHrChainInfoDao.queryAll(zHrChainInfo);
+        if (zHrChainInfos.size()==0){
+            return "保存失败，没有找到相应的链群！";
         }
-        zReservePlanTeamworkDto.setParentId(zContracts.getId());
         zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
         List<ZReservePlanTeamworkDetail> details = zReservePlanTeamworkDto.getDetails();
         for (ZReservePlanTeamworkDetail zReservePlanTeamworkDetail : details) {
@@ -121,16 +127,16 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         //创建SimpleDateFormat对象实例并定义好转换格式
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
+
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
-        String executors = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getExecuter().split(","));
-        ihaierTask.setExecutors(executors.split(","));
-        if(!StringUtils.isEmpty(zReservePlanTeamworkDto.getTeamworker())){
-            String ccs = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getTeamworker().split(","));
-            ihaierTask.setCcs(ccs.split(","));
+        if (!StringUtils.isBlank(zReservePlanTeamworkDto.getExecuter())){
+            ihaierTask.setExecutors(zReservePlanTeamworkDto.getExecuter().split(","));
         }
-        String oid = IHaierUtil.getUserOpenId(zReservePlanTeamworkDto.getCreateUserCode().split(","));
-        ihaierTask.setOpenId(oid);
+        if(!StringUtils.isBlank(zReservePlanTeamworkDto.getTeamworker())){
+            ihaierTask.setCcs(zReservePlanTeamworkDto.getTeamworker().split(","));
+        }
+        ihaierTask.setCreateJobNo(zReservePlanTeamworkDto.getCreateUserCode());
         ihaierTask.setContent(zReservePlanTeamworkDto.getDetails().get(0).getContent());
         ihaierTask.setEndDate(date.getTime());
         ihaierTask.setImportant(Integer.parseInt(zReservePlanTeamworkDto.getIsImportant()));
@@ -139,7 +145,17 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
         ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
-        String taskId = IHaierUtil.getTaskId(new Gson().toJson(ihaierTask));
+        ihaierTask.setExtData("{" +
+                "        \"searchKey\": \"并联协同预案\"," +
+                "        \"jsonData\": {" +
+                "            \"systemSource\": \""+zReservePlanTeamworkDto.getProblemChannel()+"\"," +
+                "            \"problemSource\": \""+zReservePlanTeamworkDto.getProblemType()+"\"," +
+                "            \"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
+                "            \"problem\": \""+zReservePlanTeamworkDto.getProblemContent()+"\"" +
+                "        }" +
+                "    }");
+
+        String taskId = IHaierUtil.createTask(new Gson().toJson(ihaierTask));
         zReservePlanTeamworkDto.setTaskCode(taskId);
         //更新taskID
         zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);

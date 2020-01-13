@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -390,5 +391,117 @@ public class IHaierUtil {
         return null;
     }
 
+
+
+
+
+    //#########################################################################################################################
+    //##########################################        新的逻辑开始       ######################################################
+    //#########################################################################################################################
+
+    /**
+     * 获取新的token的接口
+     *
+     * @return
+     */
+    private static String getNewAccessToken() {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"appId\" :\"interaction\",\n           \"appSecret\" :\"NfuNMqncAnjeernl\",\n           \"scopes\":[\"link_group\"]}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/oauth2/getSysAccessToken")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Host", "i.haier.net")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("cache-control", "no-cache")
+                .build();
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            JsonObject result = json.get("data").getAsJsonObject();
+            return result.get("accessToken").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 创建群组
+     *
+     * @param user
+     * @return
+     */
+    public static String createGroup(String[] user,String lqName,String lqCode) {
+        OkHttpClient client = new OkHttpClient();
+        String userIds = StringUtils.join(user, ",");
+        String accessToken = getNewAccessToken();
+        if (accessToken == null) {
+            return null;
+        }
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\""+lqName+"自驱动交互群\",\"adminJobNo\":\"robot001\",\"needDeal\":" + userIds + ",\"banner\":\"链群\",\"source\":\"690\",\"linkId\":\""+lqCode+"\"}");
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/SecondProject/interaction/createLinkGroup?accessToken=" + accessToken)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .addHeader("Postman-Token", "920ddce3-c447-4690-a5c2-7c9301bc1fcc")
+                .build();
+
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            if (json.get("success").getAsBoolean()) {
+                JsonObject result = json.get("data").getAsJsonObject();
+                return result.get("groupId").getAsString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * 返回创建任务的任务ID
+     *
+     * @param ihaierTask
+     * @return
+     */
+    public static String createTask(String ihaierTask) {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, ihaierTask);
+        String accessToken = getNewAccessToken();
+        if (accessToken == null) {
+            return null;
+        }
+        Request request = new Request.Builder()
+                .url("https://i.haier.net/gateway/SecondProject/interaction/createLinkTask?accessToken=" + accessToken)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "*/*")
+                .addHeader("cache-control", "no-cache")
+                .build();
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            Response response = client.newCall(request).execute();
+            JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
+            if (json.get("success").getAsBoolean()){
+                JsonObject result = json.get("data").getAsJsonObject();
+                return result.get("taskId").getAsString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

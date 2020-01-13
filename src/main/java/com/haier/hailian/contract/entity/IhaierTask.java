@@ -31,4 +31,8 @@ public class IhaierTask {
     private String channel;
     //自渠道
     private String createChannel;
+    //任务创建者
+    private String createJobNo;
+
+    private String extData;
 }
