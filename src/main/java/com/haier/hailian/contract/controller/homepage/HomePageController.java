@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by liuyq 2019年12月17日 14:32:15
  */
-@Api(value = "首页相关接口", tags = {"首页相关接口"})
+@Api(value = "对接外部相关接口", tags = {"对接外部相关接口"})
 @RestController
 @Slf4j
 public class HomePageController {
@@ -63,7 +63,9 @@ public class HomePageController {
     public R getContractData(@RequestBody DataInfo dataInfo) {
         try{
             List<Map<String , Object>> list = new ArrayList<>();
-            List<ZHrChainInfo> chainInfoList = zHrChainInfoService.queryAll(new ZHrChainInfo());
+            ZHrChainInfo chainInfo = new ZHrChainInfo();
+            chainInfo.setDeleted(0);
+            List<ZHrChainInfo> chainInfoList = zHrChainInfoService.queryAll(chainInfo);
             for(ZHrChainInfo zHrChainInfo : chainInfoList){
                 dataInfo.setChainCode(zHrChainInfo.getChainCode());
                 Map<String,Object> res = homePageService.getContractData(dataInfo);
