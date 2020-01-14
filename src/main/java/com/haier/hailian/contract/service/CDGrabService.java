@@ -26,5 +26,7 @@ public interface CDGrabService {
 
     Integer updateCancelGrab(String contractId);
 
+    void checkBanchCancel(String[] idArray);
+
     Integer updateKickOff(String contractId);
 }
