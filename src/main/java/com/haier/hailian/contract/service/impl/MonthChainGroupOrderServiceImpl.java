@@ -34,4 +34,9 @@ public class MonthChainGroupOrderServiceImpl extends ServiceImpl<MonthChainGroup
     public List<MeshGrabEntity> sumStruMeshGrabIncome(TyMasterGrabQueryDto queryDto) {
         return baseMapper.sumStruMeshGrabIncome(queryDto);
     }
+
+    @Override
+    public List<MeshGrabEntity> queryMeshE2EIncome(TyMasterGrabQueryDto queryDto) {
+        return baseMapper.queryMeshE2EIncome(queryDto);
+    }
 }

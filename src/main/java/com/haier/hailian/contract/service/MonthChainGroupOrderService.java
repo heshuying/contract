@@ -28,5 +28,12 @@ public interface MonthChainGroupOrderService extends IService<MonthChainGroupOrd
 
     List<MeshGrabEntity> queryMeshGrabIncome(TyMasterGrabQueryDto queryDto);
 
+    /**
+     * 查询网格E2E抢单收入
+     * @param queryDto
+     * @return
+     */
+    List<MeshGrabEntity> queryMeshE2EIncome(TyMasterGrabQueryDto queryDto);
+
     List<MeshGrabEntity> sumStruMeshGrabIncome(TyMasterGrabQueryDto queryDto);
 }
