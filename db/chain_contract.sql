@@ -1431,5 +1431,6 @@ CREATE TABLE `month_retail` (
   `add1` varchar(255) DEFAULT NULL COMMENT '备用字段1',
   `add2` varchar(255) DEFAULT NULL COMMENT '备用字段2',
   `add3` varchar(255) DEFAULT '' COMMENT '备用字段3',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 comment 'EDW网格E2E数据';
