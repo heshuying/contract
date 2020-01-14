@@ -181,6 +181,12 @@
 <!--			<version>3.6.0.9-SNAPSHOT</version>-->
 <!--		</dependency>-->
 		<!--hr:end-->
+		<!--excel-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.17</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
