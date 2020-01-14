@@ -10,5 +10,9 @@
         <result column="model_code" property="modelCode" />
         <result column="chain_code" property="chainCode" />
     </resultMap>
+    <select id="selectSeriesByChainCode" resultMap="BaseResultMap">
+        select DISTINCT product_series from z_product_chain
+        where chain_code = #{chainCode}
+    </select>
 
 </mapper>
