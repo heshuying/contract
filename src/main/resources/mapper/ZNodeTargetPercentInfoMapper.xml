@@ -109,7 +109,7 @@
             <if test="targetLine != null and targetLine != ''">
                 target_line = #{targetLine},
             </if>
-            <if test="sharePercent != null and sharePercent != ''">
+           <if test="sharePercent != null and sharePercent != ''">
                 share_percent = #{sharePercent},
             </if>
         </set>

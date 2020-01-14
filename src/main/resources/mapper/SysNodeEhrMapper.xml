@@ -113,13 +113,18 @@
     <!--通过实体作为筛选条件查询-->
     <select id="searchUsersByKeyWords" resultMap="SysNodeEhrMap">
         select
-        id, xwCode, xwName, nodeCode, nodeName, nodeManagerCode, nodeManagerName, nodeManagerPos, data_type
-        from chain_contract.sys_node_ehr
+            empSn as nodeManagerCode,
+            empName as nodeManagerName,
+            posCode as nodeManagerPos,
+            deptCode as xwCode,
+            deptName as xwName,
+            nodeCode as nodeCode,
+            nodeName as nodeName
+        from chain_contract.sys_employee_ehr
         where nodeName  like CONCAT('%', #{keyWords}, '%')
-        or nodeManagerCode like CONCAT('%', #{keyWords}, '%')
+        or empSn like CONCAT('%', #{keyWords}, '%')
         or nodeCode like CONCAT('%', #{keyWords}, '%')
-        or xwName like CONCAT('%', #{keyWords}, '%')
-        or nodeManagerName like CONCAT('%', #{keyWords}, '%')
+        or empName like CONCAT('%', #{keyWords}, '%')
     </select>
 
 </mapper>

@@ -216,7 +216,8 @@ public class HomePageImpl implements HomePageService {
         List<ChainDataInfo> list = new ArrayList<>();
 
         // 链群组织信息
-        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>());
+        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>()
+                .eq("deleted" , 0));
 
         for(ZHrChainInfo zHrChainInfo : chainInfoList){
             ChainDataInfo chainDataInfo = new ChainDataInfo();

@@ -493,7 +493,34 @@ public class GrabServiceImpl implements GrabService {
         }
         log.info("========刷新合约状态=====");
         log.info("数据：{}", updateList);
-        contractsService.updateBatchById(updateList);
+        if(updateList!=null&&updateList.size()>0) {
+            contractsService.updateBatchById(updateList);
+        }
+        expiredContract();
+    }
+
+    private void expiredContract(){
+        //截止抢入时间 仍然处于抢入中的合约
+        List<ZContracts> list=contractsService.list(new QueryWrapper<ZContracts>()
+                .eq("contract_type","10")
+                .eq("status","1")
+                .lt("end_date",new Date())
+        );
+        List<ZContracts> updateList=new ArrayList<>();
+
+        for (ZContracts contract:list) {
+            ZContracts updateContract=new ZContracts();
+            updateContract.setId(contract.getId());
+            updateContract.setStatus("7");
+
+            updateList.add(updateContract);
+        }
+        log.info("========刷新合约过期状态=====");
+        log.info("数据：{}", updateList);
+        if(updateList!=null&&updateList.size()>0) {
+            contractsService.updateBatchById(updateList);
+        }
+
 
     }
 
