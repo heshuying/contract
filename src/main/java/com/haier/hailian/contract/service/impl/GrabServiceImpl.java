@@ -268,7 +268,7 @@ public class GrabServiceImpl implements GrabService {
         if(StringUtils.isNoneBlank(tip)){
             //存在抢入小于目标
             tyMasterGrabChainInfoDto.setCanSubmit(false);
-            tyMasterGrabChainInfoDto.setErrorMsg("抢单"+tip+"指标小于底线值");
+            tyMasterGrabChainInfoDto.setErrorMsg("抢单"+tip+"低于底线");
         }
 
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
