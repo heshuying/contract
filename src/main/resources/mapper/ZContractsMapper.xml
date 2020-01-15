@@ -324,6 +324,7 @@
         and not EXISTS (select 1 from z_contracts where
         parent_id=base.id and contract_type='20' and org_code=#{loginBuCode}
         )
+        order by id desc
     </select>
 
 

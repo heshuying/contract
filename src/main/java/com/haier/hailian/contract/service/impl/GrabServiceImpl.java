@@ -103,6 +103,7 @@ public class GrabServiceImpl implements GrabService {
                 .le(StringUtils.isNoneBlank(queryDto.getEndDate()),
                         "end_date",
                         DateFormatUtil.stringToDate(queryDto.getEndDate(),DateFormatUtil.DATE_TIME_PATTERN))
+                .orderByDesc("id")
         );
 
         for ( ZContracts contract: contracts
