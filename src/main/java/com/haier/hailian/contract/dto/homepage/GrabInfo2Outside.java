@@ -51,4 +51,5 @@ public class GrabInfo2Outside {
 
     private List<PlanTeamWorkInfo> planTeamWorkInfos;
 
+    private String contractType;
 }

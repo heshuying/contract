@@ -171,26 +171,37 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setCreateChannel(zReservePlanTeamworkDto.getGroupId());
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
         ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
+        String[] systemSource = zReservePlanTeamworkDto.getProblemChannel().split(",,,");
+        String[] problemSource = zReservePlanTeamworkDto.getProblemType().split(",,,");
+        String[] problemId = zReservePlanTeamworkDto.getProblemCode().split(",,,");
+        String[] problem = zReservePlanTeamworkDto.getProblemContent().split(",,,");
+        String[] jsonData = new String[problemId.length];
+        for (int i=0;i<problemId.length;i++){
+            jsonData[i] = "{" +
+                            "\"systemSource\": \""+systemSource[i]+"\"," +
+                            "\"problemSource\": \""+problemSource[i]+"\"," +
+                            "\"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
+                            "\"problemId\": \""+problemId[i]+"\"," +
+                            "\"contractsId\": \""+zContracts.getId()+"\"," +
+                            "\"problem\": \""+problem[i]+"\"" +
+                            "}";
+            }
+
+        String jsonDateStr = new Gson().toJson(jsonData);
         String extData = "{" +
                 "        \"searchKey\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
-                "        \"jsonData\": {" +
-                "            \"systemSource\": \""+zReservePlanTeamworkDto.getProblemChannel()+"\"," +
-                "            \"problemSource\": \""+zReservePlanTeamworkDto.getProblemType()+"\"," +
-                "            \"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
-                "            \"problemId\": \""+zReservePlanTeamworkDto.getProblemCode()+"\"," +
-                "            \"contractsId\": \""+zContracts.getId()+"\"," +
-                "            \"problem\": \""+zReservePlanTeamworkDto.getProblemContent()+"\"" +
-                "        }" +
+                "        \"jsonData\": "+ jsonDateStr +
                 "    }";
         JsonParser parse = new JsonParser();  //创建json解析器
         JsonObject json = (JsonObject) parse.parse(extData);
         ihaierTask.setExtData(json);
-        String taskId = IHaierUtil.createTask(new Gson().toJson(ihaierTask));
+        String jsonObject = new Gson().toJson(ihaierTask);
+        String taskId = IHaierUtil.createTask(jsonObject);
         if (taskId == null){
-            return "保存失败,并联协同群组不存在！";
+            return "保存失败,调用任务中心出错了！";
         }
         zReservePlanTeamworkDto.setTaskCode(taskId);
-        //更新taskID
+//        更新taskID
         zReservePlanTeamworkDao.updateByDto(zReservePlanTeamworkDto);
         return "保存成功";
     }
