@@ -1,8 +1,6 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
-import com.haier.hailian.contract.dto.MarketTargetDTO3;
-import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.ExportService;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

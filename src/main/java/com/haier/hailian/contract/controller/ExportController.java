@@ -5,7 +5,6 @@ import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.ExportInfo;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
-import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.ExportService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +79,7 @@ public class ExportController {
         }
         // 导出
         try {
+            fileName = URLEncoder.encode(fileName, "UTF-8");
             exportService.export(fileName , sheetName , headFields , rows ,  request , response);
         }catch (Exception e){
             e.printStackTrace();

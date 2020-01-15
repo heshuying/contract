@@ -1,9 +1,7 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
-import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.util.ExcelUtil;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
