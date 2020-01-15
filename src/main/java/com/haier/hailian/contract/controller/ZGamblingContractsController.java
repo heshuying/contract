@@ -9,10 +9,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +105,18 @@ public class ZGamblingContractsController {
     public R exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException{
         gamblingContractsService.exportMarket(request,response);
         return R.ok();
+    }
+
+    @PostMapping(value = {"/importMarket"})
+    @ApiOperation(value = "导入42市场小微的名字和商圈目标名称")
+    public R importMarket(MultipartFile file) throws Exception{
+        if (file.isEmpty()) {
+            return R.error().put("msg","文件为空");
+        }
+        InputStream inputStream = file.getInputStream();
+        List<MarketTargetDTO> list = gamblingContractsService.getMarketTargetListByExcel(inputStream, file.getOriginalFilename());
+        inputStream.close();
+        return R.ok().put("data",list);
     }
 
 

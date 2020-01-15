@@ -1,15 +1,13 @@
 package com.haier.hailian.contract.service;
 
-import com.haier.hailian.contract.dto.GamblingContractDTO;
-import com.haier.hailian.contract.dto.MarketReturnDTO;
-import com.haier.hailian.contract.dto.QueryContractListDTO;
-import com.haier.hailian.contract.dto.QueryProductChainDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZProductChain;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -40,4 +38,5 @@ public interface ZGamblingContractsService {
 
     void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
+    List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String originalFilename) throws Exception;
 }
