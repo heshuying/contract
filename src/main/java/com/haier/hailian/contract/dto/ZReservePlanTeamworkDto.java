@@ -59,6 +59,10 @@ public class ZReservePlanTeamworkDto implements Serializable {
     private String taskCode;
     //群组的ID
     private String groupId;
+    //问题的类型编码
+    private String problemTypeId;
+    //问题的来源编码
+    private String problemChannelId;
 
     List<ZReservePlanTeamworkDetail> details;
 

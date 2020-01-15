@@ -175,6 +175,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         String[] problemSource = zReservePlanTeamworkDto.getProblemType().split(",,,");
         String[] problemId = zReservePlanTeamworkDto.getProblemCode().split(",,,");
         String[] problem = zReservePlanTeamworkDto.getProblemContent().split(",,,");
+        String[] problemChannelId = zReservePlanTeamworkDto.getProblemChannelId().split(",,,");
+        String[] problemTypeId = zReservePlanTeamworkDto.getProblemTypeId().split(",,,");
         JsonObject[] jsonData = new JsonObject[problemId.length];
         for (int i = 0; i < problemId.length; i++) {
             JsonParser parse = new JsonParser();  //创建json解析器
@@ -184,10 +186,11 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
                     "\"linkId\": \"" + zHrChainInfos.get(0).getChainCode() + "\"," +
                     "\"problemId\": \"" + problemId[i] + "\"," +
                     "\"contractsId\": \"" + zContracts.getId() + "\"," +
+                    "\"proSrcCode\": \"" + problemChannelId[i] + "\"," +
+                    "\"proTypeCode\": \"" + problemTypeId[i] + "\"," +
                     "\"problem\": \"" + problem[i] + "\"" +
                     "}");
         }
-
         String jsonDateStr = new Gson().toJson(jsonData);
         String extData = "{" +
                 "        \"searchKey\": \"" + zHrChainInfos.get(0).getChainCode() + "\"," +
@@ -198,8 +201,10 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setExtData(json);
         String jsonObject = new Gson().toJson(ihaierTask);
         String taskId = IHaierUtil.createTask(jsonObject);
-        if (taskId == null) {
+        if (taskId == null || "系统错误".equals(taskId)) {
             return "保存失败,调用任务中心出错了！";
+        }else if (taskId.contains("接口错误")){
+            return taskId;
         }
         zReservePlanTeamworkDto.setTaskCode(taskId);
 //        更新taskID
