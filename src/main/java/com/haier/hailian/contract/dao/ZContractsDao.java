@@ -115,4 +115,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     List<ZContracts> selectKickedOutContract(QueryContractListDTO dto);
+
+
+    ZContracts selectByTime(String startTime ,String endTime,String groupId);
 }

@@ -1,6 +1,8 @@
 package com.haier.hailian.contract.service.impl;
 
 
+import com.alibaba.dubbo.config.annotation.Reference;
+//import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
@@ -187,7 +189,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             name = name + "链群";
         }
         //hr接口获取编码
-//        String code = chainGroupClient.getChainGroupCode(name);
+//        String chainCode = chainGroupClient.getChainGroupCode(name);
 
         zHrChainInfo.setChainCode(chainCode);
         zHrChainInfo.setChainPtCode(currentUser.getPtCode());
@@ -271,6 +273,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Override
     public String getDepVCode(String userCode) {
         return zHrChainInfoDao.getDepVCode(userCode);
+    }
+
+    @Override
+    public int updateBatch(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfo) {
+        return zNodeTargetPercentInfoDao.updateBatch(zNodeTargetPercentInfo);
     }
 
 

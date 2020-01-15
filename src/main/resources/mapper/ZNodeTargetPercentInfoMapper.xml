@@ -223,4 +223,16 @@
         WHERE node_code = #{xwCode}
     </select>
 
+
+    <update id="updateBatch" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update z_node_target_percent_info
+            <set >
+                <if test="item.sharePercent != null" >
+                    share_percent = #{item.sharePercent,jdbcType=VARCHAR},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
 </mapper>

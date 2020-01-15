@@ -5,6 +5,19 @@ spring:
   application:
       id: zzfz
       name: zzfx
+#  dubbo:
+#    server: false
+#    registries:
+#      registry1:
+#        protocol: zookeeper
+#        address: 10.135.13.22:2181,10.138.46.22:2181,10.135.12.166:2181
+#      registry2:
+#        protocol: zookeeper
+#        address: 10.135.7.56:2181,10.135.7.58:2181,10.135.6.66:2181
+#    consumer:
+#      timeout: 60000
+#      retries: 3
+#      check: true
   datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       druid:

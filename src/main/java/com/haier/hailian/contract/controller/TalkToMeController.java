@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,11 +71,14 @@ public class TalkToMeController {
     @ApiOperation(value = "保存协同预案")
     public R savePlan(@RequestBody @Validated @ApiParam(value = "保存协同预案", required = true) ZReservePlanTeamworkDto zReservePlanTeamworkDto) {
         try {
-                String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDto);
-                if (z == null){
-                    return R.error("操作人不在链群中！");
-                }
-                return R.ok().put("data", z);
+            if (StringUtils.isBlank(zReservePlanTeamworkDto.getExecuter())){
+             return R.error("执行人不能为空！");
+            }
+            String z = zReservePlanTeamworkService.saveAllInfo(zReservePlanTeamworkDto);
+            if (z == null){
+                return R.error("操作人不在链群中！");
+            }
+            return R.ok().put("data", z);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.savePlan,", e);
             return R.error("操作出问题了，请联系管理员！");
