@@ -29,5 +29,5 @@ public class TyMasterGrabChainInfoDto {
 
     List<FactorDto> targetList;
     List<FactorDto> grabList;
-
+    List<FactorDto> e2eList;
 }

@@ -37,6 +37,13 @@ public interface MonthChainGroupOrderDao extends BaseMapper<MonthChainGroupOrder
     List<MeshGrabEntity> queryMeshGrabIncome(TyMasterGrabQueryDto queryDto);
 
     /**
+     * 查询网格E2E抢单收入
+     * @param queryDto
+     * @return
+     */
+    List<MeshGrabEntity> queryMeshE2EIncome(TyMasterGrabQueryDto queryDto);
+
+    /**
      * 查询网格抢单收入按型号汇总
      * @param queryDto
      * @return
