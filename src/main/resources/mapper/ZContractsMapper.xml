@@ -355,6 +355,11 @@
                 AND t1.`xiaowei_code` = node.xw_code
                 AND t1.`parent_id` = #{contractId}))
           ) t
+        <where>
+            <if test="xwName != null and xwName != ''">
+                t.xwName like CONCAT('%', #{xwName}, '%')
+            </if>
+        </where>
         <if test="isgrab!=null and isgrab == 'yes'">
           HAVING t.factor_code != ''
         </if>

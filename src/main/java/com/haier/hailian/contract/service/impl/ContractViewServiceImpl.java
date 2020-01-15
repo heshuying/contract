@@ -168,17 +168,27 @@ public class ContractViewServiceImpl implements ContractViewService {
         paraMap.put("contractId", requestBean.getContractId());
         paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
         if(StringUtils.isNotBlank(requestBean.getFilterStr())){
-            if("incomeDesc".equals(requestBean.getFilterStr())){
-                paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
-            }else if("highDesc".equals(requestBean.getFilterStr())){
-                paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
-            }else if("grabed".equals(requestBean.getFilterStr())){
+           if("grabed".equals(requestBean.getFilterStr())){
                 paraMap.put("isgrab", "yes");
             }else if("notGrab".equals(requestBean.getFilterStr())){
                 paraMap.put("isgrab", "no");
             }
+        }
+
+        // 排序
+        if(StringUtils.isNotBlank(requestBean.getOrderStr())){
+            if("incomeDesc".equals(requestBean.getFilterStr())){
+                paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+            }else if("highDesc".equals(requestBean.getFilterStr())){
+                paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
+            }
         }else {
             paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+        }
+
+        // 按名称检索
+        if(StringUtils.isNotBlank(requestBean.getXwName())){
+            paraMap.put("xwName", requestBean.getXwName());
         }
 
 //        paraMap.put("orderStr", "desc");
@@ -188,35 +198,70 @@ public class ContractViewServiceImpl implements ContractViewService {
             return resultMap;
         }
 
-        // 过滤抢单低于举单和E2E
-        for(ContractViewDataTYResponseNewDTO item : resultList){
-            if(item.getQdList() == null || item.getQdList().isEmpty() || item.getQdList().size() != 2){
-                continue;
-            }
-
-            if(item.getJdList() != null && !item.getJdList().isEmpty() && item.getJdList().size() == 2){
-                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(1).getTargetValue())) < 0){
-                    filterListJD.add(item);
-                }
-            }
-
-            if(item.getE2eList() != null && !item.getE2eList().isEmpty()){
-                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(1).getTargetValue())) < 0){
-                    filterListE2E.add(item);
-                }
-            }
-        }
-        resultMap.put("lessthanJDCount", filterListJD.size());
-        resultMap.put("lessthanE2ECount", filterListE2E.size());
-
         if(StringUtils.isNotBlank(requestBean.getFilterStr()) && "lessthanJD".equals(requestBean.getFilterStr())){
+            // 过滤抢单低于举单
+            for(ContractViewDataTYResponseNewDTO item : resultList){
+                if(item.getQdList() == null || item.getQdList().isEmpty() || item.getQdList().size() != 2){
+                    continue;
+                }
+
+                if(item.getJdList() != null && !item.getJdList().isEmpty() && item.getJdList().size() == 2){
+                    if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(1).getTargetValue())) < 0){
+                        filterListJD.add(item);
+                    }
+                }
+            }
             resultMap.put("data", filterListJD);
-            return resultMap;
+            resultMap.put("lessthanJDCount", filterListJD.size());
         }
         if(StringUtils.isNotBlank(requestBean.getFilterStr()) && "lessthanE2E".equals(requestBean.getFilterStr())){
+            // 过滤抢单低于E2E
+            for(ContractViewDataTYResponseNewDTO item : resultList){
+                if(item.getQdList() == null || item.getQdList().isEmpty() || item.getQdList().size() != 2){
+                    continue;
+                }
+
+                if(item.getE2eList() != null && !item.getE2eList().isEmpty()){
+                    if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(1).getTargetValue())) < 0){
+                        filterListE2E.add(item);
+                    }
+                }
+            }
             resultMap.put("data", filterListE2E);
-            return resultMap;
+            resultMap.put("lessthanE2ECount", filterListE2E.size());
         }
+
+        // 计算抢单完成率
+        if(StringUtils.isNotBlank(requestBean.getOrderStr()) && "grabRateDesc".equals(requestBean.getOrderStr())){
+            BigDecimal grabRate = BigDecimal.ZERO;
+            for(ContractViewDataTYResponseNewDTO item : (List<ContractViewDataTYResponseNewDTO>)resultMap.get("data")){
+                if(item.getQdList() == null || item.getQdList().isEmpty() || item.getQdList().size() != 2){
+                    continue;
+                }
+                if(item.getJdList() == null || item.getJdList().isEmpty() || item.getJdList().size() != 2){
+                    continue;
+                }
+//                if(item.getE2eList() == null || item.getE2eList().isEmpty() || item.getE2eList().size() != 2){
+//                    continue;
+//                }
+
+                BigDecimal rateImcome = (((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(0).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(0).getTargetValue()))));
+                        //.add((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(0).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(0).getTargetValue())))).divide(new BigDecimal("2"));
+
+                BigDecimal rateHigh = (((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(1).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(1).getTargetValue()))));
+                        //.add((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(1).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(1).getTargetValue())))).divide(new BigDecimal("2"));
+                grabRate = (rateImcome.add(rateHigh)).divide(new BigDecimal("2"));
+                item.setGrabRate(grabRate);
+            }
+
+        }
+
+        Collections.sort((List<ContractViewDataTYResponseNewDTO>)resultMap.get("data"), new Comparator<ContractViewDataTYResponseNewDTO>() {
+            @Override
+            public int compare(ContractViewDataTYResponseNewDTO o1, ContractViewDataTYResponseNewDTO o2) {
+                return o1.getGrabRate().subtract(o2.getGrabRate()).compareTo(BigDecimal.ZERO);
+            }
+        });
 
         return resultMap;
     }

@@ -8,6 +8,8 @@ public class ContractViewRequestNewDTO {
     String contractId;
     /** 小微名称*/
     String xwName;
-    /** 筛选：incomeDesc，highDesc, grabed, notGrab, lessthanJD, lessthanE2E*/
+    /** 筛选：grabed, notGrab, lessthanJD, lessthanE2E*/
     String filterStr;
+    /** 排序：incomeDesc，highDesc, grabRateDesc*/
+    String orderStr;
 }

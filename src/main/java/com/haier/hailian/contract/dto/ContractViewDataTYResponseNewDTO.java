@@ -2,6 +2,7 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -13,6 +14,11 @@ public class ContractViewDataTYResponseNewDTO {
      * 小微名称
      */
     private String xwName;
+
+    /**
+     * 抢单完成率
+     */
+    private BigDecimal grabRate = BigDecimal.ZERO;
 
     /**
      * 举单
