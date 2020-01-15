@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @ApiModel(value = "创单节点抢单页面数据")
 public class CDGrabInfoRequestDto {
-    private Integer contractId;
+    private String contractId;
     private String year;
     private String month;
     private String yearMonth;

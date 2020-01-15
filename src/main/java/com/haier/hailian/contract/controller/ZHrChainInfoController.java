@@ -14,12 +14,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -149,6 +151,19 @@ public class ZHrChainInfoController {
         try {
             //1.校验一下名字是否重复
             R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
+            BigDecimal count = new BigDecimal(0);
+            for (ZNodeTargetPercentInfo zNodeTargetPercentInfo:zHrChainInfoDto.getZNodeTargetPercentInfos()){
+                count = BigDecimal.valueOf(Double.parseDouble(zNodeTargetPercentInfo.getSharePercent())).add(count);
+            }
+            if (count.intValue()>100){
+                return R.error("分享比例不能大于100%");
+            }
+            if (count.intValue() == 0){
+                return R.error("分享比例不能为0！");
+            }
+            if (StringUtils.isBlank(zHrChainInfoDto.getFixedPosition())){
+                return R.error("链群定位未输入，请输入！");
+            }
             if (res.get("code").equals(0)){
                 ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
                 if (z==null){

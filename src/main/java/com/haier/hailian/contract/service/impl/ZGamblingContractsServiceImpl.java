@@ -262,7 +262,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public List<ZProductChain> selectProductSeries(QueryProductChainDTO dto) {
-        return productChainDao.selectList(new QueryWrapper<ZProductChain>().eq("chain_code",dto.getChainCode()));
+        return productChainDao.selectSeriesByChainCode(dto.getChainCode());
     }
 
     @Override
