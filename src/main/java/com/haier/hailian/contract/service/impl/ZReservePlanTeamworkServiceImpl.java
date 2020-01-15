@@ -141,7 +141,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         zHrChainInfo.setGroupId(zReservePlanTeamworkDto.getGroupId());
         List<ZHrChainInfo> zHrChainInfos = zHrChainInfoDao.queryAll(zHrChainInfo);
-        if (zHrChainInfos.size()==0){
+        if (zHrChainInfos.size() == 0) {
             return "保存失败，没有找到相应的链群！";
         }
         zReservePlanTeamworkDao.save(zReservePlanTeamworkDto);
@@ -152,14 +152,14 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         }
         //创建SimpleDateFormat对象实例并定义好转换格式
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime()+" 23:59:59");
+        Date date = sdf.parse(zReservePlanTeamworkDto.getEndTime() + " 23:59:59");
 
         // 调用ihaier的接口进行任务创建
         IhaierTask ihaierTask = new IhaierTask();
-        if (!StringUtils.isBlank(zReservePlanTeamworkDto.getExecuter())){
+        if (!StringUtils.isBlank(zReservePlanTeamworkDto.getExecuter())) {
             ihaierTask.setExecutors(zReservePlanTeamworkDto.getExecuter().split(","));
         }
-        if(!StringUtils.isBlank(zReservePlanTeamworkDto.getTeamworker())){
+        if (!StringUtils.isBlank(zReservePlanTeamworkDto.getTeamworker())) {
             ihaierTask.setCcs(zReservePlanTeamworkDto.getTeamworker().split(","));
         }
         ihaierTask.setCreateJobNo(zReservePlanTeamworkDto.getCreateUserCode());
@@ -175,29 +175,30 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         String[] problemSource = zReservePlanTeamworkDto.getProblemType().split(",,,");
         String[] problemId = zReservePlanTeamworkDto.getProblemCode().split(",,,");
         String[] problem = zReservePlanTeamworkDto.getProblemContent().split(",,,");
-        String[] jsonData = new String[problemId.length];
-        for (int i=0;i<problemId.length;i++){
-            jsonData[i] = "{" +
-                            "\"systemSource\": \""+systemSource[i]+"\"," +
-                            "\"problemSource\": \""+problemSource[i]+"\"," +
-                            "\"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
-                            "\"problemId\": \""+problemId[i]+"\"," +
-                            "\"contractsId\": \""+zContracts.getId()+"\"," +
-                            "\"problem\": \""+problem[i]+"\"" +
-                            "}";
-            }
+        JsonObject[] jsonData = new JsonObject[problemId.length];
+        for (int i = 0; i < problemId.length; i++) {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            jsonData[i] = (JsonObject) parse.parse("{" +
+                    "\"systemSource\": \"" + systemSource[i] + "\"," +
+                    "\"problemSource\": \"" + problemSource[i] + "\"," +
+                    "\"linkId\": \"" + zHrChainInfos.get(0).getChainCode() + "\"," +
+                    "\"problemId\": \"" + problemId[i] + "\"," +
+                    "\"contractsId\": \"" + zContracts.getId() + "\"," +
+                    "\"problem\": \"" + problem[i] + "\"" +
+                    "}");
+        }
 
         String jsonDateStr = new Gson().toJson(jsonData);
         String extData = "{" +
-                "        \"searchKey\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
-                "        \"jsonData\": {\"dataList\": "+ jsonDateStr +
+                "        \"searchKey\": \"" + zHrChainInfos.get(0).getChainCode() + "\"," +
+                "        \"jsonData\": {\"dataList\": " + jsonDateStr +
                 " }   }";
         JsonParser parse = new JsonParser();  //创建json解析器
         JsonObject json = (JsonObject) parse.parse(extData);
         ihaierTask.setExtData(json);
         String jsonObject = new Gson().toJson(ihaierTask);
         String taskId = IHaierUtil.createTask(jsonObject);
-        if (taskId == null){
+        if (taskId == null) {
             return "保存失败,调用任务中心出错了！";
         }
         zReservePlanTeamworkDto.setTaskCode(taskId);
