@@ -102,12 +102,36 @@ public class CDGrabController {
     @PostMapping(value = {"/cancel"})
     @ApiOperation(value = "创单节点抢单页撤销接口")
     public R cancel(@RequestBody CDGrabInfoRequestDto requestDto) {
-        if(requestDto == null || requestDto.getContractId() == null){
+        if(requestDto == null || StringUtils.isBlank(requestDto.getContractId())){
             return R.error("请求参数错误，有为空的字段");
         }
 
         try {
-            cdGrabService.updateCancelGrab(String.valueOf(requestDto.getContractId()));
+            cdGrabService.updateCancelGrab(requestDto.getContractId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+
+        return R.ok().put("data","");
+    }
+
+    @PostMapping(value = {"/cancelBatch"})
+    @ApiOperation(value = "创单节点抢单页批量撤销接口")
+    public R cancelBatch(@RequestBody CDGrabInfoRequestDto requestDto) {
+        if(requestDto == null || requestDto.getContractId() == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+        String[] idArray = requestDto.getContractId().split(",");
+        if(idArray == null || idArray.length == 0){
+            return R.error("请求参数错误，有为空的字段");
+        }
+        cdGrabService.checkBanchCancel(idArray);
+
+        try {
+            for(String contractId : idArray){
+                cdGrabService.updateCancelGrab(contractId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

@@ -179,6 +179,12 @@
 <!--			<groupId>com.haier.hrportal</groupId>-->
 <!--			<artifactId>hrportal-service-client</artifactId>-->
 <!--			<version>3.6.0.9-SNAPSHOT</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.mybatis</groupId>-->
+<!--					<artifactId>mybatis</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
 <!--		</dependency>-->
 		<!--hr:end-->
 	</dependencies>

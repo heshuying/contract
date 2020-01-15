@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * (ZReservePlanTeamwork)表服务实现类
@@ -109,11 +106,38 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Transactional
     public String saveAllInfo(ZReservePlanTeamworkDto zReservePlanTeamworkDto) throws ParseException {
         //查询对应的合约ID
-//        ZContracts zContracts = zContractsDao.selectByGID(zReservePlanTeamworkDto.getGroupId(),zReservePlanTeamworkDto.getCreateUserCode());
-//        if (zContracts ==null){
-//            return null;
-//        }
-//        zReservePlanTeamworkDto.setParentId(zContracts.getId());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        获取本月第一天：
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.MONTH, 0);
+        Date tempDate = calendar.getTime();
+        String startTime = dateFormat.format(tempDate);
+//        获取本月最后一天：
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        calendar.add(Calendar.MONTH, 1);
+        tempDate = calendar.getTime();
+        String endTime = dateFormat.format(tempDate);
+
+        ZContracts zContracts = zContractsDao.selectByTime(startTime,endTime,zReservePlanTeamworkDto.getGroupId());
+        if (zContracts == null){
+            //上个月第一天
+            calendar.add(Calendar.MONTH, -1);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            tempDate = calendar.getTime();
+            startTime = dateFormat.format(tempDate);
+            //上个月最后一天
+            int month=calendar.get(Calendar.MONTH);
+            calendar.set(Calendar.MONTH, month-1);
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            tempDate = calendar.getTime();
+            endTime = dateFormat.format(tempDate);
+            zContracts = zContractsDao.selectByTime(startTime,endTime,zReservePlanTeamworkDto.getGroupId());
+            if (zContracts == null ){
+                return "当前月和上个月都没有抢单！";
+            }
+        }
         ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
         zHrChainInfo.setGroupId(zReservePlanTeamworkDto.getGroupId());
         List<ZHrChainInfo> zHrChainInfos = zHrChainInfoDao.queryAll(zHrChainInfo);
@@ -148,12 +172,13 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         ihaierTask.setTimingNoticeTime(Integer.parseInt(zReservePlanTeamworkDto.getRemindTime()));
         ihaierTask.setCallBackUrl("http://jhzx.haier.net/api/v1/cloudworktask/callBack");
         String extData = "{" +
-                "        \"searchKey\": \"并联协同预案\"," +
+                "        \"searchKey\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
                 "        \"jsonData\": {" +
                 "            \"systemSource\": \""+zReservePlanTeamworkDto.getProblemChannel()+"\"," +
                 "            \"problemSource\": \""+zReservePlanTeamworkDto.getProblemType()+"\"," +
                 "            \"linkId\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
                 "            \"problemId\": \""+zReservePlanTeamworkDto.getProblemCode()+"\"," +
+                "            \"contractsId\": \""+zContracts.getId()+"\"," +
                 "            \"problem\": \""+zReservePlanTeamworkDto.getProblemContent()+"\"" +
                 "        }" +
                 "    }";

@@ -123,4 +123,13 @@ public interface ZHrChainInfoService {
      */
     String getDepVCode(String userCode);
 
+
+
+    /**
+     * 更新
+     * @param zNodeTargetPercentInfo
+     * @return
+     */
+    int updateBatch(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfo);
+
 }

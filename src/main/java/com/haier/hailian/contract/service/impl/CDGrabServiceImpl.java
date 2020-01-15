@@ -560,6 +560,30 @@ public class CDGrabServiceImpl implements CDGrabService {
     }
 
     /**
+     * 批量撤销校验
+     */
+    @Override
+    public void checkBanchCancel(String[] idArray){
+        if(idArray == null || idArray.length == 0){
+            return;
+        }
+
+        for(String id : idArray){
+            ZContracts contracts = contractsDao.selectById(id);
+            if(contracts == null){
+                throw new RException("批量撤销失败：所选合约有数据库中不存在的记录，不可以撤销");
+            }
+            if(!"1".equals(contracts.getStatus())){
+                throw new RException("批量撤销失败：所选合约有未抢入成功的，不可以撤销");
+            }
+            if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
+                throw new RException("批量撤销失败：所选合约有已过结束时间的，不可以撤销");
+            }
+        }
+    }
+
+
+    /**
      * 更新为已踢出
      * @param contractId
      * @return
