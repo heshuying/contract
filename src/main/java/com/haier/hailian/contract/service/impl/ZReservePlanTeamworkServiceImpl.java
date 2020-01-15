@@ -190,8 +190,8 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         String jsonDateStr = new Gson().toJson(jsonData);
         String extData = "{" +
                 "        \"searchKey\": \""+zHrChainInfos.get(0).getChainCode()+"\"," +
-                "        \"jsonData\": "+ jsonDateStr +
-                "    }";
+                "        \"jsonData\": {\"dataList\": "+ jsonDateStr +
+                " }   }";
         JsonParser parse = new JsonParser();  //创建json解析器
         JsonObject json = (JsonObject) parse.parse(extData);
         ihaierTask.setExtData(json);
