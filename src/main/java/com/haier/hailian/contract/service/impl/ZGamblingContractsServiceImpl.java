@@ -6,12 +6,25 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.ExcelUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -324,6 +337,87 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         dto.setProductList(productDTOs);
         return dto;
     }
+
+    @Override
+    public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        String ptCode = currentUser.getPtCode();
+        TOdsMinbu tOdsMinbu = new TOdsMinbu();
+        tOdsMinbu.setPtCode(ptCode);
+        tOdsMinbu.setXwType3Code("4");
+        tOdsMinbu.setXwType5Code("2");
+        List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
+
+        Workbook workbook = new HSSFWorkbook();
+        ExcelUtil.buildSheet(workbook, "42中心", list, TEMPLATE_TITLE);
+        ByteArrayOutputStream bot = new ByteArrayOutputStream();
+        workbook.write(bot);
+        ExcelUtil.export(request,response,workbook,"42中心.xls");
+
+    }
+
+    @Override
+    public List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String fileName) throws Exception{
+
+        List list = new ArrayList<>();
+        //创建Excel工作薄
+        Workbook work = this.getWorkbook(inputStream, fileName);
+        if (null == work) {
+            throw new Exception("创建Excel工作薄为空！");
+        }
+        Sheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+
+        for (int i = 0; i < work.getNumberOfSheets(); i++) {
+            sheet = work.getSheetAt(i);
+            if (sheet == null) {
+                continue;
+            }
+            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
+                row = sheet.getRow(j);
+                if (row == null || row.getFirstCellNum() == j) {
+                    continue;
+                }
+                MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
+                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                    cell = row.getCell(y);
+                    if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
+                    if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
+                    if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
+                }
+                list.add(marketTargetDTO3);
+            }
+        }
+        work.close();
+        return list;
+    }
+
+    //校验excle格式
+    public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
+        Workbook workbook = null;
+        String fileType = fileName.substring(fileName.lastIndexOf("."));
+        if (".xls".equals(fileType)) {
+            workbook = new HSSFWorkbook(inStr);
+        } else if (".xlsx".equals(fileType)) {
+            workbook = new XSSFWorkbook(inStr);
+        } else {
+            throw new Exception("请上传excel文件！");
+        }
+        return workbook;
+    }
+
+
+    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE = {
+            new ExcelUtil.CellHeadField("42中心", "xwCode"),
+            new ExcelUtil.CellHeadField("42中心", "xwName"),
+            new ExcelUtil.CellHeadField("收入(万元)", "income"),
+            new ExcelUtil.CellHeadField("高端占比(%)", "high")
+    };
+
 
 
 }
