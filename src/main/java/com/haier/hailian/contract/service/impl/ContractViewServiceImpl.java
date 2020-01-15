@@ -9,6 +9,7 @@ import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
+import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -150,6 +151,25 @@ public class ContractViewServiceImpl implements ContractViewService {
             }
         }
 
+        return resultList;
+    }
+
+    @Override
+    public List<ContractViewDataTYResponseNewDTO> getContractViewDataTYNew(ContractViewRequestNewDTO requestBean){
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("contractId", requestBean.getContractId());
+        if(StringUtils.isNotBlank(requestBean.getFilterStr())){
+
+        }else {
+            paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+        }
+
+        paraMap.put("orderStr", "desc");
+        List<ContractViewDataTYResponseNewDTO> resultList = contractsDao.selectContractsViewForTYNew(paraMap);
+
+        if(resultList == null){
+            return new ArrayList<>();
+        }
         return resultList;
     }
 

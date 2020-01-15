@@ -4,11 +4,9 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.service.ContractViewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,6 +43,17 @@ public class ContractViewController {
         List<ContractViewDataTYResultDTO> result = contractViewService.getContractViewDataTY(contractId, orderType);
         Integer size = contractViewService.getContractSize2(contractId);
         return R.ok().put("data",result).put("title", resultTitle).put("grabPercent", result.size() + "/" + size);
+    }
+
+    @PostMapping(value = {"/getContractInfoTYNew"})
+    @ApiOperation(value = "合约体验数据查询new")
+    public R getContractInfoTYNew(@RequestBody ContractViewRequestNewDTO requestBean) {
+        if(requestBean == null || StringUtils.isBlank(requestBean.getContractId())){
+            return R.error("请求参数错误，合约id为空");
+        }
+        List<ContractViewDataTYResponseNewDTO> result = contractViewService.getContractViewDataTYNew(requestBean);
+        Integer size = contractViewService.getContractSize2(requestBean.getContractId());
+        return R.ok().put("data",result).put("grabPercent", result.size() + "/" + size);
     }
 
 }

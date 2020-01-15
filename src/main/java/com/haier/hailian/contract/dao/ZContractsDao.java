@@ -6,6 +6,7 @@ import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -78,6 +79,12 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     List<FactorConfigDTO> selectContractsViewForTYSum(String contractId);
+
+    /**
+     * 体验抢单列表数据new
+     * @return
+     */
+    List<ContractViewDataTYResponseNewDTO> selectContractsViewForTYNew(Map<String, Object> paraMap);
 
     /**
      * 查询待抢入合约列表
