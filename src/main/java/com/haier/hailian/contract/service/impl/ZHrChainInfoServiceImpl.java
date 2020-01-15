@@ -4,6 +4,7 @@ package com.haier.hailian.contract.service.impl;
 import com.alibaba.dubbo.config.annotation.Reference;
 //import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
+import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -304,5 +305,21 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         num = key + num;
         return num;
 
+    }
+
+    @Override
+    public List<ExportChainUnitInfo> getPartMinbuList() {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        //2获取数据库中这个平台的所有最小单元
+
+        return tOdsMinbuDao.getPartListByPtCode(currentUser.getPtCode());
     }
 }

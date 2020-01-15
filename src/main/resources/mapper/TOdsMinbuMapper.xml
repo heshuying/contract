@@ -59,5 +59,10 @@
         where ptCode=#{ptCode} and xwType5Code = #{xwType5Code} and xwType3Code = #{xwType3Code}
     </select>
 
+    <select id="getPartListByPtCode" parameterType="java.lang.String" resultType="com.haier.hailian.contract.dto.ExportChainUnitInfo">
+        select littleXwCode,littleXwName from t_ods_minbu base
+        where ptCode=#{ptCode} and xwType5Code != 2
+    </select>
+
 
 </mapper>
