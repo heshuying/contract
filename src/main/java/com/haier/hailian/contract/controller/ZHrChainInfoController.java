@@ -193,12 +193,25 @@ public class ZHrChainInfoController {
             return R.error("系统异常，请稍后尝试！");
         }
     }
-
     @PostMapping(value = {"/updateChainInfo"})
     @ApiOperation(value = "更新链群信息")
     public R updateChainInfo(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
         try {
-                int z = zHrChainInfoService.updateChainInfo(zNodeTargetPercentInfo);
+            int z = zHrChainInfoService.updateChainInfo(zNodeTargetPercentInfo);
+            if (z==0){
+                return R.error("更新出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateChainInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+    @PostMapping(value = {"/updateBatchChainInfo"})
+    @ApiOperation(value = "更新链群信息")
+    public R updateBatchChainInfo(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) List<ZNodeTargetPercentInfo> zNodeTargetPercentInfo) {
+        try {
+                int z = zHrChainInfoService.updateBatch(zNodeTargetPercentInfo);
                 if (z==0){
                     return R.error("更新出错了，请稍后重试！");
                 }
