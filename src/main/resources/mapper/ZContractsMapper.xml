@@ -343,7 +343,15 @@
         where node.share_percent is null and node.lq_code in (select chain_code from z_contracts where id=#{contractId})
 
     </select>
-
+    <select id="selectByTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where join_time <![CDATA[ >= ]]> #{startTime}
+        and join_time <![CDATA[ <= ]]> #{endTime}
+        and group_id = #{groupId}
+        and parent_id = 0
+    </select>
 
 
 </mapper>

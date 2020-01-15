@@ -1460,3 +1460,7 @@ CREATE TABLE `month_retail` (
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 comment 'EDW网格E2E数据';
+
+-- alter table sys_node_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
+-- alter table sys_employee_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
+-- alter table sys_xiaowei_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;

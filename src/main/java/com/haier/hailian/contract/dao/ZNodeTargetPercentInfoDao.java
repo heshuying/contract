@@ -83,4 +83,6 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<CDGrabTargetEntity> queryCDGrabTargetNew(Map<String,Object> paraMap);
 
     List<ZNodeTargetPercentInfo> selectChainByLittleXwCode(@Param("xwCode")String xwCode);
+
+    int updateBatch(@Param("list") List<ZNodeTargetPercentInfo> list);
 }
