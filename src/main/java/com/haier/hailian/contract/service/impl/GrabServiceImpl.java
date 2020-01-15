@@ -229,12 +229,8 @@ public class GrabServiceImpl implements GrabService {
                 BigDecimal incBill=inc.divide(
                         new BigDecimal("10000"),2, RoundingMode.HALF_UP
                 );
-                BigDecimal e2eIncBill=e2eInc.divide(
-                        new BigDecimal("10000"),2, RoundingMode.HALF_UP
-                );
-
                 grabFactor.setFactorValue(incBill.toString());//格式化万
-                e2eFactor.setFactorValue(e2eIncBill.toString());//格式化万
+                e2eFactor.setFactorValue(e2eInc.toString());
 
             } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                 List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
