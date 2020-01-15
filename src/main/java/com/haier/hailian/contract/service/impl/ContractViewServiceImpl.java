@@ -155,22 +155,75 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public List<ContractViewDataTYResponseNewDTO> getContractViewDataTYNew(ContractViewRequestNewDTO requestBean){
+    public Map<String, Object> getContractViewDataTYNew(ContractViewRequestNewDTO requestBean){
+        Map<String, Object> resultMap = new HashMap<>();
+        List<ContractViewDataTYResponseNewDTO> resultList = new ArrayList<>();
+        List<ContractViewDataTYResponseNewDTO> filterListJD = new ArrayList<>();
+        List<ContractViewDataTYResponseNewDTO> filterListE2E = new ArrayList<>();
+        resultMap.put("data", resultList);
+        resultMap.put("lessthanJDCount", "0");
+        resultMap.put("lessthanE2ECount", "0");
+
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("contractId", requestBean.getContractId());
+        paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
         if(StringUtils.isNotBlank(requestBean.getFilterStr())){
-
+            if("incomeDesc".equals(requestBean.getFilterStr())){
+                paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+            }else if("highDesc".equals(requestBean.getFilterStr())){
+                paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
+            }else if("grabed".equals(requestBean.getFilterStr())){
+                paraMap.put("isgrab", "yes");
+            }else if("notGrab".equals(requestBean.getFilterStr())){
+                paraMap.put("isgrab", "no");
+            }
         }else {
             paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
         }
 
-        paraMap.put("orderStr", "desc");
-        List<ContractViewDataTYResponseNewDTO> resultList = contractsDao.selectContractsViewForTYNew(paraMap);
-
-        if(resultList == null){
-            return new ArrayList<>();
+//        paraMap.put("orderStr", "desc");
+        resultList = contractsDao.selectContractsViewForTYNew(paraMap);
+        resultMap.put("data", resultList);
+        if(resultList == null || resultList.isEmpty()){
+            return resultMap;
         }
-        return resultList;
+
+        // 过滤抢单低于举单和E2E
+        for(ContractViewDataTYResponseNewDTO item : resultList){
+            if(item.getQdList() == null || item.getQdList().isEmpty() || item.getQdList().size() != 2){
+                continue;
+            }
+
+            if(item.getJdList() != null && !item.getJdList().isEmpty() && item.getJdList().size() == 2){
+                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(1).getTargetValue())) < 0){
+                    filterListJD.add(item);
+                }
+            }
+
+            if(item.getE2eList() != null && !item.getE2eList().isEmpty()){
+                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(1).getTargetValue())) < 0){
+                    filterListE2E.add(item);
+                }
+            }
+        }
+        resultMap.put("lessthanJDCount", filterListJD.size());
+        resultMap.put("lessthanE2ECount", filterListE2E.size());
+
+        if(StringUtils.isNotBlank(requestBean.getFilterStr()) && "lessthanJD".equals(requestBean.getFilterStr())){
+            resultMap.put("data", filterListJD);
+            return resultMap;
+        }
+        if(StringUtils.isNotBlank(requestBean.getFilterStr()) && "lessthanE2E".equals(requestBean.getFilterStr())){
+            resultMap.put("data", filterListE2E);
+            return resultMap;
+        }
+
+        return resultMap;
+    }
+
+    @Override
+    public int selectContractsViewForTYCount(String contractId){
+        return contractsDao.selectContractsViewForTYCount(contractId);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 19033323
@@ -51,9 +52,10 @@ public class ContractViewController {
         if(requestBean == null || StringUtils.isBlank(requestBean.getContractId())){
             return R.error("请求参数错误，合约id为空");
         }
-        List<ContractViewDataTYResponseNewDTO> result = contractViewService.getContractViewDataTYNew(requestBean);
+        Map<String, Object> result = contractViewService.getContractViewDataTYNew(requestBean);
+        Integer grabSize = contractViewService.selectContractsViewForTYCount(requestBean.getContractId());
         Integer size = contractViewService.getContractSize2(requestBean.getContractId());
-        return R.ok().put("data",result).put("grabPercent", result.size() + "/" + size);
+        return R.ok().put("data",result.get("data")).put("lessthanJDCount", result.get("lessthanJDCount")).put("lessthanE2ECount", result.get("lessthanE2ECount")).put("grabPercent", grabSize + "/" + size);
     }
 
 }

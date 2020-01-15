@@ -122,4 +122,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     List<ZContracts> selectKickedOutContract(QueryContractListDTO dto);
+
+    int selectContractsViewForTYCount(String contractId);
 }

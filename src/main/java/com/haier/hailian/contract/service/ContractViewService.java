@@ -13,7 +13,9 @@ public interface ContractViewService {
 
     List<ContractViewDataTYResultDTO> getContractViewDataTY(String contractId, String orderType);
 
-    List<ContractViewDataTYResponseNewDTO> getContractViewDataTYNew(ContractViewRequestNewDTO requestBean);
+    Map<String, Object> getContractViewDataTYNew(ContractViewRequestNewDTO requestBean);
+
+    int selectContractsViewForTYCount(String contractId);
 
     List<TargetTitleTYDTO> getTargetTitleList(String contractId);
 
