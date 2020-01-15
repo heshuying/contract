@@ -48,8 +48,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Autowired
     private TargetBasicDao targetBasicDao;
     @Autowired
-    private TOdsMinbuEmpDao tOdsMinbuEmpDao;
-    @Autowired
     private ZNodeTargetPercentInfoDao nodeTargetPercentInfoDao;
     @Autowired
     private TOdsMinbuDao tOdsMinbuDao;
@@ -156,8 +154,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //查询42个市场小微
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        TOdsMinbu currentUser = sysUser.getMinbu();
-        String ptCode = currentUser.getPtCode();
+        TOdsMinbu minbu = sysUser.getMinbu();
+        if(minbu == null){
+            throw new RException("没有维护最小作战单元，无法举单",Constant.CODE_VALIDFAIL);
+        }
+        String ptCode = minbu.getPtCode();
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
         tOdsMinbu.setPtCode(ptCode);
         tOdsMinbu.setXwType3Code("4");
@@ -240,7 +241,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         String userCode = sysUser.getEmpSn();
         //查询用户所属的最小作战单元
-        String xwCode = sysUser.getMinbu().getLittleXwCode();
+        String xwCode = "";
+        if(sysUser.getMinbu() != null) xwCode = sysUser.getMinbu().getLittleXwCode();
         List<ZNodeTargetPercentInfo> chainList = nodeTargetPercentInfoDao.selectChainByLittleXwCode(xwCode);
         //查询所属链群可抢入的合约
         if(null != chainList && chainList.size()>0){
@@ -342,8 +344,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        TOdsMinbu currentUser = sysUser.getMinbu();
-        String ptCode = currentUser.getPtCode();
+        TOdsMinbu minbu = sysUser.getMinbu();
+        String ptCode = "";
+        if(minbu != null) ptCode = minbu.getPtCode();
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
         tOdsMinbu.setPtCode(ptCode);
         tOdsMinbu.setXwType3Code("4");
@@ -393,6 +396,15 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
         }
         work.close();
+        return list;
+    }
+
+    @Override
+    public List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO) {
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        queryDTO.setUserCode(sysUser.getEmpSn());
+        List<ZContracts> list = contractsDao.selectHomePageContract(queryDTO);
         return list;
     }
 

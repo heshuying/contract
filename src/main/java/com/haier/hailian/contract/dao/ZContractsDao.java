@@ -118,4 +118,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
 
     ZContracts selectByTime(String startTime ,String endTime,String groupId);
+
+    List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO);
 }
