@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.QueryContractListDTO;
+import com.haier.hailian.contract.dto.QueryContractListDTO2;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
@@ -45,4 +46,12 @@ public class ContractListController {
         List<ZContracts> contractsList = gamblingContractsService.selectToGrabContract(queryDTO);
         return R.ok().put("data",contractsList);
     }
+
+    @PostMapping(value = {"/selectHomePageContract"})
+    @ApiOperation(value = "首页查询合约列表")
+    public R selectHomePageContract(@RequestBody QueryContractListDTO2 queryDTO) {
+        List<ZContracts> contractsList = gamblingContractsService.selectHomePageContract(queryDTO);
+        return R.ok().put("data",contractsList);
+    }
+
 }
