@@ -78,6 +78,9 @@ public class TalkToMeController {
             if (z == null){
                 return R.error("操作人不在链群中！");
             }
+            if (!"保存成功".equals(z)){
+                return R.error(z);
+            }
             return R.ok().put("data", z);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.savePlan,", e);
