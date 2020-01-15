@@ -161,9 +161,9 @@ public class ZHrChainInfoController {
             if (count.intValue() == 0){
                 return R.error("分享比例不能为0！");
             }
-            if (StringUtils.isBlank(zHrChainInfoDto.getFixedPosition())){
-                return R.error("链群定位未输入，请输入！");
-            }
+//            if (StringUtils.isBlank(zHrChainInfoDto.getFixedPosition())){
+//                return R.error("链群定位未输入，请输入！");
+//            }
             if (res.get("code").equals(0)){
                 ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
                 if (z==null){

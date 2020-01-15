@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -40,6 +41,7 @@ public class ZHrChainInfo implements Serializable {
     private String groupId;
     //定位
     private String fixedPosition;
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
 }
