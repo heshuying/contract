@@ -353,5 +353,30 @@
         and parent_id = 0
     </select>
 
-
+    <select id="selectHomePageContract" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from (  select *
+                from z_contracts
+                where create_code = #{userCode}
+                and status = '1'
+                and contract_type in ('20','30')
+                and DATE_FORMAT(create_time,'%Y%m')=#{month}
+             UNION all (
+                select *
+                from z_contracts c
+                where create_code = #{userCode}
+                and contract_type='10'
+                and DATE_FORMAT(create_time,'%Y%m')=#{month}
+                and not EXISTS (
+                    select 1
+                    from z_contracts
+                    where create_code = #{userCode}
+                    and status = '1'
+                    and contract_type in ('20','30')
+                    and parent_id = c.id
+                )
+        )) a
+        ORDER BY a.create_time DESC
+    </select>
 </mapper>
