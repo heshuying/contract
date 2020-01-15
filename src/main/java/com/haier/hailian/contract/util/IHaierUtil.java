@@ -493,6 +493,9 @@ public class IHaierUtil {
         try {
             JsonParser parse = new JsonParser();  //创建json解析器
             Response response = client.newCall(request).execute();
+            if (response.code()!=200){
+                return null;
+            }
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
             if (json.get("success").getAsBoolean()){
                 JsonObject result = json.get("data").getAsJsonObject();
