@@ -229,10 +229,10 @@
             update z_node_target_percent_info
             <set >
                 <if test="item.sharePercent != null" >
-                    share_percent = #{item.sharePercent,jdbcType=VARCHAR},
+                    share_percent = #{item.sharePercent},
                 </if>
             </set>
-            where id = #{item.id,jdbcType=BIGINT}
+            where id = #{item.id}
         </foreach>
     </update>
 </mapper>
