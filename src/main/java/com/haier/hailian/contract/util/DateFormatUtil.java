@@ -185,4 +185,18 @@ public class DateFormatUtil {
         m = cd.get(Calendar.MONTH) + 1;
         return m;
     }
+
+    /**
+     * 获取日期的DAY值
+     *
+     * @param date 输入日期
+     * @return
+     */
+    public static int getDAYOfDate(Date date) {
+        int d = 0;
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        d = cd.get(Calendar.DAY_OF_MONTH);
+        return d;
+    }
 }
