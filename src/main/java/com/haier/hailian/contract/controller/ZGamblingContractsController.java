@@ -100,7 +100,7 @@ public class ZGamblingContractsController {
     }
 
 
-    @GetMapping(value = {"/exportMarket"})
+    @GetMapping(value = {"/exportMarket"},headers="Accept=application/octet-stream")
     @ApiOperation(value = "查询并导出42市场小微的名字和商圈目标名称")
     public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException{
         gamblingContractsService.exportMarket(request,response);
@@ -118,9 +118,9 @@ public class ZGamblingContractsController {
         return R.ok().put("data",list);
     }
 
-    @GetMapping(value = {"/exportProductSeries/{chainCode}"})
+    @GetMapping(value = {"/exportProductSeries/{chainCode}"},headers="Accept=application/octet-stream")
     @ApiOperation(value = "导出链群下的产品系列")
-    public void ProductSeries(@PathVariable(value = "chainCode") String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void exportProductSeries(@PathVariable(value = "chainCode") String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException{
         gamblingContractsService.exportProductSeries(chainCode,request,response);
     }
 
