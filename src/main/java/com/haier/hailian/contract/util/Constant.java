@@ -29,6 +29,8 @@ public class Constant {
 
     public static String CHAIN_SEED= "海链-baas-";
 
+    public static String lqhyVirturl="bHFoeVZpcnR1YWw=";
+
     public static String RMB_MIL= "万元";
     public static String RMB_YUAN= "元";
 

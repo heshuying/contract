@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.HacLoginDto;
+import com.haier.hailian.contract.dto.LoginMagicDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
@@ -51,6 +52,11 @@ public class LoginController {
     @ApiOperation(value = "登录")
     public R hacLogin(@RequestBody @Validated HacLoginDto hacSignInDTO) {
         return hacLoginService.login(hacSignInDTO);
+    }
+    @PostMapping(value = {"/loginMagic"})
+    @ApiOperation(value = "登录")
+    public R loginMagic(@RequestBody @Validated LoginMagicDto dto) {
+        return hacLoginService.loginVirtual(dto.getUserName(),dto.getSalt());
     }
 
     @PostMapping(value = "/current/set")
