@@ -22,7 +22,7 @@ spring:
       type: com.alibaba.druid.pool.DruidDataSource
       druid:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://10.138.26.200:3909/chain_contract?zeroDateTimeBehavior=CONVERT_TO_NULL&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+        url: jdbc:mysql://10.138.26.200:3909/chain_contract?zeroDateTimeBehavior=CONVERT_TO_NULL&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowMultiQueries=true
         username: chcontract_tmp
         password: Bfds8LvadCCd
         initial-size: 10

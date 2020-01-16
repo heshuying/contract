@@ -30,6 +30,23 @@
         <result column="group_id" property="groupId" />
         <result column="open_valid" property="openValid" />
     </resultMap>
+
+    <!-- 体验列表映射结果 -->
+    <resultMap id="TYResultMap" type="com.haier.hailian.contract.dto.ContractViewDataTYResponseNewDTO">
+        <collection property="jdList" column="grabId"  select="selectFactorJDForTYNew" />
+        <collection property="e2eList" column="grabId"  select="selectFactorE2EForTYNew" />
+        <collection property="qdList" column="grabId"  select="selectFactorQDForTYNew" />
+    </resultMap>
+    <!-- 体验jd列表映射结果 -->
+    <resultMap id="jdResultMap" type="com.haier.hailian.contract.dto.TargetConfigDTO">
+    </resultMap>
+    <!-- 体验e2e列表映射结果 -->
+    <resultMap id="e2eResultMap" type="com.haier.hailian.contract.dto.TargetConfigDTO">
+    </resultMap>
+    <!-- 体验qd列表映射结果 -->
+    <resultMap id="qdResultMap" type="com.haier.hailian.contract.dto.TargetConfigDTO">
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,parent_id,contract_name,contract_type,status,share_space,chain_code,
         region_code,join_time,DATE_FORMAT(join_time,'%Y-%m-%d %H:%i:%s') as join_time_str,start_date,DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') as start_date_str,
@@ -268,6 +285,147 @@
             z_contracts t1
           WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId})
         ORDER BY xwName, factor_code,factor_type
+    </select>
+
+    <select id="selectContractsViewForTYCount" resultType="int">
+        SELECT
+            ifnull(count(t1.id),0)
+          FROM
+            z_contracts t1
+          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId}
+    </select>
+
+    <select id="selectContractsViewForTYNew" parameterType="map" resultMap="TYResultMap">
+        SELECT
+          *
+        FROM
+          (
+            (SELECT
+              zc.id AS grabId,
+              zc.`contract_name`,
+              xw.`xwName`,
+              cf.factor_name,
+              cf.`factor_code`,
+              cf.`factor_value`,
+              cf.`factor_type`,
+              cf.`factor_unit`
+            FROM
+              z_contracts_factor cf
+              JOIN z_contracts zc
+                ON cf.`contract_id` = zc.id
+                AND cf.`factor_type` = '02'
+                AND cf.`factor_code` = #{factorCode}
+              JOIN sys_xiaowei_ehr xw
+                ON zc.`xiaowei_code` = xw.`xwCode`
+            WHERE cf.`contract_id` IN
+              (SELECT
+                t1.id
+              FROM
+                z_contracts t1
+              WHERE t1.contract_type = '20'
+                AND t1.`status` = '1'
+                AND t1.`parent_id` = #{contractId})
+            ORDER BY cf.`factor_value` DESC)
+            UNION
+            (SELECT
+              '' AS grabId,
+              '' AS contract_name,
+              node.xw_name AS xwName,
+              '' AS factor_name,
+              '' AS factor_code,
+              '' AS factor_value,
+              '' AS factor_type,
+              '' AS factor_unit
+            FROM
+              z_node_target_percent_info node
+            WHERE node.share_percent IS NULL
+              AND node.lq_code IN
+              (SELECT
+                chain_code
+              FROM
+                z_contracts
+              WHERE id = #{contractId})
+              AND NOT EXISTS
+              (SELECT
+                id
+              FROM
+                z_contracts t1
+              WHERE t1.contract_type = '20'
+                AND t1.`status` = '1'
+                AND t1.`xiaowei_code` = node.xw_code
+                AND t1.`parent_id` = #{contractId}))
+          ) t
+        <where>
+            <if test="xwName != null and xwName != ''">
+                t.xwName like CONCAT('%', #{xwName}, '%')
+            </if>
+        </where>
+        <if test="isgrab!=null and isgrab == 'yes'">
+          HAVING t.factor_code != ''
+        </if>
+        <if test="isgrab!=null and isgrab == 'no'">
+            HAVING t.factor_code = ''
+        </if>
+    </select>
+
+    <select id="selectFactorJDForTYNew" parameterType="map" resultMap="jdResultMap">
+        SELECT
+          cf.`factor_code` AS targetCode,
+          cf.`factor_name` AS targetName,
+          cf.`factor_value` AS targetValue,
+          cf.`factor_type` AS targetType,
+          cf.`factor_unit` AS targetUnit
+        FROM
+          z_contracts_factor cf
+        WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '01'
+    </select>
+
+    <select id="selectFactorE2EForTYNew" parameterType="map" resultMap="e2eResultMap">
+        SELECT
+          cf.`factor_code` AS targetCode,
+          cf.`factor_name` AS targetName,
+          cf.`factor_value` AS targetValue,
+          cf.`factor_type` AS targetType,
+          cf.`factor_unit` AS targetUnit
+        FROM
+          z_contracts_factor cf
+        WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '03'
+    </select>
+
+    <select id="selectFactorQDForTYNew" parameterType="map" resultMap="qdResultMap">
+        SELECT
+          cf.`factor_code` AS targetCode,
+          cf.`factor_name` AS targetName,
+          cf.`factor_value` AS targetValue,
+          cf.`factor_type` AS targetType,
+          cf.`factor_unit` AS targetUnit
+        FROM
+          z_contracts_factor cf
+        WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '02'
+
+    </select>
+
+    <select id="selectFactorListForTYNew" parameterType="map" resultMap="TYResultMap">
+        SELECT
+          zc.`contract_name`,
+          xw.`xwName`,
+          cf.*
+        FROM
+          z_contracts_factor cf
+          JOIN z_contracts zc
+            ON cf.`contract_id` = zc.id
+            AND cf.`factor_code` = #{factorCode}
+          JOIN sys_xiaowei_ehr xw
+            ON zc.`xiaowei_code` = xw.`xwCode`
+        WHERE cf.`contract_id` IN
+          (SELECT
+            t1.id
+          FROM
+            z_contracts t1
+          WHERE t1.contract_type = '20'
+            AND t1.`status` = '1'
+            AND t1.`parent_id` = #{contractId})
+        ORDER BY cf.`factor_value` #{orderStr}
     </select>
 
     <select id="selectContractsViewForTYSum" resultType="com.haier.hailian.contract.dto.FactorConfigDTO">

@@ -102,9 +102,8 @@ public class ZGamblingContractsController {
 
     @GetMapping(value = {"/exportMarket"})
     @ApiOperation(value = "查询并导出42市场小微的名字和商圈目标名称")
-    public R exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException{
         gamblingContractsService.exportMarket(request,response);
-        return R.ok();
     }
 
     @PostMapping(value = {"/importMarket"})
@@ -115,6 +114,24 @@ public class ZGamblingContractsController {
         }
         InputStream inputStream = file.getInputStream();
         List<MarketTargetDTO> list = gamblingContractsService.getMarketTargetListByExcel(inputStream, file.getOriginalFilename());
+        inputStream.close();
+        return R.ok().put("data",list);
+    }
+
+    @GetMapping(value = {"/exportProductSeries/{chainCode}"})
+    @ApiOperation(value = "导出链群下的产品系列")
+    public void ProductSeries(@PathVariable(value = "chainCode") String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        gamblingContractsService.exportProductSeries(chainCode,request,response);
+    }
+
+    @PostMapping(value = {"/importProductSeries"})
+    @ApiOperation(value = "导入产品系列和销量")
+    public R importProductSeries(MultipartFile file) throws Exception{
+        if (file.isEmpty()) {
+            return R.error().put("msg","文件为空");
+        }
+        InputStream inputStream = file.getInputStream();
+        List<ContractProductDTO> list = gamblingContractsService.getProductSeriesListByExcel(inputStream, file.getOriginalFilename());
         inputStream.close();
         return R.ok().put("data",list);
     }
