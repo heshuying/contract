@@ -354,7 +354,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
 
         Workbook workbook = new HSSFWorkbook();
-        ExcelUtil.buildSheet(workbook, "42中心", list, TEMPLATE_TITLE);
+        ExcelUtil.buildSheet(workbook, "42中心", list, TEMPLATE_TITLE_MARKET);
         ByteArrayOutputStream bot = new ByteArrayOutputStream();
         workbook.write(bot);
         ExcelUtil.export(request,response,workbook,"42中心.xls");
@@ -408,6 +408,53 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return list;
     }
 
+    @Override
+    public void exportProductSeries(String chainCode, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(chainCode);;
+
+        Workbook workbook = new HSSFWorkbook();
+        ExcelUtil.buildSheet(workbook, "产品系列", list, TEMPLATE_TITLE_PRODUCT);
+        ByteArrayOutputStream bot = new ByteArrayOutputStream();
+        workbook.write(bot);
+        ExcelUtil.export(request,response,workbook,"产品系列.xls");
+    }
+
+    @Override
+    public List<ContractProductDTO> getProductSeriesListByExcel(InputStream inputStream, String fileName) throws Exception{
+        Sheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+        List list = new ArrayList<>();
+        //创建Excel工作薄
+        Workbook work = this.getWorkbook(inputStream, fileName);
+        if (null == work) {
+            throw new Exception("Excel工作薄为空！");
+        }
+
+        for (int i = 0; i < work.getNumberOfSheets(); i++) {
+            sheet = work.getSheetAt(i);
+            if (sheet == null) {
+                continue;
+            }
+            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
+                row = sheet.getRow(j);
+                if (row == null || row.getFirstCellNum() == j) {
+                    continue;
+                }
+                ContractProductDTO dto = new ContractProductDTO();
+                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                    cell = row.getCell(y);
+                    if(y==0) dto.setProductSeries(cell.getStringCellValue());
+                    if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
+                    if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                }
+                list.add(dto);
+            }
+        }
+        work.close();
+        return list;
+    }
+
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
         Workbook workbook = null;
@@ -423,13 +470,18 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
 
-    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE = {
+    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_MARKET = {
             new ExcelUtil.CellHeadField("42中心", "xwCode"),
             new ExcelUtil.CellHeadField("42中心", "xwName"),
             new ExcelUtil.CellHeadField("收入(万元)", "income"),
             new ExcelUtil.CellHeadField("高端占比(%)", "high")
     };
 
+    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_PRODUCT = {
+            new ExcelUtil.CellHeadField("系列名称", "productSeries"),
+            new ExcelUtil.CellHeadField("年度销量(台)", ""),
+            new ExcelUtil.CellHeadField("月度销量(台)", "")
+    };
 
 
 }
