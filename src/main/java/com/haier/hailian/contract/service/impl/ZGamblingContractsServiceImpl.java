@@ -55,6 +55,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private ZProductChainDao productChainDao;
     @Autowired
     private ZContractsProductDao contractsProductDao;
+    @Autowired
+    private ZHrChainInfoDao hrChainInfoDao;
 
 
     @Override
@@ -368,7 +370,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //创建Excel工作薄
         Workbook work = this.getWorkbook(inputStream, fileName);
         if (null == work) {
-            throw new Exception("创建Excel工作薄为空！");
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
         }
         Sheet sheet = null;
         Row row = null;
@@ -405,6 +407,15 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
         List<ZContracts> list = contractsDao.selectHomePageContract(queryDTO);
+        //链群主假数据
+        //1.查询链群主的链群
+        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("master_code",sysUser.getEmpSn()));
+        //2.查询每个链群当月是否举单，未举单的链群产生假数据
+        if(null != chainList && chainList.size() > 0){
+            for(ZHrChainInfo chainInfo : chainList){
+                
+            }
+        }
         return list;
     }
 
@@ -428,7 +439,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //创建Excel工作薄
         Workbook work = this.getWorkbook(inputStream, fileName);
         if (null == work) {
-            throw new Exception("Excel工作薄为空！");
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
         }
 
         for (int i = 0; i < work.getNumberOfSheets(); i++) {
@@ -464,7 +475,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         } else if (".xlsx".equals(fileType)) {
             workbook = new XSSFWorkbook(inStr);
         } else {
-            throw new Exception("请上传excel文件！");
+            throw new RException("请上传excle文件",Constant.CODE_VALIDFAIL);
         }
         return workbook;
     }
