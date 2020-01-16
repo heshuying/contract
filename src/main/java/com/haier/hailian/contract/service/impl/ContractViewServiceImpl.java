@@ -135,7 +135,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                 resultDTO.setDiff(diff);
                 resultList.add(resultDTO);
             }
-            if("desc".equals(orderType)){
+            if("desc".equalsIgnoreCase(orderType)){
                 Collections.sort(resultList, new Comparator<ContractViewDataTYResultDTO>() {
                     @Override
                     public int compare(ContractViewDataTYResultDTO o1, ContractViewDataTYResultDTO o2) {
