@@ -160,9 +160,13 @@ public class ContractViewServiceImpl implements ContractViewService {
         List<ContractViewDataTYResponseNewDTO> resultList = new ArrayList<>();
         List<ContractViewDataTYResponseNewDTO> filterListJD = new ArrayList<>();
         List<ContractViewDataTYResponseNewDTO> filterListE2E = new ArrayList<>();
+        List<ContractViewDataTYResponseNewDTO> filterListGrabed = new ArrayList<>();
+        List<ContractViewDataTYResponseNewDTO> filterListNotGrab = new ArrayList<>();
         resultMap.put("data", resultList);
         resultMap.put("lessthanJDCount", "0");
         resultMap.put("lessthanE2ECount", "0");
+        resultMap.put("filterListGrabed", "0");
+        resultMap.put("filterListNotGrab", "0");
 
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("contractId", requestBean.getContractId());
@@ -191,7 +195,6 @@ public class ContractViewServiceImpl implements ContractViewService {
             paraMap.put("xwName", requestBean.getXwName());
         }
 
-//        paraMap.put("orderStr", "desc");
         resultList = contractsDao.selectContractsViewForTYNew(paraMap);
         resultMap.put("data", resultList);
         if(resultList == null || resultList.isEmpty()){
