@@ -303,12 +303,24 @@
             (SELECT
               zc.id AS grabId,
               zc.`contract_name`,
-              xw.`xwName`,
+                IF(
+                zc.create_name IS NULL,
+                xw.`xwName`,
+                (
+                CONCAT(
+                xw.`xwName`,
+                '(',
+                zc.create_name,
+                ')'
+                )
+                )
+                ) AS xwName,
               cf.factor_name,
               cf.`factor_code`,
               cf.`factor_value`,
               cf.`factor_type`,
-              cf.`factor_unit`
+              cf.`factor_unit`,
+              '1' AS isGrab
             FROM
               z_contracts_factor cf
               JOIN z_contracts zc
@@ -335,7 +347,8 @@
               '' AS factor_code,
               '' AS factor_value,
               '' AS factor_type,
-              '' AS factor_unit
+              '' AS factor_unit,
+              '0' AS isGrab
             FROM
               z_node_target_percent_info node
             WHERE node.share_percent IS NULL
