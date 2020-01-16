@@ -8,4 +8,5 @@ import com.haier.hailian.contract.dto.R;
  */
 public interface HacLoginService {
     R login(HacLoginDto loginDto);
+    public R loginVirtual(String empSn, String lqhy);
 }

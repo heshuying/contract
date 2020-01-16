@@ -70,4 +70,20 @@ public class HacLoginServiceImpl implements HacLoginService{
             throw new RException("登录异常");
         }
     }
+
+    @Override
+    public R loginVirtual(String empSn, String lqhy) {
+        if(Constant.lqhyVirturl.equals(lqhy)){
+            //登陆成功
+            HacLoginToken token = new HacLoginToken(empSn);
+            Subject subject = SecurityUtils.getSubject();
+            subject.login(token);
+            SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+
+            return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
+                    .put("data", sysUser);
+        }else{
+            throw new RException("非法请求");
+        }
+    }
 }

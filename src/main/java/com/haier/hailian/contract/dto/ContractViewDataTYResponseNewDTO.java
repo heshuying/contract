@@ -16,6 +16,11 @@ public class ContractViewDataTYResponseNewDTO {
     private String xwName;
 
     /**
+     * 是否已抢单 0：未抢单 1：已抢单
+     */
+    private String isGrab;
+
+    /**
      * 抢单完成率
      */
     private BigDecimal grabRate = BigDecimal.ZERO;
