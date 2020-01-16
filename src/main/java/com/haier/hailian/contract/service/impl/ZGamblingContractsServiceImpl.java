@@ -6,6 +6,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -403,19 +404,37 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO) {
+        List<ZContracts> list = new ArrayList<>();
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
-        List<ZContracts> list = contractsDao.selectHomePageContract(queryDTO);
-        //链群主假数据
-        //1.查询链群主的链群
-        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("master_code",sysUser.getEmpSn()));
-        //2.查询每个链群当月是否举单，未举单的链群产生假数据
-        if(null != chainList && chainList.size() > 0){
-            for(ZHrChainInfo chainInfo : chainList){
-                
+        List<ZContracts> list2 = contractsDao.selectHomePageContract(queryDTO);
+        //查当前月份的时候，链群主假数据
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+        if(sf.format(new Date()).equals(queryDTO.getMonth())){
+            //1.查询链群主的链群
+            List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("master_code",sysUser.getEmpSn()));
+            //2.查询每个链群是否举了下个月的单，未举单的链群产生假数据
+            if(null != chainList && chainList.size() > 0){
+                for(ZHrChainInfo chainInfo : chainList){
+                    QueryContractListDTO dto = new QueryContractListDTO();
+                    dto.setChainCode(chainInfo.getChainCode());
+                    dto.setNextMonth(DateFormatUtil.getMonthOfDate(new Date())+1+"");
+                    List<ZContracts> contractsList = contractsDao.selectContractList(dto);
+                    if(null == contractsList || contractsList.size()==0){
+                        ZContracts zContracts = new ZContracts();
+                        zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
+                        if(DateFormatUtil.getDAYOfDate(new Date())<20){
+                            zContracts.setStatus("close");
+                        }else{
+                            zContracts.setStatus("open");
+                        }
+                        list.add(zContracts);
+                    }
+                }
             }
         }
+        list.addAll(list2);
         return list;
     }
 

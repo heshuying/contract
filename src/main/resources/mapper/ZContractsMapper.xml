@@ -76,6 +76,9 @@
             <if test=" chainCode != null and chainCode != '' ">
                 and chain_code = #{chainCode}
             </if>
+            <if test=" nextMonth != null and nextMonth != '' ">
+                and DATE_FORMAT(start_date,'%Y%m') = #{nextMonth}
+            </if>
             <if test=" status != null and status != '' ">
                 and status = #{status}
             </if>
@@ -533,13 +536,13 @@
                 where create_code = #{userCode}
                 and status = '1'
                 and contract_type in ('20','30')
-                and DATE_FORMAT(create_time,'%Y%m')=#{month}
+                and (DATE_FORMAT(create_time,'%Y%m')=#{month} or DATE_FORMAT(start_date,'%Y%m')=#{month} or DATE_FORMAT(end_date,'%Y%m')=#{month})
              UNION all (
                 select *
                 from z_contracts c
                 where create_code = #{userCode}
                 and contract_type='10'
-                and DATE_FORMAT(create_time,'%Y%m')=#{month}
+                and (DATE_FORMAT(create_time,'%Y%m')=#{month} or DATE_FORMAT(start_date,'%Y%m')=#{month} or DATE_FORMAT(end_date,'%Y%m')=#{month})
                 and not EXISTS (
                     select 1
                     from z_contracts

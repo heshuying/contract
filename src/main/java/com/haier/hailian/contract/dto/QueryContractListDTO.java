@@ -22,4 +22,6 @@ public class QueryContractListDTO {
 
     private String littleXwCode;
 
+    private String nextMonth;
+
 }
