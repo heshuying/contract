@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.service;
 
+import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -131,5 +132,11 @@ public interface ZHrChainInfoService {
      * @return
      */
     int updateBatch(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfo);
+
+    /**
+     * 获取平台下战略最小单元部分数据
+     * @return
+     */
+    List<ExportChainUnitInfo> getPartMinbuList();
 
 }

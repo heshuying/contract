@@ -497,14 +497,16 @@ public class IHaierUtil {
                 return null;
             }
             JsonObject json = (JsonObject) parse.parse(response.body().string());  //创建jsonObject对象
-            if (json.get("success").getAsBoolean()){
+            if (json.get("success").getAsBoolean()) {
                 JsonObject result = json.get("data").getAsJsonObject();
                 return result.get("taskId").getAsString();
+            } else {
+                return "接口错误：" + json.get("error").getAsString();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return "系统错误";
     }
 
 }

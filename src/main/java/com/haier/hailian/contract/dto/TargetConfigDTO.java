@@ -9,5 +9,4 @@ public class TargetConfigDTO {
     private String targetValue;
     private String targetType;
     private String targetUnit;
-//    private String targetValueGrab;
 }

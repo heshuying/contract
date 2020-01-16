@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dao;
 
+import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -28,4 +29,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<String> getListByCodeList(String ptCode,List<String> list);
 
     List<TOdsMinbu> selectMarket(TOdsMinbu tOdsMinbu);
+
+    List<ExportChainUnitInfo> getPartListByPtCode(String ptCode);
 }
