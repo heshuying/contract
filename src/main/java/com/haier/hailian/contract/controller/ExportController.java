@@ -1,10 +1,9 @@
 package com.haier.hailian.contract.controller;
 
 
-import com.haier.hailian.contract.dto.ExportChainUnitInfo;
-import com.haier.hailian.contract.dto.ExportInfo;
-import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
+import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.ExportService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
@@ -20,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -40,6 +41,8 @@ public class ExportController {
     private GrabService grabService;
     @Autowired
     private ExportService exportService;
+    @Autowired
+    private ContractViewService contractViewService;
 
 
 
@@ -73,7 +76,44 @@ public class ExportController {
                 headFields = GRID_EXCEL_TITLE;
                 break;
             case "masterGrab":
-                System.out.println("");
+                ContractViewRequestNewDTO requestBean = new ContractViewRequestNewDTO();
+                requestBean.setContractId(String.valueOf(contractId));
+                List<ContractViewDataTYResponseNewDTO> res = (ArrayList)contractViewService.getContractViewDataTYNew(requestBean).get("data");
+                for(ContractViewDataTYResponseNewDTO dto : res){
+                    Map map = new HashMap();
+                    map.put("xwName" , dto.getXwName());
+                    for(TargetConfigDTO jd : dto.getJdList()){
+                        if(jd.getTargetName().equals("收入")){
+                            map.put("jdInComeTarget" , jd.getTargetValue() + jd.getTargetUnit());
+                        }else if(jd.getTargetName().equals("高端占比")){
+                            map.put("jdHighTarget" , jd.getTargetValue() + jd.getTargetUnit());
+                        }
+                    }
+
+                    for(TargetConfigDTO e2e : dto.getE2eList()){
+                        if(e2e.getTargetName().equals("收入")){
+                            map.put("e2eInComeTarget" , e2e.getTargetValue() + e2e.getTargetUnit());
+                        }else if(e2e.getTargetName().equals("高端占比")){
+                            map.put("e2eHighTarget" , e2e.getTargetValue() + e2e.getTargetUnit());
+                        }
+                    }
+                    for(TargetConfigDTO grab : dto.getQdList()){
+                        if(grab.getTargetName().equals("收入")){
+                            map.put("grabInComeTarget" , grab.getTargetValue() + grab.getTargetUnit());
+                        }else if(grab.getTargetName().equals("高端占比")){
+                            map.put("grabHighTarget" , grab.getTargetValue() + grab.getTargetUnit());
+                        }
+                    }
+                    if(dto.getIsGrab().equals("1")){
+                        map.put("isGrab" , "已抢入");
+                    }else{
+                        map.put("isGrab" , "未抢入");
+                    }
+                    rows.add(map);
+                }
+                sheetName = "体验链群抢单信息";
+                fileName = "体验链群抢单信息.xls";
+                headFields = MASTER_GRAB_EXCEL_TITLE;
                 break;
             default:
                 System.out.println("暂无匹配类型");
@@ -122,7 +162,12 @@ public class ExportController {
                 headFields = GRID_EXCEL_TITLE;
                 break;
             case "masterGrab":
-                System.out.println("");
+                ContractViewRequestNewDTO requestBean = new ContractViewRequestNewDTO();
+                requestBean.setContractId(String.valueOf(exportInfo.getContractId()));
+                rows = (ArrayList)contractViewService.getContractViewDataTYNew(requestBean).get("data");
+                sheetName = "体验链群抢单信息";
+                fileName = "体验链群抢单信息.xls";
+                headFields = MASTER_GRAB_EXCEL_TITLE;
                 break;
             default:
                 System.out.println("暂无匹配类型");
@@ -175,6 +220,18 @@ public class ExportController {
             new ExcelUtil.CellHeadField("网格", "meshName"),
             new ExcelUtil.CellHeadField("收入（万元）", "income"),
             new ExcelUtil.CellHeadField("高端占比（%）", "struHighPercent"),
+    };
+
+
+    private static final ExcelUtil.CellHeadField[] MASTER_GRAB_EXCEL_TITLE = {
+            new ExcelUtil.CellHeadField("抢入节点", "xwName"),
+            new ExcelUtil.CellHeadField("举单收入目标", "jdInComeTarget"),
+            new ExcelUtil.CellHeadField("举单高端占比目标", "jdHighTarget"),
+            new ExcelUtil.CellHeadField("E2E收入目标", "e2eInComeTarget"),
+            new ExcelUtil.CellHeadField("E2E高端占比目标", "e2eHighTarget"),
+            new ExcelUtil.CellHeadField("抢单收入目标", "grabInComeTarget"),
+            new ExcelUtil.CellHeadField("抢单高端占比目标", "grabHighTarget"),
+            new ExcelUtil.CellHeadField("是否抢入", "isGrab"),
     };
 
 
