@@ -5,19 +5,19 @@ spring:
   application:
       id: zzfz
       name: zzfx
-#  dubbo:
-#    server: false
-#    registries:
-#      registry1:
-#        protocol: zookeeper
-#        address: 10.135.13.22:2181,10.138.46.22:2181,10.135.12.166:2181
-#      registry2:
-#        protocol: zookeeper
-#        address: 10.135.7.56:2181,10.135.7.58:2181,10.135.6.66:2181
-#    consumer:
-#      timeout: 60000
-#      retries: 3
-#      check: true
+  dubbo:
+    server: false
+    registries:
+      registry1:
+        protocol: zookeeper
+        address: 10.135.13.22:2181,10.138.46.22:2181,10.135.12.166:2181
+      registry2:
+        protocol: zookeeper
+        address: 10.135.7.56:2181,10.135.7.58:2181,10.135.6.66:2181
+    consumer:
+      timeout: 60000
+      retries: 3
+      check: true
   datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       druid:
@@ -93,3 +93,7 @@ hac:
   loginUri: http://almsc.hoptest.haier.net:8899/api/service-sso/user/loginjson
   appKey: CkHorSCQuBQwNhgHiKgvPPNWsYYprmXj
   appSecret: RF9vLUON3pBS4FzeW4DtQ0oK6fUwACGW
+
+ehr:
+  version: ehr2.0-test
+  registry: registry2

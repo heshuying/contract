@@ -2,7 +2,7 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.alibaba.dubbo.config.annotation.Reference;
-//import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
+import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.R;
@@ -41,8 +41,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
     //hr发版后放开
 //    @Reference(version = "ehr2.0", registry = "registry2", check = false)
-//    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
-//    ChainGroupClient chainGroupClient;
+    @Reference(version = "${ehr.version}",registry = "${ehr.registry}",check=false)
+    ChainGroupClient chainGroupClient;
 
     /**
      * 通过ID查询单条数据
@@ -183,14 +183,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //链群编码生成
         String maxOne = zHrChainInfoDao.queryMaxOne();
         //生成编码的方法
-        String chainCode = frontCompWithZore(maxOne, 5, "H");
+//        String chainCode = frontCompWithZore(maxOne, 5, "H");
         //判断是否存在链群关键字，不存在则添加
         String name = zHrChainInfoDto.getChainName();
         if (!name.contains("链群")) {
             name = name + "链群";
         }
         //hr接口获取编码
-//        String chainCode = chainGroupClient.getChainGroupCode(name);
+        String chainCode = chainGroupClient.getChainGroupCode(name);
 
         zHrChainInfo.setChainCode(chainCode);
         zHrChainInfo.setChainPtCode(currentUser.getPtCode());

@@ -55,7 +55,8 @@ public class ContractViewController {
         Map<String, Object> result = contractViewService.getContractViewDataTYNew(requestBean);
         Integer grabSize = contractViewService.selectContractsViewForTYCount(requestBean.getContractId());
         Integer size = contractViewService.getContractSize2(requestBean.getContractId());
-        return R.ok().put("data",result.get("data")).put("lessthanJDCount", result.get("lessthanJDCount")).put("lessthanE2ECount", result.get("lessthanE2ECount")).put("grabPercent", grabSize + "/" + size);
+        return R.ok().put("data",result.get("data")).put("lessthanJDCount", result.get("lessthanJDCount")).put("lessthanE2ECount", result.get("lessthanE2ECount"))
+                .put("grabedCount", result.get("grabedCount")).put("notGrabCount", result.get("notGrabCount")).put("grabPercent", grabSize + "/" + size);
     }
 
 }

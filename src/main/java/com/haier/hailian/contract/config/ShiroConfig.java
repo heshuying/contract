@@ -47,6 +47,7 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/loginMagic", "anon");
         filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/zHrChainInfo/searchUsers", "anon");
         filterMap.put("/zHrChainInfo/getDepVCode", "anon");
