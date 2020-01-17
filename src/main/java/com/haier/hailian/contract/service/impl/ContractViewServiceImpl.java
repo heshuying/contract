@@ -182,9 +182,9 @@ public class ContractViewServiceImpl implements ContractViewService {
 
         // 排序
         if(StringUtils.isNotBlank(requestBean.getOrderStr())){
-            if("incomeDesc".equals(requestBean.getFilterStr())){
+            if("incomeDesc".equals(requestBean.getOrderStr())){
                 paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
-            }else if("highDesc".equals(requestBean.getFilterStr())){
+            }else if("highDesc".equals(requestBean.getOrderStr())){
                 paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
             }
         }else {
@@ -277,6 +277,13 @@ public class ContractViewServiceImpl implements ContractViewService {
             Collections.sort((List<ContractViewDataTYResponseNewDTO>)resultMap.get("data"), new Comparator<ContractViewDataTYResponseNewDTO>() {
                 @Override
                 public int compare(ContractViewDataTYResponseNewDTO o1, ContractViewDataTYResponseNewDTO o2) {
+                    if(Integer.parseInt(o2.getIsGrab()) > Integer.parseInt(o1.getIsGrab())){
+                        return 1;
+                    }else if(Integer.parseInt(o2.getIsGrab()) < Integer.parseInt(o1.getIsGrab())){
+                        return -1;
+                    }else if(Integer.parseInt(o2.getIsGrab()) == Integer.parseInt(o1.getIsGrab())){
+                        return o2.getGrabRate().subtract(o1.getGrabRate()).compareTo(BigDecimal.ZERO);
+                    }
                     return o2.getGrabRate().subtract(o1.getGrabRate()).compareTo(BigDecimal.ZERO);
                 }
             });
