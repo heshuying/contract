@@ -340,7 +340,7 @@
               WHERE t1.contract_type = '20'
                 AND t1.`status` = '1'
                 AND t1.`parent_id` = #{contractId})
-            ORDER BY cf.`factor_value` DESC)
+            ORDER BY CONVERT(cf.`factor_value`,DECIMAL) DESC)
             UNION
             (SELECT
               '' AS grabId,
@@ -382,6 +382,7 @@
         <if test="isgrab!=null and isgrab == 'no'">
             HAVING t.factor_code = ''
         </if>
+        ORDER BY CONVERT(t.`factor_value`,DECIMAL) DESC
     </select>
 
     <select id="selectFactorJDForTYNew" parameterType="map" resultMap="jdResultMap">
@@ -553,5 +554,11 @@
                 )
         )) a
         ORDER BY a.create_time DESC
+    </select>
+
+    <select id="selectGamnlingBeginDate" resultType="java.util.Date">
+      select start_date from z_waring_period_config
+      where chain_code=#{chainCode}
+      and  DATE_FORMAT(start_date,'%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m' )
     </select>
 </mapper>
