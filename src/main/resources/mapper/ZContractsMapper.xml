@@ -269,6 +269,11 @@
               AND zc.`status` = '1'
               AND zc.contract_type = '30') t2
             ON node.`node_code` = t2.org_code
+        <where>
+            <if test="xwName != null and xwName != ''">
+                node.node_name like CONCAT('%', #{xwName}, '%')
+            </if>
+        </where>
     </select>
 
     <select id="selectContractsViewForTY" resultType="com.haier.hailian.contract.dto.ContractViewDataTY">

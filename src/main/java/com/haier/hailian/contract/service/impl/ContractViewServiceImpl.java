@@ -299,9 +299,14 @@ public class ContractViewServiceImpl implements ContractViewService {
 
 
     @Override
-    public Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId){
+    public Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId, String xwName){
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("contractId", contractId);
+        if(StringUtils.isNotBlank(xwName)){
+            paraMap.put("xwName", xwName);
+        }
         List<ContractViewDataCDResponseDTO> resultList = new ArrayList<>();
-        List<ContractViewDataCD> list = contractsDao.selectContractsViewForCD(contractId);
+        List<ContractViewDataCD> list = contractsDao.selectContractsViewForCD(paraMap);
         Map<String, ContractViewDataCDResponseDTO> resultMap = new HashMap<String, ContractViewDataCDResponseDTO>();
 
         if(list != null && !list.isEmpty()){

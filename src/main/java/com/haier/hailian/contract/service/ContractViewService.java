@@ -19,7 +19,7 @@ public interface ContractViewService {
 
     List<TargetTitleTYDTO> getTargetTitleList(String contractId);
 
-    Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId);
+    Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId, String xwName);
 
     String getContractSize(String contractId);
 

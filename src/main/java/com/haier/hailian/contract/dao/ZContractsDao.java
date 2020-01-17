@@ -52,10 +52,8 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     /**
      * 合约详情查看（创单）
-     * @param contractId
-     * @return
      */
-    List<ContractViewDataCD> selectContractsViewForCD(String contractId);
+    List<ContractViewDataCD> selectContractsViewForCD(Map<String,Object> paraMap);
 
     /**
      * 查询已抢入合约列表
