@@ -340,7 +340,7 @@
               WHERE t1.contract_type = '20'
                 AND t1.`status` = '1'
                 AND t1.`parent_id` = #{contractId})
-            ORDER BY cf.`factor_value` DESC)
+            ORDER BY CONVERT(cf.`factor_value`,DECIMAL) DESC)
             UNION
             (SELECT
               '' AS grabId,
