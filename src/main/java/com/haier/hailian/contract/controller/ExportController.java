@@ -210,7 +210,7 @@ public class ExportController {
 
 
     private static final ExcelUtil.CellHeadField[] CHAIN_EXCEL_TITLE = {
-            new ExcelUtil.CellHeadField("单元", "littleXwCode"),
+            new ExcelUtil.CellHeadField("单元", "xwName"),
             new ExcelUtil.CellHeadField("小微", "littleXwName"),
             new ExcelUtil.CellHeadField("分享比例（100%）", "sharePercent"),
     };
