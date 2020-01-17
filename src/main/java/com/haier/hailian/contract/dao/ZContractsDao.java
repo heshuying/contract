@@ -5,6 +5,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -127,4 +128,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     ZContracts selectByTime(String startTime ,String endTime,String groupId);
 
     List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO);
+
+    Date selectGamnlingBeginDate(String chainCode);
 }

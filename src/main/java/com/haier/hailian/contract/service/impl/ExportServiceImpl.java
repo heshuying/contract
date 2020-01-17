@@ -58,7 +58,7 @@ public class ExportServiceImpl implements ExportService {
                 ExportChainUnitInfo exportChainUnitInfo = new ExportChainUnitInfo();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) exportChainUnitInfo.setLittleXwCode(cell.getStringCellValue());
+                    if(y==0) exportChainUnitInfo.setXwName(cell.getStringCellValue());
                     if(y==1) exportChainUnitInfo.setLittleXwName(cell.getStringCellValue());
                     if(y==2) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
                 }
