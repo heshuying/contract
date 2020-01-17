@@ -199,10 +199,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(null != list && list.size() > 0){
             for(ZContracts zContracts:list){
                 int id = zContracts.getId();
-                if(contractIds.indexOf(id+",")>0){
-                    zContracts.setStatus2("1");
-                }else {
+                if(contractIds.indexOf(id+",")<0){
                     zContracts.setStatus2("0");
+                }else {
+                    zContracts.setStatus2("1");
                 }
             }
         }
