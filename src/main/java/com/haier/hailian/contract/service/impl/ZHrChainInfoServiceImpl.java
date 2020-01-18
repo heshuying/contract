@@ -41,7 +41,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
     //hr发版后放开
 //    @Reference(version = "ehr2.0", registry = "registry2", check = false)
-    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
+    @Reference(version = "ehr2.0",registry = "registry2",check=false)
     ChainGroupClient chainGroupClient;
 
     /**
@@ -66,6 +66,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         ZHrChainInfo zHrChainInfo = this.zHrChainInfoDao.queryById(id);
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainName(zHrChainInfo.getChainName());
+        zHrChainInfoDto.setChainCode(zHrChainInfo.getChainCode());
+        zHrChainInfoDto.setFixedPosition(zHrChainInfo.getFixedPosition());
         ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
         zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
         zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(zNodeTargetPercentInfo));
