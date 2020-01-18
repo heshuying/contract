@@ -554,4 +554,14 @@
         )) a
         ORDER BY a.create_time DESC
     </select>
+
+
+    <select id="selectByChainCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where chain_code =#{chainCode}
+        and start_date <![CDATA[ >= ]]> #{opTime}
+        and parent_id = 0
+    </select>
 </mapper>

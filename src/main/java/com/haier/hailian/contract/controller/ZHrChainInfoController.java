@@ -248,4 +248,22 @@ public class ZHrChainInfoController {
         return null;
     }
 
+    @PostMapping(value = {"/updateChain"})
+    @ApiOperation(value = "更新链群信息主要信息")
+    public R updateChain(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) ZHrChainInfoDto zHrChainInfoDto) {
+        try {
+            ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
+            zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
+            zHrChainInfo.setId(zHrChainInfoDto.getId());
+            ZHrChainInfo z = zHrChainInfoService.update(zHrChainInfo);
+            if (z==null){
+                return R.error("更新出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateChainInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
 }

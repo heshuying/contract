@@ -51,11 +51,55 @@ public class ZContractsQuartz {
         log.info("【创建合约的群组结束】");
     }
 
+    /**
+     * 合约达成变更合约状态
+     */
 //    @Scheduled(cron="0 0/10 * * * ?")
     public void createContracts(){
         log.info("【合约达成开始】");
         zReservePlanTeamworkService.createContracts();
         log.info("【合约达成结束】");
     }
+
+    /**
+     * 举单预警（开启前一次/天）
+     */
+    //    @Scheduled(cron="0 0/10 * * * ?")
+    public void jdStartWarning(){
+        log.info("【合约达成开始】");
+        zReservePlanTeamworkService.createContracts();
+        log.info("【合约达成结束】");
+    }
+
+    /**
+     * 举单预警（结束前两次/天）
+     */
+    //    @Scheduled(cron="0 0/10 * * * ?")
+    public void jdEndWarning(){
+        log.info("【合约达成开始】");
+        zReservePlanTeamworkService.createContracts();
+        log.info("【合约达成结束】");
+    }
+
+    /**
+     * 抢单预警（开启前一次/天）
+     */
+    //    @Scheduled(cron="0 0/10 * * * ?")
+    public void qdStartWarning(){
+        log.info("【合约达成开始】");
+        zReservePlanTeamworkService.createContracts();
+        log.info("【合约达成结束】");
+    }
+
+    /**
+     * 抢单预警（结束前两次/天）
+     */
+    //    @Scheduled(cron="0 0/10 * * * ?")
+    public void qdEndWarning(){
+        log.info("【合约达成开始】");
+        zReservePlanTeamworkService.createContracts();
+        log.info("【合约达成结束】");
+    }
+
 }
 
