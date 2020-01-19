@@ -436,7 +436,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                         }else {
                             day = 20;
                         }
-                        if(DateFormatUtil.getDAYOfDate(new Date())<20){
+                        if(DateFormatUtil.getDAYOfDate(new Date())<day){
                             zContracts.setStatus("close");
                         }else{
                             zContracts.setStatus("open");
