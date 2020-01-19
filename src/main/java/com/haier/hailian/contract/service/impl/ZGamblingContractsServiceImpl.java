@@ -384,16 +384,29 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
             for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
-                if (row == null || row.getFirstCellNum() == j) {
+                if (row == null ) {
                     continue;
+                }
+                if(row.getFirstCellNum() == j){
+                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
+                    if("42中心".equals(title1)&&"42中心".equals(title2)&&"收入(万元)".equals(title3)&&"高端占比(%)".equals(title4)){
+                        continue;
+                    }else {
+                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
+                    }
                 }
                 MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
-                    if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
-                    if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
-                    if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    if(cell != null){
+                        if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
+                        if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
+                        if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
+                        if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    }
                 }
                 list.add(marketTargetDTO3);
             }
@@ -480,15 +493,27 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
             for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
-                if (row == null || row.getFirstCellNum() == j) {
+                if (row == null ) {
                     continue;
+                }
+                if(row.getFirstCellNum() == j){
+                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    if("系列名称".equals(title1)&&"年度销量(台)".equals(title2)&&"月度销量(台)".equals(title3)){
+                        continue;
+                    }else {
+                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
+                    }
                 }
                 ContractProductDTO dto = new ContractProductDTO();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) dto.setProductSeries(cell.getStringCellValue());
-                    if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
-                    if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                    if(cell != null){
+                        if(y==0) dto.setProductSeries(cell.getStringCellValue());
+                        if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
+                        if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                    }
                 }
                 list.add(dto);
             }
