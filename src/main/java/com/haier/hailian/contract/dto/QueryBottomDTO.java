@@ -9,4 +9,6 @@ import lombok.Data;
 public class QueryBottomDTO {
 
     private String chainCode;
+
+    private String startDate;
 }

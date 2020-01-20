@@ -266,4 +266,20 @@ public class ZHrChainInfoController {
         }
     }
 
+    @PostMapping(value = {"/searchChainList"})
+    @ApiOperation(value = "查询用户所选最小作战单元所在的链群")
+    public R searchChainList() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+            TOdsMinbu minbu = sysUser.getMinbu();
+            String littleXwCode = minbu==null?"":minbu.getLittleXwCode();
+            List<ZHrChainInfo> list = zHrChainInfoService.searchChainListByLittleXwCode(littleXwCode);
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.searchChainList,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
 }

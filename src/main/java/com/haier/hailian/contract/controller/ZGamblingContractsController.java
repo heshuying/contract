@@ -48,10 +48,10 @@ public class ZGamblingContractsController {
 
     }
 
-    @PostMapping(value = {"/selectMarket"})
+    @GetMapping(value = {"/selectMarket"})
     @ApiOperation(value = "查询42市场小微的名字和商圈目标名称")
-    public R selectMarket() {
-        MarketReturnDTO dto = gamblingContractsService.selectMarket();
+    public R selectMarket(@RequestParam String chainCode) {
+        MarketReturnDTO dto = gamblingContractsService.selectMarket(chainCode);
         return R.ok().put("data",dto);
     }
 
@@ -102,8 +102,8 @@ public class ZGamblingContractsController {
 
     @GetMapping(value = "/exportMarket",headers="Accept=application/octet-stream")
     @ApiOperation(value = "查询并导出42市场小微的名字和商圈目标名称")
-    public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        gamblingContractsService.exportMarket(request,response);
+    public void exportMarket(@RequestParam String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        gamblingContractsService.exportMarket(chainCode,request,response);
     }
 
     @PostMapping(value = {"/importMarket"})
