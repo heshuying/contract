@@ -64,4 +64,11 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
     String queryMaxOne();
 
     String getDepVCode(String userCode);
+
+    /**
+     * 根据用户登录时所选的最小作战单元查询其所在链群列表
+     * @param littleXwCode
+     * @return
+     */
+    List<ZHrChainInfo> searchChainListByLittleXwCode(String littleXwCode);
 }

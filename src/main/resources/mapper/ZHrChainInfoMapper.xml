@@ -25,7 +25,6 @@
         where id = #{id}
     </select>
 
-
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZHrChainInfoMap">
         select
@@ -139,6 +138,14 @@
         from chain_contract.sys_employee_ehr sem
         left join sys_node_ehr sne on sne.nodeCode=sem.nodeCode
         where empSn =  #{userCode}
+    </select>
+
+    <select id="searchChainListByLittleXwCode" resultMap="ZHrChainInfoMap">
+        select a.id, a.chain_code, a.chain_name, a.xw_code, a.xw_name, a.master_code, a.master_name, a.chain_pt_code, a.deleted,a.group_id,a.fixed_position,a.create_date
+        from z_hr_chain_info a
+        LEFT JOIN z_node_target_percent_info b
+        on a.chain_code = b.lq_code
+        where b.node_code=#{littleXwCode}
     </select>
 
 </mapper>

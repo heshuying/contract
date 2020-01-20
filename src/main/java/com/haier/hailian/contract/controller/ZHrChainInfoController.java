@@ -2,8 +2,6 @@ package com.haier.hailian.contract.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
-import com.haier.hailian.contract.dto.CurrentUser;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -13,8 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
@@ -246,6 +242,22 @@ public class ZHrChainInfoController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @PostMapping(value = {"/searchChainList"})
+    @ApiOperation(value = "查询用户所选最小作战单元所在的链群")
+    public R searchChainList() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+            TOdsMinbu minbu = sysUser.getMinbu();
+            String littleXwCode = minbu==null?"":minbu.getLittleXwCode();
+            List<ZHrChainInfo> list = zHrChainInfoService.searchChainListByLittleXwCode(littleXwCode);
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.searchChainList,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
     }
 
 }

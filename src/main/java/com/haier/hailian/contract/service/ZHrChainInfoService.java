@@ -139,4 +139,5 @@ public interface ZHrChainInfoService {
      */
     List<ExportChainUnitInfo> getPartMinbuList();
 
+    List<ZHrChainInfo> searchChainListByLittleXwCode(String littleXwCode);
 }
