@@ -182,9 +182,9 @@ public class ContractViewServiceImpl implements ContractViewService {
 
         // 排序
         if(StringUtils.isNotBlank(requestBean.getOrderStr())){
-            if("incomeDesc".equals(requestBean.getFilterStr())){
+            if("incomeDesc".equals(requestBean.getOrderStr())){
                 paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
-            }else if("highDesc".equals(requestBean.getFilterStr())){
+            }else if("highDesc".equals(requestBean.getOrderStr())){
                 paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
             }
         }else {
@@ -264,19 +264,27 @@ public class ContractViewServiceImpl implements ContractViewService {
                     continue;
                 }
 
-                BigDecimal rateImcome = ((((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(0).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(0).getTargetValue()))))
-                        .add((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(0).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(0).getTargetValue())))).divide(new BigDecimal("2"));
+                BigDecimal rateImcome = ((((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(0).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(0).getTargetValue()), BigDecimal.ROUND_HALF_UP)))
+                        .add((new BigDecimal(item.getQdList().get(0).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(0).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(0).getTargetValue()), BigDecimal.ROUND_HALF_UP))).divide(new BigDecimal("2"), BigDecimal.ROUND_HALF_UP);
 
-                BigDecimal rateHigh = ((((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(1).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(1).getTargetValue()))))
-                        .add((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(1).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(1).getTargetValue())))).divide(new BigDecimal("2"));
-                grabRate = (rateImcome.add(rateHigh)).divide(new BigDecimal("2"));
+                BigDecimal rateHigh = (((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getJdList().get(1).getTargetValue()))).divide(new BigDecimal(item.getJdList().get(1).getTargetValue()), BigDecimal.ROUND_HALF_UP)));
+                // e2e的高端占比有0的情况作为分母会报错
+//                        .add((new BigDecimal(item.getQdList().get(1).getTargetValue()).subtract(new BigDecimal(item.getE2eList().get(1).getTargetValue()))).divide(new BigDecimal(item.getE2eList().get(1).getTargetValue()), BigDecimal.ROUND_HALF_UP))).divide(new BigDecimal("2"), BigDecimal.ROUND_HALF_UP);
+                grabRate = (rateImcome.add(rateHigh)).divide(new BigDecimal("2"), BigDecimal.ROUND_HALF_UP);
                 item.setGrabRate(grabRate);
             }
 
             Collections.sort((List<ContractViewDataTYResponseNewDTO>)resultMap.get("data"), new Comparator<ContractViewDataTYResponseNewDTO>() {
                 @Override
                 public int compare(ContractViewDataTYResponseNewDTO o1, ContractViewDataTYResponseNewDTO o2) {
-                    return o1.getGrabRate().subtract(o2.getGrabRate()).compareTo(BigDecimal.ZERO);
+                    if(Integer.parseInt(o2.getIsGrab()) > Integer.parseInt(o1.getIsGrab())){
+                        return 1;
+                    }else if(Integer.parseInt(o2.getIsGrab()) < Integer.parseInt(o1.getIsGrab())){
+                        return -1;
+                    }else if(Integer.parseInt(o2.getIsGrab()) == Integer.parseInt(o1.getIsGrab())){
+                        return o2.getGrabRate().subtract(o1.getGrabRate()).compareTo(BigDecimal.ZERO);
+                    }
+                    return o2.getGrabRate().subtract(o1.getGrabRate()).compareTo(BigDecimal.ZERO);
                 }
             });
         }
@@ -298,9 +306,14 @@ public class ContractViewServiceImpl implements ContractViewService {
 
 
     @Override
-    public Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId){
+    public Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId, String xwName){
+        Map<String, Object> paraMap = new HashMap<>();
+        paraMap.put("contractId", contractId);
+        if(StringUtils.isNotBlank(xwName)){
+            paraMap.put("xwName", xwName);
+        }
         List<ContractViewDataCDResponseDTO> resultList = new ArrayList<>();
-        List<ContractViewDataCD> list = contractsDao.selectContractsViewForCD(contractId);
+        List<ContractViewDataCD> list = contractsDao.selectContractsViewForCD(paraMap);
         Map<String, ContractViewDataCDResponseDTO> resultMap = new HashMap<String, ContractViewDataCDResponseDTO>();
 
         if(list != null && !list.isEmpty()){

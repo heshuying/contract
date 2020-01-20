@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 @Data
 public class ExportChainUnitInfo {
 
-    private String littleXwCode;
+    private String xwName;
 
     private String littleXwName;
 

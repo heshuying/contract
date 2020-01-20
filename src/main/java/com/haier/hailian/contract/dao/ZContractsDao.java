@@ -5,6 +5,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
 import com.haier.hailian.contract.entity.ZContracts;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,10 +53,8 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     /**
      * 合约详情查看（创单）
-     * @param contractId
-     * @return
      */
-    List<ContractViewDataCD> selectContractsViewForCD(String contractId);
+    List<ContractViewDataCD> selectContractsViewForCD(Map<String,Object> paraMap);
 
     /**
      * 查询已抢入合约列表
@@ -137,4 +136,5 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      * @return
      */
     ZContracts selectByChainCode(String chainCode,String opTime);
+    Date selectGamnlingBeginDate(String chainCode);
 }

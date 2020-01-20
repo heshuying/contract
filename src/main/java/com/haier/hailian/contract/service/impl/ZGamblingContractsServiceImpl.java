@@ -199,10 +199,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(null != list && list.size() > 0){
             for(ZContracts zContracts:list){
                 int id = zContracts.getId();
-                if(contractIds.indexOf(id+",")>0){
-                    zContracts.setStatus2("1");
-                }else {
+                if(contractIds.indexOf(id+",")<0){
                     zContracts.setStatus2("0");
+                }else {
+                    zContracts.setStatus2("1");
                 }
             }
         }
@@ -384,16 +384,29 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
             for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
-                if (row == null || row.getFirstCellNum() == j) {
+                if (row == null ) {
                     continue;
+                }
+                if(row.getFirstCellNum() == j){
+                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
+                    if("42中心".equals(title1)&&"42中心".equals(title2)&&"收入(万元)".equals(title3)&&"高端占比(%)".equals(title4)){
+                        continue;
+                    }else {
+                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
+                    }
                 }
                 MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
-                    if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
-                    if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
-                    if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    if(cell != null){
+                        if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
+                        if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
+                        if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
+                        if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    }
                 }
                 list.add(marketTargetDTO3);
             }
@@ -419,12 +432,24 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 for(ZHrChainInfo chainInfo : chainList){
                     QueryContractListDTO dto = new QueryContractListDTO();
                     dto.setChainCode(chainInfo.getChainCode());
-                    dto.setNextMonth(DateFormatUtil.getMonthOfDate(new Date())+1+"");
+                    int next = DateFormatUtil.getMonthOfDate(new Date())+1;
+                    int year = DateFormatUtil.getYearOfDate(new Date());
+                    String nextMonth = "";
+                    nextMonth = next<10?year+"0"+next:year+""+next;
+                    dto.setNextMonth(nextMonth);
                     List<ZContracts> contractsList = contractsDao.selectContractList(dto);
                     if(null == contractsList || contractsList.size()==0){
                         ZContracts zContracts = new ZContracts();
                         zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
-                        if(DateFormatUtil.getDAYOfDate(new Date())<20){
+                        //从z_waring_period_config表中查询举单开始日期
+                        Date begin = contractsDao.selectGamnlingBeginDate(chainInfo.getChainCode());
+                        int day = 0;
+                        if(begin != null){
+                            day = DateFormatUtil.getDAYOfDate(begin);
+                        }else {
+                            day = 20;
+                        }
+                        if(DateFormatUtil.getDAYOfDate(new Date())<day){
                             zContracts.setStatus("close");
                         }else{
                             zContracts.setStatus("open");
@@ -468,15 +493,27 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
             for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
-                if (row == null || row.getFirstCellNum() == j) {
+                if (row == null ) {
                     continue;
+                }
+                if(row.getFirstCellNum() == j){
+                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    if("系列名称".equals(title1)&&"年度销量(台)".equals(title2)&&"月度销量(台)".equals(title3)){
+                        continue;
+                    }else {
+                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
+                    }
                 }
                 ContractProductDTO dto = new ContractProductDTO();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) dto.setProductSeries(cell.getStringCellValue());
-                    if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
-                    if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                    if(cell != null){
+                        if(y==0) dto.setProductSeries(cell.getStringCellValue());
+                        if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
+                        if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                    }
                 }
                 list.add(dto);
             }

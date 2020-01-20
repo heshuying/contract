@@ -1,7 +1,9 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
+import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.service.ExportService;
+import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,15 +54,27 @@ public class ExportServiceImpl implements ExportService {
             }
             for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
                 row = sheet.getRow(j);
-                if (row == null || row.getFirstCellNum() == j) {
+                if (row == null) {
                     continue;
+                }
+                if(row.getFirstCellNum() == j){
+                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    if("单元".equals(title1)&&"小微".equals(title2)&&"分享比例（100%）".equals(title3)){
+                        continue;
+                    }else {
+                        throw new RException("请先下载模板，再上传", Constant.CODE_VALIDFAIL);
+                    }
                 }
                 ExportChainUnitInfo exportChainUnitInfo = new ExportChainUnitInfo();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
-                    if(y==0) exportChainUnitInfo.setLittleXwCode(cell.getStringCellValue());
-                    if(y==1) exportChainUnitInfo.setLittleXwName(cell.getStringCellValue());
-                    if(y==2) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    if(cell != null){
+                        if(y==0) exportChainUnitInfo.setXwName(cell.getStringCellValue());
+                        if(y==1) exportChainUnitInfo.setLittleXwName(cell.getStringCellValue());
+                        if(y==2) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    }
                 }
                 list.add(exportChainUnitInfo);
             }
