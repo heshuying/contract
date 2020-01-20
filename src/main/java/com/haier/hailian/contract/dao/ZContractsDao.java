@@ -129,5 +129,12 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO);
 
+
+    /**
+     * 获取合约的ID
+     * @param opTime
+     * @return
+     */
+    ZContracts selectByChainCode(String chainCode,String opTime);
     Date selectGamnlingBeginDate(String chainCode);
 }

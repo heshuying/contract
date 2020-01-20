@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZWaringPeriodConfigDao">
+
+    <resultMap type="com.haier.hailian.contract.entity.ZWaringPeriodConfig" id="ZWaringPeriodConfigMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="chainCode" column="chain_code" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+        <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+        <result property="opDate" column="op_date" jdbcType="VARCHAR"/>
+        <result property="isSend" column="is_send" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ZWaringPeriodConfigMap">
+        select
+          id, chain_code, type, start_date, end_date, op_date, is_send
+        from chain_contract.z_waring_period_config
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ZWaringPeriodConfigMap">
+        select
+          id, chain_code, type, start_date, end_date, op_date, is_send
+        from chain_contract.z_waring_period_config
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ZWaringPeriodConfigMap">
+        select
+          id, chain_code, type, start_date, end_date, op_date, is_send
+        from chain_contract.z_waring_period_config
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="chainCode != null and chainCode != ''">
+                and chain_code = #{chainCode}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="startDate != null">
+                and start_date = #{startDate}
+            </if>
+            <if test="endDate != null">
+                and end_date = #{endDate}
+            </if>
+            <if test="opDate != null and opDate != ''">
+                and op_date = #{opDate}
+            </if>
+            <if test="isSend != null">
+                and is_send = #{isSend}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into chain_contract.z_waring_period_config(chain_code, type, start_date, end_date, op_date, is_send)
+        values (#{chainCode}, #{type}, #{startDate}, #{endDate}, #{opDate}, #{isSend})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update chain_contract.z_waring_period_config
+        <set>
+            <if test="chainCode != null and chainCode != ''">
+                chain_code = #{chainCode},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="startDate != null">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null">
+                end_date = #{endDate},
+            </if>
+            <if test="opDate != null and opDate != ''">
+                op_date = #{opDate},
+            </if>
+            <if test="isSend != null">
+                is_send = #{isSend},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from chain_contract.z_waring_period_config where id = #{id}
+    </delete>
+
+</mapper>
