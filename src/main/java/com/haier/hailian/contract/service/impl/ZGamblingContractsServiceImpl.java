@@ -162,8 +162,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             throw new RException("没有维护最小作战单元，无法举单",Constant.CODE_VALIDFAIL);
         }
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
-        tOdsMinbu.setXwType3Code("4");
-        tOdsMinbu.setXwType5Code("2");
         tOdsMinbu.setChainCode(chainCode);
         List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
         dto.setMarket(list);
@@ -346,8 +344,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     public void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException {
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
         tOdsMinbu.setChainCode(chainCode);
-        tOdsMinbu.setXwType3Code("4");
-        tOdsMinbu.setXwType5Code("2");
         List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
 
         Workbook workbook = new HSSFWorkbook();

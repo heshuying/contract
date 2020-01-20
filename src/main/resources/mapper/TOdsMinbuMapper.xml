@@ -58,8 +58,8 @@
         from t_ods_minbu o
         LEFT JOIN z_node_target_percent_info t
         on t.node_code=o.littleXwCode
-        and o.xwType3Code= #{xwType3Code}
-        and o.xwType5Code= #{xwType5Code}
+        and o.xwType3Code like '%|4|%'
+        and o.xwType5Code like '%|2|%'
         where t.lq_code=#{chainCode}
     </select>
 
