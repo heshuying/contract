@@ -10,6 +10,8 @@ public class QueryContractListDTO {
 
     private String chainCode;
 
+    private String contractName;
+
     private String startDate;
 
     private String endDate;
