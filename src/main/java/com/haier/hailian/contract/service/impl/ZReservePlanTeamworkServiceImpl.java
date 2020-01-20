@@ -215,28 +215,12 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
     @Override
     public void createGroup() {
         List<ZContracts> list = zContractsDao.selectAllContracts("1");
-        List<String> userList = new ArrayList<>();
         for (ZContracts zContracts : list) {
-            List<ZContracts> contracts= zContractsDao.selectUserList(zContracts.getId());
-            for (ZContracts z: contracts){
-                userList.add(z.getCreateCode());
-            }
-            String[] toBeStored = new String[userList.size()];
-            userList.toArray(toBeStored);
-            String user = IHaierUtil.getUserOpenId(toBeStored);
-            String groupId = IHaierUtil.getGroupId(user.split(","),zContracts.getContractName());
+           ZHrChainInfo zHrChainInfo = zHrChainInfoDao.queryByCode(zContracts.getChainCode());
             ZContracts zContractTemp = new ZContracts();
             zContractTemp.setId(zContracts.getId());
-            zContractTemp.setGroupId(groupId);
+            zContractTemp.setGroupId(zHrChainInfo.getGroupId());
             zContractsDao.updateById(zContractTemp);
-            //循环父亲ID的数据
-            List<ZContracts> pa = zContractsDao.selectAllContractsById(zContracts.getId());
-            for (ZContracts z:pa){
-                ZContracts zContractTemp2 = new ZContracts();
-                zContractTemp2.setId(z.getId());
-                zContractTemp2.setGroupId(groupId);
-                zContractsDao.updateById(zContractTemp2);
-            }
         }
 
     }

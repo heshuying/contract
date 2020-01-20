@@ -195,9 +195,7 @@
         select
         <include refid="Base_Column_List" />
         from z_contracts
-        where contract_type ='10'
-        and status = #{status}
---         and group_id is null
+        where group_id is null
     </select>
 
     <select id="selectAllContractsById" resultMap="BaseResultMap">
