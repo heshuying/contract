@@ -23,4 +23,9 @@ public class ZContractsServiceImpl extends ServiceImpl<ZContractsDao, ZContracts
     public List<ZContracts> queryTyGrabList(TyGrabListQueryDto queryDto) {
         return baseMapper.queryTyGrabList(queryDto);
     }
+
+    @Override
+    public List<ZContracts> queryTyMyGrabList(TyGrabListQueryDto queryDto) {
+        return baseMapper.queryTyMyGrabList(queryDto);
+    }
 }

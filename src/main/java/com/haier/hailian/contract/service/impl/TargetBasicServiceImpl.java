@@ -2,13 +2,16 @@ package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.haier.hailian.contract.dao.TargetBasicDao;
-import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.service.TargetBasicService;
+import com.haier.hailian.contract.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -26,21 +29,30 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     private TargetBasicDao targetBasicDao;
 
     @Override
-    public List<TargetBasic> selectBottom(QueryBottomDTO dto) {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH )+1;
+    public List<TargetBasic> selectBottom(QueryBottomDTO dto){
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
-        String monthStr = month < 10 ? "0" + month : "" + month;
-        targetBasic.setPeriodCode(year+monthStr);
+        String date = dto.getStartDate();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
+        try {
+            targetBasic.setPeriodCode(sf2.format(sf.parse(date)));
+        } catch (ParseException e) {
+            throw new RException("日期类型不正确", Constant.CODE_VALIDFAIL);
+        }
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         for(TargetBasic targetBasic1:list){
             if(null != targetBasic1.getTargetBottomLine()){
-                targetBasic1.setTargetBottomLine(targetBasic1.getTargetBottomLine());
+                String bottom = targetBasic1.getTargetBottomLine();
+                int position = bottom.length() - bottom.indexOf(".") - 1;
+                if(position==1) bottom = bottom.replaceAll("\\.0","");
+                targetBasic1.setTargetBottomLine(bottom);
             }
             if(null != targetBasic1.getTargetJdLine()){
-                targetBasic1.setTargetJdLine(targetBasic1.getTargetJdLine());
+                String e2e = targetBasic1.getTargetJdLine();
+                int position = e2e.length() - e2e.indexOf(".") - 1;
+                if(position==1) e2e = e2e.replaceAll("\\.0","");
+                targetBasic1.setTargetJdLine(e2e);
             }
         }
         return list;

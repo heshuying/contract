@@ -324,4 +324,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         return tOdsMinbuDao.getPartListByPtCode(currentUser.getPtCode());
     }
+
+    @Override
+    public List<ZHrChainInfo> searchChainListByUser(String userCode) {
+        return zHrChainInfoDao.searchChainListByUser(userCode);
+    }
+
+
 }

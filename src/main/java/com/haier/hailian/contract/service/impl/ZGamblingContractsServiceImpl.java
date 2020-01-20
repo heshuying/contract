@@ -151,7 +151,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public MarketReturnDTO selectMarket() {
+    public MarketReturnDTO selectMarket(String chainCode) {
 
         MarketReturnDTO dto = new MarketReturnDTO();
         //查询42个市场小微
@@ -161,11 +161,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(minbu == null){
             throw new RException("没有维护最小作战单元，无法举单",Constant.CODE_VALIDFAIL);
         }
-        String ptCode = minbu.getPtCode();
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
-        tOdsMinbu.setPtCode(ptCode);
         tOdsMinbu.setXwType3Code("4");
         tOdsMinbu.setXwType5Code("2");
+        tOdsMinbu.setChainCode(chainCode);
         List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
         dto.setMarket(list);
         TargetBasic targetBasic = new TargetBasic();
@@ -344,14 +343,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Subject subject = SecurityUtils.getSubject();
-        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        TOdsMinbu minbu = sysUser.getMinbu();
-        String ptCode = "";
-        if(minbu != null) ptCode = minbu.getPtCode();
+    public void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException {
         TOdsMinbu tOdsMinbu = new TOdsMinbu();
-        tOdsMinbu.setPtCode(ptCode);
+        tOdsMinbu.setChainCode(chainCode);
         tOdsMinbu.setXwType3Code("4");
         tOdsMinbu.setXwType5Code("2");
         List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);

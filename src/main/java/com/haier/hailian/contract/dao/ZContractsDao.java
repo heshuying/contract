@@ -28,6 +28,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     List<ZContracts>queryTyGrabList(TyGrabListQueryDto queryDto);
 
+    List<ZContracts>queryTyMyGrabList(TyGrabListQueryDto queryDto);
     /**
      * 查询所有的链群主抢单记录
      * @return

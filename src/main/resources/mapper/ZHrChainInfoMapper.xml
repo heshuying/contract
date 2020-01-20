@@ -25,7 +25,6 @@
         where id = #{id}
     </select>
 
-
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="ZHrChainInfoMap">
         select
@@ -139,6 +138,16 @@
         from chain_contract.sys_employee_ehr sem
         left join sys_node_ehr sne on sne.nodeCode=sem.nodeCode
         where empSn =  #{userCode}
+    </select>
+
+    <select id="searchChainListByUser" resultMap="ZHrChainInfoMap">
+        select id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date
+        from z_hr_chain_info
+        where chain_code in (
+           select chain_code from z_contracts
+           where create_code=#{userCode}
+           and `status` not in ('2','3','5')
+        )
     </select>
 
     <select id="queryByCode" resultMap="ZHrChainInfoMap">

@@ -72,4 +72,11 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
      * @return 实例对象
      */
     ZHrChainInfo queryByCode(String lqCode);
+
+    /**
+     * 查询用户举单和抢单的链群列表
+     * @param userCode
+     * @return
+     */
+    List<ZHrChainInfo> searchChainListByUser(String userCode);
 }
