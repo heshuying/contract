@@ -12,6 +12,8 @@ import java.util.List;
 public class TyGrabListQueryDto {
     private String startDate;
     private String endDate;
+    //根据名称查询
+    private String name;
     private List<String> chainCodes;
     private String empSn;
     @ApiModelProperty(value = "登陆人作战单元编码", required = false)

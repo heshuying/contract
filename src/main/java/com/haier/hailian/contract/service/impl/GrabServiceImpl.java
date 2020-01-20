@@ -97,6 +97,7 @@ public class GrabServiceImpl implements GrabService {
                 .eq("create_code",sysUser.getEmpSn())
                 .eq("contract_type","20")
                 .eq("status",1)
+                .like(StringUtils.isNoneBlank(queryDto.getName()),"contract_name",queryDto.getName())
                 .ge(StringUtils.isNoneBlank(queryDto.getStartDate()),
                         "start_date",
                         DateFormatUtil.stringToDate(queryDto.getStartDate(),DateFormatUtil.DATE_TIME_PATTERN) )
