@@ -53,10 +53,14 @@
     </select>
 
     <select id="selectMarket"  resultMap="BaseResultMap">
-        select  id,xwCode,SUBSTR(substring(xwName,4) ,1 , CHAR_LENGTH(substring(xwName,4))-4) as xwName,xwMasterCode,xwMasterName,littleXwCode,littleXwName,littleXwMasterCode,littleXwMasterName,
-                 ptCode,ptName,xwType3,xwType5,xwType3Code,xwType5Code,userXwCode,userXwName,create_time
-        from t_ods_minbu
-        where ptCode=#{ptCode} and xwType5Code = #{xwType5Code} and xwType3Code = #{xwType3Code}
+        select  o.id,o.xwCode,SUBSTR(substring(o.xwName,4) ,1 , CHAR_LENGTH(substring(o.xwName,4))-4) as xwName,o.xwMasterCode,o.xwMasterName,o.littleXwCode,o.littleXwName,o.littleXwMasterCode,o.littleXwMasterName,
+                 o.ptCode,o.ptName,o.xwType3,o.xwType5,o.xwType3Code,o.xwType5Code,o.userXwCode,o.userXwName,o.create_time
+        from t_ods_minbu o
+        LEFT JOIN z_node_target_percent_info t
+        on t.node_code=o.littleXwCode
+        and o.xwType3Code= #{xwType3Code}
+        and o.xwType5Code= #{xwType5Code}
+        where t.lq_code=#{chainCode}
     </select>
 
     <select id="getPartListByPtCode" parameterType="java.lang.String" resultType="com.haier.hailian.contract.dto.ExportChainUnitInfo">

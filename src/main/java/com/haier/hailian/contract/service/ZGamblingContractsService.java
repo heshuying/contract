@@ -22,7 +22,7 @@ public interface ZGamblingContractsService {
 
     void saveGambling(GamblingContractDTO dto) throws Exception;
 
-    MarketReturnDTO selectMarket();
+    MarketReturnDTO selectMarket(String chainCode);
 
     List<ZContracts> selectContractList(QueryContractListDTO queryDTO);
 
@@ -36,7 +36,7 @@ public interface ZGamblingContractsService {
 
     GamblingContractDTO selectContractById(Integer contractId);
 
-    void exportMarket(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String originalFilename) throws Exception;
 
