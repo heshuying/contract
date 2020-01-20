@@ -87,4 +87,8 @@
         <result column="xwStyleCode" jdbcType="VARCHAR" property="xwstylecode" />
     </resultMap>
 
+    <select id="selectInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * from  sys_employee_ehr where empSn =#{empSn,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

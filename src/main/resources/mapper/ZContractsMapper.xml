@@ -195,9 +195,7 @@
         select
         <include refid="Base_Column_List" />
         from z_contracts
-        where contract_type ='10'
-        and status = #{status}
---         and group_id is null
+        where group_id is null
     </select>
 
     <select id="selectAllContractsById" resultMap="BaseResultMap">
@@ -561,6 +559,15 @@
         ORDER BY a.create_time DESC
     </select>
 
+
+    <select id="selectByChainCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts
+        where chain_code =#{chainCode}
+        and start_date <![CDATA[ >= ]]> #{opTime}
+        and parent_id = 0
+    </select>
     <select id="selectGamnlingBeginDate" resultType="java.util.Date">
       select start_date from z_waring_period_config
       where chain_code=#{chainCode}

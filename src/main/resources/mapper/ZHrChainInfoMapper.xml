@@ -141,4 +141,10 @@
         where empSn =  #{userCode}
     </select>
 
+    <select id="queryByCode" resultMap="ZHrChainInfoMap">
+        select
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date
+        from chain_contract.z_hr_chain_info
+        where chain_code = #{lqCode}
+    </select>
 </mapper>

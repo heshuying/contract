@@ -23,4 +23,6 @@ public interface SysEmployeeEhrDao extends BaseMapper<SysEmployeeEhr> {
     List<SysRole> selectRoleByUser(@Param(value = "empSn") String empSn);
     List<SysNodeEhr> selectNodeByNodeCode(@Param(value = "empSn") String empSn);
     List<SysXiaoweiEhr> selectXiaoweiByEmpId(@Param(value = "empSn") String empSn);
+
+    SysEmployeeEhr selectInfo(@Param(value = "empSn") String empSn);
 }

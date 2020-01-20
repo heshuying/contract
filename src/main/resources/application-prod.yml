@@ -90,3 +90,7 @@ hac:
   loginUri: http://hopcloud.haier.net/api/service-sso/user/loginjson
   appKey: NmQ4YWM4NjA3MWU3NGM4M2E2NWE4MjY2YmQyMTE3OWM=
   appSecret: OWRjYWQ1MTlmNDI1ZDFjOGUyNmU5MjBmYWRkYzkyYmM=
+
+ehr:
+  version: ehr2.0
+  registry: registry2

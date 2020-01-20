@@ -31,4 +31,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<TOdsMinbu> selectMarket(TOdsMinbu tOdsMinbu);
 
     List<ExportChainUnitInfo> getPartListByPtCode(String ptCode);
+
+    TOdsMinbu queryMinbuByOrgCode(String orgCode);
 }

@@ -63,6 +63,9 @@
         select xwName,littleXwName from t_ods_minbu base
         where ptCode=#{ptCode} and xwType5Code != 2
     </select>
-
+    <select id="queryMinbuByOrgCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select base.* from t_ods_minbu base
+        where base.littleXwCode=#{orgCode}
+    </select>
 
 </mapper>

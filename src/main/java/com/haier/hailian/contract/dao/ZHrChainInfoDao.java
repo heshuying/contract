@@ -64,4 +64,12 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
     String queryMaxOne();
 
     String getDepVCode(String userCode);
+
+    /**
+     * 通过ID查询单条数据
+     *
+     * @param lqCode 主键
+     * @return 实例对象
+     */
+    ZHrChainInfo queryByCode(String lqCode);
 }
