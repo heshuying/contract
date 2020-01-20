@@ -37,10 +37,10 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         for(TargetBasic targetBasic1:list){
             if(null != targetBasic1.getTargetBottomLine()){
-                targetBasic1.setTargetBottomLine(targetBasic1.getTargetBottomLine().replaceAll("\\.0",""));
+                targetBasic1.setTargetBottomLine(targetBasic1.getTargetBottomLine());
             }
             if(null != targetBasic1.getTargetJdLine()){
-                targetBasic1.setTargetJdLine(targetBasic1.getTargetJdLine().replaceAll("\\.0",""));
+                targetBasic1.setTargetJdLine(targetBasic1.getTargetJdLine());
             }
         }
         return list;
