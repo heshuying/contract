@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface ZContractsService extends IService<ZContracts> {
     List<ZContracts> queryTyGrabList(TyGrabListQueryDto queryDto);
-
+    List<ZContracts>queryTyMyGrabList(TyGrabListQueryDto queryDto);
 }

@@ -520,6 +520,27 @@
         order by id desc
     </select>
 
+    <select id="queryTyMyGrabList" resultMap="BaseResultMap" >
+        select base.id, base.create_code, base.chain_code,
+        base.region_code,base.join_time,base.start_date,
+        base.end_date, base.xiaowei_code, base.share_space,
+        zc.contract_name, zc.create_name
+        from z_contracts base
+        join z_contracts zc on base.parent_id=zc.id
+        where base.contract_type='20' and base.status='1'
+        and base.create_code=#{empSn}
+        <if test=" startDate != null and startDate != '' ">
+            and DATE_FORMAT(base.start_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d')
+        </if>
+        <if test=" endDate != null and endDate != ''">
+            and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(base.end_date,'%Y-%m-%d')
+        </if>
+        <if test=" name != null and name != ''">
+            and zc.contract_name like CONCAT(CONCAT('%', #{name}), '%')
+        </if>
+        order by base.id desc
+    </select>
+
 
 
     <select id="getContractSize" resultType="java.lang.Integer">
