@@ -140,12 +140,14 @@
         where empSn =  #{userCode}
     </select>
 
-    <select id="searchChainListByLittleXwCode" resultMap="ZHrChainInfoMap">
-        select a.id, a.chain_code, a.chain_name, a.xw_code, a.xw_name, a.master_code, a.master_name, a.chain_pt_code, a.deleted,a.group_id,a.fixed_position,a.create_date
-        from z_hr_chain_info a
-        LEFT JOIN z_node_target_percent_info b
-        on a.chain_code = b.lq_code
-        where b.node_code=#{littleXwCode}
+    <select id="searchChainListByUser" resultMap="ZHrChainInfoMap">
+        select id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date
+        from z_hr_chain_info
+        where chain_code in (
+           select chain_code from z_contracts
+           where create_code=#{userCode}
+           and `status` not in ('2','3','5')
+        )
     </select>
 
     <select id="queryByCode" resultMap="ZHrChainInfoMap">

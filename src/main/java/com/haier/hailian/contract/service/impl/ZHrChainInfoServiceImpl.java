@@ -326,8 +326,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<ZHrChainInfo> searchChainListByLittleXwCode(String littleXwCode) {
-        return zHrChainInfoDao.searchChainListByLittleXwCode(littleXwCode);
+    public List<ZHrChainInfo> searchChainListByUser(String userCode) {
+        return zHrChainInfoDao.searchChainListByUser(userCode);
     }
 
 

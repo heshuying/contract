@@ -74,9 +74,9 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
     ZHrChainInfo queryByCode(String lqCode);
 
     /**
-     * 根据用户登录时所选的最小作战单元查询其所在链群列表
-     * @param littleXwCode
+     * 查询用户举单和抢单的链群列表
+     * @param userCode
      * @return
      */
-    List<ZHrChainInfo> searchChainListByLittleXwCode(String littleXwCode);
+    List<ZHrChainInfo> searchChainListByUser(String userCode);
 }
