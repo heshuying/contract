@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.config.shiro;
 
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
@@ -22,6 +23,7 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.jboss.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,7 +76,9 @@ public class HacLoginRealm extends AuthorizingRealm {
         if(minBu!=null&&minBu.size()>0){
             TOdsMinbu bu=minBu.get(0);
             //优先创单
-            if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
+            if(StringUtils.isBlank(bu.getXwType5Code())){
+                bu.setXwType5Code(Constant.EmpRole.CD.getValue());
+            }else if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
                 bu.setXwType5Code(Constant.EmpRole.CD.getValue());
             }else{
                 bu.setXwType5Code(Constant.EmpRole.TY.getValue());

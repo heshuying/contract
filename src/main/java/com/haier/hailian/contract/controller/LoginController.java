@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.controller;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.CurrentUser;
@@ -69,7 +70,9 @@ public class LoginController {
 
             if (minBu != null && minBu.size() > 0) {
                 TOdsMinbu bu = minBu.get(0);
-                if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
+                if(StringUtils.isBlank(bu.getXwType5Code())){
+                    bu.setXwType5Code(Constant.EmpRole.CD.getValue());
+                } else if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
                     bu.setXwType5Code(Constant.EmpRole.CD.getValue());
                 }else{
                     bu.setXwType5Code(Constant.EmpRole.TY.getValue());
