@@ -410,6 +410,7 @@
         FROM
           z_contracts_factor cf
         WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '01'
+        ORDER BY cf.`factor_code`
     </select>
 
     <select id="selectFactorE2EForTYNew" parameterType="map" resultMap="e2eResultMap">
@@ -422,6 +423,7 @@
         FROM
           z_contracts_factor cf
         WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '03'
+        ORDER BY cf.`factor_code`
     </select>
 
     <select id="selectFactorQDForTYNew" parameterType="map" resultMap="qdResultMap">
@@ -434,7 +436,7 @@
         FROM
           z_contracts_factor cf
         WHERE cf.`contract_id` = #{grabId}  AND cf.`factor_type` = '02'
-
+        ORDER BY cf.`factor_code`
     </select>
 
     <select id="selectFactorListForTYNew" parameterType="map" resultMap="TYResultMap">
