@@ -73,6 +73,12 @@ public class HacLoginRealm extends AuthorizingRealm {
 
         if(minBu!=null&&minBu.size()>0){
             TOdsMinbu bu=minBu.get(0);
+            //优先创单
+            if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
+                bu.setXwType5Code(Constant.EmpRole.CD.getValue());
+            }else{
+                bu.setXwType5Code(Constant.EmpRole.TY.getValue());
+            }
             if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
                 //当前体验链群对应的区域
                 List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
