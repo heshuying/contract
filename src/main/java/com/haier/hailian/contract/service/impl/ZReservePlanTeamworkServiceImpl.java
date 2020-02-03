@@ -129,7 +129,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             startTime = dateFormat.format(tempDate);
             //上个月最后一天
             int month=calendar.get(Calendar.MONTH);
-            calendar.set(Calendar.MONTH, month-1);
+            calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
             tempDate = calendar.getTime();
             endTime = dateFormat.format(tempDate);
