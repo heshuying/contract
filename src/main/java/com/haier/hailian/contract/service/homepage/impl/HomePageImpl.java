@@ -122,8 +122,8 @@ public class HomePageImpl implements HomePageService {
         QueryWrapper<ZContracts> query = new QueryWrapper<ZContracts>();
         query.eq("chain_code"  , dataInfo.getChainCode())
                 .eq("contract_type" , "10")
-                .gt("create_time" , startTime)
-                .lt("create_time" , endTime);
+                .gt("join_time" , startTime)
+                .lt("join_time" , endTime);
         if(dataInfo.getStatus() != null && !"".equals(dataInfo.getStatus())){
             query.eq("status" , dataInfo.getStatus());
         }
