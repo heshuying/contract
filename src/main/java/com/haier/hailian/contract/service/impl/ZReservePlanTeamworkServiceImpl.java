@@ -118,7 +118,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         calendar.add(Calendar.MONTH, 1);
         tempDate = calendar.getTime();
-        String endTime = dateFormat.format(tempDate);
+        String endTime = dateFormat.format(tempDate) + "23:59:59";
 
         ZContracts zContracts = zContractsDao.selectByTime(startTime,endTime,zReservePlanTeamworkDto.getGroupId());
         if (zContracts == null){
@@ -132,7 +132,7 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
             tempDate = calendar.getTime();
-            endTime = dateFormat.format(tempDate);
+            endTime = dateFormat.format(tempDate) + "23:59:59";
             zContracts = zContractsDao.selectByTime(startTime,endTime,zReservePlanTeamworkDto.getGroupId());
             if (zContracts == null ){
                 return "当前月和上个月都没有抢单！";
