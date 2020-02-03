@@ -33,7 +33,7 @@
 
     <select id="getListByPtCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from t_ods_minbu base
-        where ptCode=#{ptCode} and xwType5Code != 2
+        where ptCode=#{ptCode} and xwType5Code != '|2|'
     </select>
 
 
