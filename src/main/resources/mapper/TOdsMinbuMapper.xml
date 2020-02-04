@@ -33,19 +33,19 @@
 
     <select id="getListByPtCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from t_ods_minbu base
-        where ptCode=#{ptCode} and xwType5Code != '|2|'
+        where ptCode like '%'#{ptCode}'%' and xwType5Code != '|2|'
     </select>
 
 
     <select id="getListByIsTY" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from t_ods_minbu base
-        where ptCode=#{ptCode} and xwType5Code = 2
+        where ptCode like '%'#{ptCode}'%' and xwType5Code = '|2|'
     </select>
 
 
     <select id="getListByCodeList" resultType="java.lang.String">
         select littleXwMasterCode from t_ods_minbu base
-        where ptCode=#{ptCode} and xwType5Code != 2
+        where ptCode like '%'#{ptCode}'%' and xwType5Code != '|2|'
         and littleXwCode in
         <foreach collection="list" item="item" index="index" open="(" close=")"  separator="," >
             #{item}
@@ -65,7 +65,7 @@
 
     <select id="getPartListByPtCode" parameterType="java.lang.String" resultType="com.haier.hailian.contract.dto.ExportChainUnitInfo">
         select xwName,littleXwName from t_ods_minbu base
-        where ptCode=#{ptCode} and xwType5Code != 2
+        where ptCode like '%'#{ptCode}'%' and xwType5Code != '|2|'
     </select>
     <select id="queryMinbuByOrgCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         select base.* from t_ods_minbu base
