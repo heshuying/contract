@@ -38,4 +38,6 @@ public class ZHrChainInfoDto {
     //定位
     private String fixedPosition;
     private List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos ;
+
+    private String zzfxRate;//增值分享比例
 }

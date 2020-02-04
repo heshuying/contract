@@ -44,4 +44,6 @@ public class ZHrChainInfo implements Serializable {
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
+    private String zzfxRate;//增值分享比例
+
 }

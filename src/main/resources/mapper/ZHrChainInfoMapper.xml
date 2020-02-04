@@ -112,6 +112,9 @@
             <if test="fixedPosition != null">
                 fixed_position = #{fixedPosition},
             </if>
+            <if test="zzfxRate != null">
+                zzfx_rate = #{zzfxRate},
+            </if>
         </set>
         where id = #{id}
     </update>

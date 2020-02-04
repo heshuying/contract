@@ -202,6 +202,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setXwName(currentUser.getLittleXwName());
         zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
         zHrChainInfo.setChainName(name);
+        zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
         zHrChainInfoDao.insert(zHrChainInfo);
         List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息
