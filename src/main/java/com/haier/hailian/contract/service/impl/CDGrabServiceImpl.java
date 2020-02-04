@@ -70,6 +70,9 @@ public class CDGrabServiceImpl implements CDGrabService {
                 responseDto.setMasterName(chainInfos.get(0).getMasterName());
                 responseDto.setXwCode(chainInfos.get(0).getXwCode());
                 responseDto.setXwName(chainInfos.get(0).getXwName());
+                if(StringUtils.isNotBlank(chainInfos.get(0).getZzfxRate())){
+                    responseDto.setZzfxRate(new BigDecimal(chainInfos.get(0).getZzfxRate()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP).toString());
+                }
             }
 
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));

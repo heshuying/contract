@@ -17,6 +17,7 @@ public class CDGrabInfoResponseDto {
     private String sharePercent;
 //    @ApiModelProperty(value="链群目标",name="链群目标",example="400")
 //    private String chainGoal;
+
     @ApiModelProperty(value="链群名称",name="链群名称")
     private String chainName;
     @ApiModelProperty(value="合约有效期开始",name="合约有效期开始")
@@ -31,6 +32,7 @@ public class CDGrabInfoResponseDto {
     private String xwCode;
     @ApiModelProperty(value="小微名字",name="小微名字")
     private String xwName;
-    @ApiModelProperty(value="目标列表",name="目标列表")
+    @ApiModelProperty(value="增值分享比例",name="增值分享比例",example="1%")
+    private String zzfxRate;//增值分享比例（新增字段）
     private List<CDGrabTargetDto> targetList = new ArrayList<>();
 }
