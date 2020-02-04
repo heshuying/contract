@@ -251,6 +251,7 @@ public class ZHrChainInfoController {
             ZHrChainInfo zHrChainInfo = new ZHrChainInfo();
             zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
             zHrChainInfo.setId(zHrChainInfoDto.getId());
+            zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
             ZHrChainInfo z = zHrChainInfoService.update(zHrChainInfo);
             if (z==null){
                 return R.error("更新出错了，请稍后重试！");
