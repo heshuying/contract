@@ -52,4 +52,6 @@ public class GrabInfo2Outside {
     private List<PlanTeamWorkInfo> planTeamWorkInfos;
 
     private String contractType;
+
+    private String status; //抢单状态
 }
