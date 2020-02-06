@@ -62,10 +62,12 @@ public class CDGrabController {
 //        }
 
         try {
-            if("1".equals(requestDto.getIsUpdate())){
-                cdGrabService.updateCDGrab(requestDto);
-            }else {
-                cdGrabService.saveCDGrab(requestDto);
+            synchronized (this.getClass()){
+                if("1".equals(requestDto.getIsUpdate())){
+                    cdGrabService.updateCDGrab(requestDto);
+                }else {
+                    cdGrabService.saveCDGrab(requestDto);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

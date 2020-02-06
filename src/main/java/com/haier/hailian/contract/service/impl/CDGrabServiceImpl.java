@@ -330,7 +330,8 @@ public class CDGrabServiceImpl implements CDGrabService {
 
     @Override
     @Transactional
-    public synchronized void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
+    public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
+        System.out.println("start thread name: " + Thread.currentThread().getName());
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
@@ -460,6 +461,12 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         }
 
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //加入群组
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
@@ -468,6 +475,8 @@ public class CDGrabServiceImpl implements CDGrabService {
             String[] users = new String[]{sysUser.getEmpSn()};
             IHaierUtil.joinGroup(groupId, users);
         }
+
+        System.out.println("end Thread name: " + Thread.currentThread().getName());
     }
 
     @Override
