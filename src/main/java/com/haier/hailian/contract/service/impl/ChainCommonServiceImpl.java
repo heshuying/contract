@@ -230,7 +230,8 @@ public class ChainCommonServiceImpl implements ChainCommonService{
             doChainAfterGrab(contracts.getId().toString(),factors);
 
         }catch (Exception e){
-
+            log.error("合约：{}，上链产生异常");
+            log.error(e.getMessage());
         }
 
     }
