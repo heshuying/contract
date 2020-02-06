@@ -70,30 +70,36 @@ public class HacLoginRealm extends AuthorizingRealm {
         }
         List<SysNet> sysNetList = sysNetService.list(
                 new QueryWrapper<SysNet>().eq("empSN",empSn));
-        List<TOdsMinbu> minBu=minbuService.queryMinbuByEmp(empSn);
-        sysEmployee.setMinbuList(minBu);
-
-        if(minBu!=null&&minBu.size()>0){
-            TOdsMinbu bu=minBu.get(0);
-            //优先创单
-            if(StringUtils.isBlank(bu.getXwType5Code())){
-                bu.setXwType5Code(Constant.EmpRole.CD.getValue());
-            }else if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
-                bu.setXwType5Code(Constant.EmpRole.CD.getValue());
-            }else{
-                bu.setXwType5Code(Constant.EmpRole.TY.getValue());
-            }
-            if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
-                //当前体验链群对应的区域
-                List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
-                        .eq("xw_code", bu.getXwCode()));
-                if (xwRegion != null && xwRegion.size() > 0) {
-                    bu.setRegionCode(xwRegion.get(0).getRegionCode());
-                    bu.setRegionName(xwRegion.get(0).getRegionName());
+        List<TOdsMinbu> minBues=minbuService.queryMinbuByEmp(empSn);
+        //格式话xwtype5
+        if(minBues!=null&&minBues.size()>0) {
+            for (TOdsMinbu bu :
+                    minBues) {
+                //优先创单
+                if(StringUtils.isBlank(bu.getXwType5Code())){
+                    bu.setXwType5Code(Constant.EmpRole.CD.getValue());
+                }else if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
+                    bu.setXwType5Code(Constant.EmpRole.CD.getValue());
+                }else{
+                    bu.setXwType5Code(Constant.EmpRole.TY.getValue());
                 }
+                if(Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())){
+                    //当前体验链群对应的区域
+                    List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
+                            .eq("xw_code", bu.getXwCode()));
+                    if (xwRegion != null && xwRegion.size() > 0) {
+                        bu.setRegionCode(xwRegion.get(0).getRegionCode());
+                        bu.setRegionName(xwRegion.get(0).getRegionName());
+                    }
+                }
+
             }
-            sysEmployee.setMinbu(bu);
+            TOdsMinbu defaultBu=minBues.get(0);
+            sysEmployee.setMinbu(defaultBu);
+
         }
+        sysEmployee.setMinbuList(minBues);
+
         sysEmployee.setWanggeList(sysNetList);
         return new SimpleAuthenticationInfo(sysEmployee, empSn, this.getName());
     }

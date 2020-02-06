@@ -70,30 +70,9 @@ public class LoginController {
 
             if (minBu != null && minBu.size() > 0) {
                 TOdsMinbu bu = minBu.get(0);
-                if(StringUtils.isBlank(bu.getXwType5Code())){
-                    bu.setXwType5Code(Constant.EmpRole.CD.getValue());
-                } else if(bu.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
-                    bu.setXwType5Code(Constant.EmpRole.CD.getValue());
-                }else{
-                    bu.setXwType5Code(Constant.EmpRole.TY.getValue());
-                }
-                if (Constant.EmpRole.TY.getValue().equals(bu.getXwType5Code())) {
-                    //当前体验链群对应的区域
-                    List<SysXwRegion> xwRegion = xwRegionService.list(new QueryWrapper<SysXwRegion>()
-                            .eq("xw_code", bu.getXwCode()));
-                    if (xwRegion != null && xwRegion.size() > 0) {
-                        bu.setRegionCode(xwRegion.get(0).getRegionCode());
-                        bu.setRegionName(xwRegion.get(0).getRegionName());
-                    }
-                }
                 sysUser.setMinbu(bu);
             }
         }else{
-            if(currentUser.getXwType5Code().contains(Constant.EmpRole.CD.getValue())){
-                currentUser.setXwType5Code(Constant.EmpRole.CD.getValue());
-            }else{
-                currentUser.setXwType5Code(Constant.EmpRole.TY.getValue());
-            }
             sysUser.setMinbu(currentUser);
         }
 
