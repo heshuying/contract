@@ -505,7 +505,12 @@ public class GrabServiceImpl implements GrabService {
                 String groupId=chainInfo.getGroupId();
                 String[] users=new String[]{sysUser.getEmpSn()};
                 IHaierUtil.joinGroup(groupId, users);
-        }
+            }
+            Thread t = new Thread(new Runnable(){
+                public void run(){
+                    chainCommonService.buildContractChain(contracts.getId());
+                }});
+            t.start();
 
         }
 
