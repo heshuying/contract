@@ -331,7 +331,6 @@ public class CDGrabServiceImpl implements CDGrabService {
     @Override
     @Transactional
     public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
-        System.out.println("start thread name: " + Thread.currentThread().getName());
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
@@ -350,7 +349,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         //根据小微code 和合约判断是否已抢单
         List<ZContracts> contractList=contractsDao.selectList(new QueryWrapper<ZContracts>()
                 .eq("parent_id",requestDto.getContractId())
-                .eq("create_code",sysUser.getEmpSn())
+                .eq("org_code",sysUser.getMinbu().getLittleXwCode())
                 .eq("contract_type", "30")
                 .notIn("status", "3", "5", "6"));
         if(contractList!=null && contractList.size()>0){
@@ -461,12 +460,6 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         }
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         //加入群组
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
@@ -476,7 +469,6 @@ public class CDGrabServiceImpl implements CDGrabService {
             IHaierUtil.joinGroup(groupId, users);
         }
 
-        System.out.println("end Thread name: " + Thread.currentThread().getName());
     }
 
     @Override
