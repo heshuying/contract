@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
@@ -164,7 +165,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         TOdsMinbu tOdsMinbu = sysUser.getMinbu();
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("001");
-        targetBasic.setTargetPtCode(tOdsMinbu.getPtCode());
+        // 获取链群所在的平台 liuyq 2020年2月6日 11:47:05
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , nodeCodeStr));
+        targetBasic.setTargetPtCode(zHrChainInfo.getChainPtCode());
         targetBasic.setRoleCode(tOdsMinbu.getXwCode());
         return targetBasicDao.selectTarget(targetBasic);
     }
