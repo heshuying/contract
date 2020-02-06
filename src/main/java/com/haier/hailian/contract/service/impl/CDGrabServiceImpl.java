@@ -330,7 +330,7 @@ public class CDGrabServiceImpl implements CDGrabService {
 
     @Override
     @Transactional
-    public void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
+    public synchronized void saveCDGrab(CDGrabInfoSaveRequestDto requestDto){
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
