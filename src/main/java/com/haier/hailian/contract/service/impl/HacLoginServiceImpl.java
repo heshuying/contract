@@ -51,7 +51,8 @@ public class HacLoginServiceImpl implements HacLoginService{
                     entity, String.class);
 
             String value = responseEntity.getBody();
-            log.info("=====Hac 登录返回结果====>", value);
+            log.info("=====Hac 登录入参{},返回结果{}",loginDto, value);
+
             HacLoginRespDto loginRespDto=gson.fromJson(value,HacLoginRespDto.class);
             if("0".equals(loginRespDto.getCode())){
                 //登陆成功
@@ -66,7 +67,7 @@ public class HacLoginServiceImpl implements HacLoginService{
                 return R.error(Constant.CODE_LOGINFAIL, loginRespDto.getMessage());
             }
         }catch (Exception e){
-            log.info("=====Hac 登录异常====>", e.getMessage());
+            log.error("=====登录异常{}====>", e.getMessage());
             throw new RException("登录异常");
         }
     }

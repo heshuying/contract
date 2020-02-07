@@ -90,7 +90,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
             log.info(transactionHash);
             return transactionHash;
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("{},异常{}", "uploadJsonData", e.getMessage());
             return "";
         }
     }
@@ -134,7 +134,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
                         contract.getId(),dataHash, result);
             }
         } catch (Exception e){
-            log.error(e.getMessage());
+            log.error("{},异常{}", "doChainAfterGrab", e.getMessage());
         }
     }
 
@@ -186,7 +186,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
 
             }
         } catch (Exception e){
-            log.error(e.getMessage());
+            log.error("{},异常{}", "doChainAfterGrab", e.getMessage());
         }
     }
 
@@ -206,8 +206,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
                 log.info(json);
 
             }catch (Exception e){
-
-
+                log.error("获取上链信息异常，入参{},异常{}",contractId, e.getMessage());
             }
         }
     }
@@ -230,7 +229,7 @@ public class ChainCommonServiceImpl implements ChainCommonService{
             doChainAfterGrab(contracts.getId().toString(),factors);
 
         }catch (Exception e){
-            log.error("合约：{}，上链产生异常");
+            log.error("合约：{}，上链产生异常",contractId);
             log.error(e.getMessage());
         }
 
