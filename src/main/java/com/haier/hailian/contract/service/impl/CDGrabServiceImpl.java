@@ -7,6 +7,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
+import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.IHaierUtil;
@@ -46,6 +47,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     SysXwRegionDao sysXwRegionDao;
     @Autowired
     ZHrChainInfoDao zHrChainInfoDao;
+    @Autowired
+    private ChainCommonService chainCommonService; //上链
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -468,6 +471,13 @@ public class CDGrabServiceImpl implements CDGrabService {
             String[] users = new String[]{sysUser.getEmpSn()};
             IHaierUtil.joinGroup(groupId, users);
         }
+
+        //异步上链
+        new Thread(new Runnable(){
+            public void run(){
+                chainCommonService.buildContractChain(contractsId);
+            }
+        }).start();
 
     }
 
