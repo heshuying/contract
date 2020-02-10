@@ -29,10 +29,13 @@ import static org.web3j.crypto.Hash.sha256;
 public class SysEmployeeEhrServiceImpl extends ServiceImpl<SysEmployeeEhrDao, SysEmployeeEhr> implements SysEmployeeEhrService {
     @Override
     public SysEmployeeEhr getEmployeeEhr(String empSn) {
-        SysEmployeeEhr employeeEhr=baseMapper.selectOne(
+        //防止推数时一个工号对应多个记录
+        List<SysEmployeeEhr> employeeEhres=baseMapper.selectList(
                 new QueryWrapper<SysEmployeeEhr>().eq("empSn",empSn)
         );
-        if(employeeEhr!=null){
+
+        if(employeeEhres!=null&&employeeEhres.size()>0){
+            SysEmployeeEhr employeeEhr=employeeEhres.get(0);
             List<SysRole> roles=baseMapper.selectRoleByUser(empSn);
             List<SysNodeEhr> nodes=baseMapper.selectNodeByNodeCode(empSn);
 
@@ -40,8 +43,11 @@ public class SysEmployeeEhrServiceImpl extends ServiceImpl<SysEmployeeEhrDao, Sy
             employeeEhr.setRoles(roles);
             employeeEhr.setNodeEhrList(nodes);
             employeeEhr.setXiaoweiEhrList(xwEhr);
+            return employeeEhr;
+        }else{
+            return  null;
         }
-        return  employeeEhr;
+
     }
 
 
