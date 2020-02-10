@@ -3,16 +3,16 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.config.ChainConfig;
+import com.haier.hailian.contract.dao.ZContractsProductDao;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZContractsProduct;
 import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.ZContractsFactorService;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.util.chian.ChainContract;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
@@ -21,14 +21,8 @@ import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.RemoteCall;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.EthTransaction;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tuples.generated.Tuple4;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -36,7 +30,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 19012964 on 2019/12/24.
@@ -50,6 +43,8 @@ public class ChainCommonServiceImpl implements ChainCommonService{
     private ZContractsService contractsService;
     @Autowired
     private ZContractsFactorService contractsFactorService;
+    @Autowired
+    private ZContractsProductDao contractsProductDao;
 
     private Gson gson=new Gson();
     @Override
@@ -190,6 +185,52 @@ public class ChainCommonServiceImpl implements ChainCommonService{
         }
     }
 
+    public void doChainAfterGrabProduct(String contractId, List<ZContractsProduct> products) {
+
+        Web3j web3j = Web3j.build(new HttpService(chainConfig.getContractUri()));
+        // 私钥
+        String prikey = "0xa392604efc2fad9c0b3da43b5f698a2e3f270f170d859912be0d54742275c5f6";
+        // 公钥
+        String pubkey = "0x506bc1dc099358e5137292f4efdd57e400f29ba5132aa5d12b18dac1c1f6aaba645c0b7b58158babbfa6c6cd5a48aa7340a8749176b120e8516216787a13dc76";
+        ECKeyPair KEY_PAIR = new ECKeyPair(Numeric.toBigInt(prikey), Numeric.toBigInt(pubkey));
+        Credentials CREDENTIALS = Credentials.create(KEY_PAIR);
+        //System.out.println(CREDENTIALS.getAddress());
+        String address = "0xef678007d18427e6022059dbc264f27507cd1ffc";
+        try {
+            EthGetBalance ethGetBalance = web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
+
+            if(ethGetBalance!=null){
+                // 打印账户余额
+                System.out.println(ethGetBalance.getBalance());
+                // 将单位转为以太，方便查看
+                System.out.println(Convert.fromWei(ethGetBalance.getBalance().toString(), Convert.Unit.ETHER));
+            }
+
+            //ChainContract cc = ChainContract.deploy(web3, CREDENTIALS,BigInteger.valueOf(0), BigInteger.valueOf(50000000)).send();
+            //System.out.println(cc.getContractAddress());
+            //cc.Create("c001", "0", "0xc8d6229e0d348b885eea9599271ad4883c0f24e76450ecbcded047906c69e8f8")
+            //合约地址可配0x9307adc58cb4d47d0f43a3f30d8a1bd33797debe
+            ChainContract cc = ChainContract.load("0xe8108ee3d27f3a7d6365c6db91358b28b23698af", web3j, CREDENTIALS, BigInteger.valueOf(0), BigInteger.valueOf(200000));
+            if(cc.isValid())
+            {
+                for (ZContractsProduct product:products) {
+                    String departCode = "";
+                    departCode = contractId;
+
+                    TransactionReceipt result = cc.InsertTatget(ToBytes32(contractId),
+                            ToBytes32(departCode), ToBytes32(product.getProductSeries()), ToBytes32(product.getQtyYear()+""),
+                            ToBytes32(product.getQtyMonth()+"")).send();
+
+                    log.info("合约id：{}，factor数据：{}，返回:{}",
+                            contractId, gson.toJson(product), result);
+                }
+
+            }
+        } catch (Exception e){
+            log.error("{},异常{}", "doChainAfterGrab", e.getMessage());
+        }
+    }
+
     @Override
     public void getContractFromChain(Integer contractId) {
         ChainContract chain=getContracChain();
@@ -223,11 +264,14 @@ public class ChainCommonServiceImpl implements ChainCommonService{
                     new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId)
             );
 
+            List<ZContractsProduct> products=contractsProductDao.selectList(
+                    new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId)
+            );
             String contractJsonHash=uploadJsonData(gson.toJson(contracts));
 
             doChainAfterGrab(contracts,contractJsonHash);
             doChainAfterGrab(contracts.getId().toString(),factors);
-
+            doChainAfterGrabProduct(contracts.getId().toString(),products);
         }catch (Exception e){
             log.error("合约：{}，上链产生异常",contractId);
             log.error(e.getMessage());
