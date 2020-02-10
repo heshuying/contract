@@ -72,10 +72,10 @@ public class ContractViewController {
 
 
     @GetMapping(value = {"/serials/{contractId}"})
-    @ApiOperation(value = "合约基础数据查询")
+    @ApiOperation(value = "合约爆款数据统计")
     public R getContractInfo(@PathVariable Long contractId) {
-        // ContractViewResultDTO resultDTO = contractViewService.getContractViewData(contractId);
-        return R.ok().put("data",null);
+         List<ContractSerialDto> list = contractViewService.staticSerial(contractId);
+        return R.ok().put("data",list);
     }
 
 }
