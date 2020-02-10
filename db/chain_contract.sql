@@ -1457,6 +1457,17 @@ CREATE TABLE `month_retail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 comment 'EDW网格E2E数据';
 
+-- PV/UV统计
+DROP TABLE IF EXISTS `app_statistic`;
+CREATE TABLE `app_statistic` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `source` varchar(50) DEFAULT '' COMMENT 'PC、App',
+  `page` varchar(500) DEFAULT '' COMMENT '页面',
+  `empSn` varchar(50) DEFAULT '' COMMENT '用户编码',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 -- alter table sys_node_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
 -- alter table sys_employee_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
 -- alter table sys_xiaowei_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;

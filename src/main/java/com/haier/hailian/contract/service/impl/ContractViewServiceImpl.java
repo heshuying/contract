@@ -3,10 +3,12 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
+import com.haier.hailian.contract.dao.ZContractsProductDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZContractsProduct;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.Constant;
@@ -31,6 +33,8 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZContractsDao contractsDao;
     @Autowired
     ZHrChainInfoDao zHrChainInfoDao;
+    @Autowired
+    ZContractsProductDao contractsProductDao;
 
     @Override
     public ContractViewResultDTO getContractViewData(String contractId){
@@ -345,6 +349,16 @@ public class ContractViewServiceImpl implements ContractViewService {
         return fact + "/" + target;
     }
 
+    @Override
+    public List<ContractSerialDto> staticSerial(Long contractId) {
+        //计划数据
+        List<ZContractsProduct> products=contractsProductDao.selectList(
+                new QueryWrapper<ZContractsProduct>()
+                .eq("contract_id",contractId)
+        );
+
+        return null;
+    }
 
     @Override
     public Integer getContractSize2(String contractId) {

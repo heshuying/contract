@@ -24,4 +24,6 @@ public interface ContractViewService {
     String getContractSize(String contractId);
 
     Integer getContractSize2(String contractId);
+
+    List<ContractSerialDto> staticSerial(Long contractId);
 }

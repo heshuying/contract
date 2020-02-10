@@ -70,4 +70,12 @@ public class ContractViewController {
                 .put("grabedCount", result.get("grabedCount")).put("notGrabCount", result.get("notGrabCount")).put("grabPercent", grabSize + "/" + size);
     }
 
+
+    @GetMapping(value = {"/serials/{contractId}"})
+    @ApiOperation(value = "合约基础数据查询")
+    public R getContractInfo(@PathVariable Long contractId) {
+        // ContractViewResultDTO resultDTO = contractViewService.getContractViewData(contractId);
+        return R.ok().put("data",null);
+    }
+
 }
