@@ -5,6 +5,7 @@ import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -33,4 +34,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<ExportChainUnitInfo> getPartListByPtCode(String ptCode);
 
     TOdsMinbu queryMinbuByOrgCode(String orgCode);
+
+    List<TOdsMinbu> getOtherListByPtCode(Map map);
 }
