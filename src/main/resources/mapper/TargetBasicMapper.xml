@@ -35,15 +35,15 @@
         <result column="chain_name" property="chainName" />
     </resultMap>
     <sql id="Base_Column_List" >
-        id, target_code, target_name, target_des, target_unit, target_to,
-        judan_flag, target_pt_code, target_diff_type, target_dim, target_process_type, target_xw_category_code,
-        target_xw_category_name,target_DSLogic_code,targe_year,target_month,target_model,target_model_code,ROUND(target_bottom_line,2) as target_bottom_line,
-        ROUND(target_jd_line,2) as target_jd_line,target_logic,target_weight,target_region_code,target_region_name,role_code,role_name,period_code,chain_code,chain_name
+        target.id, target.target_code, target.target_name, target.target_des, target.target_unit, target.target_to,
+        target.judan_flag, target.target_pt_code, target.target_diff_type, target.target_dim, target.target_process_type, target.target_xw_category_code,
+        target.target_xw_category_name,target.target_DSLogic_code,target.targe_year,target_month,target.target_model,target.target_model_code,ROUND(target.target_bottom_line,2) as target_bottom_line,
+        ROUND(target.target_jd_line,2) as target_jd_line,target.target_logic,target.target_weight,target.target_region_code,target.target_region_name,target.role_code,target.role_name,target.period_code,target.chain_code,target.chain_name
     </sql>
     <select id="selectTarget" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from z_target_basic
+        from z_target_basic target
         <where>
             <if test=" targeYear != null ">
                 and targe_year = #{targeYear}
@@ -77,6 +77,16 @@
             </if>
             order by target_code
         </where>
+    </select>
+    <select id="selectChainTarget" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_target_basic target
+        RIGHT JOIN  z_chain_target c
+        on c.chain_code=target.chain_code
+        and c.target_code = target.target_code
+        where target.chain_code= #{chainCode}
+        and target.period_code= #{periodCode}
     </select>
 
 </mapper>
