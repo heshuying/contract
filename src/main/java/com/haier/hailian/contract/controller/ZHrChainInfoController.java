@@ -252,6 +252,8 @@ public class ZHrChainInfoController {
             zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
             zHrChainInfo.setId(zHrChainInfoDto.getId());
             zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
+            zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+            zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
             ZHrChainInfo z = zHrChainInfoService.update(zHrChainInfo);
             if (z==null){
                 return R.error("更新出错了，请稍后重试！");

@@ -115,6 +115,12 @@
             <if test="zzfxRate != null">
                 zzfx_rate = #{zzfxRate},
             </if>
+            <if test="cdShareRate != null">
+                cd_share_rate = #{cdShareRate},
+            </if>
+            <if test="tyShareRate != null">
+                ty_share_rate = #{tyShareRate},
+            </if>
         </set>
         where id = #{id}
     </update>
