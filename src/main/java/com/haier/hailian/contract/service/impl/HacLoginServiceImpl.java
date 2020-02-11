@@ -7,7 +7,9 @@ import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.HacLoginRespDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.service.AppStatisticService;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.util.Constant;
 import org.apache.shiro.SecurityUtils;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
+
 /**
  * Created by 19012964 on 2019/12/17.
  */
@@ -35,6 +39,8 @@ public class HacLoginServiceImpl implements HacLoginService{
     private HacLoginConfig hacLoginConfig;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private AppStatisticService appStatisticService;
     private Gson gson=new Gson();
 
     @Override
@@ -61,6 +67,18 @@ public class HacLoginServiceImpl implements HacLoginService{
                 subject.login(token);
                 SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
 
+                new Thread(new Runnable(){
+                    public void run(){
+                        AppStatistic appStatistic=new AppStatistic();
+                        appStatistic.setCreateTime(new Date());
+                        appStatistic.setEmpSn(sysUser.getEmpSn());
+                        appStatistic.setPage("UV");
+                        appStatistic.setSource("AppLogin");
+                        appStatisticService.save(appStatistic);
+                    }
+                }).start();
+
+
                 return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
                         .put("data", sysUser);
             }else{
@@ -80,7 +98,16 @@ public class HacLoginServiceImpl implements HacLoginService{
             Subject subject = SecurityUtils.getSubject();
             subject.login(token);
             SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-
+            new Thread(new Runnable(){
+                public void run(){
+                    AppStatistic appStatistic=new AppStatistic();
+                    appStatistic.setCreateTime(new Date());
+                    appStatistic.setEmpSn(sysUser.getEmpSn());
+                    appStatistic.setPage("UV");
+                    appStatistic.setSource("WebLogin");
+                    appStatisticService.save(appStatistic);
+                }
+            }).start();
             return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
                     .put("data", sysUser);
         }else{
