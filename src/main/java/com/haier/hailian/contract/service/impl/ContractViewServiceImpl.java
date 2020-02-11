@@ -386,8 +386,8 @@ public class ContractViewServiceImpl implements ContractViewService {
                 ZContractsProduct monthSale=monthSales.stream()
                         .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
                         .findAny().orElse(null);
-                dto.setYearPlan(yearSale==null?0:yearSale.getQtyYear());
-                dto.setMonthPlan(monthSale==null?0:monthSale.getQtyYear());
+                dto.setYearSales(yearSale==null?0:yearSale.getQtyYear());
+                dto.setMonthSales(monthSale==null?0:monthSale.getQtyYear());
                 list.add(dto);
             }
         }
