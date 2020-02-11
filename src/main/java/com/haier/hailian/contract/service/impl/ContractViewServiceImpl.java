@@ -350,14 +350,48 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public List<ContractSerialDto> staticSerial(Long contractId) {
+    public List<ContractSerialDto> staticSerial(Integer contractId) {
         //计划数据
         List<ZContractsProduct> products=contractsProductDao.selectList(
                 new QueryWrapper<ZContractsProduct>()
                 .eq("contract_id",contractId)
         );
+        List<ContractSerialDto> list=new ArrayList<>();
+        if(products!=null&&products.size()>0) {
+            ZContracts contracts = contractsDao.selectById(contractId);
+            if (contracts == null) {
+                throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
+            }
+            int year = DateFormatUtil.getYearOfDate(contracts.getStartDate());
+            int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
+            ZContractsProduct queryEntity = new ZContractsProduct();
+            queryEntity.setContractId(contractId);
+            queryEntity.setQtyYear(year);
+            //年度数据
+            List<ZContractsProduct> yearSales = contractsProductDao.calContractProduct(queryEntity);
 
-        return null;
+            //月度数据
+            queryEntity.setQtyMonth(mounth);
+            List<ZContractsProduct> monthSales = contractsProductDao.calContractProduct(queryEntity);
+
+            for (ZContractsProduct zcp:products) {
+
+                ContractSerialDto dto=new ContractSerialDto();
+                dto.setSerial(zcp.getProductSeries());
+                dto.setYearPlan(zcp.getQtyYear());
+                dto.setMonthPlan(zcp.getQtyMonth());
+                ZContractsProduct yearSale=yearSales.stream()
+                        .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
+                        .findAny().orElse(null);
+                ZContractsProduct monthSale=monthSales.stream()
+                        .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
+                        .findAny().orElse(null);
+                dto.setYearPlan(yearSale==null?0:yearSale.getQtyYear());
+                dto.setMonthPlan(monthSale==null?0:monthSale.getQtyYear());
+                list.add(dto);
+            }
+        }
+        return  list;
     }
 
     @Override
