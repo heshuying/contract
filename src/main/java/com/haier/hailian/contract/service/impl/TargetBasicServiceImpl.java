@@ -40,7 +40,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         } catch (ParseException e) {
             throw new RException("日期类型不正确", Constant.CODE_VALIDFAIL);
         }
-        List<TargetBasic> list = targetBasicDao.selectChainTarget(targetBasic);
+        List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         for(TargetBasic targetBasic1:list){
             if(null != targetBasic1.getTargetBottomLine()){
                 String bottom = targetBasic1.getTargetBottomLine();
