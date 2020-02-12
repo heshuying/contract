@@ -72,8 +72,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setChainCode(zHrChainInfo.getChainCode());
         zHrChainInfoDto.setFixedPosition(zHrChainInfo.getFixedPosition());
         zHrChainInfoDto.setZzfxRate(zHrChainInfo.getZzfxRate());
-        zHrChainInfoDto.setCdShareRate(zHrChainInfoDto.getCdShareRate());
-        zHrChainInfoDto.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+        zHrChainInfoDto.setCdShareRate(zHrChainInfo.getCdShareRate());
+        zHrChainInfoDto.setTyShareRate(zHrChainInfo.getTyShareRate());
         ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
         zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
         zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(zNodeTargetPercentInfo));
