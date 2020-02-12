@@ -252,6 +252,8 @@ public class ZHrChainInfoController {
             zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
             zHrChainInfo.setId(zHrChainInfoDto.getId());
             zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
+            zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+            zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
             ZHrChainInfo z = zHrChainInfoService.update(zHrChainInfo);
             if (z==null){
                 return R.error("更新出错了，请稍后重试！");
@@ -273,6 +275,38 @@ public class ZHrChainInfoController {
             return R.ok().put("data", list);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.searchChainList,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/getOtherMinbuList"})
+    @ApiOperation(value = "查询未选中最小单元")
+    public R getOtherMinbuList(@RequestBody String chainCode) {
+        try {
+            List list = zHrChainInfoService.getOtherMinbuList(chainCode);
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getOtherMinbuList,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/saveNewMinbu"})
+    @ApiOperation(value = "保存新增最小作战单元")
+    public R saveNewMinbu(@RequestBody List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos) {
+        try {
+            int z = zHrChainInfoService.saveNewMinbu(zNodeTargetPercentInfos);
+            if (z==0){
+                return R.error("更新出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.saveNewMinbu,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }

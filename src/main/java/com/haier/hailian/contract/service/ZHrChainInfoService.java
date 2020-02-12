@@ -140,4 +140,13 @@ public interface ZHrChainInfoService {
     List<ExportChainUnitInfo> getPartMinbuList();
 
     List<ZHrChainInfo> searchChainListByUser(String userCode);
+
+    /**
+     * 获取平台下战略最小单元
+     * @return
+     */
+    List<TOdsMinbu> getOtherMinbuList(String chainCode);
+
+
+    int saveNewMinbu(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos);
 }

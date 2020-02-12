@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * (ZHrChainInfo)表服务实现类
@@ -207,6 +209,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setFixedPosition(zHrChainInfoDto.getFixedPosition());
         zHrChainInfo.setChainName(name);
         zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
+        zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
+        zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
         zHrChainInfoDao.insert(zHrChainInfo);
         List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息
@@ -333,6 +337,32 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Override
     public List<ZHrChainInfo> searchChainListByUser(String userCode) {
         return zHrChainInfoDao.searchChainListByUser(userCode);
+    }
+
+
+    @Override
+    public List<TOdsMinbu> getOtherMinbuList(String chainCode) {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        //2获取数据库中这个平台的所有最小单元
+        Map map = new HashMap<>();
+        map.put("ptCode" , currentUser.getPtCode());
+        map.put("chainCode" , chainCode.trim());
+        List<TOdsMinbu> list = tOdsMinbuDao.getOtherListByPtCode(map);
+        return list;
+    }
+
+    @Override
+    public int saveNewMinbu(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos) {
+        int num = zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
+        return num;
     }
 
 

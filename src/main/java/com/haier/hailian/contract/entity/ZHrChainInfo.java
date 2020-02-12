@@ -46,4 +46,8 @@ public class ZHrChainInfo implements Serializable {
 
     private String zzfxRate;//增值分享比例
 
+    private String cdShareRate; // 创单分享比例
+
+    private String tyShareRate; // 体验分享比例
+
 }

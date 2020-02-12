@@ -8,9 +8,11 @@ import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.LoginMagicDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
+import com.haier.hailian.contract.service.AppStatisticService;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.util.Constant;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,6 +50,8 @@ public class LoginController {
     private HacLoginService hacLoginService;
     @Autowired
     private SysXwRegionService xwRegionService;
+    @Autowired
+    private AppStatisticService appStatisticService;
     public static String JWT_AUTH_HEADER = "Authorization";
 
     @PostMapping(value = {"/login"})
@@ -128,6 +133,17 @@ public class LoginController {
                     SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
                     //报文头
                     response.setHeader(JWT_AUTH_HEADER, subject.getSession().getId().toString());
+                    new Thread(new Runnable(){
+                        public void run(){
+                            AppStatistic appStatistic=new AppStatistic();
+                            appStatistic.setCreateTime(new Date());
+                            appStatistic.setEmpSn(sysUser.getEmpSn());
+                            appStatistic.setPage("UV");
+                            appStatistic.setSource("IhaierLogin");
+                            appStatisticService.save(appStatistic);
+                        }
+                    }).start();
+
                     return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
                             .put("data", sysUser);
                 } catch (AuthenticationException e) {
