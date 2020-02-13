@@ -15,12 +15,15 @@
         <result property="groupId" column="group_id" jdbcType="VARCHAR"/>
         <result property="createDate" column="create_date" jdbcType="VARCHAR"/>
         <result property="fixedPosition" column="fixed_position" jdbcType="VARCHAR"/>
+        <result property="zzfxRate" column="zzfx_rate" jdbcType="VARCHAR"/>
+        <result property="cdShareRate" column="cd_share_rate" jdbcType="VARCHAR"/>
+        <result property="tyShareRate" column="ty_share_rate" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date,zzfx_rate,cd_share_rate,ty_share_rate
         from chain_contract.z_hr_chain_info
         where id = #{id}
     </select>
@@ -74,8 +77,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position)
-        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition})
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate)
+        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate})
     </insert>
 
     <!--通过主键修改数据-->
