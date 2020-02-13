@@ -113,6 +113,50 @@
         GROUP BY product_stru
     </select>
 
+<select id="tyExport">
+    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, fac.* from (
+        select contract_id,
+        Max(case base.factor_type when '01' then base.inc else 0 end ) '底线收入',
+        Max(case base.factor_type when '01' then base.highPer else 0 end ) '底线高端占比',
+        Max(case base.factor_type when '02' then base.inc else 0 end ) '抢单收入',
+        Max(case base.factor_type when '02' then base.highPer else 0 end ) '抢单高端占比'
+        from(
+        select zcf.contract_id ,zcf.factor_type,
+        Max(case zcf.factor_code when 'T01001' then zcf.factor_value else 0 end ) 'inc',
+        max(case zcf.factor_code when 'T03001' then zcf.factor_value else 0 end) 'highPer'
+        from z_contracts zc
+          join z_contracts_factor zcf on zc.id=zcf.contract_id
+        where zc.parent_id=288 and zc.contract_type='20' and factor_type in('01','02')
+        GROUP BY zcf.contract_id,zcf.factor_type
+          )base
+        group by contract_id) fac
+      join z_contracts zc on fac.contract_id=zc.id
+      join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
 
+</select>
+
+    <select id="cdExport">
+    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, fac.* from (
+        select contract_id,
+        Max(case base.factor_type when '01' then base.inc else 0 end ) '底线收入',
+        Max(case base.factor_type when '01' then base.highPer else 0 end ) '底线高端占比',
+        Max(case base.factor_type when '02' then base.inc else 0 end ) '抢单收入',
+        Max(case base.factor_type when '02' then base.highPer else 0 end ) '抢单高端占比'
+        from(
+        select zcf.contract_id ,zcf.factor_type,
+        Max(case zcf.factor_code when 'T01001' then zcf.factor_value else 0 end ) 'inc',
+        max(case zcf.factor_code when 'T03001' then zcf.factor_value else 0 end) 'highPer'
+        from z_contracts zc
+          join z_contracts_factor zcf on zc.id=zcf.contract_id
+        where zc.parent_id=288 and zc.contract_type='20' and factor_type in('01','02')
+        GROUP BY zcf.contract_id,zcf.factor_type
+          )base
+        group by contract_id) fac
+      join z_contracts zc on fac.contract_id=zc.id
+      join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
+
+</select>
 
 </mapper>
