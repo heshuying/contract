@@ -77,8 +77,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position)
-        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition})
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate)
+        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate})
     </insert>
 
     <!--通过主键修改数据-->
