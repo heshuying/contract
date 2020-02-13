@@ -188,6 +188,8 @@ public class GrabServiceImpl implements GrabService {
         //网格抢单汇总
         perfectQueryParam(queryDto);
         queryDto.setLoginXwCode(minBu.getXwCode());
+        queryDto.setRegionCode(minBu.getRegionCode());
+
         //e2e收入
         List<MeshGrabEntity> meshE2EEntities=monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
         BigDecimal e2eInc=new BigDecimal(meshE2EEntities.stream().mapToDouble(m->
@@ -328,7 +330,7 @@ public class GrabServiceImpl implements GrabService {
         //获取用户首页选中的用户
         TOdsMinbu minbu = sysUser.getMinbu();
         queryDto.setLoginXwCode(minbu.getXwCode());
-
+        queryDto.setRegionCode(minbu.getRegionCode());
 
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.queryMeshGrabIncome(queryDto);
         List<String> wgCodes=meshGrabEntities.stream().map(m->m.getMeshCode())
@@ -688,6 +690,7 @@ public class GrabServiceImpl implements GrabService {
         if(contracts==null){
             throw new RException("合约"+Constant.MSG_DATA_NOTFOUND,Constant.CODE_DATA_NOTFOUND);
         }
+        queryDTO.setChainCode(contracts.getChainCode());
         queryDTO.setContractOwner(contracts.getCreateCode());
         int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
         int endMounth=DateFormatUtil.getMonthOfDate(contracts.getEndDate());

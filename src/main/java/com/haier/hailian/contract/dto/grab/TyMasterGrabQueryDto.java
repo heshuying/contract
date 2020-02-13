@@ -25,4 +25,14 @@ public class TyMasterGrabQueryDto {
     private String year;
     private List<String> month;
     private List<String> yearMonth;
+
+    /**
+     * 举单所属链群
+     */
+    private String chainCode;
+
+    /**
+     * 登录人所属区域
+     */
+    private String regionCode;
 }
