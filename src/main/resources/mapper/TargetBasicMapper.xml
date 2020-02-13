@@ -78,15 +78,15 @@
             order by target_code
         </where>
     </select>
-    <select id="selectChainTarget" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from z_target_basic target
-        RIGHT JOIN  z_chain_target c
-        on c.chain_code=target.chain_code
-        and c.target_code = target.target_code
-        where target.chain_code= #{chainCode}
-        and target.period_code= #{periodCode}
-    </select>
+    <!--<select id="selectChainTarget" resultMap="BaseResultMap">-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from z_target_basic target-->
+        <!--RIGHT JOIN  z_chain_target c-->
+        <!--on c.chain_code=target.chain_code-->
+        <!--and c.target_code = target.target_code-->
+        <!--where target.chain_code= #{chainCode}-->
+        <!--and target.period_code= #{periodCode}-->
+    <!--</select>-->
 
 </mapper>
