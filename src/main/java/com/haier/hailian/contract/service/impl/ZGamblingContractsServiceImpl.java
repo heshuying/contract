@@ -101,6 +101,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //2.保存链群目标到目标表
         List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
         for(ChainGroupTargetDTO chainGroupTarget:chainGroupTargetList){
+            if(null==chainGroupTarget.getGrab()) continue;
                 ZContractsFactor factor1 = new ZContractsFactor();
                 factor1.setContractId(contracts.getId());
                 factor1.setFactorValue(chainGroupTarget.getBottom()+"");
