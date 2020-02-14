@@ -234,7 +234,7 @@ public class ZHrChainInfoController {
     }
 
     @GetMapping("getDepVCode")
-    @ApiOperation(value = "获取用户的部门编码")
+    @ApiOperation(value = "获取用户的部门编码（现在已改成获取最小作战单元）")
     public String getDepVCode(String userCode) {
         try {
             return this.zHrChainInfoService.getDepVCode(userCode);

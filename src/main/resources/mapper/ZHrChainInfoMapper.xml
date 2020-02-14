@@ -145,11 +145,7 @@
 
 
     <select id="getDepVCode" resultType="string">
-        select
-            distinct sne.xwCode
-        from chain_contract.sys_employee_ehr sem
-        left join sys_node_ehr sne on sne.nodeCode=sem.nodeCode
-        where empSn =  #{userCode}
+        select littleXwCode from t_ods_minbu_emp where littleEmpsn = #{userCode} LIMIT 1
     </select>
 
     <select id="searchChainListByUser" resultMap="ZHrChainInfoMap">
