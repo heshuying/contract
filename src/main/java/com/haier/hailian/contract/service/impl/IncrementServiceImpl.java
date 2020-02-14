@@ -78,7 +78,7 @@ public class IncrementServiceImpl implements IncrementService {
         if(StringUtils.isNotBlank(chainInfos.get(0).getCdShareRate())){
             cdShareRate = chainInfos.get(0).getCdShareRate();
         }
-        BigDecimal cdShareRateDecimal = new BigDecimal(chainInfos.get(0).getCdShareRate()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal cdShareRateDecimal = new BigDecimal(chainInfos.get(0).getCdShareRate()).divide(new BigDecimal("100"));
         return money.multiply(cdShareRateDecimal);
 
     }

@@ -74,7 +74,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 responseDto.setXwCode(chainInfos.get(0).getXwCode());
                 responseDto.setXwName(chainInfos.get(0).getXwName());
                 if(StringUtils.isNotBlank(chainInfos.get(0).getZzfxRate())){
-                    responseDto.setZzfxRate(new BigDecimal(chainInfos.get(0).getZzfxRate()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP).toString());
+                    responseDto.setZzfxRate(new BigDecimal(chainInfos.get(0).getZzfxRate()).divide(new BigDecimal("100")).toString());
                 }
             }
 
