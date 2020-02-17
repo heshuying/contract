@@ -1,23 +1,24 @@
 package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.haier.hailian.contract.dao.ZContractsDao;
-import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dao.ZContractsProductDao;
-import com.haier.hailian.contract.dao.ZHrChainInfoDao;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
-import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZContractsFactor;
-import com.haier.hailian.contract.entity.ZContractsProduct;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
+import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,49 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
     ZContractsProductDao contractsProductDao;
+    private static final ExcelUtil.CellHeadField[] Serial_Header = {
+            new ExcelUtil.CellHeadField("系列", "serial"),
+            new ExcelUtil.CellHeadField("年计划", "yearPlan"),
+            new ExcelUtil.CellHeadField("年累", "yearSales"),
+            new ExcelUtil.CellHeadField("月计划", "monthPlan"),
+            new ExcelUtil.CellHeadField("月累", "monthSales")
+
+    };
+    private static final ExcelUtil.CellHeadField[] Ty_Export_Header = {
+            new ExcelUtil.CellHeadField("链群编码", "chainCode"),
+            new ExcelUtil.CellHeadField("链群名称", "chainName"),
+            new ExcelUtil.CellHeadField("合约编码", "parentId"),
+            new ExcelUtil.CellHeadField("合约开始时间", "startDate"),
+            new ExcelUtil.CellHeadField("合约结束时间", "endDate"),
+            new ExcelUtil.CellHeadField("抢单编码", "id"),
+            new ExcelUtil.CellHeadField("抢单组织编码", "orgCode"),
+            new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
+            new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
+            new ExcelUtil.CellHeadField("抢单人", "createName"),
+            new ExcelUtil.CellHeadField("底线收入", "bottomInc"),
+            new ExcelUtil.CellHeadField("底线高端占比", "bottomHigh"),
+            new ExcelUtil.CellHeadField("抢单收入", "grabInc"),
+            new ExcelUtil.CellHeadField("抢单高端占比", "grabHigh"),
+
+    };
+    private static final ExcelUtil.CellHeadField[] Cd_Export_Header = {
+            new ExcelUtil.CellHeadField("链群编码", "chainCode"),
+            new ExcelUtil.CellHeadField("链群名称", "chainName"),
+            new ExcelUtil.CellHeadField("合约编码", "parentId"),
+            new ExcelUtil.CellHeadField("合约开始时间", "startDate"),
+            new ExcelUtil.CellHeadField("合约结束时间", "endDate"),
+            new ExcelUtil.CellHeadField("抢单编码", "id"),
+            new ExcelUtil.CellHeadField("抢单组织编码", "orgCode"),
+            new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
+            new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
+            new ExcelUtil.CellHeadField("抢单人", "createName"),
+            new ExcelUtil.CellHeadField("抢单", "factorName"),
+            new ExcelUtil.CellHeadField("值", "factorValue"),
+            new ExcelUtil.CellHeadField("预案", "content"),
+
+    };
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public ContractViewResultDTO getContractViewData(String contractId){
@@ -393,12 +437,10 @@ public class ContractViewServiceImpl implements ContractViewService {
         }
         return  list;
     }
-
-    @Override
-    public Integer getContractSize2(String contractId) {
-        Integer target = contractsDao.getContractSize2(contractId);
-        return target;
-    }
+    @Autowired
+    private HttpServletResponse response;
+    @Autowired
+    private MonthChainGroupOrderDao monthChainGroupOrderDao;
 
     /**
      * 获取合约状态名称
@@ -414,5 +456,55 @@ public class ContractViewServiceImpl implements ContractViewService {
             case "6" : return "已删除";
             default: return "";
         }
+    }
+    @Autowired
+    private ZReservePlanDetailDao planDetailDao;
+
+    @Override
+    public void exportContract(Integer contractId) {
+
+        try {
+            Workbook workbook = new HSSFWorkbook();
+            //市场
+            List<ContractExportEntity> tyExports=monthChainGroupOrderDao.tyExport(contractId);
+            ExcelUtil.buildSheet(workbook, "体验抢单数据", tyExports, Ty_Export_Header);
+
+            //创单
+            List<ContractExportEntity> cdExports=monthChainGroupOrderDao.cdExport(contractId);
+            List<ZReservePlanDetail> list=planDetailDao.getByContract(contractId);
+            for (ContractExportEntity curr:cdExports
+                 ) {
+                List<ZReservePlanDetail> currPlan=list.stream().filter(
+                        m->curr.getId().equals(
+                        m.getParentId())
+                ).collect(Collectors.toList());
+                String content="";
+                if(currPlan!=null&&currPlan.size()>0){
+
+                    for (ZReservePlanDetail plan: currPlan
+                         ) {
+                        content+=plan.getContent();
+                    }
+                }
+                curr.setContent("");
+
+            }
+            ExcelUtil.buildSheet(workbook, "创单抢单数据", cdExports, Cd_Export_Header);
+
+            //爆款
+            List<ContractSerialDto> product = this.staticSerial(contractId);
+            ExcelUtil.buildSheet(workbook, "爆款数据", product, Serial_Header);
+            ByteArrayOutputStream bot = new ByteArrayOutputStream();
+            workbook.write(bot);
+            ExcelUtil.export(request, response, workbook, "合约抢单信息.xls");
+        }catch (Exception ex){
+
+        }
+    }
+
+    @Override
+    public Integer getContractSize2(String contractId) {
+        Integer target = contractsDao.getContractSize2(contractId);
+        return target;
     }
 }

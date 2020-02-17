@@ -83,8 +83,8 @@ public class ContractViewController {
 
     @GetMapping(value = "/exportContract",headers="Accept=application/octet-stream")
     @ApiOperation(value = "导出合约抢单数据")
-    public void exportContract(@RequestParam Integer contractId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //gamblingContractsService.exportMarket(chainCode,request,response);
+    public void exportContract(@RequestParam Integer contractId) throws IOException {
+        contractViewService.exportContract(contractId);
     }
 
 }
