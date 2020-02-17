@@ -8,6 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +79,12 @@ public class ContractViewController {
     public R getContractInfo(@PathVariable Integer contractId) {
          List<ContractSerialDto> list = contractViewService.staticSerial(contractId);
         return R.ok().put("data",list);
+    }
+
+    @GetMapping(value = "/exportContract",headers="Accept=application/octet-stream")
+    @ApiOperation(value = "导出合约抢单数据")
+    public void exportContract(@RequestParam Integer contractId) throws IOException {
+        contractViewService.exportContract(contractId);
     }
 
 }

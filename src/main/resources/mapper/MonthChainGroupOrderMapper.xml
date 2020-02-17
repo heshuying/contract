@@ -47,6 +47,26 @@
         <result column="product_stru" property="productStru" />
     </resultMap>
 
+    <resultMap id="contractExportResult" type="com.haier.hailian.contract.entity.ContractExportEntity">
+        <id column="chain_code" property="chainCode" />
+        <id column="chain_name" property="chainName" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="org_code" property="orgCode" />
+        <result column="org_name" property="orgName" />
+        <result column="create_code" property="createCode" />
+        <result column="create_name" property="createName" />
+        <result column="bottomInc" property="bottomInc" />
+        <result column="bottomHigh" property="bottomHigh" />
+        <result column="grabInc" property="grabInc" />
+        <result column="grabHigh" property="grabHigh" />
+        <result column="factor_name" property="factorName" />
+        <result column="factor_value" property="factorValue" />
+
+    </resultMap>
+
     <select id="getProductByContract" resultType="java.lang.String">
         select DISTINCT product_model_code from
         z_gambling_contracts_product_modle gpm
@@ -101,6 +121,39 @@
         GROUP BY is_gzd
     </select>
 
+<select id="tyExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
+    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, fac.bottomInc,
+     fac.bottomHigh, fac.grabInc ,fac.grabHigh
+     from (
+        select contract_id,
+        Max(case base.factor_type when '01' then base.inc else 0 end ) 'bottomInc',
+        Max(case base.factor_type when '01' then base.highPer else 0 end ) 'bottomHigh',
+        Max(case base.factor_type when '02' then base.inc else 0 end ) 'grabInc',
+        Max(case base.factor_type when '02' then base.highPer else 0 end ) 'grabHigh'
+        from(
+        select zcf.contract_id ,zcf.factor_type,
+        Max(case zcf.factor_code when 'T01001' then zcf.factor_value else 0 end ) 'inc',
+        max(case zcf.factor_code when 'T03001' then zcf.factor_value else 0 end) 'highPer'
+        from z_contracts zc
+          join z_contracts_factor zcf on zc.id=zcf.contract_id
+        where zc.parent_id=#{contractId} and zc.contract_type='20' and factor_type in('01','02')
+        GROUP BY zcf.contract_id,zcf.factor_type
+          )base
+        group by contract_id) fac
+      join z_contracts zc on fac.contract_id=zc.id
+      join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
 
+</select>
+
+    <select id="cdExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
+    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, zcf.factor_name,zcf.factor_value
+    from  z_contracts zc
+    join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
+    join z_contracts_factor zcf on zc.id=zcf.contract_id
+    where zc.parent_id=#{contractId} and zc.contract_type='30'
+
+</select>
 
 </mapper>

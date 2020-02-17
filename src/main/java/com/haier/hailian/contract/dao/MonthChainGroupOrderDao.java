@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
+import com.haier.hailian.contract.entity.ContractExportEntity;
 import com.haier.hailian.contract.entity.MeshGrabEntity;
 import com.haier.hailian.contract.entity.MonthChainGroupOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -49,5 +50,20 @@ public interface MonthChainGroupOrderDao extends BaseMapper<MonthChainGroupOrder
      * @return
      */
     List<MeshGrabEntity> sumStruMeshGrabIncome(TyMasterGrabQueryDto queryDto);
+
+    /**
+     * 体验抢单导出
+     * @param contractId
+     * @return
+     */
+    List<ContractExportEntity> tyExport(Integer contractId);
+
+    /**
+     * 创单抢单导出
+     * @param contractId
+     * @return
+     */
+    List<ContractExportEntity> cdExport(Integer contractId);
+
 
 }

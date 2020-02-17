@@ -12,4 +12,9 @@
         <result column="liable" property="liable" />
     </resultMap>
 
+    <select id="getByContract" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select plan.* from z_contracts zc join  z_reserve_plan_detail plan on zc.id=plan.parent_id
+        where zc.parent_id=#{contractId} and zc.contract_type='30'
+    </select>
+
 </mapper>
