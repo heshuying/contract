@@ -302,7 +302,7 @@ public class ZHrChainInfoController {
         try {
             int z = zHrChainInfoService.saveNewMinbu(zNodeTargetPercentInfos);
             if (z==0){
-                return R.error("更新出错了，请稍后重试！");
+                return R.error("保存出错了，请稍后重试！");
             }
             return R.ok().put("data", z);
         } catch (Exception e) {
@@ -310,5 +310,21 @@ public class ZHrChainInfoController {
             return R.error("系统异常，请稍后尝试！");
         }
     }
+
+    @PostMapping(value = {"/saveModel"})
+    @ApiOperation(value = "保存模块(暂时无用)")
+    public R saveModel(@RequestBody List<ZHrChainInfo> zHrChainInfos) {
+        try {
+            int z = zHrChainInfoService.saveModel(zHrChainInfos);
+            if (z==0){
+                return R.error("保存出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.saveModel,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
 
 }

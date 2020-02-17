@@ -149,4 +149,6 @@ public interface ZHrChainInfoService {
 
 
     int saveNewMinbu(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos);
+
+    int saveModel(List<ZHrChainInfo> zHrChainInfos);
 }

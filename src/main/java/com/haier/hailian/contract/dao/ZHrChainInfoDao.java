@@ -79,4 +79,8 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
      * @return
      */
     List<ZHrChainInfo> searchChainListByUser(String userCode);
+
+    int getNum();
+
+    void updateNum();
 }

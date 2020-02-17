@@ -44,4 +44,8 @@ public class ZHrChainInfoDto {
     private String cdShareRate; // 创单分享比例
 
     private String tyShareRate; // 体验分享比例
+
+    private List<ZHrChainInfoDto> zHrChainInfoDtos; //模块数据
+
+    private String isModel; // 是否开启模块
 }

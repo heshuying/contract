@@ -164,4 +164,16 @@
         from chain_contract.z_hr_chain_info
         where chain_code = #{lqCode}
     </select>
+
+
+    <select id="getNum" resultType="integer">
+        select
+          counter
+        from calculator
+        where keySource = 'modelCode'
+    </select>
+
+    <update id="updateNum">
+        update calculator set counter=counter+1 where keySource='modelCode'
+    </update>
 </mapper>
