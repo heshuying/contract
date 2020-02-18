@@ -33,6 +33,8 @@ public interface ZHrChainInfoService {
      */
     ZHrChainInfoDto queryAllById(Integer id);
 
+    Boolean isChainMaster(String empSn);
+
     /**
      * 查询多条数据
      *

@@ -17,6 +17,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.web3j.abi.datatypes.Int;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -131,6 +132,17 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Override
     public boolean deleteById(Integer id) {
         return this.zHrChainInfoDao.deleteById(id) > 0;
+    }
+
+    @Override
+    public Boolean isChainMaster(String empSn) {
+        if(StringUtils.isBlank(empSn)){
+            return false;
+        }
+        Integer count =zHrChainInfoDao.selectCount(
+                new QueryWrapper<ZHrChainInfo>()
+        .eq("master_code",empSn));
+        return count>0;
     }
 
     @Override

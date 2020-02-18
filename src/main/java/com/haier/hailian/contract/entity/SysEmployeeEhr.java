@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author 19012964
@@ -88,6 +88,9 @@ public class SysEmployeeEhr extends Model<SysEmployeeEhr> {
      * 邮箱
      */
     private String notesmail;
+
+    @TableField(exist=false)
+    private Boolean chainMaster;
 
 
     @TableField(exist=false)
