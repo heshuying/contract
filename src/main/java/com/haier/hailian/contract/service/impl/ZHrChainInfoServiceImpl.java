@@ -215,6 +215,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
         zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
         zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+        zHrChainInfo.setParentCode("0");
         zHrChainInfoDao.insert(zHrChainInfo);
 
         List<String> minbuList = new ArrayList<>();
@@ -245,6 +246,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setXwCode(currentUser.getXwCode());
         zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
+        zHrChainInfoDto.setParentCode("0");
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
@@ -285,6 +287,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 fuck.setZzfxRate(chain.getZzfxRate());
                 fuck.setCdShareRate(chain.getCdShareRate());
                 fuck.setTyShareRate(chain.getTyShareRate());
+                fuck.setParentCode(chainCode);
                 zHrChainInfoDao.insert(fuck);
 
                 List<String> modelMinbuList = new ArrayList<>();
@@ -332,6 +335,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 chain.setXwCode(currentUser.getXwCode());
                 chain.setXwName(currentUser.getXwName());
                 chain.setChainName(modelName);
+                chain.setParentCode(chainCode);
 
                 dtos.add(chain);
 

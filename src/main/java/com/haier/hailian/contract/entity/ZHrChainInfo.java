@@ -50,4 +50,6 @@ public class ZHrChainInfo implements Serializable {
 
     private String tyShareRate; // 体验分享比例
 
+    private String parentCode; //主链群编码
+
 }
