@@ -18,6 +18,7 @@
         <result property="zzfxRate" column="zzfx_rate" jdbcType="VARCHAR"/>
         <result property="cdShareRate" column="cd_share_rate" jdbcType="VARCHAR"/>
         <result property="tyShareRate" column="ty_share_rate" jdbcType="VARCHAR"/>
+        <result property="parentCode" column="parent_code" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -71,6 +72,9 @@
             </if>
             <if test="deleted != null">
                 and deleted = #{deleted}
+            </if>
+            <if test="parentCode != null and parentCode != ''">
+                and parent_code = #{parentCode}
             </if>
         </where>
     </select>

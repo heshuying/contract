@@ -2,6 +2,7 @@ package com.haier.hailian.contract.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.haier.hailian.contract.dto.ChainRepairInfo;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
@@ -204,7 +205,7 @@ public class ZHrChainInfoController {
         }
     }
     @PostMapping(value = {"/updateBatchChainInfo"})
-    @ApiOperation(value = "更新链群信息")
+    @ApiOperation(value = "批量更新节点分享比例")
     public R updateBatchChainInfo(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) List<ZNodeTargetPercentInfo> zNodeTargetPercentInfo) {
         try {
                 int z = zHrChainInfoService.updateBatch(zNodeTargetPercentInfo);
@@ -312,10 +313,10 @@ public class ZHrChainInfoController {
     }
 
     @PostMapping(value = {"/saveModel"})
-    @ApiOperation(value = "保存模块(暂时无用)")
-    public R saveModel(@RequestBody List<ZHrChainInfo> zHrChainInfos) {
+    @ApiOperation(value = "链群设置新增模块")
+    public R saveModel(@RequestBody ZHrChainInfoDto zHrChainInfoDto) {
         try {
-            int z = zHrChainInfoService.saveModel(zHrChainInfos);
+            int z = zHrChainInfoService.saveModel(zHrChainInfoDto);
             if (z==0){
                 return R.error("保存出错了，请稍后重试！");
             }
@@ -326,5 +327,36 @@ public class ZHrChainInfoController {
         }
     }
 
+
+    @PostMapping(value = {"/updateModelInfo"})
+    @ApiOperation(value = "更新子链群(删除链群deleted字段前端传1)")
+    public R updateModelInfo(@RequestBody @Validated @ApiParam(value = "更新子链群", required = true) ZHrChainInfo zHrChainInfo) {
+        try {
+            int z = zHrChainInfoService.updateModelInfo(zHrChainInfo);
+            if (z==0){
+                return R.error("修改出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateModelInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/getChildChainOtherMinbuList"})
+    @ApiOperation(value = "查询子链群未选中最小单元")
+    public R getChildChainOtherMinbuList(@RequestBody ChainRepairInfo chainRepairInfo) {
+        try {
+            List list = zHrChainInfoService.getChildChainOtherMinbuList(chainRepairInfo);
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getOtherMinbuList,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
 
 }

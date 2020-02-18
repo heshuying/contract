@@ -1,9 +1,6 @@
 package com.haier.hailian.contract.service;
 
-import com.haier.hailian.contract.dto.ExportChainUnitInfo;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.ValidateChainNameDTO;
-import com.haier.hailian.contract.dto.ZHrChainInfoDto;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 
 import java.util.List;
@@ -150,5 +147,14 @@ public interface ZHrChainInfoService {
 
     int saveNewMinbu(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos);
 
-    int saveModel(List<ZHrChainInfo> zHrChainInfos);
+    int saveModel(ZHrChainInfoDto zHrChainInfoDto);
+
+    /**
+     * 更新
+     * @param zHrChainInfo
+     * @return
+     */
+    int updateModelInfo(ZHrChainInfo zHrChainInfo);
+
+    List<TOdsMinbu> getChildChainOtherMinbuList(ChainRepairInfo chainRepairInfo);
 }

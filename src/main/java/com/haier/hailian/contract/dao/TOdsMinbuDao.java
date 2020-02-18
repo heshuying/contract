@@ -36,4 +36,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     TOdsMinbu queryMinbuByOrgCode(String orgCode);
 
     List<TOdsMinbu> getOtherListByPtCode(Map map);
+
+    List<TOdsMinbu> getChildOtherListByPtCode(Map map);
 }
