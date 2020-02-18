@@ -4,16 +4,9 @@ package com.haier.hailian.contract.config.shiro;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dto.RException;
-import com.haier.hailian.contract.entity.SysEmployeeEhr;
-import com.haier.hailian.contract.entity.SysEmployeeZ;
-import com.haier.hailian.contract.entity.SysNet;
-import com.haier.hailian.contract.entity.SysXwRegion;
-import com.haier.hailian.contract.entity.TOdsMinbu;
-import com.haier.hailian.contract.service.SysEmployeeEhrService;
-import com.haier.hailian.contract.service.SysEmployeeZService;
-import com.haier.hailian.contract.service.SysNetService;
-import com.haier.hailian.contract.service.SysXwRegionService;
-import com.haier.hailian.contract.service.TOdsMinbuService;
+import com.haier.hailian.contract.dto.ZHrChainInfoDto;
+import com.haier.hailian.contract.entity.*;
+import com.haier.hailian.contract.service.*;
 import com.haier.hailian.contract.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -42,6 +35,8 @@ public class HacLoginRealm extends AuthorizingRealm {
     private TOdsMinbuService minbuService;
     @Autowired
     private SysXwRegionService xwRegionService;
+    @Autowired
+    private ZHrChainInfoService zHrChainInfoService;
 
     /**
      * 认证(登录时调用)
@@ -98,6 +93,8 @@ public class HacLoginRealm extends AuthorizingRealm {
             sysEmployee.setMinbu(defaultBu);
 
         }
+        boolean isChainMaster=zHrChainInfoService.isChainMaster(empSn);
+        sysEmployee.setChainMaster(isChainMaster);
         sysEmployee.setMinbuList(minBues);
 
         sysEmployee.setWanggeList(sysNetList);
