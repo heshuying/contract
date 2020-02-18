@@ -5,10 +5,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
-import com.haier.hailian.contract.dto.ExportChainUnitInfo;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.ValidateChainNameDTO;
-import com.haier.hailian.contract.dto.ZHrChainInfoDto;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.IHaierUtil;
@@ -78,6 +75,30 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
         zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
         zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(zNodeTargetPercentInfo));
+        // 获取子链群信息
+        List<ZHrChainInfoDto> dtos = new ArrayList<>();
+        ZHrChainInfo exp = new ZHrChainInfo();
+        exp.setParentCode(zHrChainInfo.getChainCode());
+        exp.setDeleted(0); //查询未删除的
+        List<ZHrChainInfo> listChild = zHrChainInfoDao.queryAll(exp);
+        for(ZHrChainInfo fuck : listChild){
+            ZHrChainInfoDto dto = new ZHrChainInfoDto();
+            dto.setId(fuck.getId());
+            dto.setChainName(fuck.getChainName());
+            dto.setChainCode(fuck.getChainCode());
+            dto.setFixedPosition(fuck.getFixedPosition());
+            dto.setZzfxRate(fuck.getZzfxRate());
+            dto.setCdShareRate(fuck.getCdShareRate());
+            dto.setTyShareRate(fuck.getTyShareRate());
+            ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
+            nodeChild.setModelCode(fuck.getChainCode());
+            nodeChild.setLqCode(zHrChainInfo.getChainCode());
+            dto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(nodeChild));
+
+            dtos.add(dto);
+        }
+
+        zHrChainInfoDto.setZHrChainInfoDtos(dtos);//包括主链群 和 子链群
         return zHrChainInfoDto;
     }
 
@@ -215,6 +236,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //hr接口获取编码
         String chainCode = chainGroupClient.getChainGroupCode(name);
 
+        // 主链群
         zHrChainInfo.setChainCode(chainCode);
         zHrChainInfo.setChainPtCode(currentUser.getPtCode());
         zHrChainInfo.setMasterCode(sysUser.getEmpSn());
@@ -226,7 +248,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setZzfxRate(zHrChainInfoDto.getZzfxRate());
         zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
         zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+        zHrChainInfo.setParentCode("0");
         zHrChainInfoDao.insert(zHrChainInfo);
+
         List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
@@ -255,6 +279,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setXwCode(currentUser.getXwCode());
         zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
+        zHrChainInfoDto.setParentCode("0");
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
@@ -268,6 +293,91 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo1.setId(zHrChainInfo.getId());
         zHrChainInfo1.setGroupId(groupId);
         zHrChainInfoDao.update(zHrChainInfo1 );
+
+
+        List<ZHrChainInfoDto> dtos = new ArrayList<>(); // 存放模块链群数据
+        // 模块链群
+        if(zHrChainInfoDto.getZHrChainInfoDtos()!=null && zHrChainInfoDto.getIsModel().equals("1")){
+            for(ZHrChainInfoDto chain : zHrChainInfoDto.getZHrChainInfoDtos()){
+                String modelName = chain.getChainName();
+                if (!modelName.contains("链群")) {
+                    modelName = modelName + "链群";
+                }
+
+                // 获取计数器
+                int num = zHrChainInfoDao.getNum();
+                String modelCode = chainCode + "-" + num;
+
+                ZHrChainInfo fuck = new ZHrChainInfo();
+                fuck.setChainCode(modelCode);
+                fuck.setChainPtCode(currentUser.getPtCode());
+                fuck.setMasterCode(sysUser.getEmpSn());
+                fuck.setMasterName(sysUser.getEmpName());
+                fuck.setXwCode(currentUser.getLittleXwCode());
+                fuck.setXwName(currentUser.getLittleXwName());
+                fuck.setFixedPosition(chain.getFixedPosition());
+                fuck.setChainName(modelName);
+                fuck.setZzfxRate(chain.getZzfxRate());
+                fuck.setCdShareRate(chain.getCdShareRate());
+                fuck.setTyShareRate(chain.getTyShareRate());
+                fuck.setParentCode(chainCode);
+                zHrChainInfoDao.insert(fuck);
+
+                List<String> modelMinbuList = new ArrayList<>();
+                // 保存链群的目标信息
+                for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
+                    z.setLqCode(chainCode);
+                    z.setLqName(name);
+                    z.setModelCode(modelCode);
+                    modelMinbuList.add(z.getNodeCode());
+                    zNodeTargetPercentInfoDao.insert(z);
+                }
+
+                //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
+                List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+                for (TOdsMinbu tOdsMinbu:getIsTYModel){
+                    ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
+                    zNodeTargetPercentInfo.setLqCode(chainCode);
+                    zNodeTargetPercentInfo.setLqName(name);
+                    zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
+                    zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
+                    zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
+                    zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+                    zNodeTargetPercentInfo.setModelCode(modelCode);
+                    zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+                }
+
+                //4.新增创建群组，在创建链群的时候创建
+                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+                modelCodeList.add(sysUser.getEmpSn());
+                String[] modelToBeStored = new String[modelCodeList.size()];
+                modelCodeList.toArray(modelToBeStored);
+                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,name,chainCode);
+                //更新链群的群组ID字段
+                ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
+                zHrChainInfoExp.setId(fuck.getId());
+                zHrChainInfoExp.setGroupId(modelGroupId);
+                zHrChainInfoDao.update(zHrChainInfoExp );
+
+                // 构建返回对象
+                chain.setId(fuck.getId());
+                chain.setChainCode(modelCode);
+                chain.setMasterCode(sysUser.getEmpSn());
+                chain.setMasterName(sysUser.getEmpName());
+                chain.setChainPtCode(currentUser.getPtCode());
+                chain.setXwCode(currentUser.getXwCode());
+                chain.setXwName(currentUser.getXwName());
+                chain.setChainName(modelName);
+                chain.setParentCode(chainCode);
+
+                dtos.add(chain);
+
+                // 更新计数器表
+                zHrChainInfoDao.updateNum();
+            }
+        }
+        zHrChainInfoDto.setZHrChainInfoDtos(dtos);
+
         return zHrChainInfoDto;
     }
 
@@ -378,6 +488,112 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public int saveNewMinbu(List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos) {
         int num = zNodeTargetPercentInfoDao.insertBatch(zNodeTargetPercentInfos);
         return num;
+    }
+
+    @Override
+    public int saveModel(ZHrChainInfoDto zHrChainInfoDto) {
+
+        //1.保存链群信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return 0;
+        }
+
+        String modelName = zHrChainInfoDto.getChainName();
+        if (!modelName.contains("链群")) {
+            modelName = modelName + "链群";
+        }
+
+        // 获取计数器
+        int num = zHrChainInfoDao.getNum();
+        String modelCode = zHrChainInfoDto.getParentCode() + "-" + num;
+
+        ZHrChainInfo fuck = new ZHrChainInfo();
+        fuck.setChainCode(modelCode);
+        fuck.setChainPtCode(currentUser.getPtCode());
+        fuck.setMasterCode(sysUser.getEmpSn());
+        fuck.setMasterName(sysUser.getEmpName());
+        fuck.setXwCode(currentUser.getLittleXwCode());
+        fuck.setXwName(currentUser.getLittleXwName());
+        fuck.setFixedPosition(zHrChainInfoDto.getFixedPosition());
+        fuck.setChainName(modelName);
+        fuck.setZzfxRate(zHrChainInfoDto.getZzfxRate());
+        fuck.setCdShareRate(zHrChainInfoDto.getCdShareRate());
+        fuck.setTyShareRate(zHrChainInfoDto.getTyShareRate());
+        fuck.setParentCode(zHrChainInfoDto.getParentCode());
+        int change = zHrChainInfoDao.insert(fuck);
+
+        List<String> modelMinbuList = new ArrayList<>();
+        // 保存链群的目标信息
+        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
+            z.setLqCode(zHrChainInfoDto.getParentCode());
+            z.setLqName(zHrChainInfoDto.getParentName());
+            z.setModelCode(modelCode);
+            modelMinbuList.add(z.getNodeCode());
+            zNodeTargetPercentInfoDao.insert(z);
+        }
+
+        //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
+        List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+        for (TOdsMinbu tOdsMinbu:getIsTYModel){
+            ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
+            zNodeTargetPercentInfo.setLqCode(zHrChainInfoDto.getParentCode());
+            zNodeTargetPercentInfo.setLqName(zHrChainInfoDto.getParentName());
+            zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
+            zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
+            zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
+            zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+            zNodeTargetPercentInfo.setModelCode(modelCode);
+            zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+        }
+
+        //4.新增创建群组，在创建链群的时候创建
+        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+        modelCodeList.add(sysUser.getEmpSn());
+        String[] modelToBeStored = new String[modelCodeList.size()];
+        modelCodeList.toArray(modelToBeStored);
+        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getParentName(),zHrChainInfoDto.getParentCode());
+        //更新链群的群组ID字段
+        ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
+        zHrChainInfoExp.setId(fuck.getId());
+        zHrChainInfoExp.setGroupId(modelGroupId);
+        zHrChainInfoDao.update(zHrChainInfoExp );
+
+        // 更新计数器表
+        zHrChainInfoDao.updateNum();
+        return change;
+    }
+
+    @Override
+    public int updateModelInfo(ZHrChainInfo zHrChainInfo) {
+        int num = zHrChainInfoDao.update(zHrChainInfo);
+        return num;
+    }
+
+
+
+    @Override
+    public List<TOdsMinbu> getChildChainOtherMinbuList(ChainRepairInfo chainRepairInfo) {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        //2获取数据库中这个平台的所有最小单元
+        Map map = new HashMap<>();
+        map.put("ptCode" , currentUser.getPtCode());
+        map.put("chainCode" , chainRepairInfo.getChainCode());
+        map.put("modelCode" , chainRepairInfo.getChildChainCode());
+        List<TOdsMinbu> list = tOdsMinbuDao.getChildOtherListByPtCode(map);
+        return list;
     }
 
 

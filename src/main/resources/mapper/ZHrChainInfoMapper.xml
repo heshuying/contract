@@ -18,6 +18,7 @@
         <result property="zzfxRate" column="zzfx_rate" jdbcType="VARCHAR"/>
         <result property="cdShareRate" column="cd_share_rate" jdbcType="VARCHAR"/>
         <result property="tyShareRate" column="ty_share_rate" jdbcType="VARCHAR"/>
+        <result property="parentCode" column="parent_code" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -72,13 +73,16 @@
             <if test="deleted != null">
                 and deleted = #{deleted}
             </if>
+            <if test="parentCode != null and parentCode != ''">
+                and parent_code = #{parentCode}
+            </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate)
-        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate})
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate,parent_code)
+        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate},#{parentCode})
     </insert>
 
     <!--通过主键修改数据-->
@@ -124,6 +128,9 @@
             <if test="tyShareRate != null">
                 ty_share_rate = #{tyShareRate},
             </if>
+            <if test="parentCode != null">
+                parent_code = #{parentCode},
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -164,4 +171,16 @@
         from chain_contract.z_hr_chain_info
         where chain_code = #{lqCode}
     </select>
+
+
+    <select id="getNum" resultType="integer">
+        select
+          counter
+        from calculator
+        where keySource = 'modelCode'
+    </select>
+
+    <update id="updateNum">
+        update calculator set counter=counter+1 where keySource='modelCode'
+    </update>
 </mapper>

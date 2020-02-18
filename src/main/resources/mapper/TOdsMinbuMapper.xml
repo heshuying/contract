@@ -79,4 +79,12 @@
        and a.ptCode like "%"#{ptCode}"%" and a.xwType5Code != '|2|'
     </select>
 
+
+    <select id="getChildOtherListByPtCode" parameterType="java.util.Map" resultMap="BaseResultMap">
+       select * from t_ods_minbu a
+       where a.littleXwCode not in
+       (select node_code from z_node_target_percent_info b where b.share_percent is not null and b.lq_code=#{chainCode} and b.model_code=#{modelCode})
+       and a.ptCode like "%"#{ptCode}"%" and a.xwType5Code != '|2|'
+    </select>
+
 </mapper>
