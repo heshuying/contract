@@ -171,6 +171,8 @@ public class TargetBasic extends Model<TargetBasic> {
 
     private String chainName;
 
+    private String isLqTarget;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

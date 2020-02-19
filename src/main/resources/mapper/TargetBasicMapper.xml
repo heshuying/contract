@@ -33,12 +33,13 @@
         <result column="period_code" property="periodCode" />
         <result column="chain_code" property="chainCode" />
         <result column="chain_name" property="chainName" />
+        <result column="is_lq_target" property="isLqTarget" />
     </resultMap>
     <sql id="Base_Column_List" >
         target.id, target.target_code, target.target_name, target.target_des, target.target_unit, target.target_to,
         target.judan_flag, target.target_pt_code, target.target_diff_type, target.target_dim, target.target_process_type, target.target_xw_category_code,
         target.target_xw_category_name,target.target_DSLogic_code,target.targe_year,target_month,target.target_model,target.target_model_code,ROUND(target.target_bottom_line,2) as target_bottom_line,
-        ROUND(target.target_jd_line,2) as target_jd_line,target.target_logic,target.target_weight,target.target_region_code,target.target_region_name,target.role_code,target.role_name,target.period_code,target.chain_code,target.chain_name
+        ROUND(target.target_jd_line,2) as target_jd_line,target.target_logic,target.target_weight,target.target_region_code,target.target_region_name,target.role_code,target.role_name,target.period_code,target.chain_code,target.chain_name,target.is_lq_target
     </sql>
     <select id="selectTarget" resultMap="BaseResultMap">
         select
