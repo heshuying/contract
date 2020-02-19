@@ -111,8 +111,46 @@ public class ContractViewServiceImpl implements ContractViewService {
         result.setGrabList(grabList);
         List<FactorConfigDTO> grabTYList = contractsDao.selectContractsViewForTYSum(contractId);
         result.setGrabTYList(grabTYList);
-
+        List<SubContractInfo> subList = getSubContractList(contractId);
+        result.setSubContractList(subList);
         return result;
+    }
+
+    /**
+     * 获取自合约列表
+     * @param contractId
+     * @return
+     */
+    public List<SubContractInfo> getSubContractList(String contractId){
+        List<SubContractInfo> subList = new ArrayList<SubContractInfo>();
+        List<ZContracts> contracts = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", contractId).eq("contract_type", "10"));
+        if(contracts == null || contracts.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        for(ZContracts contract : contracts){
+            SubContractInfo subContract = new SubContractInfo();
+            subContract.setContractId(String.valueOf(contract.getId()));
+
+            ZHrChainInfo chain = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contract.getChainCode()));
+            if(chain != null){
+                subContract.setChainName(chain.getChainName());
+            }
+
+            String rate = getContractSize(contractId);
+            subContract.setCountCD(rate);
+            Integer grabSize = selectContractsViewForTYCount(contractId);
+            Integer size = getContractSize2(contractId);
+            subContract.setCountTY(grabSize + "/" + size);
+            List<ContractSerialDto> list = staticSerial(Integer.parseInt(contractId));
+            if (list == null || list.isEmpty()){
+                subContract.setCountBK("0");
+            }else{
+                subContract.setCountBK(String.valueOf(list.size()));
+            }
+            subList.add(subContract);
+        }
+        return subList;
     }
 
     @Override
