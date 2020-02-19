@@ -5,6 +5,10 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
+import com.haier.hailian.contract.dto.ExportChainUnitInfo;
+import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.dto.ValidateChainNameDTO;
+import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
@@ -12,9 +16,9 @@ import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.web3j.abi.datatypes.Int;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,9 +45,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Resource
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
     //hr发版后放开
-    //@Reference(version = "ehr2.0", registry = "registry2", check = false)
-    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
-    ChainGroupClient chainGroupClient;
+    @Reference(version = "ehr2.0", registry = "registry2", check = false)
+    //@Reference(version = "ehr2.0-test",registry = "registry2",check=false)
+    private ChainGroupClient chainGroupClient;
 
     /**
      * 通过ID查询单条数据

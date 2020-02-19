@@ -148,16 +148,20 @@ public class ZHrChainInfoController {
         try {
             //1.校验一下名字是否重复
             R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
-            BigDecimal count = new BigDecimal(0);
-            for (ZNodeTargetPercentInfo zNodeTargetPercentInfo:zHrChainInfoDto.getZNodeTargetPercentInfos()){
-                count = BigDecimal.valueOf(Double.parseDouble(zNodeTargetPercentInfo.getSharePercent())).add(count);
+
+            if(!zHrChainInfoDto.getIsModel().equals("1")){
+                BigDecimal count = new BigDecimal(0);
+                for (ZNodeTargetPercentInfo zNodeTargetPercentInfo:zHrChainInfoDto.getZNodeTargetPercentInfos()){
+                    count = BigDecimal.valueOf(Double.parseDouble(zNodeTargetPercentInfo.getSharePercent())).add(count);
+                }
+                if (count.intValue()>100){
+                    return R.error("分享比例不能大于100%");
+                }
+                if (count.intValue() == 0){
+                    return R.error("分享比例不能为0！");
+                }
             }
-            if (count.intValue()>100){
-                return R.error("分享比例不能大于100%");
-            }
-            if (count.intValue() == 0){
-                return R.error("分享比例不能为0！");
-            }
+
 //            if (StringUtils.isBlank(zHrChainInfoDto.getFixedPosition())){
 //                return R.error("链群定位未输入，请输入！");
 //            }
