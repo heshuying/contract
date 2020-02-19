@@ -528,7 +528,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                         content+=plan.getContent();
                     }
                 }
-                curr.setContent("");
+                curr.setContent(content);
 
             }
             ExcelUtil.buildSheet(workbook, "创单抢单数据", cdExports, Cd_Export_Header);
