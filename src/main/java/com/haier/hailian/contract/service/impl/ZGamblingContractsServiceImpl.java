@@ -270,8 +270,17 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public List<ZProductChain> selectProductSeries(QueryProductChainDTO dto) {
-        return productChainDao.selectSeriesByChainCode(dto.getChainCode());
+    public List<ContractProductDTO> selectProductSeries(QueryProductChainDTO dto) {
+        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(dto.getChainCode());
+        List<ContractProductDTO> productList = new ArrayList<>();
+        for(ZProductChain productChain : list){
+            ContractProductDTO productDTO = new ContractProductDTO();
+            productDTO.setProductSeries(productChain.getProductSeries());
+            productDTO.setQtyMonth(null);
+            productDTO.setQtyYear(null);
+            productList.add(productDTO);
+        }
+        return productList;
     }
 
     @Override
@@ -513,6 +522,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return list;
     }
 
+
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
         Workbook workbook = null;
@@ -540,6 +550,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             new ExcelUtil.CellHeadField("年度销量(台)", ""),
             new ExcelUtil.CellHeadField("月度销量(台)", "")
     };
+
 
 
 }

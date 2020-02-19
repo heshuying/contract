@@ -2,7 +2,6 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZProductChain;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +31,7 @@ public interface ZGamblingContractsService {
 
     List<ZContracts> selectToGrabContract(QueryContractListDTO queryDTO);
 
-    List<ZProductChain> selectProductSeries(QueryProductChainDTO dto);
+    List<ContractProductDTO> selectProductSeries(QueryProductChainDTO dto);
 
     GamblingContractDTO selectContractById(Integer contractId);
 
@@ -45,4 +44,5 @@ public interface ZGamblingContractsService {
     void exportProductSeries(String chainCode, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     List<ContractProductDTO> getProductSeriesListByExcel(InputStream inputStream, String originalFilename)throws Exception;
+
 }
