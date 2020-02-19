@@ -1,9 +1,14 @@
 package com.haier.hailian.contract.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.entity.TOdsMinbu;
+import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZProductChain;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +39,10 @@ public class ZGamblingContractsController {
 
     @Autowired
     private ZGamblingContractsService gamblingContractsService;
+    @Autowired
+    private TargetBasicService targetBasicService;
+    @Autowired
+    private ZHrChainInfoDao hrChainInfoDao;
 
     @PostMapping(value = {"/saveGambling"})
     @ApiOperation(value = "链群主抢单（举单）信息保存")
@@ -53,6 +62,53 @@ public class ZGamblingContractsController {
     public R selectMarket(@RequestParam String chainCode) {
         MarketReturnDTO dto = gamblingContractsService.selectMarket(chainCode);
         return R.ok().put("data",dto);
+    }
+
+    @PostMapping(value = {"/selectTargetAll"})
+    @ApiOperation(value = "查询主链群和子链群的所有链群目标、42中心和爆款")
+    public R selectTargetAll(@RequestBody QueryBottomDTO dto) {
+
+        ReturnTargetAllDTO targetAllDTO = new ReturnTargetAllDTO();
+        //1.查询主链群目标
+        List<TargetBasic> targetBasicList = targetBasicService.selectBottom(dto);
+        targetAllDTO.setParentTarget(targetBasicList);
+        String parentChain = dto.getChainCode();
+        //2.查询子链群
+        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("parent_code",parentChain));
+        if(null != chainList && chainList.size()>0){
+            List<ReturnTargetDTO> children = new ArrayList<>();
+            for(ZHrChainInfo chain:chainList){
+                ReturnTargetDTO targetDTO = new ReturnTargetDTO();
+                //3.查询子链群的链群目标
+                String chainCode = chain.getChainCode();
+                dto.setChainCode(chainCode);
+                List<TargetBasic> childTarget = targetBasicService.selectBottom(dto);
+                targetDTO.setChildChainCode(chainCode);
+                targetDTO.setChildChainName(chain.getChainName());
+                targetDTO.setChildTarget(childTarget);
+                //4.查询子链群的42中心
+                List<TOdsMinbu> childCenter = gamblingContractsService.selectMarket(chainCode).getMarket();
+                targetDTO.setChildCenter(childCenter);
+                //5.查询子链群的爆款目标
+                QueryProductChainDTO dto1 = new QueryProductChainDTO();
+                dto1.setChainCode(chainCode);
+                List<ContractProductDTO> childProduct = gamblingContractsService.selectProductSeries(dto1);
+                targetDTO.setChildProduct(childProduct);
+                children.add(targetDTO);
+            }
+            targetAllDTO.setChildren(children);
+        }else{
+            //4.查询主链群的42中心
+            MarketReturnDTO marketReturnDTO = gamblingContractsService.selectMarket(parentChain);
+            List<TOdsMinbu> parentCenter = marketReturnDTO.getMarket();
+            targetAllDTO.setParentCenter(parentCenter);
+            //5.查询主链群的爆款目标
+            QueryProductChainDTO dto1 = new QueryProductChainDTO();
+            dto1.setChainCode(parentChain);
+            List<ContractProductDTO> parentProduct = gamblingContractsService.selectProductSeries(dto1);
+            targetAllDTO.setParentProduct(parentProduct);
+        }
+        return R.ok().put("data",targetAllDTO);
     }
 
     @PostMapping(value = {"/calculateSharing"})
@@ -79,15 +135,7 @@ public class ZGamblingContractsController {
     @PostMapping(value = {"/selectProductSeries"})
     @ApiOperation(value = "根据链群编码查询产品系列")
     public R selectProductSeries(@RequestBody QueryProductChainDTO dto) {
-        List<ZProductChain> list = gamblingContractsService.selectProductSeries(dto);
-        List<ContractProductDTO> productList = new ArrayList<>();
-        for(ZProductChain productChain : list){
-            ContractProductDTO productDTO = new ContractProductDTO();
-            productDTO.setProductSeries(productChain.getProductSeries());
-            productDTO.setQtyMonth(null);
-            productDTO.setQtyYear(null);
-            productList.add(productDTO);
-        }
+        List<ContractProductDTO> productList = gamblingContractsService.selectProductSeries(dto);
         return R.ok().put("data",productList);
     }
 
