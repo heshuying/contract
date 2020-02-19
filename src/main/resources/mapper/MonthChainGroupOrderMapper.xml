@@ -58,6 +58,7 @@
         <result column="org_name" property="orgName" />
         <result column="create_code" property="createCode" />
         <result column="create_name" property="createName" />
+        <result column="create_time" property="createTime" />
         <result column="bottomInc" property="bottomInc" />
         <result column="bottomHigh" property="bottomHigh" />
         <result column="grabInc" property="grabInc" />
@@ -123,7 +124,7 @@
 
 <select id="tyExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
     select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
-    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, fac.bottomInc,
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, fac.bottomInc,
      fac.bottomHigh, fac.grabInc ,fac.grabHigh
      from (
         select contract_id,
@@ -148,7 +149,7 @@
 
     <select id="cdExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
     select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
-    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name, zcf.factor_name,zcf.factor_value
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, zcf.factor_name,zcf.factor_value
     from  z_contracts zc
     join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
     join z_contracts_factor zcf on zc.id=zcf.contract_id

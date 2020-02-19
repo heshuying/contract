@@ -55,6 +55,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
             new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
             new ExcelUtil.CellHeadField("抢单人", "createName"),
+            new ExcelUtil.CellHeadField("抢单时间", "createTime"),
+
             new ExcelUtil.CellHeadField("底线收入", "bottomInc"),
             new ExcelUtil.CellHeadField("底线高端占比", "bottomHigh"),
             new ExcelUtil.CellHeadField("抢单收入", "grabInc"),
@@ -72,6 +74,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
             new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
             new ExcelUtil.CellHeadField("抢单人", "createName"),
+            new ExcelUtil.CellHeadField("抢单时间", "createTime"),
+
             new ExcelUtil.CellHeadField("抢单", "factorName"),
             new ExcelUtil.CellHeadField("值", "factorValue"),
             new ExcelUtil.CellHeadField("预案", "content"),

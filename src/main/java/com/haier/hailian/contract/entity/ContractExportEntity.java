@@ -15,6 +15,7 @@ public class ContractExportEntity {
     private String orgName;
     private String createCode;
     private String createName;
+    private String createTime;
     private String bottomInc;
     private String bottomHigh;
     private String grabInc;
