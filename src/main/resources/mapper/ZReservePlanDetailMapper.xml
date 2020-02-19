@@ -13,8 +13,9 @@
     </resultMap>
 
     <select id="getByContract" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select plan.* from z_contracts zc join  z_reserve_plan_detail plan on zc.id=plan.parent_id
-        where zc.parent_id=#{contractId} and zc.contract_type='30'
+        select pd.* from z_reserve_plan_detail pd join z_reserve_plan p on p.id=pd.parent_id
+        join z_contracts zc on zc.id=p.parent_id and zc.parent_id=#{contractId}
+        and zc.contract_type='30' and zc.status=1
     </select>
 
 </mapper>
