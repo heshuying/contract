@@ -40,7 +40,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date,zzfx_rate,cd_share_rate,ty_share_rate,parent_code
         from chain_contract.z_hr_chain_info
         <where>
             <if test="id != null">
