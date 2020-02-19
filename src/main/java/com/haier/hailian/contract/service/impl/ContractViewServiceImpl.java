@@ -517,8 +517,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             for (ContractExportEntity curr:cdExports
                  ) {
                 List<ZReservePlanDetail> currPlan=list.stream().filter(
-                        m->curr.getId().equals(
-                        m.getParentId())
+                        m->curr.getId().equals(m.getParentId().toString())
                 ).collect(Collectors.toList());
                 String content="";
                 if(currPlan!=null&&currPlan.size()>0){
