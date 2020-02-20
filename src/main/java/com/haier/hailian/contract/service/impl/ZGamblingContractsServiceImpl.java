@@ -191,6 +191,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
+        queryDTO.setParentId(0);
         List<ZContracts> list = contractsDao.selectContractList(queryDTO);
         //查询还没有抢入、抢入未截止的合约
         String contractIds = contractsDao.selectContractToUpdate()+",";
@@ -504,6 +505,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             //2.查询每个链群是否举了下个月的单，未举单的链群产生假数据
             if(null != chainList && chainList.size() > 0){
                 for(ZHrChainInfo chainInfo : chainList){
+                    if(null != chainInfo.getParentCode() && !"0".equals(chainInfo.getParentCode()) && !"".equals(chainInfo.getParentCode())) continue;
                     QueryContractListDTO dto = new QueryContractListDTO();
                     dto.setChainCode(chainInfo.getChainCode());
                     int next = DateFormatUtil.getMonthOfDate(new Date())+1;

@@ -26,4 +26,6 @@ public class QueryContractListDTO {
 
     private String nextMonth;
 
+    private Integer parentId;
+
 }
