@@ -16,6 +16,8 @@ public class ChainGroupTargetDTO {
 
     private String targetUnit;
 
+    private String isLqTarget;
+
     private BigDecimal bottom;
 
     private BigDecimal E2E;
