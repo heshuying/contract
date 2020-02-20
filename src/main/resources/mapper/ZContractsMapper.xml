@@ -101,6 +101,9 @@
                     #{chainCodeList}
                 </foreach>
             </if>
+            <if test=" parentId != null ">
+                and parent_id = #{parentId}
+            </if>
             and contract_type='10'
             order by id desc
         </where>
@@ -159,6 +162,10 @@
             and not EXISTS (select 1 from z_contracts where
                 parent_id=base.id and contract_type in ('20','30') and status = '1' and org_code = #{littleXwCode}
                 )
+            -- 排除有子链群的主合约
+            and not EXISTS (select 1 from z_contracts where
+            parent_id=base.id and contract_type='10'
+            )
             and contract_type='10' and status = '0'
             order by id desc
         </where>
