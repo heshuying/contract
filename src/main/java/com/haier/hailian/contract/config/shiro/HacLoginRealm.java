@@ -35,8 +35,6 @@ public class HacLoginRealm extends AuthorizingRealm {
     private TOdsMinbuService minbuService;
     @Autowired
     private SysXwRegionService xwRegionService;
-    //@Autowired
-    //private ZHrChainInfoService zHrChainInfoService;
 
     /**
      * 认证(登录时调用)
@@ -93,8 +91,8 @@ public class HacLoginRealm extends AuthorizingRealm {
             sysEmployee.setMinbu(defaultBu);
 
         }
-        //boolean isChainMaster=zHrChainInfoService.isChainMaster(empSn);
-        //sysEmployee.setChainMaster(isChainMaster);
+        boolean isChainMaster=minbuService.isChainMaster(empSn);
+        sysEmployee.setChainMaster(isChainMaster);
         sysEmployee.setMinbuList(minBues);
 
         sysEmployee.setWanggeList(sysNetList);

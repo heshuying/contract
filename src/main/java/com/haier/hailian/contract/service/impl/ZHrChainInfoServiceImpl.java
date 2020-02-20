@@ -157,17 +157,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public boolean deleteById(Integer id) {
         return this.zHrChainInfoDao.deleteById(id) > 0;
     }
-
-    @Override
-    public Boolean isChainMaster(String empSn) {
-        if(StringUtils.isBlank(empSn)){
-            return false;
-        }
-        Integer count =zHrChainInfoDao.selectCount(
-                new QueryWrapper<ZHrChainInfo>()
-        .eq("master_code",empSn));
-        return count>0;
-    }
+    
 
     @Override
     public R validateChainName(ValidateChainNameDTO validateChainNameDTO) {

@@ -521,10 +521,11 @@ public class ContractViewServiceImpl implements ContractViewService {
                 ).collect(Collectors.toList());
                 String content="";
                 if(currPlan!=null&&currPlan.size()>0){
-
+                    int index=1;
                     for (ZReservePlanDetail plan: currPlan
                          ) {
-                        content+=plan.getContent();
+                        content+="预案"+index+":"+plan.getContent()+"; ";
+                        index++;
                     }
                 }
                 curr.setContent(content);
