@@ -522,6 +522,191 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return list;
     }
 
+    @Override
+    public void saveGamblingNew(SaveGamblingContractDTO dto) throws Exception{
+
+
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        //1.保存链群主抢单信息到合同主表
+        ZContracts contracts = new ZContracts();
+        if(null == dto.getId() || dto.getId() == 0){
+            //ID 为空时为新增
+            BeanUtils.copyProperties(dto,contracts);
+            contracts.setStartDate(sf.parse(dto.getStartDate()));
+            contracts.setEndDate(sf.parse(dto.getEndDate()));
+            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setContractType("10");
+            contracts.setStatus("0");
+            contracts.setCreateName(sysUser.getEmpName());
+            contracts.setCreateCode(sysUser.getEmpSn());
+            contracts.setCreateTime(new Date());
+            contracts.setXiaoweiCode(currentUser.getXwCode());
+            contracts.setOrgName(currentUser.getLittleXwName());
+            contracts.setOrgCode(currentUser.getLittleXwCode());
+            contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
+            contractsDao.insert(contracts);
+        }else{
+            //ID 不为0时，为修改
+            contracts = contractsDao.selectByContractId(dto.getId());
+            contracts.setShareSpace(dto.getShareSpace());
+            contractsDao.updateById(contracts);
+            //修改时删除原有目标
+            factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",dto.getId()));
+            contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",dto.getId()));
+        }
+        //2.保存链群目标到目标表
+        List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
+        for(ChainGroupTargetDTO chainGroupTarget:chainGroupTargetList){
+            if(null==chainGroupTarget.getGrab()) continue;
+            ZContractsFactor factor1 = new ZContractsFactor();
+            factor1.setContractId(contracts.getId());
+            factor1.setFactorValue(chainGroupTarget.getBottom()+"");
+            factor1.setFactorCode(chainGroupTarget.getTargetCode());
+            factor1.setFactorName(chainGroupTarget.getTargetName());
+            factor1.setFactorType(Constant.FactorType.Bottom.getValue());
+            factor1.setFactorUnit(chainGroupTarget.getTargetUnit());
+            factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
+            factorDao.insert(factor1);
+            factor1.setId(null);
+            factor1.setFactorValue(chainGroupTarget.getE2E()+"");
+            factor1.setFactorType(Constant.FactorType.E2E.getValue());
+            factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
+            factorDao.insert(factor1);
+            factor1.setId(null);
+            factor1.setFactorValue(chainGroupTarget.getGrab()+"");
+            factor1.setFactorType(Constant.FactorType.Grab.getValue());
+            factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
+            factorDao.insert(factor1);
+        }
+        //3.保存主链群市场目标到目标表
+        List<MarketTargetDTO> marketTargetList = dto.getMarketTargetList();
+        if(null != marketTargetList){
+            for (MarketTargetDTO marketTarget : marketTargetList){
+                List<MarketTargetDTO2> dto2List = marketTarget.getTargetList();
+                for(MarketTargetDTO2 dto2:dto2List){
+                    ZContractsFactor factor = new ZContractsFactor();
+                    factor.setContractId(contracts.getId());
+                    factor.setFactorValue(dto2.getTargetValue());
+                    factor.setFactorCode(dto2.getTargetCode());
+                    factor.setFactorName(dto2.getTargetName());
+                    factor.setFactorType(Constant.FactorType.Grab.getValue());
+                    factor.setFactorUnit(dto2.getTargetUnit());
+                    factor.setRegionCode(marketTarget.getXwCode());
+                    factor.setRegionName(marketTarget.getXwName());
+                    factor.setIsLqTarget(dto2.getIsLqTarget());
+                    factorDao.insert(factor);
+                }
+            }
+        }
+
+        //4 保存主链群产品系列目标到合约产品表
+        List<ContractProductDTO> productList = dto.getProductList();
+        if(null != productList){
+            for (ContractProductDTO productDTO : productList){
+                ZContractsProduct contractsProduct = new ZContractsProduct();
+                contractsProduct.setContractId(contracts.getId());
+                contractsProduct.setQtyYear(productDTO.getQtyYear());
+                contractsProduct.setQtyMonth(productDTO.getQtyMonth());
+                contractsProduct.setProductSeries(productDTO.getProductSeries());
+                contractsProductDao.insert(contractsProduct);
+            }
+        }
+        //5.保存子链群合约
+        List<ChildTargetDTO> children = dto.getChildren();
+        if(null != children && children.size()>0){
+            for(ChildTargetDTO child:children){
+                ZContracts childContracts = new ZContracts();
+                if(null == child.getId() || child.getId() == 0){
+                    //ID 为空时为新增
+                    childContracts.setParentId(contracts.getId());
+                    childContracts.setShareSpace(child.getShareSpace());
+                    childContracts.setChainCode(child.getChildChainCode());
+                    childContracts.setStartDate(sf.parse(dto.getStartDate()));
+                    childContracts.setEndDate(sf.parse(dto.getEndDate()));
+                    childContracts.setJoinTime(sf.parse(dto.getJoinTime()));
+                    childContracts.setContractType("10");
+                    childContracts.setStatus("0");
+                    childContracts.setCreateName(sysUser.getEmpName());
+                    childContracts.setCreateCode(sysUser.getEmpSn());
+                    childContracts.setCreateTime(new Date());
+                    childContracts.setXiaoweiCode(currentUser.getXwCode());
+                    childContracts.setOrgName(currentUser.getLittleXwName());
+                    childContracts.setOrgCode(currentUser.getLittleXwCode());
+                    childContracts.setContractName(child.getChildChainName()+"-"+sysUser.getEmpName());
+                    contractsDao.insert(childContracts);
+                }else{
+                    //ID 不为0时，为修改
+                    //修改时删除原有目标
+                    factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",child.getId()));
+                    contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",child.getId()));
+                }
+                //6.保存子链群的链群目标
+                List<ChainGroupTargetDTO> childTargetList = child.getChildTargetList();
+                for(ChainGroupTargetDTO childTarget:childTargetList){
+                    if(null==childTarget.getGrab()) continue;
+                    ZContractsFactor factor1 = new ZContractsFactor();
+                    factor1.setIsLqTarget(childTarget.getIsLqTarget());
+                    factor1.setContractId(childContracts.getId());
+                    factor1.setFactorValue(childTarget.getBottom()+"");
+                    factor1.setFactorCode(childTarget.getTargetCode());
+                    factor1.setFactorName(childTarget.getTargetName());
+                    factor1.setFactorType(Constant.FactorType.Bottom.getValue());
+                    factor1.setFactorUnit(childTarget.getTargetUnit());
+                    factorDao.insert(factor1);
+                    factor1.setId(null);
+                    factor1.setFactorValue(childTarget.getE2E()+"");
+                    factor1.setFactorType(Constant.FactorType.E2E.getValue());
+                    factor1.setIsLqTarget(childTarget.getIsLqTarget());
+                    factorDao.insert(factor1);
+                    factor1.setId(null);
+                    factor1.setFactorValue(childTarget.getGrab()+"");
+                    factor1.setFactorType(Constant.FactorType.Grab.getValue());
+                    factor1.setIsLqTarget(childTarget.getIsLqTarget());
+                    factorDao.insert(factor1);
+                }
+                //7.保存子链群的市场目标
+                List<MarketTargetDTO> chilidMarketList = child.getChildMarketList();
+                if(null != chilidMarketList){
+                    for (MarketTargetDTO chilidMarket : chilidMarketList){
+                        List<MarketTargetDTO2> dto2List = chilidMarket.getTargetList();
+                        for(MarketTargetDTO2 dto2:dto2List){
+                            ZContractsFactor factor = new ZContractsFactor();
+                            factor.setIsLqTarget(dto2.getIsLqTarget());
+                            factor.setContractId(childContracts.getId());
+                            factor.setFactorValue(dto2.getTargetValue());
+                            factor.setFactorCode(dto2.getTargetCode());
+                            factor.setFactorName(dto2.getTargetName());
+                            factor.setFactorType(Constant.FactorType.Grab.getValue());
+                            factor.setFactorUnit(dto2.getTargetUnit());
+                            factor.setRegionCode(chilidMarket.getXwCode());
+                            factor.setRegionName(chilidMarket.getXwName());
+                            factorDao.insert(factor);
+                        }
+                    }
+                }
+                //8.保存子链群的产品目标
+                List<ContractProductDTO> childProductList = child.getChildProductList();
+                if(null != childProductList){
+                    for (ContractProductDTO chilidProduct : childProductList){
+                        ZContractsProduct contractsProduct = new ZContractsProduct();
+                        contractsProduct.setProductSeries(chilidProduct.getProductSeries());
+                        contractsProduct.setContractId(childContracts.getId());
+                        contractsProduct.setQtyYear(chilidProduct.getQtyYear());
+                        contractsProduct.setQtyMonth(chilidProduct.getQtyMonth());
+                        contractsProductDao.insert(contractsProduct);
+                    }
+                }
+            }
+
+        }
+
+
+    }
+
 
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {

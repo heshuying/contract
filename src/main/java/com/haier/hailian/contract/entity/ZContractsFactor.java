@@ -1,12 +1,13 @@
 package com.haier.hailian.contract.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -83,6 +84,8 @@ public class ZContractsFactor extends Model<ZContractsFactor> {
      * 网格名称
      */
     private String meshName;
+
+    private String isLqTarget;
 
 
     @Override
