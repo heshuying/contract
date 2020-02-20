@@ -294,6 +294,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         dto.setEndDate(contracts.getEndDateStr());
         dto.setShareSpace(contracts.getShareSpace());
         dto.setChainCode(contracts.getChainCode());
+        dto.setId(contractId);
         //2.查询链群目标
         List<ChainGroupTargetDTO> chainList = factorDao.selectChainFactorByContractId(contractId);
         dto.setChainGroupTargetList(chainList);
@@ -315,6 +316,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
                     marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
                     marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                    marketTargetDTO2.setIsLqTarget(zContractsFactor.getIsLqTarget());
                     targetList.add(marketTargetDTO2);
                     marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
                     marketTargetDTO.setXwName(zContractsFactor.getRegionName());
@@ -329,6 +331,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
                     marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
                     marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                    marketTargetDTO2.setIsLqTarget(zContractsFactor.getIsLqTarget());
                     targetList.add(marketTargetDTO2);
                     marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
                     marketTargetDTO.setXwName(zContractsFactor.getRegionName());
@@ -347,6 +350,77 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             productDTOs.add(productDTO);
         }
         dto.setProductList(productDTOs);
+        //5.查询子链群的合约
+        List<ZContracts> children = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id",contractId));
+        if(null != children && children.size()>0){
+            List<ChildTargetDTO> childrenList = new ArrayList<>();
+            for(ZContracts child:children){
+                ChildTargetDTO childTargetDTO = new ChildTargetDTO();
+                Integer childId = child.getId();
+                childTargetDTO.setId(childId);
+                childTargetDTO.setShareSpace(child.getShareSpace());
+                childTargetDTO.setChildChainCode(child.getChainCode());
+                childTargetDTO.setChildChainName(child.getContractName().substring(0,child.getContractName().lastIndexOf("-")));
+                //6.查询子链群的链群目标
+                List<ChainGroupTargetDTO> childTarget = factorDao.selectChainFactorByContractId(childId);
+                childTargetDTO.setChildTargetList(childTarget);
+                //7.查询子链群的市场目标
+                List<ZContractsFactor> childMarkets = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",childId).isNotNull("region_code").orderByAsc("region_code").orderByAsc("factor_code"));
+                List<MarketTargetDTO> childMarketList = new ArrayList<>();
+                if(null != childMarkets && childMarkets.size()>0){
+                    String regionCode = "";
+                    MarketTargetDTO childMarket = new MarketTargetDTO();
+                    List<MarketTargetDTO2> childMarket2 = new ArrayList<>();
+                    for(int i=0;i<childMarkets.size();i++){
+                        ZContractsFactor zContractsFactor = childMarkets.get(i);
+                        if(i==0){
+                            regionCode = zContractsFactor.getRegionCode();
+                        }
+                        if(regionCode.equals(zContractsFactor.getRegionCode())){
+                            MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
+                            marketTargetDTO2.setIsLqTarget(zContractsFactor.getIsLqTarget());
+                            marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
+                            marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
+                            marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
+                            marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                            childMarket2.add(marketTargetDTO2);
+                            childMarket.setXwCode(zContractsFactor.getRegionCode());
+                            childMarket.setXwName(zContractsFactor.getRegionName());
+                        }else {
+                            childMarket.setTargetList(childMarket2);
+                            childMarketList.add(childMarket);
+                            childMarket = new MarketTargetDTO();
+                            childMarket2 = new ArrayList<>();
+                            regionCode = zContractsFactor.getRegionCode();
+                            MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
+                            marketTargetDTO2.setIsLqTarget(zContractsFactor.getIsLqTarget());
+                            marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
+                            marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
+                            marketTargetDTO2.setTargetUnit(zContractsFactor.getFactorUnit());
+                            marketTargetDTO2.setTargetValue(zContractsFactor.getFactorValue());
+                            childMarket2.add(marketTargetDTO2);
+                            childMarket.setXwCode(zContractsFactor.getRegionCode());
+                            childMarket.setXwName(zContractsFactor.getRegionName());
+                        }
+                    }
+                    childMarket.setTargetList(childMarket2);
+                    childMarketList.add(childMarket);
+                }
+                childTargetDTO.setChildMarketList(childMarketList);
+                //8.查询子链群的产品目标
+                List<ZContractsProduct> childProducts = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",childId));
+                List<ContractProductDTO> childProductList = new ArrayList<>();
+                for(ZContractsProduct product : childProducts){
+                    ContractProductDTO productDTO = new ContractProductDTO();
+                    BeanUtils.copyProperties(product,productDTO);
+                    childProductList.add(productDTO);
+                }
+                childTargetDTO.setChildProductList(childProductList);
+                childrenList.add(childTargetDTO);
+            }
+            dto.setChildren(childrenList);
+        }
+
         return dto;
     }
 
@@ -706,7 +780,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
 
     }
-
 
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
