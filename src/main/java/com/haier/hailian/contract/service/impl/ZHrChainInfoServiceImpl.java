@@ -322,7 +322,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 // 保存链群的目标信息
                 for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
                     z.setLqCode(modelCode);
-                    z.setLqName(name);
+                    z.setLqName(modelName);
                     z.setParentChainCode(chainCode);
                     modelMinbuList.add(z.getNodeCode());
                     zNodeTargetPercentInfoDao.insert(z);
@@ -333,7 +333,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 for (TOdsMinbu tOdsMinbu:getIsTYModel){
                     ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
                     zNodeTargetPercentInfo.setLqCode(modelCode);
-                    zNodeTargetPercentInfo.setLqName(name);
+                    zNodeTargetPercentInfo.setLqName(modelName);
                     zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
                     zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
                     zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
@@ -526,7 +526,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         // 保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
             z.setLqCode(modelCode);
-            z.setLqName(zHrChainInfoDto.getParentName());
+            z.setLqName(zHrChainInfoDto.getChainName());
             z.setParentChainCode(zHrChainInfoDto.getParentCode());
             modelMinbuList.add(z.getNodeCode());
             zNodeTargetPercentInfoDao.insert(z);
@@ -537,7 +537,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         for (TOdsMinbu tOdsMinbu:getIsTYModel){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(modelCode);
-            zNodeTargetPercentInfo.setLqName(zHrChainInfoDto.getParentName());
+            zNodeTargetPercentInfo.setLqName(zHrChainInfoDto.getChainName());
             zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
             zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
             zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
