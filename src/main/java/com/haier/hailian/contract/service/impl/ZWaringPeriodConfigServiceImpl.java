@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
+import com.haier.hailian.contract.util.EmailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +77,8 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
                 if (nowTime >= startTime.getTime() && nowTime < (endTime.getTime() - ((long) 2 * 24 * 60 * 60 * 1000)) && z.getIsSend() == 0) {//第一次执行
                     //发邮件给链群主
                     SysEmployeeEhr sysEmployeeEhr = sysEmployeeEhrDao.selectInfo(zHrChainInfos.get(0).getMasterCode());
-                    //todo 发邮件
+                    // 发邮件
+                    EmailUtil.transmitMsg(sysEmployeeEhr.getNotesmail(),"举单预警","您好，请尽快进行举单操作！");
                     System.out.println(sysEmployeeEhr.getEmpSn()+":"+sysEmployeeEhr.getNotesmail());
                     //更新状态为1
                     z.setIsSend(1);
@@ -94,7 +96,8 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
                                 .eq("xwCode",zHrChainInfos.get(0).getXwCode()));
                         //发邮件给平台主
                         SysEmployeeEhr sysEmployeeEhr = sysEmployeeEhrDao.selectInfo(sysXiaoweiEhr.getXwmastercode());
-                        //todo 发邮件
+                        // 发邮件
+                        EmailUtil.transmitMsg(sysEmployeeEhr.getNotesmail(),"举单预警","您好，请尽快进行举单操作！");
                         System.out.println(sysEmployeeEhr.getEmpSn()+":"+sysEmployeeEhr.getNotesmail());
                     } else if (endTime.getTime() < nowTime) {
                         //更新状态为2
@@ -151,7 +154,8 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
                             TOdsMinbu tOdsMinbu = tOdsMinbuDao.queryMinbuByOrgCode(zNodeTargetPercentInfo.getNodeCode());
                             //发送给创单最小单元主
                             SysEmployeeEhr sysEmployeeEhr = sysEmployeeEhrDao.selectInfo(tOdsMinbu.getLittleXwMasterCode());
-                            //todo 发邮件
+                            //发邮件
+                            EmailUtil.transmitMsg(sysEmployeeEhr.getNotesmail(),"抢单预警","您好，请尽快进行抢单操作！");
                             System.out.println(sysEmployeeEhr.getEmpSn()+":"+sysEmployeeEhr.getNotesmail());
                         }
                     }
@@ -172,7 +176,8 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
                                 TOdsMinbu tOdsMinbu = tOdsMinbuDao.queryMinbuByOrgCode(zNodeTargetPercentInfo.getNodeCode());
                                 //发送给平台主
                                 SysEmployeeEhr sysEmployeeEhr = sysEmployeeEhrDao.selectInfo(tOdsMinbu.getXwMasterCode());
-                                //todo 发邮件
+                                //发邮件
+                                EmailUtil.transmitMsg(sysEmployeeEhr.getNotesmail(),"抢单预警","您好，请尽快进行抢单操作！");
                                 System.out.println(sysEmployeeEhr.getEmpSn()+":"+sysEmployeeEhr.getNotesmail());
                             }
                         }
