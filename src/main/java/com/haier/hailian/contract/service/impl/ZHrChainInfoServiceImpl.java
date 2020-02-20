@@ -94,8 +94,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             dto.setCdShareRate(fuck.getCdShareRate());
             dto.setTyShareRate(fuck.getTyShareRate());
             ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
-            nodeChild.setModelCode(fuck.getChainCode());
-            nodeChild.setLqCode(zHrChainInfo.getChainCode());
+            nodeChild.setParentChainCode(zHrChainInfo.getChainCode());
+            nodeChild.setLqCode(fuck.getChainCode());
             dto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(nodeChild));
 
             dtos.add(dto);
@@ -276,16 +276,18 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //3.保存数据到链上（目前没有实现）
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
-        List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),minbuList);
-        codeList.add(sysUser.getEmpSn());
-        String[] toBeStored = new String[codeList.size()];
-        codeList.toArray(toBeStored);
-        String groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
-        //更新链群的群组ID字段
-        ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
-        zHrChainInfo1.setId(zHrChainInfo.getId());
-        zHrChainInfo1.setGroupId(groupId);
-        zHrChainInfoDao.update(zHrChainInfo1 );
+        if(!zHrChainInfoDto.getIsModel().equals("1")){
+            List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),minbuList);
+            codeList.add(sysUser.getEmpSn());
+            String[] toBeStored = new String[codeList.size()];
+            codeList.toArray(toBeStored);
+            String groupId = IHaierUtil.createGroup(toBeStored,name + "链群交互群",chainCode);
+            //更新链群的群组ID字段
+            ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
+            zHrChainInfo1.setId(zHrChainInfo.getId());
+            zHrChainInfo1.setGroupId(groupId);
+            zHrChainInfoDao.update(zHrChainInfo1 );
+        }
 
 
         List<ZHrChainInfoDto> dtos = new ArrayList<>(); // 存放模块链群数据
@@ -319,9 +321,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 List<String> modelMinbuList = new ArrayList<>();
                 // 保存链群的目标信息
                 for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
-                    z.setLqCode(chainCode);
+                    z.setLqCode(modelCode);
                     z.setLqName(name);
-                    z.setModelCode(modelCode);
+                    z.setParentChainCode(chainCode);
                     modelMinbuList.add(z.getNodeCode());
                     zNodeTargetPercentInfoDao.insert(z);
                 }
@@ -330,13 +332,13 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
                 for (TOdsMinbu tOdsMinbu:getIsTYModel){
                     ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
-                    zNodeTargetPercentInfo.setLqCode(chainCode);
+                    zNodeTargetPercentInfo.setLqCode(modelCode);
                     zNodeTargetPercentInfo.setLqName(name);
                     zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
                     zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
                     zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
                     zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
-                    zNodeTargetPercentInfo.setModelCode(modelCode);
+                    zNodeTargetPercentInfo.setParentChainCode(chainCode);
                     zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
                 }
 
@@ -345,7 +347,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
-                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,name,chainCode);
+                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName + "链群交互群",chainCode);
                 //更新链群的群组ID字段
                 ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
                 zHrChainInfoExp.setId(fuck.getId());
@@ -523,9 +525,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         List<String> modelMinbuList = new ArrayList<>();
         // 保存链群的目标信息
         for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
-            z.setLqCode(zHrChainInfoDto.getParentCode());
+            z.setLqCode(modelCode);
             z.setLqName(zHrChainInfoDto.getParentName());
-            z.setModelCode(modelCode);
+            z.setParentChainCode(zHrChainInfoDto.getParentCode());
             modelMinbuList.add(z.getNodeCode());
             zNodeTargetPercentInfoDao.insert(z);
         }
@@ -534,13 +536,13 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTYModel){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
-            zNodeTargetPercentInfo.setLqCode(zHrChainInfoDto.getParentCode());
+            zNodeTargetPercentInfo.setLqCode(modelCode);
             zNodeTargetPercentInfo.setLqName(zHrChainInfoDto.getParentName());
             zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
             zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
             zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
             zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
-            zNodeTargetPercentInfo.setModelCode(modelCode);
+            zNodeTargetPercentInfo.setParentChainCode(zHrChainInfoDto.getParentCode());
             zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
         }
 
@@ -549,7 +551,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);
-        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getParentName(),zHrChainInfoDto.getParentCode());
+        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getChainName() + "链群交互群",zHrChainInfoDto.getParentCode());
         //更新链群的群组ID字段
         ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
         zHrChainInfoExp.setId(fuck.getId());
@@ -583,8 +585,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //2获取数据库中这个平台的所有最小单元
         Map map = new HashMap<>();
         map.put("ptCode" , currentUser.getPtCode());
-        map.put("chainCode" , chainRepairInfo.getChainCode());
-        map.put("modelCode" , chainRepairInfo.getChildChainCode());
+        map.put("childchainCode" , chainRepairInfo.getChildChainCode());
+        map.put("parentChainCode" , chainRepairInfo.getParentChainCode());
         List<TOdsMinbu> list = tOdsMinbuDao.getChildOtherListByPtCode(map);
         return list;
     }
