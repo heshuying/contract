@@ -363,4 +363,17 @@ public class ZHrChainInfoController {
         }
     }
 
+    @GetMapping(value = {"/updateAllGroupId"})
+    @ApiOperation(value = "更新所有链群groupId")
+    public R updateAllGroupId() {
+        try {
+            int num = zHrChainInfoService.updateAllGroupId();
+            return R.ok().put("data",num);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateAllGroupId,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
 }

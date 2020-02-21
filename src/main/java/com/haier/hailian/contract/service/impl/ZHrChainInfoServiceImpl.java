@@ -591,5 +591,21 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         return list;
     }
 
+    @Override
+    public int updateAllGroupId() {
+        int num = 0;
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().isNull("group_id"));
+        for(ZHrChainInfo chainInfo : list){
+            String[] users = {chainInfo.getMasterCode(),"19037699"};
+            String groupId = IHaierUtil.createGroup(users,chainInfo.getChainName(),chainInfo.getChainCode());
+            ZHrChainInfo exp = new ZHrChainInfo();
+            exp.setId(chainInfo.getId());
+            exp.setGroupId(groupId);
+            zHrChainInfoDao.update(exp);
+            num++;
+        }
+        return num;
+    }
+
 
 }
