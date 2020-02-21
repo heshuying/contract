@@ -484,7 +484,7 @@
             t1.id
           FROM
             z_contracts t1
-          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId})
+          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND (t1.`parent_id` = #{contractId} OR t1.`parent_id` IN (SELECT t2.id FROM z_contracts t2 WHERE t2.`parent_id` = #{contractId} AND t2.contract_type = '10')))
            GROUP BY factor_code
     </select>
 
