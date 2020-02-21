@@ -281,7 +281,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             codeList.add(sysUser.getEmpSn());
             String[] toBeStored = new String[codeList.size()];
             codeList.toArray(toBeStored);
-            String groupId = IHaierUtil.createGroup(toBeStored,name + "链群交互群",chainCode);
+            String groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
             //更新链群的群组ID字段
             ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
             zHrChainInfo1.setId(zHrChainInfo.getId());
@@ -347,7 +347,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
-                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName + "链群交互群",chainCode);
+                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
                 //更新链群的群组ID字段
                 ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
                 zHrChainInfoExp.setId(fuck.getId());
@@ -551,7 +551,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);
-        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getChainName() + "链群交互群",zHrChainInfoDto.getParentCode());
+        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getChainName(),zHrChainInfoDto.getParentCode());
         //更新链群的群组ID字段
         ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
         zHrChainInfoExp.setId(fuck.getId());

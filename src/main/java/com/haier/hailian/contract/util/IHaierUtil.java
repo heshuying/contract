@@ -445,7 +445,7 @@ public class IHaierUtil {
             return null;
         }
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\""+lqName+"自驱动交互群\",\"adminJobNo\":\"robot001\",\"needDeal\":\"" + userIds + "\",\"banner\":\"链群\",\"source\":\"690\",\"linkId\":\""+lqCode+"\"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"groupName\":\""+lqName+"链群交互群\",\"adminJobNo\":\"robot001\",\"needDeal\":\"" + userIds + "\",\"banner\":\"链群\",\"source\":\"690\",\"linkId\":\""+lqCode+"\"}");
         Request request = new Request.Builder()
                 .url("https://i.haier.net/gateway/SecondProject/interaction/createLinkGroup?accessToken=" + accessToken)
                 .post(body)
