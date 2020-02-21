@@ -15,4 +15,6 @@ public class MarketTargetDTO2 {
     private String targetUnit;
 
     private String targetValue;
+
+    private String isLqTarget;
 }

@@ -397,6 +397,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                     contractsFactor2.setFactorType(Constant.FactorType.Grab.getValue());
                     contractsFactor2.setFactorUnit(targetDto.getTargetUnit());
                     contractsFactor2.setFactorDirecton(targetDto.getTargetTo());
+                    contractsFactor2.setIsLqTarget(targetDto.getIsLqTarget());
                     factorDao.insert(contractsFactor2);
                 }
                 // 链群目标保存

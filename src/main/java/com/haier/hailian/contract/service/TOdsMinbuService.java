@@ -15,4 +15,5 @@ import java.util.List;
  */
 public interface TOdsMinbuService extends IService<TOdsMinbu> {
     List<TOdsMinbu> queryMinbuByEmp(String empSn);
+    Boolean isChainMaster(String empSn);
 }

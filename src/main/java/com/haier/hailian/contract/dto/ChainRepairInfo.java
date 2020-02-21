@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ChainRepairInfo {
 
-    private String chainCode;
+    private String parentChainCode;
 
     private String childChainCode;
 
