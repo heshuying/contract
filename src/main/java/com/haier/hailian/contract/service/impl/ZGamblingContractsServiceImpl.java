@@ -716,6 +716,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     contractsDao.insert(childContracts);
                 }else{
                     //ID 不为0时，为修改
+                    childContracts.setId(child.getId());
                     //修改时删除原有目标
                     factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",child.getId()));
                     contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",child.getId()));
