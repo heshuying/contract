@@ -168,6 +168,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (StringUtils.isEmpty(name)){
             return R.error("链群名称不能为空，请输入链群名称！");
         }
+        zHrChainInfo.setChainName(name);// 子链群检验
+        List<ZHrChainInfo> childChainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
+        if (childChainNames.size() > 0) {
+            return R.error("链群名称已经存在");
+        }
         if (!name.contains("链群")) {
             name = name + "链群";
         }
@@ -295,9 +300,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if(zHrChainInfoDto.getZHrChainInfoDtos()!=null && zHrChainInfoDto.getIsModel().equals("1")){
             for(ZHrChainInfoDto chain : zHrChainInfoDto.getZHrChainInfoDtos()){
                 String modelName = chain.getChainName();
-                if (!modelName.contains("链群")) {
-                    modelName = modelName + "链群";
-                }
+//                if (!modelName.contains("链群")) {
+//                    modelName = modelName + "链群";
+//                }
 
                 // 获取计数器
                 int num = zHrChainInfoDao.getNum();
@@ -499,9 +504,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         String modelName = zHrChainInfoDto.getChainName();
-        if (!modelName.contains("链群")) {
-            modelName = modelName + "链群";
-        }
+//        if (!modelName.contains("链群")) {
+//            modelName = modelName + "链群";
+//        }
 
         // 获取计数器
         int num = zHrChainInfoDao.getNum();
