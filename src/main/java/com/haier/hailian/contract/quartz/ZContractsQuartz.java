@@ -67,7 +67,7 @@ public class ZContractsQuartz {
     /**
      * 举单预警（开启前一次/天）
      */
-    //    @Scheduled(cron="0 0/10 * * * ?")
+    @Scheduled(cron="0 0 0/2 * * ?")
     public void jdWarning(){
         log.info("【合约达成开始】");
         zWaringPeriodConfigService.jdWarning();
@@ -78,7 +78,7 @@ public class ZContractsQuartz {
     /**
      * 抢单预警（开启前一次/天）
      */
-    //    @Scheduled(cron="0 0/10 * * * ?")
+    @Scheduled(cron="0 0 0/2 * * ?")
     public void qdWarning(){
         log.info("【合约达成开始】");
         zWaringPeriodConfigService.qdWarning();
