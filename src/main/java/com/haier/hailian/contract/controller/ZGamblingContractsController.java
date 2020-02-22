@@ -89,7 +89,7 @@ public class ZGamblingContractsController {
         targetAllDTO.setParentTarget(targetBasicList);
         String parentChain = dto.getChainCode();
         //2.查询子链群
-        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("parent_code",parentChain));
+        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("parent_code",parentChain).eq("deleted","0"));
         if(null != chainList && chainList.size()>0){
             List<ReturnTargetDTO> children = new ArrayList<>();
             for(ZHrChainInfo chain:chainList){
@@ -131,6 +131,7 @@ public class ZGamblingContractsController {
     public R calculateSharing(@RequestBody CalculateSharingDTO dto) {
         String chainCode = dto.getChainCode();
         BigDecimal share = ZERO;
+        String unit = "元";
         List<ChainGroupTargetDTO> targetList = dto.getTargetList();
         if(null == targetList || targetList.size()==0) return R.error().put("msg","参数有误，无法计算");
         List<ZChainShare> chainShares = chainShareDao.selectList(new QueryWrapper<ZChainShare>().eq("chain_code",chainCode));
@@ -143,6 +144,7 @@ public class ZGamblingContractsController {
                if(target.getTargetCode().equals("T02006")){
                    singleIncomeDX = target.getBottom();
                    singleIncomeQD = target.getGrab();
+                   unit = target.getTargetUnit();
                }
                if(target.getTargetCode().equals("T01002")){
                    qtyDX = target.getBottom();
@@ -157,11 +159,12 @@ public class ZGamblingContractsController {
                 if (target.getTargetCode().equals("T01017")) {
                     incomeDX = target.getBottom();
                     incomeQD = target.getGrab();
+                    unit = target.getTargetUnit();
                 }
             }
             share = incomeQD.subtract(incomeDX);
         }
-        return R.ok().put("share",share);
+        return R.ok().put("share",share).put("unit",unit);
     }
 
     @PostMapping(value = {"/selectContractList"})
