@@ -154,7 +154,7 @@ public class ZGamblingContractsController {
             BigDecimal incomeQD = ZERO;
             BigDecimal incomeDX = ZERO;
             for(ChainGroupTargetDTO target:targetList) {
-                if (target.getTargetCode().equals("T01001")) {
+                if (target.getTargetCode().equals("T01017")) {
                     incomeDX = target.getBottom();
                     incomeQD = target.getGrab();
                 }
