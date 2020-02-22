@@ -519,6 +519,8 @@
         and not EXISTS (select 1 from z_contracts where
         parent_id=base.id and contract_type='20' and status=1 and org_code=#{loginBuCode}
         )
+        and not exists(select 1 from z_contracts where
+        parent_id=base.id and contract_type='10')
         order by id desc
     </select>
 
