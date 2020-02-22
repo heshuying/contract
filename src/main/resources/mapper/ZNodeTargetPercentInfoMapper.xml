@@ -14,13 +14,13 @@
         <result property="targetName" column="target_name" jdbcType="VARCHAR"/>
         <result property="targetLine" column="target_line" jdbcType="VARCHAR"/>
         <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
-        <result property="modelCode" column="model_code" jdbcType="VARCHAR"/>
+        <result property="parentChainCode" column="parent_chain_code" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,model_code
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code
         from chain_contract.z_node_target_percent_info
         where id = #{id}
     </select>
@@ -69,8 +69,8 @@
             <if test="targetLine != null and targetLine != ''">
                 and target_line = #{targetLine}
             </if>
-            <if test="modelCode != null and modelCode != ''">
-                and model_code = #{modelCode}
+            <if test="parentChainCode != null and parentChainCode != ''">
+                and parent_chain_code = #{parentChainCode}
             </if>
                 and share_percent is not null
         </where>
@@ -78,8 +78,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,model_code)
-        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{modelCode})
+        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code)
+        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{parentChainCode})
     </insert>
 
     <!--通过主键修改数据-->
@@ -116,8 +116,8 @@
            <if test="sharePercent != null and sharePercent != ''">
                 share_percent = #{sharePercent},
             </if>
-            <if test="modelCode != null and modelCode != ''">
-                model_code = #{modelCode},
+            <if test="parentChainCode != null and parentChainCode != ''">
+                parent_chain_code = #{parentChainCode},
             </if>
         </set>
         where id = #{id}
@@ -152,7 +152,7 @@
     <!-- 批量插入数据 -->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into z_node_target_percent_info
-        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,model_code)
+        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -166,7 +166,7 @@
             #{item.targetName},
             #{item.targetLine},
             #{item.sharePercent},
-            #{item.modelCode}
+            #{item.parentChainCode}
             )
         </foreach>
     </insert>

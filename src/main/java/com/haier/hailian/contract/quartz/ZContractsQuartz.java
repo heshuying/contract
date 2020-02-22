@@ -4,6 +4,7 @@ import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
+import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ZContractsQuartz {
     private GrabService grabService;
     @Autowired
     private ZReservePlanTeamworkService zReservePlanTeamworkService;
+    @Autowired
+    private ZWaringPeriodConfigService zWaringPeriodConfigService;
 
     /**
      * 每天零点刷新合约状态
@@ -64,42 +67,22 @@ public class ZContractsQuartz {
     /**
      * 举单预警（开启前一次/天）
      */
-    //    @Scheduled(cron="0 0/10 * * * ?")
-    public void jdStartWarning(){
+    @Scheduled(cron="0 0 0/2 * * ?")
+    public void jdWarning(){
         log.info("【合约达成开始】");
-        zReservePlanTeamworkService.createContracts();
+        zWaringPeriodConfigService.jdWarning();
         log.info("【合约达成结束】");
     }
 
-    /**
-     * 举单预警（结束前两次/天）
-     */
-    //    @Scheduled(cron="0 0/10 * * * ?")
-    public void jdEndWarning(){
-        log.info("【合约达成开始】");
-        zReservePlanTeamworkService.createContracts();
-        log.info("【合约达成结束】");
-    }
 
     /**
      * 抢单预警（开启前一次/天）
      */
-    //    @Scheduled(cron="0 0/10 * * * ?")
-    public void qdStartWarning(){
+    @Scheduled(cron="0 0 0/2 * * ?")
+    public void qdWarning(){
         log.info("【合约达成开始】");
-        zReservePlanTeamworkService.createContracts();
+        zWaringPeriodConfigService.qdWarning();
         log.info("【合约达成结束】");
     }
-
-    /**
-     * 抢单预警（结束前两次/天）
-     */
-    //    @Scheduled(cron="0 0/10 * * * ?")
-    public void qdEndWarning(){
-        log.info("【合约达成开始】");
-        zReservePlanTeamworkService.createContracts();
-        log.info("【合约达成结束】");
-    }
-
 }
 

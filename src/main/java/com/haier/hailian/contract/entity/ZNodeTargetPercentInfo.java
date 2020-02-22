@@ -35,7 +35,7 @@ public class ZNodeTargetPercentInfo implements Serializable {
     //分享比例
     private String sharePercent;
     //模块
-    private String modelCode;
+    private String parentChainCode;
 
 
     public Integer getId() {
@@ -126,11 +126,11 @@ public class ZNodeTargetPercentInfo implements Serializable {
         this.sharePercent = sharePercent;
     }
 
-    public String getModelCode() {
-        return modelCode;
+    public String getParentChainCode() {
+        return parentChainCode;
     }
 
-    public void setModelCode(String modelCode) {
-        this.modelCode = modelCode;
+    public void setParentChainCode(String parentChainCode) {
+        this.parentChainCode = parentChainCode;
     }
 }

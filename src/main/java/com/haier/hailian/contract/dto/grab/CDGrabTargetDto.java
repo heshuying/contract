@@ -13,6 +13,8 @@ public class CDGrabTargetDto {
     private String targetName;
     @ApiModelProperty(value="目标编码",name="目标编码")
     private String targetCode;
+    @ApiModelProperty(value="是否是链群目标",name="是否是链群目标")
+    private String isLqTarget;;
     @ApiModelProperty(value="链群目标",name="链群目标",example="400")
     private BigDecimal chainGoal;
     @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")

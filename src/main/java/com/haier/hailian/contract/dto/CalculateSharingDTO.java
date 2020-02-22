@@ -2,7 +2,7 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by 01431594 on 2019/12/20.
@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @Data
 public class CalculateSharingDTO {
 
-    private BigDecimal bottom;
-    private BigDecimal grab;
-    private BigDecimal share;
+    private String chainCode;
+    private List<ChainGroupTargetDTO> targetList;
 }

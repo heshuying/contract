@@ -129,20 +129,21 @@ public class ContractViewServiceImpl implements ContractViewService {
         }
 
         for(ZContracts contract : contracts){
+            String subId = String.valueOf(contract.getId());
             SubContractInfo subContract = new SubContractInfo();
-            subContract.setContractId(String.valueOf(contract.getId()));
+            subContract.setContractId(subId);
 
             ZHrChainInfo chain = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contract.getChainCode()));
             if(chain != null){
                 subContract.setChainName(chain.getChainName());
             }
 
-            String rate = getContractSize(contractId);
+            String rate = getContractSize(subId);
             subContract.setCountCD(rate);
-            Integer grabSize = selectContractsViewForTYCount(contractId);
-            Integer size = getContractSize2(contractId);
+            Integer grabSize = selectContractsViewForTYCount(subId);
+            Integer size = getContractSize2(subId);
             subContract.setCountTY(grabSize + "/" + size);
-            List<ContractSerialDto> list = staticSerial(Integer.parseInt(contractId));
+            List<ContractSerialDto> list = staticSerial(contract.getId());
             if (list == null || list.isEmpty()){
                 subContract.setCountBK("0");
             }else{
