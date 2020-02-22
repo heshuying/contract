@@ -716,10 +716,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     contractsDao.insert(childContracts);
                 }else{
                     //ID 不为0时，为修改
-                    childContracts.setId(child.getId());
+                    childContracts = contractsDao.selectByContractId(child.getId());
+                    childContracts.setShareSpace(child.getShareSpace());
+                    contractsDao.updateById(childContracts);
                     //修改时删除原有目标
-                    factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",child.getId()));
                     contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",child.getId()));
+                    factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",child.getId()));
                 }
                 //6.保存子链群的链群目标
                 List<ChainGroupTargetDTO> childTargetList = child.getChildTargetList();
