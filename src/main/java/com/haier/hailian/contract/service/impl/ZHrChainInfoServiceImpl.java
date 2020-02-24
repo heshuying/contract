@@ -612,5 +612,31 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         return num;
     }
 
+    @Override
+    public int updateChainTYInfo() {
+        int num = 0;
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(
+                new QueryWrapper<ZHrChainInfo>()
+                        .gt("create_date" , "2020-02-21 00:00:00")
+                        .lt("create_date" , "2020-02-21 23:59:59"));
+        for(ZHrChainInfo chainInfo : list){
+            List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(chainInfo.getChainPtCode());
+            for (TOdsMinbu tOdsMinbu:getIsTY){
+                ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
+                zNodeTargetPercentInfo.setLqCode(chainInfo.getChainCode());
+                zNodeTargetPercentInfo.setLqName(chainInfo.getChainName());
+                zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
+                zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
+                zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
+                zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+                zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+            }
+            if(getIsTY.size()>0){
+                num++;
+            }
+        }
+        return num;
+    }
+
 
 }

@@ -149,7 +149,7 @@ public class ZHrChainInfoController {
             //1.校验一下名字是否重复
             R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
 
-            if(!zHrChainInfoDto.getIsModel().equals("1")){
+            if(!"1".equals(zHrChainInfoDto.getIsModel())){
                 BigDecimal count = new BigDecimal(0);
                 for (ZNodeTargetPercentInfo zNodeTargetPercentInfo:zHrChainInfoDto.getZNodeTargetPercentInfos()){
                     count = BigDecimal.valueOf(Double.parseDouble(zNodeTargetPercentInfo.getSharePercent())).add(count);
@@ -218,7 +218,7 @@ public class ZHrChainInfoController {
                 }
                 return R.ok().put("data", z);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.updateChainInfo,", e);
+            log.error("错误发生在ZHrChainInfoController.updateBatchChainInfo,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
@@ -371,6 +371,20 @@ public class ZHrChainInfoController {
             return R.ok().put("data",num);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.updateAllGroupId,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+
+    @GetMapping(value = {"/updateChainTYInfo"})
+    @ApiOperation(value = "插入某些链群体验节点数据")
+    public R updateChainTYInfo() {
+        try {
+            int num = zHrChainInfoService.updateChainTYInfo();
+            return R.ok().put("data",num);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateChainTYInfo,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
