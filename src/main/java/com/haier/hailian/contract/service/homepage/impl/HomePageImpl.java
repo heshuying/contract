@@ -153,9 +153,27 @@ public class HomePageImpl implements HomePageService {
             // 获取ZContractsFactor部分信息
             getContractsFactor(zContracts , map);
 
-            // 获取抢单信息
-            List<ZContracts> grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
-                    .eq("parent_id" , zContracts.getId()));
+            // 主链群下子链群举单信息
+            List<ZContracts> childGamblings = new ArrayList<>();
+            // 如果是主链群 获取子链群举单信息
+            if(chainInfo.getParentCode().equals("0")){
+                childGamblings = zContractsDao.selectList(new QueryWrapper<ZContracts>()
+                        .eq("parent_id" , zContracts.getId()).eq("contract_type" , "10"));
+            }
+            // 存放无论是子还是主的抢单信息
+            List<ZContracts> grabContractsList = new ArrayList<>();
+            // 如果有子链群举单
+            if(childGamblings!=null && childGamblings.size()>0){
+                for(ZContracts child : childGamblings){
+                    List<ZContracts> childGrabList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
+                            .eq("parent_id" , child.getId()));
+                    grabContractsList.addAll(childGrabList);
+                }
+            }else{
+                // 获取单个抢单信息
+                grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
+                        .eq("parent_id" , zContracts.getId()));
+            }
 
             // 抢单信息dto
             List<GrabInfo2Outside> grabList = new ArrayList<>();
