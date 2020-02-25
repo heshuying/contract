@@ -38,8 +38,10 @@
     <sql id="Base_Column_List" >
         target.id, target.target_code, target.target_name, target.target_des, target.target_unit, target.target_to,
         target.judan_flag, target.target_pt_code, target.target_diff_type, target.target_dim, target.target_process_type, target.target_xw_category_code,
-        target.target_xw_category_name,target.target_DSLogic_code,target.targe_year,target_month,target.target_model,target.target_model_code,ROUND(target.target_bottom_line,2) as target_bottom_line,
-        ROUND(target.target_jd_line,2) as target_jd_line,target.target_logic,target.target_weight,target.target_region_code,target.target_region_name,target.role_code,target.role_name,target.period_code,target.chain_code,target.chain_name,target.is_lq_target
+        target.target_xw_category_name,target.target_DSLogic_code,target.targe_year,target_month,target.target_model,target.target_model_code,
+        IF(target.target_bottom_line is not null and target_bottom_line != '',ROUND(target.target_bottom_line,2),target_bottom_line) target_bottom_line,
+        IF(target.target_jd_line is not null and target_jd_line != '',ROUND(target.target_jd_line,2),target_jd_line) target_jd_line,
+        target.target_logic,target.target_weight,target.target_region_code,target.target_region_name,target.role_code,target.role_name,target.period_code,target.chain_code,target.chain_name,target.is_lq_target
     </sql>
     <select id="selectTarget" resultMap="BaseResultMap">
         select
@@ -79,45 +81,6 @@
             order by target_code
         </where>
     </select>
-    <select id="selectChainTarget" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from z_target_basic target
-        <where>
-            <if test=" targeYear != null ">
-                and targe_year = #{targeYear}
-            </if>
-            <if test=" targetMonth != null ">
-                and target_month = #{targetMonth}
-            </if>
-            <if test=" chainCode != null ">
-                and chain_code = #{chainCode}
-            </if>
-            <if test=" targetDiffType != null ">
-                and target_diff_type = #{targetDiffType}
-            </if>
-            <if test=" targetDim != null ">
-                and target_dim = #{targetDim}
-            </if>
-            <if test=" judanFlag != null ">
-                and judan_flag = #{judanFlag}
-            </if>
-            <if test=" periodCode != null ">
-                and period_code = #{periodCode}
-            </if>
-            <if test=" targetPtCode != null ">
-                and target_pt_code = #{targetPtCode}
-            </if>
-            <if test=" targetXwCategoryCode != null ">
-                and target_xw_category_code like CONCAT('%|', #{targetXwCategoryCode,jdbcType=VARCHAR}, '|%')
-            </if>
-            <if test=" roleCode != null ">
-                and role_code like CONCAT('%|', #{roleCode,jdbcType=VARCHAR}, '|%')
-            </if>
-            and target_bottom_line is not NULL and target_bottom_line != ''
-            and target_jd_line is not NULL and target_jd_line !=''
-            order by target_code
-        </where>
-    </select>
+
 
 </mapper>

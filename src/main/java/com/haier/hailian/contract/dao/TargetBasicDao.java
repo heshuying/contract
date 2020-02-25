@@ -17,6 +17,4 @@ public interface TargetBasicDao extends BaseMapper<TargetBasic> {
 
     List<TargetBasic> selectTarget(TargetBasic targetBasic);
 
-    List<TargetBasic> selectChainTarget(TargetBasic targetBasic);
-
 }

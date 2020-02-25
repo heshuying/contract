@@ -40,19 +40,23 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         } catch (ParseException e) {
             throw new RException("日期类型不正确", Constant.CODE_VALIDFAIL);
         }
-        List<TargetBasic> list = targetBasicDao.selectChainTarget(targetBasic);
+        List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         for(TargetBasic targetBasic1:list){
-            if(null != targetBasic1.getTargetBottomLine()){
+            if(null != targetBasic1.getTargetBottomLine() && !"".equals(targetBasic1.getTargetBottomLine())){
                 String bottom = targetBasic1.getTargetBottomLine();
                 int position = bottom.length() - bottom.indexOf(".") - 1;
                 if(position==1) bottom = bottom.replaceAll("\\.0","");
                 targetBasic1.setTargetBottomLine(bottom);
+            }else{
+                throw new RException("链群的底线和E2E目标未维护，无法举单",Constant.CODE_VALIDFAIL);
             }
-            if(null != targetBasic1.getTargetJdLine()){
+            if(null != targetBasic1.getTargetJdLine() && !"".equals(targetBasic1.getTargetJdLine())){
                 String e2e = targetBasic1.getTargetJdLine();
                 int position = e2e.length() - e2e.indexOf(".") - 1;
                 if(position==1) e2e = e2e.replaceAll("\\.0","");
                 targetBasic1.setTargetJdLine(e2e);
+            }else{
+                throw new RException("链群的底线和E2E目标未维护，无法举单",Constant.CODE_VALIDFAIL);
             }
         }
         return list;
