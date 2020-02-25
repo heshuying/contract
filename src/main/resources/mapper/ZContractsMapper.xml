@@ -61,6 +61,12 @@
             select 1 from z_contracts where
                         parent_id=base.id and contract_type in ('20','30') and status = '1'
         )
+        and not EXISTS (
+            select 1 from z_contracts t1
+            LEFT JOIN z_contracts t2
+            on t1.id = t2.parent_id
+            where t1.parent_id=base.id and t2.contract_type in ('20','30') and t2.status = '1'
+        )
     </select>
     <select id="selectByContractId" resultMap="BaseResultMap">
         select
