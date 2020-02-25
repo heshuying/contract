@@ -619,7 +619,19 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 new QueryWrapper<ZHrChainInfo>()
                         .gt("create_date" , "2020-02-21 00:00:00")
                         .lt("create_date" , "2020-02-21 23:59:59"));
+
         for(ZHrChainInfo chainInfo : list){
+
+            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(
+                    new QueryWrapper<ZNodeTargetPercentInfo>()
+                            .eq("lq_code" , chainInfo.getChainCode())
+                            .isNull("share_percent")
+            );
+
+            if(nodes != null && nodes.size() > 0){
+                continue;
+            }
+
             List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(chainInfo.getChainPtCode());
             for (TOdsMinbu tOdsMinbu:getIsTY){
                 ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
