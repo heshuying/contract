@@ -7,6 +7,8 @@
         <id column="id" property="id" />
         <result column="chain_code" property="chainCode" />
         <result column="share_expression" property="shareExpression" />
+        <result column="share_percent1" property="sharePercent1" />
+        <result column="share_percent2" property="sharePercent2" />
     </resultMap>
 
 </mapper>

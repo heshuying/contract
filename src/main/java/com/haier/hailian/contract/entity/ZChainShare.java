@@ -1,12 +1,13 @@
 package com.haier.hailian.contract.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -35,6 +36,10 @@ public class ZChainShare extends Model<ZChainShare> {
      * 增值空间计算公式
      */
     private String shareExpression;
+
+    private Double sharePercent1;
+
+    private Double sharePercent2;
 
 
     @Override
