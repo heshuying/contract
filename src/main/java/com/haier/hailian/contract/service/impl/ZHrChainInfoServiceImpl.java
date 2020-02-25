@@ -476,9 +476,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , chainCode));
         //2获取数据库中这个平台的所有最小单元
         Map map = new HashMap<>();
-        map.put("ptCode" , currentUser.getPtCode());
+        map.put("ptCode" , zHrChainInfo.getChainPtCode());
         map.put("chainCode" , chainCode.trim());
         List<TOdsMinbu> list = tOdsMinbuDao.getOtherListByPtCode(map);
         return list;
@@ -587,9 +589,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , chainRepairInfo.getChildChainCode()));
         //2获取数据库中这个平台的所有最小单元
         Map map = new HashMap<>();
-        map.put("ptCode" , currentUser.getPtCode());
+        map.put("ptCode" , zHrChainInfo.getChainPtCode());
         map.put("childchainCode" , chainRepairInfo.getChildChainCode());
         map.put("parentChainCode" , chainRepairInfo.getParentChainCode());
         List<TOdsMinbu> list = tOdsMinbuDao.getChildOtherListByPtCode(map);
