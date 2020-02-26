@@ -217,10 +217,14 @@ public class ZReservePlanTeamworkServiceImpl implements ZReservePlanTeamworkServ
         List<ZContracts> list = zContractsDao.selectAllContracts("1");
         for (ZContracts zContracts : list) {
            ZHrChainInfo zHrChainInfo = zHrChainInfoDao.queryByCode(zContracts.getChainCode());
-            ZContracts zContractTemp = new ZContracts();
-            zContractTemp.setId(zContracts.getId());
-            zContractTemp.setGroupId(zHrChainInfo.getGroupId());
-            zContractsDao.updateById(zContractTemp);
+           if (zHrChainInfo != null){
+               ZContracts zContractTemp = new ZContracts();
+               zContractTemp.setId(zContracts.getId());
+               zContractTemp.setGroupId(zHrChainInfo.getGroupId());
+               if (zHrChainInfo.getGroupId()!=null){
+                   zContractsDao.updateById(zContractTemp);
+               }
+           }
         }
 
     }
