@@ -102,11 +102,8 @@
           JOIN sys_employee_ehr e
             ON p.`littleEmpsn` = e.`empSn`
         WHERE bu.`littleXwMasterCode` = #{xwMasterCode}
-        <if test="empSn != null and empSn != ''">
-            and e.`empSn` = #{empSn}
-        </if>
-        <if test="empName != null and empName != ''">
-            and e.`empName` = #{empName}
+        <if test="keyword != null and keyword != ''">
+            and (e.`empSn` like "%"#{keyword}"%" or e.`empName` like "%"#{keyword}"%")
         </if>
     </select>
 </mapper>
