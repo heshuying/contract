@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
+import com.haier.hailian.contract.dto.LittleXWEmpDTO;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -38,4 +39,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<TOdsMinbu> getOtherListByPtCode(Map map);
 
     List<TOdsMinbu> getChildOtherListByPtCode(Map map);
+
+    List<LittleXWEmpDTO> getLittleXWEmp(Map map);
 }
