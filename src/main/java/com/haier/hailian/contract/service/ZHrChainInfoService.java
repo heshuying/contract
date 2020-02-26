@@ -158,4 +158,8 @@ public interface ZHrChainInfoService {
     int updateModelInfo(ZHrChainInfo zHrChainInfo);
 
     List<TOdsMinbu> getChildChainOtherMinbuList(ChainRepairInfo chainRepairInfo);
+
+    int updateAllGroupId();
+
+    int updateChainTYInfo();
 }

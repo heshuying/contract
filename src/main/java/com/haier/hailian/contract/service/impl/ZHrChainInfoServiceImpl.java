@@ -168,6 +168,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (StringUtils.isEmpty(name)){
             return R.error("链群名称不能为空，请输入链群名称！");
         }
+        zHrChainInfo.setChainName(name);// 子链群检验
+        List<ZHrChainInfo> childChainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
+        if (childChainNames.size() > 0) {
+            return R.error("链群名称已经存在");
+        }
         if (!name.contains("链群")) {
             name = name + "链群";
         }
@@ -281,7 +286,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             codeList.add(sysUser.getEmpSn());
             String[] toBeStored = new String[codeList.size()];
             codeList.toArray(toBeStored);
-            String groupId = IHaierUtil.createGroup(toBeStored,name + "链群交互群",chainCode);
+            String groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
             //更新链群的群组ID字段
             ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
             zHrChainInfo1.setId(zHrChainInfo.getId());
@@ -295,9 +300,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if(zHrChainInfoDto.getZHrChainInfoDtos()!=null && zHrChainInfoDto.getIsModel().equals("1")){
             for(ZHrChainInfoDto chain : zHrChainInfoDto.getZHrChainInfoDtos()){
                 String modelName = chain.getChainName();
-                if (!modelName.contains("链群")) {
-                    modelName = modelName + "链群";
-                }
+//                if (!modelName.contains("链群")) {
+//                    modelName = modelName + "链群";
+//                }
 
                 // 获取计数器
                 int num = zHrChainInfoDao.getNum();
@@ -347,7 +352,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
-                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName + "链群交互群",chainCode);
+                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
                 //更新链群的群组ID字段
                 ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
                 zHrChainInfoExp.setId(fuck.getId());
@@ -471,9 +476,11 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , chainCode));
         //2获取数据库中这个平台的所有最小单元
         Map map = new HashMap<>();
-        map.put("ptCode" , currentUser.getPtCode());
+        map.put("ptCode" , zHrChainInfo.getChainPtCode());
         map.put("chainCode" , chainCode.trim());
         List<TOdsMinbu> list = tOdsMinbuDao.getOtherListByPtCode(map);
         return list;
@@ -499,9 +506,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         String modelName = zHrChainInfoDto.getChainName();
-        if (!modelName.contains("链群")) {
-            modelName = modelName + "链群";
-        }
+//        if (!modelName.contains("链群")) {
+//            modelName = modelName + "链群";
+//        }
 
         // 获取计数器
         int num = zHrChainInfoDao.getNum();
@@ -551,7 +558,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);
-        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getChainName() + "链群交互群",zHrChainInfoDto.getParentCode());
+        String modelGroupId = IHaierUtil.createGroup(modelToBeStored,zHrChainInfoDto.getChainName(),zHrChainInfoDto.getParentCode());
         //更新链群的群组ID字段
         ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
         zHrChainInfoExp.setId(fuck.getId());
@@ -582,13 +589,69 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , chainRepairInfo.getChildChainCode()));
         //2获取数据库中这个平台的所有最小单元
         Map map = new HashMap<>();
-        map.put("ptCode" , currentUser.getPtCode());
+        map.put("ptCode" , zHrChainInfo.getChainPtCode());
         map.put("childchainCode" , chainRepairInfo.getChildChainCode());
         map.put("parentChainCode" , chainRepairInfo.getParentChainCode());
         List<TOdsMinbu> list = tOdsMinbuDao.getChildOtherListByPtCode(map);
         return list;
+    }
+
+    @Override
+    public int updateAllGroupId() {
+        int num = 0;
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().isNull("group_id"));
+        for(ZHrChainInfo chainInfo : list){
+            String[] users = {chainInfo.getMasterCode(),"19037699"};
+            String groupId = IHaierUtil.createGroup(users,chainInfo.getChainName(),chainInfo.getChainCode());
+            ZHrChainInfo exp = new ZHrChainInfo();
+            exp.setId(chainInfo.getId());
+            exp.setGroupId(groupId);
+            zHrChainInfoDao.update(exp);
+            num++;
+        }
+        return num;
+    }
+
+    @Override
+    public int updateChainTYInfo() {
+        int num = 0;
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(
+                new QueryWrapper<ZHrChainInfo>()
+                        .gt("create_date" , "2020-02-21 00:00:00")
+                        .lt("create_date" , "2020-02-21 23:59:59"));
+
+        for(ZHrChainInfo chainInfo : list){
+
+            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(
+                    new QueryWrapper<ZNodeTargetPercentInfo>()
+                            .eq("lq_code" , chainInfo.getChainCode())
+                            .isNull("share_percent")
+            );
+
+            if(nodes != null && nodes.size() > 0){
+                continue;
+            }
+
+            List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(chainInfo.getChainPtCode());
+            for (TOdsMinbu tOdsMinbu:getIsTY){
+                ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
+                zNodeTargetPercentInfo.setLqCode(chainInfo.getChainCode());
+                zNodeTargetPercentInfo.setLqName(chainInfo.getChainName());
+                zNodeTargetPercentInfo.setNodeCode(tOdsMinbu.getLittleXwCode());
+                zNodeTargetPercentInfo.setNodeName(tOdsMinbu.getLittleXwName());
+                zNodeTargetPercentInfo.setXwCode(tOdsMinbu.getXwCode());
+                zNodeTargetPercentInfo.setXwName(tOdsMinbu.getXwName());
+                zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+            }
+            if(getIsTY.size()>0){
+                num++;
+            }
+        }
+        return num;
     }
 
 

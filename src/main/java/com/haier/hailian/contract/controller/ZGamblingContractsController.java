@@ -2,12 +2,10 @@ package com.haier.hailian.contract.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.ZChainShareDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.*;
-import com.haier.hailian.contract.entity.TOdsMinbu;
-import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import io.swagger.annotations.Api;
@@ -23,6 +21,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.math.BigDecimal.ZERO;
 
 /**
  * <p>
@@ -43,6 +43,8 @@ public class ZGamblingContractsController {
     private TargetBasicService targetBasicService;
     @Autowired
     private ZHrChainInfoDao hrChainInfoDao;
+    @Autowired
+    private ZChainShareDao chainShareDao;
 
     @PostMapping(value = {"/saveGambling"})
     @ApiOperation(value = "链群主抢单（举单）信息保存")
@@ -87,7 +89,7 @@ public class ZGamblingContractsController {
         targetAllDTO.setParentTarget(targetBasicList);
         String parentChain = dto.getChainCode();
         //2.查询子链群
-        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("parent_code",parentChain));
+        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("parent_code",parentChain).eq("deleted","0"));
         if(null != chainList && chainList.size()>0){
             List<ReturnTargetDTO> children = new ArrayList<>();
             for(ZHrChainInfo chain:chainList){
@@ -127,15 +129,59 @@ public class ZGamblingContractsController {
     @PostMapping(value = {"/calculateSharing"})
     @ApiOperation(value = "计算分享空间")
     public R calculateSharing(@RequestBody CalculateSharingDTO dto) {
-        if(dto.getBottom() != null && dto.getGrab() != null ){
-            BigDecimal share = dto.getGrab().subtract(dto.getBottom());
-            return R.ok().put("share",share);
+        String chainCode = dto.getChainCode();
+        BigDecimal share = ZERO;
+        String unit = "元";
+        List<ChainGroupTargetDTO> targetList = dto.getTargetList();
+        if(null == targetList || targetList.size()==0) return R.error().put("msg","参数有误，无法计算");
+        List<ZChainShare> chainShares = chainShareDao.selectList(new QueryWrapper<ZChainShare>().eq("chain_code",chainCode));
+        if(null != chainShares && chainShares.size()>0 && "T02006*T01002".equals(chainShares.get(0).getShareExpression())){
+            BigDecimal qtyQD = ZERO;
+            BigDecimal singleIncomeQD = ZERO;
+            BigDecimal qtyDX = ZERO;
+            BigDecimal singleIncomeDX = ZERO;
+           for(ChainGroupTargetDTO target:targetList){
+               if(target.getTargetCode().equals("T02006")){
+                   singleIncomeDX = target.getBottom();
+                   singleIncomeQD = target.getGrab();
+                   unit = target.getTargetUnit();
+               }
+               if(target.getTargetCode().equals("T01002")){
+                   qtyDX = target.getBottom();
+                   qtyQD = target.getGrab();
+               }
+           }
+           share = singleIncomeQD.multiply(qtyQD).subtract(singleIncomeDX.multiply(qtyDX));
+        }else{
+            BigDecimal incomeQD = ZERO;
+            BigDecimal incomeDX = ZERO;
+            BigDecimal incomeE2E = ZERO;
+            for(ChainGroupTargetDTO target:targetList) {
+                if (target.getTargetCode().equals("T01017")) {
+                    incomeDX = target.getBottom();
+                    incomeQD = target.getGrab();
+                    incomeE2E = target.getE2E();
+                    unit = target.getTargetUnit();
+                }
+            }
+            if(null != chainShares && chainShares.size()>0 && "T01017".equals(chainShares.get(0).getShareExpression())){
+                Double sharePercent1 = chainShares.get(0).getSharePercent1();
+                Double sharePercent2 = chainShares.get(0).getSharePercent2();
+
+                if(incomeQD.compareTo(incomeE2E) == 1){
+                    share = incomeQD.subtract(incomeE2E).multiply(BigDecimal.valueOf(sharePercent2).divide(BigDecimal.valueOf(100))).add(incomeE2E.subtract(incomeDX).multiply(BigDecimal.valueOf(sharePercent1).divide(BigDecimal.valueOf(100))));
+                }else if(incomeQD.compareTo(incomeDX)==1){
+                    share = incomeQD.subtract(incomeDX).multiply(BigDecimal.valueOf(sharePercent1).divide(BigDecimal.valueOf(100)));
+                }
+            }else{
+                if(incomeQD.compareTo(incomeE2E) == 1){
+                    share = incomeQD.subtract(incomeE2E).multiply(BigDecimal.valueOf(50).divide(BigDecimal.valueOf(100))).add(incomeE2E.subtract(incomeDX).multiply(BigDecimal.valueOf(20).divide(BigDecimal.valueOf(100))));
+                }else if(incomeQD.compareTo(incomeDX)==1){
+                    share = incomeQD.subtract(incomeDX).multiply(BigDecimal.valueOf(20).divide(BigDecimal.valueOf(100)));
+                }
+            }
         }
-        if(dto.getBottom() != null && dto.getShare() != null){
-            BigDecimal grab = dto.getBottom().add(dto.getShare());
-            return R.ok().put("grab",grab);
-        }
-        return R.error().put("msg","参数有误，无法计算");
+        return R.ok().put("share",share.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()).put("unit",unit);
     }
 
     @PostMapping(value = {"/selectContractList"})

@@ -61,6 +61,12 @@
             select 1 from z_contracts where
                         parent_id=base.id and contract_type in ('20','30') and status = '1'
         )
+        and not EXISTS (
+            select 1 from z_contracts t1
+            LEFT JOIN z_contracts t2
+            on t1.id = t2.parent_id
+            where t1.parent_id=base.id and t2.contract_type in ('20','30') and t2.status = '1'
+        )
     </select>
     <select id="selectByContractId" resultMap="BaseResultMap">
         select
@@ -484,7 +490,7 @@
             t1.id
           FROM
             z_contracts t1
-          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId})
+          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND (t1.`parent_id` = #{contractId} OR t1.`parent_id` IN (SELECT t2.id FROM z_contracts t2 WHERE t2.`parent_id` = #{contractId} AND t2.contract_type = '10')))
            GROUP BY factor_code
     </select>
 
@@ -526,6 +532,8 @@
         and not EXISTS (select 1 from z_contracts where
         parent_id=base.id and contract_type='20' and status=1 and org_code=#{loginBuCode}
         )
+        and not exists(select 1 from z_contracts where
+        parent_id=base.id and contract_type='10')
         order by id desc
     </select>
 
