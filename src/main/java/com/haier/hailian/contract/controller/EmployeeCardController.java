@@ -50,8 +50,8 @@ public class EmployeeCardController {
         if(StringUtils.isBlank(empSn)){
             return R.error("请求参数不全");
         }
-        cardUrl = cardUrl + empSn;
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(cardUrl, String.class);
+        String url = cardUrl + empSn;
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         JSONObject data = JSON.parseObject(responseEntity.getBody(), JSONObject.class);
         return R.ok().put("data", data);
     }
