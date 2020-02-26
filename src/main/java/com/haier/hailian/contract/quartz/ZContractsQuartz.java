@@ -67,22 +67,21 @@ public class ZContractsQuartz {
     /**
      * 举单预警（开启前一次/天）
      */
-    @Scheduled(cron="0 0 0/2 * * ?")
+    @Scheduled(cron="0 0 9,15 * * ?")
     public void jdWarning(){
-        log.info("【合约达成开始】");
+        log.info("【举单预警开始】");
         zWaringPeriodConfigService.jdWarning();
-        log.info("【合约达成结束】");
+        log.info("【举单预警结束】");
     }
-
 
     /**
      * 抢单预警（开启前一次/天）
      */
-    @Scheduled(cron="0 0 0/2 * * ?")
+    @Scheduled(cron="0 0 9,15 * * ?")
     public void qdWarning(){
-        log.info("【合约达成开始】");
+        log.info("【抢单预警开始】");
         zWaringPeriodConfigService.qdWarning();
-        log.info("【合约达成结束】");
+        log.info("【抢单预警结束】");
     }
 }
 
