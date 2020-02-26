@@ -87,4 +87,26 @@
        and a.ptCode like "%"#{ptCode}"%" and a.xwType5Code != '|2|'
     </select>
 
+    <select id="getLittleXWEmp" parameterType="java.util.Map" resultType="com.haier.hailian.contract.dto.LittleXWEmpDTO">
+       SELECT
+          e.`empSn`,
+          e.`empName`,
+          e.`posName`,
+          e.`nodeCode`,
+          p.`littleXwCode`,
+          bu.`xwCode`
+        FROM
+          t_ods_minbu bu
+          JOIN t_ods_minbu_emp p
+            ON bu.`littleXwCode` = p.`littleXwCode`
+          JOIN sys_employee_ehr e
+            ON p.`littleEmpsn` = e.`empSn`
+        WHERE bu.`littleXwMasterCode` = #{xwMasterCode}
+        <if test="empSn != null and empSn != ''">
+            and e.`empSn` = #{empSn}
+        </if>
+        <if test="empName != null and empName != ''">
+            and e.`empName` = #{empName}
+        </if>
+    </select>
 </mapper>
