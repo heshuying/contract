@@ -101,7 +101,7 @@
     <!--查询网格抢单收入-->
     <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select wg_code, wg_name, is_gzd as 'product_stru', sum(order_amt) as 'income'
+        select wg_code, wg_name, is_gzd as 'product_stru', sum(order_num) as 'income'
         FROM month_chain_group_order
         where chain_code=#{chainCode} and trade_code=#{regionCode} and year=#{year} and month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
@@ -113,7 +113,7 @@
     <!--查询网格抢单收入按型号汇总-->
     <select id="sumStruMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select is_gzd as 'product_stru', sum(order_amt) as 'income'
+        select is_gzd as 'product_stru', sum(order_num) as 'income'
         FROM month_chain_group_order
         where chain_code=#{chainCode} and trade_code=#{regionCode} and year=#{year} and month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
