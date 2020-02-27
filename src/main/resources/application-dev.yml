@@ -97,3 +97,7 @@ hac:
 ehr:
   version: ehr2.0-test
   registry: registry2
+
+# 人才池接口地址
+card:
+  url: http://card-dev.qd-ctcc.haier.net//api/v1/talentInformatica?cusId=
