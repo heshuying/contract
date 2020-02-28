@@ -57,7 +57,7 @@ public class HacLoginServiceImpl implements HacLoginService{
                     entity, String.class);
 
             String value = responseEntity.getBody();
-            log.info("=====Hac 登录入参{},返回结果{}",loginDto, value);
+            log.info("=====Hac返回结果{}", value);
 
             HacLoginRespDto loginRespDto=gson.fromJson(value,HacLoginRespDto.class);
             if("0".equals(loginRespDto.getCode())){

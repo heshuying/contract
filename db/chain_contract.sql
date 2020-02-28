@@ -1471,3 +1471,5 @@ CREATE TABLE `app_statistic` (
 -- alter table sys_node_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
 -- alter table sys_employee_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
 -- alter table sys_xiaowei_ehr add `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP;
+-- alter table month_retail add `chain_code` varchar(80) NULL DEFAULT '';
+-- alter table month_retail add `chain_name` varchar(80) NULL DEFAULT '';

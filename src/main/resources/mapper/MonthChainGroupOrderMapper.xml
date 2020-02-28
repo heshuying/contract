@@ -83,19 +83,14 @@
     <!--查询网格E2E收入-->
     <select id="queryMeshE2EIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select wg_code, wg_name, sum(income) as 'income'from(
-        select  mr.first_region_code as 'wg_code',mr.first_region_name as 'wg_name',mr.sales_amount as income
+        select mr.first_region_code as 'wg_code',mr.first_region_name as 'wg_name', sum(sales_amount) as 'income'
         FROM month_retail mr
-        join (select xw_code from sys_xw_master where master_code=#{contractOwner}) xwm
-        on mr.smb_code=xwm.xw_code
-        join (select DISTINCT jyt_code from sys_net where xw_code=#{loginXwCode}) sn
-        on mr.first_region_code=sn.jyt_code
-        where mr.schedule_year=#{year} and mr.schedule_month IN
+        where chain_code=#{chainCode} and trade_code=#{regionCode}
+        and mr.schedule_year=#{year} and mr.schedule_month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
             #{item}
         </foreach>
-        ) base
-        GROUP BY wg_code,wg_name
+        GROUP BY first_region_code,first_region_name
     </select>
 
     <!--查询网格抢单收入-->
