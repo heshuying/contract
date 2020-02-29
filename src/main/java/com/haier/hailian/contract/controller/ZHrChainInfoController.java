@@ -182,9 +182,9 @@ public class ZHrChainInfoController {
 
     @PostMapping(value = {"/getMinbuList"})
     @ApiOperation(value = "查询最小单元")
-    public R getMinbuList() {
+    public R getMinbuList(@RequestBody String ptCode) {
         try {
-            List list = zHrChainInfoService.getMinbuList();
+            List list = zHrChainInfoService.getMinbuList(ptCode);
             if(list ==null){
                 R.error("登陆异常请重新尝试！");
             }

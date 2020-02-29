@@ -71,6 +71,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainName(zHrChainInfo.getChainName());
         zHrChainInfoDto.setChainCode(zHrChainInfo.getChainCode());
+        zHrChainInfoDto.setChainPtCode(zHrChainInfo.getChainPtCode());
         zHrChainInfoDto.setFixedPosition(zHrChainInfo.getFixedPosition());
         zHrChainInfoDto.setZzfxRate(zHrChainInfo.getZzfxRate());
         zHrChainInfoDto.setCdShareRate(zHrChainInfo.getCdShareRate());
@@ -236,7 +237,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         // 主链群
         zHrChainInfo.setChainCode(chainCode);
-        zHrChainInfo.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfo.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         zHrChainInfo.setMasterCode(sysUser.getEmpSn());
         zHrChainInfo.setMasterName(sysUser.getEmpName());
         zHrChainInfo.setXwCode(currentUser.getLittleXwCode());
@@ -258,7 +259,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             zNodeTargetPercentInfoDao.insert(z);
         }
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTY){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(chainCode);
@@ -273,7 +274,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setChainCode(chainCode);
         zHrChainInfoDto.setMasterCode(sysUser.getEmpSn());
         zHrChainInfoDto.setMasterName(sysUser.getEmpName());
-        zHrChainInfoDto.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfoDto.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         zHrChainInfoDto.setXwCode(currentUser.getXwCode());
         zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
@@ -282,7 +283,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
         if(!zHrChainInfoDto.getIsModel().equals("1")){
-            List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),minbuList);
+            List<String> codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
             codeList.add(sysUser.getEmpSn());
             String[] toBeStored = new String[codeList.size()];
             codeList.toArray(toBeStored);
@@ -310,7 +311,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
                 ZHrChainInfo fuck = new ZHrChainInfo();
                 fuck.setChainCode(modelCode);
-                fuck.setChainPtCode(currentUser.getPtCode());
+                fuck.setChainPtCode(zHrChainInfoDto.getChainPtCode());
                 fuck.setMasterCode(sysUser.getEmpSn());
                 fuck.setMasterName(sysUser.getEmpName());
                 fuck.setXwCode(currentUser.getLittleXwCode());
@@ -334,7 +335,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 }
 
                 //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-                List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+                List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
                 for (TOdsMinbu tOdsMinbu:getIsTYModel){
                     ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
                     zNodeTargetPercentInfo.setLqCode(modelCode);
@@ -348,7 +349,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 }
 
                 //4.新增创建群组，在创建链群的时候创建
-                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
@@ -364,7 +365,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 chain.setChainCode(modelCode);
                 chain.setMasterCode(sysUser.getEmpSn());
                 chain.setMasterName(sysUser.getEmpName());
-                chain.setChainPtCode(currentUser.getPtCode());
+                chain.setChainPtCode(zHrChainInfoDto.getChainPtCode());
                 chain.setXwCode(currentUser.getXwCode());
                 chain.setXwName(currentUser.getXwName());
                 chain.setChainName(modelName);
@@ -382,7 +383,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<TOdsMinbu> getMinbuList() {
+    public List<TOdsMinbu> getMinbuList(String ptCode) {
         //1获取当前登陆人的平台信息
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
@@ -394,7 +395,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
         //2获取数据库中这个平台的所有最小单元
 
-        return tOdsMinbuDao.getListByPtCode(currentUser.getPtCode());
+        return tOdsMinbuDao.getListByPtCode(ptCode);
     }
 
     @Override
@@ -516,7 +517,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         ZHrChainInfo fuck = new ZHrChainInfo();
         fuck.setChainCode(modelCode);
-        fuck.setChainPtCode(currentUser.getPtCode());
+        fuck.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         fuck.setMasterCode(sysUser.getEmpSn());
         fuck.setMasterName(sysUser.getEmpName());
         fuck.setXwCode(currentUser.getLittleXwCode());
@@ -540,7 +541,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-        List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+        List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTYModel){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(modelCode);
@@ -554,7 +555,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         //4.新增创建群组，在创建链群的时候创建
-        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);

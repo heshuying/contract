@@ -99,7 +99,7 @@ public interface ZHrChainInfoService {
      * 获取平台下战略最小单元
      * @return
      */
-    List<TOdsMinbu> getMinbuList();
+    List<TOdsMinbu> getMinbuList(String ptCode);
 
     /**
      * 更新
