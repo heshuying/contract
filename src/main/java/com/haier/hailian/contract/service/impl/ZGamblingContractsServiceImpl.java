@@ -75,6 +75,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             contracts.setStartDate(sf.parse(dto.getStartDate()));
             contracts.setEndDate(sf.parse(dto.getEndDate()));
             contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             contracts.setContractType("10");
             contracts.setStatus("0");
             contracts.setCreateName(sysUser.getEmpName());
@@ -92,6 +93,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             contracts.setStartDate(sf.parse(dto.getStartDate()));
             contracts.setEndDate(sf.parse(dto.getEndDate()));
             contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             contracts.setShareSpace(dto.getShareSpace());
             contractsDao.updateById(contracts);
             //修改时删除原有目标
@@ -295,6 +297,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         dto.setEndDate(contracts.getEndDateStr());
         dto.setShareSpace(contracts.getShareSpace());
         dto.setChainCode(contracts.getChainCode());
+        dto.setCheckTime(contracts.getCheckTimeStr());
         dto.setId(contractId);
         //2.查询链群目标
         List<ChainGroupTargetDTO> chainList = factorDao.selectChainFactorByContractId(contractId);
@@ -615,6 +618,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             contracts.setStartDate(sf.parse(dto.getStartDate()));
             contracts.setEndDate(sf.parse(dto.getEndDate()));
             contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             contracts.setContractType("10");
             contracts.setStatus("0");
             contracts.setCreateName(sysUser.getEmpName());
@@ -705,6 +709,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     childContracts.setStartDate(sf.parse(dto.getStartDate()));
                     childContracts.setEndDate(sf.parse(dto.getEndDate()));
                     childContracts.setJoinTime(sf.parse(dto.getJoinTime()));
+                    childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
                     childContracts.setContractType("10");
                     childContracts.setStatus("0");
                     childContracts.setCreateName(sysUser.getEmpName());
