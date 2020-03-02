@@ -87,6 +87,9 @@ public class GamblingContractDTO {
      */
     private LocalDateTime createTime;
 
+    //链群主复核分享比例截止时间
+    private String checkTime;
+
     private String orgCode;
 
     private String orgName;

@@ -29,6 +29,8 @@
         <result column="share_percent" property="sharePercent" />
         <result column="group_id" property="groupId" />
         <result column="open_valid" property="openValid" />
+        <result column="check_time" property="checkTime" />
+        <result column="check_time_str" property="checkTimeStr" />
     </resultMap>
 
     <!-- 体验列表映射结果 -->
@@ -50,7 +52,9 @@
     <sql id="Base_Column_List">
         id,parent_id,contract_name,contract_type,status,share_space,chain_code,
         region_code,join_time,DATE_FORMAT(join_time,'%Y-%m-%d %H:%i:%s') as join_time_str,start_date,DATE_FORMAT(start_date,'%Y-%m-%d %H:%i:%s') as start_date_str,
-        end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,xiaowei_code,create_code,
+        end_date,DATE_FORMAT(end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,
+        DATE_FORMAT(check_time,'%Y-%m-%d %H:%i:%s') as check_time_str,
+        xiaowei_code,create_code,
         create_name,create_time,org_code,org_name,org_type,group_id,open_valid
     </sql>
     <select id="selectContractToUpdate" resultType="java.lang.String">

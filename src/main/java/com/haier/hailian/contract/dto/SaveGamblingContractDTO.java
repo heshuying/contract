@@ -25,6 +25,8 @@ public class SaveGamblingContractDTO {
      * 抢入截止时间
      */
     private String joinTime;
+    //链群主复核分享比例截止时间
+    private String checkTime;
 
     /**
      * 开始时间
