@@ -43,7 +43,7 @@
             ON c.`chain_code` = ch.`chain_code`
         WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` = 1
         <if test="keyword != null and keyword != ''">
-            and ch.`chain_name` like "%"#{keyword}"%"
+            and (ch.`chain_name` like "%"#{keyword}"%" or ch.master_name like "%"#{keyword}"%")
         </if>
         <if test="startDate != null and startDate != ''">
             and xp.PERIOD_CODE <![CDATA[ >= ]]> #{startDate}
