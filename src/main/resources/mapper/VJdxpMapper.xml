@@ -39,6 +39,7 @@
           JOIN z_contracts c
             ON xp.`LQ_CODE` = c.`chain_code`
             AND xp.`JD_CODE` = c.`org_code`
+            AND xp.PERIOD_CODE <![CDATA[ >= ]]> DATE_FORMAT(c.`start_date`,'%Y%m%d') AND xp.PERIOD_CODE <![CDATA[ <= ]]> DATE_FORMAT(c.`end_date`,'%Y%m%d')
           JOIN z_hr_chain_info ch
             ON c.`chain_code` = ch.`chain_code`
         WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` = 1
