@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.VJdxpDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.VJdxp">
+        <id column="id" property="id" />
+        <result column="PERIOD_CODE" property="periodCode" />
+        <result column="LQ_PT_CODE" property="lqPtCode" />
+        <result column="LQ_PT_NAME" property="lqPtName" />
+        <result column="LQ_CODE" property="lqCode" />
+        <result column="LQ_NAME" property="lqName" />
+        <result column="JD_TYPE" property="jdType" />
+        <result column="JD_CODE" property="jdCode" />
+        <result column="JD_NAME" property="jdName" />
+        <result column="PJ_M" property="pjM" />
+        <result column="PJ_Y" property="pjY" />
+    </resultMap>
+
+    <select id="getStarList" parameterType="map" resultType="com.haier.hailian.contract.dto.StarDTO">
+        SELECT
+            c.id AS contractId,
+            c.`parent_id` AS parentId,
+            c.`chain_code` AS chainCode,
+            c.`org_code` AS orgCode,
+            c.`create_code` AS createCode,
+            c.`contract_name` AS contractName,
+            c.`start_date` AS startDate,
+            c.`end_date` AS endDate,
+            ch.`chain_name` AS chainName,
+            c.`contract_type` AS contractType,
+            c.`status`,
+            xp.`PJ_M` AS pjM,
+            xp.`PJ_Y` AS pjY
+        FROM
+          v_jdxp xp
+          JOIN z_contracts c
+            ON xp.`LQ_CODE` = c.`chain_code`
+            AND xp.`JD_CODE` = c.`org_code`
+          JOIN z_hr_chain_info ch
+            ON c.`chain_code` = ch.`chain_code`
+        WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` = 1
+        <if test="keyword != null and keyword != ''">
+            and ch.`chain_name` like "%"#{keyword}"%"
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and xp.PERIOD_CODE <![CDATA[ >= ]]> #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and xp.PERIOD_CODE <![CDATA[ <= ]]> #{endDate}
+        </if>
+    </select>
+</mapper>
