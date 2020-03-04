@@ -630,4 +630,7 @@
       where chain_code=#{chainCode}
       and  DATE_FORMAT(start_date,'%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m' )
     </select>
+
+    <select id="selectContractsViewForCDNew" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabDataDTO">
+    </select>
 </mapper>

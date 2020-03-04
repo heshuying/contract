@@ -426,6 +426,10 @@ public class ContractViewServiceImpl implements ContractViewService {
         return resultMap.values();
     }
 
+    public void getContractViewDataCDNew(String contractId){
+
+    }
+
     @Override
     public String getContractSize(String contractId) {
         Integer fact = contractsDao.selectCount(new QueryWrapper<ZContracts>()
