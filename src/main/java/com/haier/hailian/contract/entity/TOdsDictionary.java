@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,7 +19,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 19033715
- * @since 2020-03-03
+ * @since 2020-03-04
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -34,8 +37,8 @@ public class TOdsDictionary extends Model<TOdsDictionary> {
     @TableField("Type")
     private String Type;
 
-    @TableField("Key")
-    private String Key;
+    @TableField("Code")
+    private String Code;
 
     @TableField("Value")
     private String Value;
@@ -44,7 +47,8 @@ public class TOdsDictionary extends Model<TOdsDictionary> {
     private String Status;
 
     @TableField("updateTime")
-    private LocalDateTime updateTime;
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
 
     @TableField("Remark")
     private String Remark;

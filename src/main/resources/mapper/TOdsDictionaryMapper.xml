@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.TOdsDictionary">
         <id column="ID" property="id" />
         <result column="Type" property="Type" />
-        <result column="Key" property="Key" />
+        <result column="Code" property="Code" />
         <result column="Value" property="Value" />
         <result column="Status" property="Status" />
         <result column="updateTime" property="updateTime" />
@@ -16,7 +16,7 @@
 
     <select id="getOtherOdsXwType3List" parameterType="java.util.Map" resultMap="BaseResultMap">
        select * from t_ods_dictionary a
-       where a.Key not in (select xwType3Code from z_node_target_percent_info b where b.share_percent is not null and b.lq_code=#{chainCode})
+       where a.Code not in (select xwType3Code from z_node_target_percent_info b where b.share_percent is not null and b.lq_code=#{chainCode} and b.xwType3Code is not null)
        and a.status = '1' AND a.Type = 'XWstyle'
     </select>
 
