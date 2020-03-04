@@ -80,9 +80,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setTyShareRate(zHrChainInfo.getTyShareRate());
         //ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
         //zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
-        List<ZNodeTargetPercentInfo> parentNodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
-                .eq("lq_code" , zHrChainInfo.getChainCode())
-                .isNotNull("share_percent").groupBy("xwType3Code"));
+        Map parentMap = new HashMap();
+        parentMap.put("lqCode" , zHrChainInfo.getChainCode());
+        List<ZNodeTargetPercentInfo> parentNodes = zNodeTargetPercentInfoDao.selectListByXwType3Code(parentMap);
         zHrChainInfoDto.setZNodeTargetPercentInfos(parentNodes);
         // 获取子链群信息
         List<ZHrChainInfoDto> dtos = new ArrayList<>();
@@ -102,11 +102,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 //            ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
 //            nodeChild.setParentChainCode(zHrChainInfo.getChainCode());
 //            nodeChild.setLqCode(fuck.getChainCode());
-            List<ZNodeTargetPercentInfo> childNodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
-                    .eq("lq_code" , fuck.getChainCode())
-                    .isNotNull("share_percent")
-                    .eq("parent_chain_code" , zHrChainInfo.getChainCode())
-                    .groupBy("xwType3Code"));
+            Map childMap = new HashMap();
+            childMap.put("lqCode" , fuck.getChainCode());
+            childMap.put("parentChainCode" , zHrChainInfo.getChainCode());
+            List<ZNodeTargetPercentInfo> childNodes = zNodeTargetPercentInfoDao.selectChildListByXwType3Code(childMap);
             dto.setZNodeTargetPercentInfos(childNodes);
 
             dtos.add(dto);

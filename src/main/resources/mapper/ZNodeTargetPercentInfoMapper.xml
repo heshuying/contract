@@ -315,4 +315,21 @@
           AND i.`share_percent` IS NOT NULL
         GROUP BY i.`xwType3Code`
     </select>
+
+    <select id="selectListByXwType3Code" parameterType="map" resultMap="ZNodeTargetPercentInfoMap" >
+        select
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3
+        from chain_contract.z_node_target_percent_info
+        where lq_code = #{lqCode} AND share_percent IS NOT NULL
+        GROUP BY xwType3Code
+    </select>
+
+    <select id="selectChildListByXwType3Code" parameterType="map" resultMap="ZNodeTargetPercentInfoMap" >
+        select
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3
+        from chain_contract.z_node_target_percent_info
+        where lq_code = #{lqCode} AND share_percent IS NOT NULL AND parent_chain_code=#{parentChainCode}
+        GROUP BY xwType3Code
+    </select>
+
 </mapper>

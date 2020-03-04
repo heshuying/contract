@@ -90,4 +90,8 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<CDGrabType3> queryCDGrabDataXWType3(Map<String,String> paraMap);
 
     int updateBatchXwType3Nodes(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
+
+    List<ZNodeTargetPercentInfo> selectListByXwType3Code(Map<String,Object> map);
+
+    List<ZNodeTargetPercentInfo> selectChildListByXwType3Code(Map<String,Object> map);
 }
