@@ -52,7 +52,18 @@ public class ContractViewController {
 
         }
 
-        return R.ok();
+        return R.ok().put("data", type3List);
+    }
+
+    @PostMapping(value = {"/getType3GrabList"})
+    @ApiOperation(value = "合约创单数据查询")
+    public R getType3GrabList(@RequestBody Map<String,String> paraMap) {
+        if(paraMap.get("contractId") == null || paraMap.get("type3Code") == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+        List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(paraMap.get("contractId"), paraMap.get("type3Code"));
+
+        return R.ok().put("data", list);
     }
 
     @GetMapping(value = {"/getContractInfoTY/{contractId}/{orderType}"})

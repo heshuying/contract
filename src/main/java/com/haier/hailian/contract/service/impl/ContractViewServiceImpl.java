@@ -443,6 +443,15 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
+    public List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code){
+        Map<String,Object> paraMap = new HashMap<>();
+        paraMap.put("contractId", contractId);
+        paraMap.put("type3Code", type3Code);
+
+        return contractsDao.getCDGrabResultType3List(paraMap);
+    }
+
+    @Override
     public String getContractSize(String contractId) {
         Integer fact = contractsDao.selectCount(new QueryWrapper<ZContracts>()
                 .eq("parent_id" , contractId)

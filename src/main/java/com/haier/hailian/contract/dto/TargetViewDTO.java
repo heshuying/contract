@@ -8,4 +8,5 @@ public class TargetViewDTO {
     private String targetCode;
     private String targetValue;
     private String targetUnit;
+    private String targetType;
 }

@@ -54,6 +54,51 @@
         <collection property="targetList" column="grabId"  select="selectFactorJDForTYNew" />
         <collection property="planList" column="grabId"  select="selectFactorE2EForTYNew" />
     </resultMap>
+    <!-- 创单抢单目标列表xwType3 -->
+    <resultMap id="cdGrabResultTargetType3" type="com.haier.hailian.contract.dto.TargetViewDTO">
+    </resultMap>
+    <!-- 创单抢单预案列表xwType3 -->
+    <resultMap id="cdGrabResultPlanType3" type="com.haier.hailian.contract.dto.ReservePlanDetailDTO">
+    </resultMap>
+
+    <select id="getCDGrabResultType3List" parameterType="map" resultMap="cdGrabResultType3">
+        SELECT
+          c.id AS contractId,
+          c.`org_code` AS nodeCode,
+          c.`org_name` AS nodeName,
+          e.`xwCode`,
+          e.`xwName`,
+          c.`share_percent` AS sharePercent
+        FROM
+          z_contracts c
+        WHERE c.parent_id = #{contractId}
+          AND c.`status` = 1
+          AND c.`contract_type` = 20
+          AND c.`org_type` LIKE CONCAT('%|',#{type3Code}, '|%');
+    </select>
+    <select id="getCDGrabResultTargetType3List" parameterType="map" resultMap="cdGrabResultTargetType3">
+        SELECT
+          f.`contract_id` AS contractId,
+          f.`factor_code` AS targetCode,
+          f.`factor_name` AS targetName,
+          f.`factor_value`  AS targetValue,
+          f.`factor_unit` AS targetUnit,
+          f.`factor_type` AS targetType
+        FROM
+          z_contracts_factor f
+        WHERE f.`contract_id` = #{contractId};
+    </select>
+    <select id="getCDGrabResultPlanType3" parameterType="map" resultMap="cdGrabResultPlanType3">
+        SELECT
+          p.`parent_id`,
+          p.`title`,
+          pd.`content`
+        FROM
+          z_reserve_plan p
+          INNER JOIN z_reserve_plan_detail pd
+            ON pd.parent_id = p.`id`
+        WHERE p.`parent_id` = #{contractId};
+    </select>
 
     <sql id="Base_Column_List">
         id,parent_id,contract_name,contract_type,status,share_space,chain_code,
