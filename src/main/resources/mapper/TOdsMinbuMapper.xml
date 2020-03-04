@@ -106,4 +106,10 @@
             and (e.`empSn` like "%"#{keyword}"%" or e.`empName` like "%"#{keyword}"%")
         </if>
     </select>
+
+
+    <select id="getListByXwType3Code" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from t_ods_minbu base
+        where xwType3Code like "%"#{XwType3Code}"%" and xwType5Code != '|2|'/* and ptCode like "%"#{ptCode}"%"*/
+    </select>
 </mapper>

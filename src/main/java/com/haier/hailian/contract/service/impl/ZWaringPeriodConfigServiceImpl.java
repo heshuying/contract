@@ -2,7 +2,10 @@ package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
+import com.haier.hailian.contract.dto.SaveXwType3;
+import com.haier.hailian.contract.dto.XwType3Info;
 import com.haier.hailian.contract.entity.*;
+import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
 import com.haier.hailian.contract.util.EmailUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 链群抢单举单预警配置表(ZWaringPeriodConfig)表服务实现类
@@ -38,6 +38,8 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
     private TOdsMinbuDao tOdsMinbuDao;
     @Resource
     private SysXiaoweiEhrDao sysXiaoweiEhrDao;
+    @Resource
+    private ZHrChainInfoService zHrChainInfoService;
 
     @Override
     public void jdWarning() {
@@ -187,6 +189,38 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
                         zWaringPeriodConfigDao.update(z);
                     }
             }
+        }
+
+    }
+
+    @Override
+    public void quartzMinbuListByXwType3() {
+        ZHrChainInfo chainInfo = new ZHrChainInfo();
+        chainInfo.setDeleted(0);
+        List<ZHrChainInfo> chainInfoList = zHrChainInfoDao.queryAll(chainInfo);
+        for(ZHrChainInfo zHrChainInfo : chainInfoList){
+            SaveXwType3 saveXwType3 = new SaveXwType3();
+            List<XwType3Info> XwType3List = new ArrayList<>();
+            // 去重后有的节点
+            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
+                    .eq("lq_code" , zHrChainInfo.getChainCode())
+                    .isNotNull("share_percent")
+                    .groupBy("xwType3Code"));
+            for(ZNodeTargetPercentInfo zNodeTargetPercentInfo : nodes){
+                XwType3Info xwType3Info = new XwType3Info();
+                xwType3Info.setSharePercent(zNodeTargetPercentInfo.getSharePercent());
+                xwType3Info.setXwType3(zNodeTargetPercentInfo.getXwType3());
+                xwType3Info.setXwType3Code(zNodeTargetPercentInfo.getXwType3Code());
+                XwType3List.add(xwType3Info);
+            }
+            saveXwType3.setXwType3List(XwType3List);
+            saveXwType3.setPtCode(zHrChainInfo.getChainPtCode());
+            saveXwType3.setLqName(zHrChainInfo.getChainName());
+            saveXwType3.setLqCode(zHrChainInfo.getChainCode());
+            saveXwType3.setParentChainCode(zHrChainInfo.getParentCode());
+
+            // 删除再同步
+            zHrChainInfoService.syncMinbuListByXwType3(saveXwType3);
         }
 
     }

@@ -39,6 +39,9 @@ public class ZHrChainInfoDto {
     private String fixedPosition;
     private List<ZNodeTargetPercentInfo> zNodeTargetPercentInfos ;
 
+    // XwType3选中数组
+    private SaveXwType3 saveXwType3;
+
     private String zzfxRate;//增值分享比例
 
     private String cdShareRate; // 创单分享比例
