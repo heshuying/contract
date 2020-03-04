@@ -9,10 +9,7 @@ import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -454,41 +451,60 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         Sheet sheet = null;
         Row row = null;
         Cell cell = null;
-
-        for (int i = 0; i < work.getNumberOfSheets(); i++) {
-            sheet = work.getSheetAt(i);
-            if (sheet == null) {
+        sheet = work.getSheetAt(0);
+        if (sheet == null) {
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
+        }
+        for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
+             row = sheet.getRow(j);
+            if (row == null ) {
                 continue;
             }
-            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
-                row = sheet.getRow(j);
-                if (row == null ) {
+            if(row.getFirstCellNum() == j){
+                String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
+                if("42中心".equals(title1)&&"42中心".equals(title2)&&"收入(万元)".equals(title3)&&"高端占比(%)".equals(title4)){
                     continue;
+                }else {
+                    throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
                 }
-                if(row.getFirstCellNum() == j){
-                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
-                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
-                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
-                    String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
-                    if("42中心".equals(title1)&&"42中心".equals(title2)&&"收入(万元)".equals(title3)&&"高端占比(%)".equals(title4)){
-                        continue;
-                    }else {
-                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
-                    }
-                }
-                MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
-                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
-                    cell = row.getCell(y);
-                    if(cell != null){
-                        if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
-                        if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
-                        if(y==2) marketTargetDTO3.setIncome(BigDecimal.valueOf(cell.getNumericCellValue()));
-                        if(y==3) marketTargetDTO3.setHigh(BigDecimal.valueOf(cell.getNumericCellValue()));
-                    }
-                }
-                list.add(marketTargetDTO3);
             }
+            MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
+            for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                cell = row.getCell(y);
+                if(cell != null){
+                    if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
+                    if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
+                    if(y==2){
+                        if(cell.getCellTypeEnum().equals(CellType.STRING)){
+                            throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
+                        }else {
+                            BigDecimal income = BigDecimal.valueOf(cell.getNumericCellValue());
+                            if(income.compareTo(BigDecimal.ZERO)==-1 ){
+                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，收入不能小于0", Constant.CODE_VALIDFAIL);
+                            }
+                            marketTargetDTO3.setIncome(income.setScale(2,BigDecimal.ROUND_HALF_UP));
+                        }
+                    }
+                    if(y==3) {
+                        if(cell.getCellTypeEnum().equals(CellType.STRING)) {
+                            throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，请填写数字，不需要单位", Constant.CODE_VALIDFAIL);
+                        }else {
+                            BigDecimal high = BigDecimal.valueOf(cell.getNumericCellValue());
+                            if(high.compareTo(BigDecimal.ZERO)==-1 || high.compareTo(BigDecimal.valueOf(100))==1){
+                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，高端占比要介于0和100之间", Constant.CODE_VALIDFAIL);
+                            }
+                            marketTargetDTO3.setHigh(high.setScale(2,BigDecimal.ROUND_HALF_UP));
+                        }
+
+                    }
+                }
+            }
+            list.add(marketTargetDTO3);
         }
+
         work.close();
         return list;
     }
@@ -564,39 +580,57 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if (null == work) {
             throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
         }
-
-        for (int i = 0; i < work.getNumberOfSheets(); i++) {
-            sheet = work.getSheetAt(i);
-            if (sheet == null) {
+        sheet = work.getSheetAt(0);
+        if (sheet == null) {
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
+        }
+        for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
+            row = sheet.getRow(j);
+            if (row == null ) {
                 continue;
             }
-            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
-                row = sheet.getRow(j);
-                if (row == null ) {
+            if(row.getFirstCellNum() == j){
+                String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                if("系列名称".equals(title1)&&"年度销量(台)".equals(title2)&&"月度销量(台)".equals(title3)){
                     continue;
+                }else {
+                    throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
                 }
-                if(row.getFirstCellNum() == j){
-                    String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
-                    String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
-                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
-                    if("系列名称".equals(title1)&&"年度销量(台)".equals(title2)&&"月度销量(台)".equals(title3)){
-                        continue;
-                    }else {
-                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
-                    }
-                }
-                ContractProductDTO dto = new ContractProductDTO();
-                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
-                    cell = row.getCell(y);
-                    if(cell != null){
-                        if(y==0) dto.setProductSeries(cell.getStringCellValue());
-                        if(y==1) dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
-                        if(y==2) dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
-                    }
-                }
-                list.add(dto);
             }
+            ContractProductDTO dto = new ContractProductDTO();
+            for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                cell = row.getCell(y);
+                if(cell != null){
+                    if(y==0) dto.setProductSeries(cell.getStringCellValue());
+                    if(y==1){
+                        if(cell.getCellTypeEnum().equals(CellType.STRING)){
+                            throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
+                        }else {
+                            BigDecimal qty = BigDecimal.valueOf(cell.getNumericCellValue());
+                            if(qty.compareTo(BigDecimal.ZERO)==-1 || qty.compareTo(new BigDecimal(qty.intValue()))==1){
+                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，销量必须为大于等于零的整数", Constant.CODE_VALIDFAIL);
+                            }
+                            dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
+                        }
+                    }
+                    if(y==2){
+                        if(cell.getCellTypeEnum().equals(CellType.STRING)){
+                            throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
+                        }else {
+                            BigDecimal qty = BigDecimal.valueOf(cell.getNumericCellValue());
+                            if(qty.compareTo(BigDecimal.ZERO)==-1 || qty.compareTo(new BigDecimal(qty.intValue()))==1){
+                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，销量必须为大于零的整数", Constant.CODE_VALIDFAIL);
+                            }
+                            dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                        }
+                    }
+                }
+            }
+            list.add(dto);
         }
+
         work.close();
         return list;
     }
