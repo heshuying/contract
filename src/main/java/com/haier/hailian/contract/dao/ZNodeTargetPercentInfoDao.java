@@ -85,4 +85,6 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<ZNodeTargetPercentInfo> selectChainByLittleXwCode(@Param("xwCode")String xwCode);
 
     int updateBatch(@Param("list") List<ZNodeTargetPercentInfo> list);
+
+    int updateBatchXwType3Nodes(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
 }

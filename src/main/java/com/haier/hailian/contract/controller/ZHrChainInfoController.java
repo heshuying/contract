@@ -2,10 +2,7 @@ package com.haier.hailian.contract.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.haier.hailian.contract.dto.ChainRepairInfo;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.ValidateChainNameDTO;
-import com.haier.hailian.contract.dto.ZHrChainInfoDto;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import io.swagger.annotations.Api;
@@ -358,7 +355,7 @@ public class ZHrChainInfoController {
             }
             return R.ok().put("data", list);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getOtherMinbuList,", e);
+            log.error("错误发生在ZHrChainInfoController.getChildChainOtherMinbuList,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
@@ -388,6 +385,104 @@ public class ZHrChainInfoController {
             return R.error("系统异常，请稍后尝试！");
         }
     }
+
+
+    @PostMapping(value = {"/getOdsXwType3List"})
+    @ApiOperation(value = "查询最小作战单元类型  xwType3")
+    public R getOdsXwType3List() {
+        try {
+            List list = zHrChainInfoService.getOdsXwType3List();
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getOdsXwType3List,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/getOtherOdsXwType3List"})
+    @ApiOperation(value = "查询未选中最小作战单元类型  xwType3(主链群子链群通用)")
+    public R getOtherOdsXwType3List(@RequestBody String chainCode) {
+        try {
+            List list = zHrChainInfoService.getOtherOdsXwType3List(chainCode);
+            if(list ==null){
+                R.error("登陆异常请重新尝试！");
+            }
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getOtherOdsXwType3List,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/saveNewXwType3"})
+    @ApiOperation(value = "保存新增XwType3")
+    public R saveNewXwType3(@RequestBody SaveXwType3 saveXwType3) {
+        try {
+            List<String> nodes = zHrChainInfoService.saveXwType3(saveXwType3);
+            if (nodes.size()==0){
+                return R.error("保存出错了，请稍后重试！");
+            }
+            return R.ok().put("data", nodes);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.saveNewXwType3,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/delXwType3Nodes"})
+    @ApiOperation(value = "删除某链群下某些小微资源类型节点")
+    public R delXwType3Nodes(@RequestBody @Validated @ApiParam(value = "删除某链群下某些小微资源类型节点", required = true) ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
+        try {
+            int z = zHrChainInfoService.delXwType3Nodes(zNodeTargetPercentInfo);
+            if (z==0){
+                return R.error("删除出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.delXwType3Nodes,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/updateBatchXwType3Nodes"})
+    @ApiOperation(value = "批量更新小微类型下节点分享比例")
+    public R updateBatchXwType3Nodes(@RequestBody @Validated @ApiParam(value = "更新链群和目标", required = true) SaveXwType3 saveXwType3) {
+        try {
+            int z = zHrChainInfoService.updateBatchXwType3Nodes(saveXwType3);
+            if (z==0){
+                return R.error("更新出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateBatchXwType3Nodes,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+    @PostMapping(value = {"/syncMinbuListByXwType3"})
+    @ApiOperation(value = "根据XwType3同步ods_minbu最新最小作战单元")
+    public R syncMinbuListByXwType3(@RequestBody @Validated @ApiParam(value = "同步最新最小作战单元", required = true) SaveXwType3 saveXwType3) {
+        try {
+            int z = zHrChainInfoService.syncMinbuListByXwType3(saveXwType3);
+            if (z==0){
+                return R.error("同步出错了，请稍后重试！");
+            }
+            return R.ok().put("data", z);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.syncMinbuListByXwType3,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
 
 
 }

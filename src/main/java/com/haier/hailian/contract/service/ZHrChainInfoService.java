@@ -162,4 +162,18 @@ public interface ZHrChainInfoService {
     int updateAllGroupId();
 
     int updateChainTYInfo();
+
+    List<TOdsDictionary> getOdsXwType3List();
+
+    List<TOdsDictionary> getOtherOdsXwType3List(String chainCode);
+
+    List<String> saveXwType3(SaveXwType3 saveXwType3);
+
+
+    int delXwType3Nodes(ZNodeTargetPercentInfo zNodeTargetPercentInfo);
+
+
+    int updateBatchXwType3Nodes(SaveXwType3 saveXwType3);
+
+    int syncMinbuListByXwType3(SaveXwType3 saveXwType3);
 }
