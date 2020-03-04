@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -41,9 +39,9 @@ public class ContractViewController {
         return R.ok().put("data",resultList).put("grabPercent", rate);
     }
 
-    @PostMapping(value = {"/getContractInfoCDNew"})
+    @PostMapping(value = {"/getType3List"})
     @ApiOperation(value = "合约创单数据查询")
-    public R getContractInfoCDNew(@RequestBody Map<String,String> paraMap) {
+    public R getType3List(@RequestBody Map<String,String> paraMap) {
         if(paraMap.get("contractId") == null){
             return R.error("请求参数错误，有为空的字段");
         }
