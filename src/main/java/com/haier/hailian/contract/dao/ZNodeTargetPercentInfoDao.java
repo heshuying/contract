@@ -94,4 +94,6 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<ZNodeTargetPercentInfo> selectListByXwType3Code(Map<String,Object> map);
 
     List<ZNodeTargetPercentInfo> selectChildListByXwType3Code(Map<String,Object> map);
+
+    int deleteListByXwType3Code(Map<String,Object> map);
 }

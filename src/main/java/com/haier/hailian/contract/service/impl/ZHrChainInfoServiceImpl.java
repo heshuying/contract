@@ -741,7 +741,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 minbuList.add(zNodeTargetPercentInfo.getNodeCode());
             }
         }
-        int num = zNodeTargetPercentInfoDao.insertBatch(nodes);
+        if(nodes.size()>0){
+            int num = zNodeTargetPercentInfoDao.insertBatch(nodes);
+        }
         return minbuList;
     }
 
@@ -776,10 +778,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         // 删除
         for(XwType3Info XwType3Info : saveXwType3.getXwType3List()){
-            zNodeTargetPercentInfoDao.delete(new QueryWrapper<ZNodeTargetPercentInfo>()
-                    .eq("lq_code" , saveXwType3.getLqCode())
-                    .eq("xwType3Code" , XwType3Info.getXwType3Code())
-                    .isNotNull("share_percent"));
+            Map map = new HashMap();
+            map.put("lqCode" , saveXwType3.getLqCode());
+            map.put("xwType3Code" , XwType3Info.getXwType3Code());
+            zNodeTargetPercentInfoDao.deleteListByXwType3Code(map);
         }
         // 新增
         List<String> minbuList = saveXwType3(saveXwType3);

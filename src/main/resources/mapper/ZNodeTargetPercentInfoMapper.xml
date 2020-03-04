@@ -332,4 +332,9 @@
         GROUP BY xwType3Code
     </select>
 
+
+    <delete id="deleteListByXwType3Code" parameterType="map">
+        delete from chain_contract.z_node_target_percent_info where lq_code = #{lqCode} and xwType3Code=#{xwType3Code} and share_percent IS NOT NULL
+    </delete>
+
 </mapper>

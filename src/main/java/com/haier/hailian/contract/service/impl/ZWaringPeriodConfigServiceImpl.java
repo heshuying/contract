@@ -202,10 +202,13 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
             SaveXwType3 saveXwType3 = new SaveXwType3();
             List<XwType3Info> XwType3List = new ArrayList<>();
             // 去重后有的节点
-            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
-                    .eq("lq_code" , zHrChainInfo.getChainCode())
-                    .isNotNull("share_percent")
-                    .groupBy("xwType3Code"));
+            Map map = new HashMap();
+            map.put("lqCode" , zHrChainInfo.getChainCode());
+            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectListByXwType3Code(map);
+//            List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
+//                    .eq("lq_code" , zHrChainInfo.getChainCode())
+//                    .isNotNull("share_percent")
+//                    .groupBy("xwType3Code"));
             for(ZNodeTargetPercentInfo zNodeTargetPercentInfo : nodes){
                 XwType3Info xwType3Info = new XwType3Info();
                 xwType3Info.setSharePercent(zNodeTargetPercentInfo.getSharePercent());
