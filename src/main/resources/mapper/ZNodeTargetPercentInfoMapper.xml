@@ -239,4 +239,22 @@
             where id = #{item.id}
         </foreach>
     </update>
+
+    <!-- 创单抢单数据-->
+    <select id="queryCDGrabDataXWType3" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabType3">
+        SELECT
+          i.`lq_code`,
+          i.`xwType3Code`,
+          i.`xwType3`
+        FROM
+          z_node_target_percent_info i
+        WHERE i.`lq_code` IN
+          (SELECT
+            chain_code
+          FROM
+            z_contracts
+          WHERE id = 1075)
+          AND i.`share_percent` IS NOT NULL
+        GROUP BY i.`xwType3Code`
+    </select>
 </mapper>

@@ -25,6 +25,7 @@ public class ContractViewController {
     @Autowired
     ContractViewService contractViewService;
 
+
     @GetMapping(value = {"/getContractInfo/{contractId}"})
     @ApiOperation(value = "合约基础数据查询")
     public R getContractInfo(@PathVariable String contractId) {
@@ -42,13 +43,18 @@ public class ContractViewController {
 
     @PostMapping(value = {"/getContractInfoCDNew"})
     @ApiOperation(value = "合约创单数据查询")
-    public R getContractInfoCDNew(@RequestBody Map<String,Object> paraMap) {
+    public R getContractInfoCDNew(@RequestBody Map<String,String> paraMap) {
         if(paraMap.get("contractId") == null){
             return R.error("请求参数错误，有为空的字段");
         }
-        Collection<ContractViewDataCDResponseDTO> resultList = contractViewService.getContractViewDataCD((String)paraMap.get("contractId"), (String)paraMap.get("xwName"));
-        String rate = contractViewService.getContractSize((String)paraMap.get("contractId"));
-        return R.ok().put("data",resultList).put("grabPercent", rate);
+        int countGrabed = 0;
+        int countTotal = 0;
+        List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(paraMap.get("contractId"));
+        if(type3List == null || type3List.isEmpty()){
+
+        }
+
+        return R.ok();
     }
 
     @GetMapping(value = {"/getContractInfoTY/{contractId}/{orderType}"})
