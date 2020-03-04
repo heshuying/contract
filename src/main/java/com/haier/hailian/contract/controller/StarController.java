@@ -7,12 +7,14 @@ import com.haier.hailian.contract.util.DateFormatUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -42,17 +44,20 @@ public class StarController {
     @PostMapping(value = {"/getScore"})
     @ApiOperation(value = "获取当月评分")
     public R getScore(@RequestBody Map<String,Object> requestMap) {
-        String score = "";
+        BigDecimal score = BigDecimal.ZERO;
         if(requestMap == null){
             requestMap = new HashMap<>();
         }
         List<StarDTO> data= new ArrayList<>();
         try {
-            requestMap.put("startDate", DateFormatUtil.format(new Date(), DateFormatUtil.DATE_PATTERN_YM) + "01");
-            requestMap.put("endDate", DateFormatUtil.format(new Date(), DateFormatUtil.DATE_PATTERN_YM) + "31");
+//            requestMap.put("startDate", DateFormatUtil.format(new Date(), DateFormatUtil.DATE_PATTERN_YM) + "01");
+//            requestMap.put("endDate", DateFormatUtil.format(new Date(), DateFormatUtil.DATE_PATTERN_YM) + "31");
             data = vJdxpService.getStarList(requestMap);
             if(data != null && !data.isEmpty()){
-                score = data.get(0).getPjM();
+                for(StarDTO star : data){
+                    score = score.add(new BigDecimal(StringUtils.isBlank(star.getPjM())?"0":star.getPjM()));
+                }
+                score = score.divide(BigDecimal.valueOf(data.size()), 2, BigDecimal.ROUND_HALF_UP);
             }
         } catch (Exception e) {
             e.printStackTrace();
