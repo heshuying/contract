@@ -345,6 +345,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 SaveXwType3 saveXwType3Child = chain.getSaveXwType3();
                 saveXwType3Child.setLqCode(modelCode);
                 saveXwType3Child.setLqName(modelName);
+                saveXwType3Child.setParentChainCode(chainCode);
                 saveXwType3Child.setPtCode(zHrChainInfoDto.getChainPtCode());
                 modelMinbuList = saveXwType3(saveXwType3Child);
 //                for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
