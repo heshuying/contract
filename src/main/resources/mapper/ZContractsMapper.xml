@@ -51,8 +51,8 @@
 
     <!-- 创单抢单合约列表xwType3 -->
     <resultMap id="cdGrabResultType3" type="com.haier.hailian.contract.dto.CDGrabDataDTO">
-        <collection property="targetList" column="grabId"  select="selectFactorJDForTYNew" />
-        <collection property="planList" column="grabId"  select="selectFactorE2EForTYNew" />
+        <collection property="targetList" column="contractId"  select="getCDGrabResultTargetType3List" />
+        <collection property="planList" column="contractId"  select="getCDGrabResultPlanType3" />
     </resultMap>
     <!-- 创单抢单目标列表xwType3 -->
     <resultMap id="cdGrabResultTargetType3" type="com.haier.hailian.contract.dto.TargetViewDTO">
@@ -71,9 +71,10 @@
           c.`share_percent` AS sharePercent
         FROM
           z_contracts c
+          JOIN sys_xiaowei_ehr e ON c.`xiaowei_code` = e.`xwCode`
         WHERE c.parent_id = #{contractId}
           AND c.`status` = 1
-          AND c.`contract_type` = 20
+          AND c.`contract_type` = 30
           AND c.`org_type` LIKE CONCAT('%|',#{type3Code}, '|%');
     </select>
     <select id="getCDGrabResultTargetType3List" parameterType="map" resultMap="cdGrabResultTargetType3">
