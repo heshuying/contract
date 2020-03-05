@@ -261,11 +261,13 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         List<String> minbuList = new ArrayList<>();
         //2.保存链群的目标信息 兼容XwType3版本
-        SaveXwType3 saveXwType3Parent = zHrChainInfoDto.getSaveXwType3();
-        saveXwType3Parent.setLqCode(chainCode);
-        saveXwType3Parent.setLqName(name);
-        saveXwType3Parent.setPtCode(zHrChainInfoDto.getChainPtCode());
-        minbuList = saveXwType3(saveXwType3Parent);
+        if(!zHrChainInfoDto.getIsModel().equals("1")){
+            SaveXwType3 saveXwType3Parent = zHrChainInfoDto.getSaveXwType3();
+            saveXwType3Parent.setLqCode(chainCode);
+            saveXwType3Parent.setLqName(name);
+            saveXwType3Parent.setPtCode(zHrChainInfoDto.getChainPtCode());
+            minbuList = saveXwType3(saveXwType3Parent);
+        }
 //        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
 //            z.setLqCode(chainCode);
 //            z.setLqName(name);
@@ -765,6 +767,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(saveXwType3.getLqCode());
             zNodeTargetPercentInfo.setXwType3Code(XwType3Info.getXwType3Code());
+            zNodeTargetPercentInfo.setSharePercent(XwType3Info.getSharePercent());
             zNodeTargetPercentInfoDao.updateBatchXwType3Nodes(zNodeTargetPercentInfo);
             num++ ;
         }
