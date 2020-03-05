@@ -64,17 +64,20 @@ public class ContractViewController {
 
     @PostMapping(value = {"/updateSharePercent"})
     @ApiOperation(value = "更新分享比例")
-    public R updateSharePercent(@RequestBody Map<String,String> paraMap) {
-        if(StringUtils.isBlank(paraMap.get("contractId")) || StringUtils.isBlank(paraMap.get("sharePercent"))){
-            return R.error("请求参数错误，有为空的字段");
+    public R updateSharePercent(@RequestBody List<Map<String,String>> paramList) {
+        if(paramList == null || paramList.isEmpty()){
+            return R.error("没有传要更新的数据");
         }
 
-        int updateR = contractViewService.updateCDSharePercent(paraMap.get("contractId"), paraMap.get("sharePercent"));
-        if(updateR > 0){
-            return R.ok();
-        }else{
+        try {
+            for(Map<String,String> map : paramList){
+                contractViewService.updateCDSharePercent(map.get("contractId"), map.get("sharePercent"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return R.error("更新失败");
         }
+        return R.ok();
     }
 
     @PostMapping(value = {"/getType3GrabList"})
