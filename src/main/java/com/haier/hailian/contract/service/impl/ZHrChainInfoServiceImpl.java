@@ -11,6 +11,7 @@ import com.haier.hailian.contract.dto.ValidateChainNameDTO;
 import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
+import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
     @Resource
     private TOdsDictionaryDao tOdsDictionaryDao;
+    @Resource
+    private ChainCommonService chainCommonService;
     //hr发版后放开
     @Reference(version = "ehr2.0", registry = "registry2", check = false)
     //@Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -345,6 +348,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 SaveXwType3 saveXwType3Child = chain.getSaveXwType3();
                 saveXwType3Child.setLqCode(modelCode);
                 saveXwType3Child.setLqName(modelName);
+                saveXwType3Child.setParentChainCode(chainCode);
                 saveXwType3Child.setPtCode(zHrChainInfoDto.getChainPtCode());
                 modelMinbuList = saveXwType3(saveXwType3Child);
 //                for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
@@ -399,6 +403,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             }
         }
         zHrChainInfoDto.setZHrChainInfoDtos(dtos);
+        // 上链
+        chainCommonService.doChain(zHrChainInfoDto);
 
         return zHrChainInfoDto;
     }
