@@ -39,7 +39,7 @@ public class TestController {
     @ApiOperation(value = "上链")
     public R createChain(@PathVariable Integer contractId) {
         //chainCommonService.buildContractChain(contractId);
-        chainCommonService.uplaodBigContract(contractId);
+        chainCommonService.uploadBigContract(contractId);
 
         return R.ok();
     }
