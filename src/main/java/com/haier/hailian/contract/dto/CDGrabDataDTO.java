@@ -12,6 +12,8 @@ public class CDGrabDataDTO {
     private String contractId;
     private String nodeCode;
     private String nodeName;
+    private String xwCode;
+    private String xwName;
     private String sharePercent;
 
     /** 目标列表*/

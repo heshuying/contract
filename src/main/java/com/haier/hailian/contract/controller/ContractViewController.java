@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -41,20 +39,38 @@ public class ContractViewController {
         return R.ok().put("data",resultList).put("grabPercent", rate);
     }
 
-    @PostMapping(value = {"/getContractInfoCDNew"})
+    @PostMapping(value = {"/getType3List"})
     @ApiOperation(value = "合约创单数据查询")
-    public R getContractInfoCDNew(@RequestBody Map<String,String> paraMap) {
+    public R getType3List(@RequestBody Map<String,String> paraMap) {
         if(paraMap.get("contractId") == null){
             return R.error("请求参数错误，有为空的字段");
         }
         int countGrabed = 0;
-        int countTotal = 0;
         List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(paraMap.get("contractId"));
-        if(type3List == null || type3List.isEmpty()){
-
+        if(type3List != null && !type3List.isEmpty()){
+            for(CDGrabType3 item : type3List){
+                List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(paraMap.get("contractId"), item.getXwType3Code());
+                if(list != null && !list.isEmpty()){
+                    item.setGrabCount(String.valueOf(list.size()));
+                    countGrabed++;
+                }else{
+                    item.setGrabCount("0");
+                }
+            }
         }
 
-        return R.ok();
+        return R.ok().put("data", type3List).put("grabRate", countGrabed+"/"+type3List.size());
+    }
+
+    @PostMapping(value = {"/getType3GrabList"})
+    @ApiOperation(value = "合约创单数据查询")
+    public R getType3GrabList(@RequestBody Map<String,String> paraMap) {
+        if(paraMap.get("contractId") == null || paraMap.get("xwType3Code") == null){
+            return R.error("请求参数错误，有为空的字段");
+        }
+        List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(paraMap.get("contractId"), paraMap.get("xwType3Code"));
+
+        return R.ok().put("data", list);
     }
 
     @GetMapping(value = {"/getContractInfoTY/{contractId}/{orderType}"})

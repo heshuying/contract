@@ -23,6 +23,8 @@ public interface ContractViewService {
 
     List<CDGrabType3> queryCDGrabDataXWType3(String contractId);
 
+    List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code);
+
     String getContractSize(String contractId);
 
     Integer getContractSize2(String contractId);

@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class TargetViewDTO {
     private String targetName;
+    private String targetCode;
     private String targetValue;
     private String targetUnit;
+    private String targetType;
 }

@@ -303,7 +303,7 @@
         SELECT
           i.`lq_code`,
           i.`xwType3Code`,
-          i.`xwType3`
+          i.`xwType3` AS xwType3Name
         FROM
           z_node_target_percent_info i
         WHERE i.`lq_code` IN
@@ -311,7 +311,7 @@
             chain_code
           FROM
             z_contracts
-          WHERE id = 1075)
+          WHERE id = #{contractId})
           AND i.`share_percent` IS NOT NULL
         GROUP BY i.`xwType3Code`
     </select>

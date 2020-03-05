@@ -138,4 +138,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
      */
     ZContracts selectByChainCode(String chainCode,String opTime);
     Date selectGamnlingBeginDate(String chainCode);
+
+    List<CDGrabDataDTO> getCDGrabResultType3List(Map<String,Object> paraMap);
 }
