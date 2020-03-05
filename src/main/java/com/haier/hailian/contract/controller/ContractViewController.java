@@ -62,6 +62,21 @@ public class ContractViewController {
         return R.ok().put("data", type3List).put("grabRate", countGrabed+"/"+type3List.size());
     }
 
+    @PostMapping(value = {"/updateSharePercent"})
+    @ApiOperation(value = "更新分享比例")
+    public R updateSharePercent(@RequestBody Map<String,String> paraMap) {
+        if(StringUtils.isBlank(paraMap.get("contractId")) || StringUtils.isBlank(paraMap.get("sharePercent"))){
+            return R.error("请求参数错误，有为空的字段");
+        }
+
+        int updateR = contractViewService.updateCDSharePercent(paraMap.get("contractId"), paraMap.get("sharePercent"));
+        if(updateR > 0){
+            return R.ok();
+        }else{
+            return R.error("更新失败");
+        }
+    }
+
     @PostMapping(value = {"/getType3GrabList"})
     @ApiOperation(value = "合约创单数据查询")
     public R getType3GrabList(@RequestBody Map<String,String> paraMap) {
