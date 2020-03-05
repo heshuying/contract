@@ -470,9 +470,12 @@ public class ZHrChainInfoController {
 
     @PostMapping(value = {"/syncMinbuListByXwType3"})
     @ApiOperation(value = "根据XwType3同步ods_minbu最新最小作战单元")
-    public R syncMinbuListByXwType3(@RequestBody @Validated @ApiParam(value = "同步最新最小作战单元", required = true) SaveXwType3 saveXwType3) {
+    public R syncMinbuListByXwType3(@RequestBody @Validated @ApiParam(value = "同步最新最小作战单元", required = true) List<SaveXwType3> saveXwType3List) {
         try {
-            int z = zHrChainInfoService.syncMinbuListByXwType3(saveXwType3);
+            int z = 0;
+            for(SaveXwType3 saveXwType3 : saveXwType3List){
+                 z = zHrChainInfoService.syncMinbuListByXwType3(saveXwType3) + z;
+            }
             if (z==0){
                 return R.error("同步出错了，请稍后重试！");
             }
