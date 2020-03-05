@@ -20,4 +20,6 @@ public interface ChainCommonService {
     void uploadBigContract(Integer contractId);
 
     void doChain(String json);
+
+    void doChain(Object object);
 }

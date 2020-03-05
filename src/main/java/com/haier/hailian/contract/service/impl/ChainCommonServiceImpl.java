@@ -154,6 +154,19 @@ public class ChainCommonServiceImpl implements ChainCommonService{
         }).start();
     }
 
+
+    @Override
+    public void doChain(Object object) {
+        new Thread(new Runnable(){
+            public void run(){
+                String json = gson.toJson(object);
+                String jsonHash=doUploadChain(json);
+                log.info("data：{}，返回:{}",
+                        json,jsonHash);
+            }
+        }).start();
+    }
+
     @Override
     public void uploadBigContract(Integer contractId){
         Map<String,Object> bigData=new HashMap<>();
