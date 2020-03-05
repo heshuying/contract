@@ -16,4 +16,8 @@ public interface ChainCommonService {
     void buildContractChain(Integer contractId);
 
     void getContractFromChain(Integer contractId);
+
+    void uploadBigContract(Integer contractId);
+
+    void doChain(String json);
 }

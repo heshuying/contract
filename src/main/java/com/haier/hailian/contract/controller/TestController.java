@@ -36,14 +36,16 @@ public class TestController {
     }
 
     @GetMapping("/buildContractChain/{contractId}")
-    @ApiOperation(value = "跑批产生用户chainCode")
+    @ApiOperation(value = "上链")
     public R createChain(@PathVariable Integer contractId) {
-        chainCommonService.buildContractChain(contractId);
+        //chainCommonService.buildContractChain(contractId);
+        chainCommonService.uplaodBigContract(contractId);
+
         return R.ok();
     }
 
     @GetMapping("/getContract/{contractId}")
-    @ApiOperation(value = "跑批产生用户chainCode")
+    @ApiOperation(value = "从链上获取数据")
     public R getContract(@PathVariable Integer contractId) {
         chainCommonService.getContractFromChain(contractId);
         return R.ok();

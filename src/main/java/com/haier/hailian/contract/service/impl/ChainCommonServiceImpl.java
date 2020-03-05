@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.config.ChainConfig;
 import com.haier.hailian.contract.dao.ZContractsProductDao;
+import com.haier.hailian.contract.dto.ChainResultNewDto;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZContractsProduct;
@@ -14,7 +15,12 @@ import com.haier.hailian.contract.util.chian.ChainContract;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.RawTransaction;
@@ -29,7 +35,9 @@ import org.web3j.utils.Numeric;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 19012964 on 2019/12/24.
@@ -39,6 +47,8 @@ import java.util.List;
 public class ChainCommonServiceImpl implements ChainCommonService{
     @Autowired
     private ChainConfig chainConfig;
+    @Autowired
+    private RestTemplate nRestTemplate;
     @Autowired
     private ZContractsService contractsService;
     @Autowired
@@ -131,6 +141,36 @@ public class ChainCommonServiceImpl implements ChainCommonService{
         } catch (Exception e){
             log.error("{},异常{}", "doChainAfterGrab", e.getMessage());
         }
+    }
+
+    @Override
+    public void doChain(String json) {
+        new Thread(new Runnable(){
+            public void run(){
+                String jsonHash=doUploadChain(json);
+                log.info("data：{}，返回:{}",
+                        json,jsonHash);
+            }
+        }).start();
+    }
+
+    @Override
+    public void uploadBigContract(Integer contractId){
+        Map<String,Object> bigData=new HashMap<>();
+        ZContracts contracts =contractsService.getById(contractId);
+        List<ZContractsFactor> factors=contractsFactorService.list(
+                new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId)
+        );
+
+        List<ZContractsProduct> products=contractsProductDao.selectList(
+                new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId)
+        );
+        bigData.put("main_"+contractId,contracts);
+        bigData.put("factor_"+contractId,factors);
+        bigData.put("product_"+contractId, products);
+        String contractJsonHash=doUploadChain(gson.toJson(bigData));
+        log.info("合约id：{}，返回:{}",
+                contractId,contractJsonHash);
     }
 
     public void doChainAfterGrab(String contractId, List<ZContractsFactor> factors) {
@@ -332,5 +372,57 @@ public class ChainCommonServiceImpl implements ChainCommonService{
             log.error(e.getMessage());
             return null;
         }
+    }
+
+
+
+    private String doUploadChain(String data){
+        log.info("=====上链数据====>",data);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api_gateway_auth_app_id",chainConfig.getApiGatewayAuthAppId());
+        headers.set("api_gateway_auth_app_password",chainConfig.getApiGatewayAuthAppPassword());
+
+        HttpEntity<String> entity = new HttpEntity<String>(data, headers);
+        try {
+            ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(chainConfig.getUploadUrl(),
+                    entity, String.class);
+
+            String value = responseEntity.getBody();
+            log.info("=====上链返回结果:{}", value);
+            ChainResultNewDto result = gson.fromJson(value, ChainResultNewDto.class);
+            if (result.getResultCode().equals("10")) {
+                return result.getData();
+            } else {
+                return "";
+            }
+        }catch (Exception e){
+            log.info("=====上链发生异常:{}====>", e.getMessage());
+            return "";
+        }
+
+    }
+
+    private String doValidChain(String hashCode){
+        log.info("=====校验数据====>",hashCode);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api_gateway_auth_app_id",chainConfig.getApiGatewayAuthAppId());
+        headers.set("api_gateway_auth_app_password",chainConfig.getApiGatewayAuthAppPassword());
+
+        HttpEntity<String> entity = new HttpEntity<String>(hashCode, headers);
+        try {
+            ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(chainConfig.getValidUrl(),
+                    entity, String.class);
+
+            String value = responseEntity.getBody();
+            log.info("=====校验数据结果====>");
+            log.info(value);
+            return value;
+        }catch (Exception e){
+            log.error("=====上链发生异常:{}====>", e.getMessage());
+            return "";
+        }
+
     }
 }

@@ -511,7 +511,7 @@ public class GrabServiceImpl implements GrabService {
             //异步上链
             new Thread(new Runnable(){
                 public void run(){
-                    chainCommonService.buildContractChain(contracts.getId());
+                    chainCommonService.uploadBigContract(contracts.getId());
                 }
             }).start();
 
