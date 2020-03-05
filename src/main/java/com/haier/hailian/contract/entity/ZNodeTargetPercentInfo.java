@@ -37,8 +37,10 @@ public class ZNodeTargetPercentInfo implements Serializable {
     //模块
     private String parentChainCode;
     // xwType3Code
+    @TableField(value = "xwType3Code")
     private String xwType3Code;
     // xwType3
+    @TableField(value = "xwType3")
     private String xwType3;
 
 
