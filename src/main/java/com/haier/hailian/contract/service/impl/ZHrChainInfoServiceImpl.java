@@ -342,7 +342,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
                 List<String> modelMinbuList = new ArrayList<>();
                 // 保存链群的目标信息  兼容XwType3版本
-                SaveXwType3 saveXwType3Child = zHrChainInfoDto.getSaveXwType3();
+                SaveXwType3 saveXwType3Child = chain.getSaveXwType3();
                 saveXwType3Child.setLqCode(modelCode);
                 saveXwType3Child.setLqName(modelName);
                 saveXwType3Child.setPtCode(zHrChainInfoDto.getChainPtCode());

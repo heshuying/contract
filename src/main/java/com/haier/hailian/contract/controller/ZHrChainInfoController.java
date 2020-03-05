@@ -148,8 +148,8 @@ public class ZHrChainInfoController {
 
             if(!"1".equals(zHrChainInfoDto.getIsModel())){
                 BigDecimal count = new BigDecimal(0);
-                for (ZNodeTargetPercentInfo zNodeTargetPercentInfo:zHrChainInfoDto.getZNodeTargetPercentInfos()){
-                    count = BigDecimal.valueOf(Double.parseDouble(zNodeTargetPercentInfo.getSharePercent())).add(count);
+                for (XwType3Info xwType3Info:zHrChainInfoDto.getSaveXwType3().getXwType3List()){
+                    count = BigDecimal.valueOf(Double.parseDouble(xwType3Info.getSharePercent())).add(count);
                 }
                 if (count.intValue()>100){
                     return R.error("分享比例不能大于100%");
