@@ -476,7 +476,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         //异步上链
         new Thread(new Runnable(){
             public void run(){
-                chainCommonService.buildContractChain(contractsId);
+                chainCommonService.uploadBigContract(contractsId);
             }
         }).start();
 
