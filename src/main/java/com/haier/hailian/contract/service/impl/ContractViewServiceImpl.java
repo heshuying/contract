@@ -36,6 +36,9 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
     ZContractsProductDao contractsProductDao;
+    @Autowired
+    ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
+
     private static final ExcelUtil.CellHeadField[] Serial_Header = {
             new ExcelUtil.CellHeadField("系列", "serial"),
             new ExcelUtil.CellHeadField("年计划", "yearPlan"),
@@ -424,6 +427,19 @@ public class ContractViewServiceImpl implements ContractViewService {
         }
 
         return resultMap.values();
+    }
+
+    /**
+     * 查询创单抢单type3列表
+     * @param contractId
+     * @return
+     */
+    @Override
+    public List<CDGrabType3> queryCDGrabDataXWType3(String contractId){
+        Map<String,String> paraMap = new HashMap<>();
+        paraMap.put("contractId", contractId);
+
+        return zNodeTargetPercentInfoDao.queryCDGrabDataXWType3(paraMap);
     }
 
     @Override

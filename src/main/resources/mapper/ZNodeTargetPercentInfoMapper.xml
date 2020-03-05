@@ -15,12 +15,14 @@
         <result property="targetLine" column="target_line" jdbcType="VARCHAR"/>
         <result property="sharePercent" column="share_percent" jdbcType="VARCHAR"/>
         <result property="parentChainCode" column="parent_chain_code" jdbcType="VARCHAR"/>
+        <result property="xwType3Code" column="xwType3Code" jdbcType="VARCHAR"/>
+        <result property="xwType3" column="xwType3" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3
         from chain_contract.z_node_target_percent_info
         where id = #{id}
     </select>
@@ -36,7 +38,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="ZNodeTargetPercentInfoMap">
         select
-          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,xwType3Code,xwType3
         from chain_contract.z_node_target_percent_info
         <where>
             <if test="id != null">
@@ -72,14 +74,20 @@
             <if test="parentChainCode != null and parentChainCode != ''">
                 and parent_chain_code = #{parentChainCode}
             </if>
+            <if test="xwType3Code != null and xwType3Code != ''">
+                and xwType3Code = #{xwType3Code}
+            </if>
+            <if test="xwType3 != null and xwType3 != ''">
+                and xwType3 = #{xwType3}
+            </if>
                 and share_percent is not null
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code)
-        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{parentChainCode})
+        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3)
+        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{parentChainCode},#{xwType3Code},#{xwType3})
     </insert>
 
     <!--通过主键修改数据-->
@@ -119,6 +127,12 @@
             <if test="parentChainCode != null and parentChainCode != ''">
                 parent_chain_code = #{parentChainCode},
             </if>
+            <if test="xwType3Code != null and xwType3Code != ''">
+                xwType3Code = #{xwType3Code},
+            </if>
+            <if test="xwType3 != null and xwType3 != ''">
+                xwType3 = #{xwType3},
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -152,7 +166,7 @@
     <!-- 批量插入数据 -->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into z_node_target_percent_info
-        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code)
+        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -166,7 +180,9 @@
             #{item.targetName},
             #{item.targetLine},
             #{item.sharePercent},
-            #{item.parentChainCode}
+            #{item.parentChainCode},
+            #{item.xwType3Code},
+            #{item.xwType3}
             )
         </foreach>
     </insert>
@@ -239,4 +255,86 @@
             where id = #{item.id}
         </foreach>
     </update>
+
+
+    <update id="updateBatchXwType3Nodes">
+        update chain_contract.z_node_target_percent_info
+        <set>
+            <if test="lqCode != null and lqCode != ''">
+                lq_code = #{lqCode},
+            </if>
+            <if test="lqName != null and lqName != ''">
+                lq_name = #{lqName},
+            </if>
+            <if test="nodeCode != null and nodeCode != ''">
+                node_code = #{nodeCode},
+            </if>
+            <if test="nodeName != null and nodeName != ''">
+                node_name = #{nodeName},
+            </if>
+            <if test="xwCode != null and xwCode != ''">
+                xw_code = #{xwCode},
+            </if>
+            <if test="xwName != null and xwName != ''">
+                xw_name = #{xwName},
+            </if>
+            <if test="targetCode != null and targetCode != ''">
+                target_code = #{targetCode},
+            </if>
+            <if test="targetName != null and targetName != ''">
+                target_name = #{targetName},
+            </if>
+            <if test="targetLine != null and targetLine != ''">
+                target_line = #{targetLine},
+            </if>
+            <if test="sharePercent != null and sharePercent != ''">
+                share_percent = #{sharePercent},
+            </if>
+            <if test="parentChainCode != null and parentChainCode != ''">
+                parent_chain_code = #{parentChainCode},
+            </if>
+        </set>
+        where lq_code = #{lqCode} and share_percent is not null and xwType3Code = #{xwType3Code}
+    </update>
+
+
+    <!-- 创单抢单数据-->
+    <select id="queryCDGrabDataXWType3" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabType3">
+        SELECT
+          i.`lq_code`,
+          i.`xwType3Code`,
+          i.`xwType3`
+        FROM
+          z_node_target_percent_info i
+        WHERE i.`lq_code` IN
+          (SELECT
+            chain_code
+          FROM
+            z_contracts
+          WHERE id = 1075)
+          AND i.`share_percent` IS NOT NULL
+        GROUP BY i.`xwType3Code`
+    </select>
+
+    <select id="selectListByXwType3Code" parameterType="map" resultMap="ZNodeTargetPercentInfoMap" >
+        select
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3
+        from chain_contract.z_node_target_percent_info
+        where lq_code = #{lqCode} AND share_percent IS NOT NULL
+        GROUP BY xwType3Code
+    </select>
+
+    <select id="selectChildListByXwType3Code" parameterType="map" resultMap="ZNodeTargetPercentInfoMap" >
+        select
+          id, lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3
+        from chain_contract.z_node_target_percent_info
+        where lq_code = #{lqCode} AND share_percent IS NOT NULL AND parent_chain_code=#{parentChainCode}
+        GROUP BY xwType3Code
+    </select>
+
+
+    <delete id="deleteListByXwType3Code" parameterType="map">
+        delete from chain_contract.z_node_target_percent_info where lq_code = #{lqCode} and xwType3Code=#{xwType3Code} and share_percent IS NOT NULL
+    </delete>
+
 </mapper>

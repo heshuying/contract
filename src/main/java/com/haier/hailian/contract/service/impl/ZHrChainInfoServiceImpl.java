@@ -43,6 +43,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private TargetBasicDao targetBasicDao;
     @Resource
     private ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
+    @Resource
+    private TOdsDictionaryDao tOdsDictionaryDao;
     //hr发版后放开
     @Reference(version = "ehr2.0", registry = "registry2", check = false)
     //@Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -71,13 +73,17 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setId(zHrChainInfo.getId());
         zHrChainInfoDto.setChainName(zHrChainInfo.getChainName());
         zHrChainInfoDto.setChainCode(zHrChainInfo.getChainCode());
+        zHrChainInfoDto.setChainPtCode(zHrChainInfo.getChainPtCode());
         zHrChainInfoDto.setFixedPosition(zHrChainInfo.getFixedPosition());
         zHrChainInfoDto.setZzfxRate(zHrChainInfo.getZzfxRate());
         zHrChainInfoDto.setCdShareRate(zHrChainInfo.getCdShareRate());
         zHrChainInfoDto.setTyShareRate(zHrChainInfo.getTyShareRate());
-        ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
-        zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
-        zHrChainInfoDto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(zNodeTargetPercentInfo));
+        //ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
+        //zNodeTargetPercentInfo.setLqCode(zHrChainInfo.getChainCode());
+        Map parentMap = new HashMap();
+        parentMap.put("lqCode" , zHrChainInfo.getChainCode());
+        List<ZNodeTargetPercentInfo> parentNodes = zNodeTargetPercentInfoDao.selectListByXwType3Code(parentMap);
+        zHrChainInfoDto.setZNodeTargetPercentInfos(parentNodes);
         // 获取子链群信息
         List<ZHrChainInfoDto> dtos = new ArrayList<>();
         ZHrChainInfo exp = new ZHrChainInfo();
@@ -93,10 +99,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             dto.setZzfxRate(fuck.getZzfxRate());
             dto.setCdShareRate(fuck.getCdShareRate());
             dto.setTyShareRate(fuck.getTyShareRate());
-            ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
-            nodeChild.setParentChainCode(zHrChainInfo.getChainCode());
-            nodeChild.setLqCode(fuck.getChainCode());
-            dto.setZNodeTargetPercentInfos(zNodeTargetPercentInfoDao.queryAll(nodeChild));
+//            ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
+//            nodeChild.setParentChainCode(zHrChainInfo.getChainCode());
+//            nodeChild.setLqCode(fuck.getChainCode());
+            Map childMap = new HashMap();
+            childMap.put("lqCode" , fuck.getChainCode());
+            childMap.put("parentChainCode" , zHrChainInfo.getChainCode());
+            List<ZNodeTargetPercentInfo> childNodes = zNodeTargetPercentInfoDao.selectChildListByXwType3Code(childMap);
+            dto.setZNodeTargetPercentInfos(childNodes);
 
             dtos.add(dto);
         }
@@ -157,7 +167,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public boolean deleteById(Integer id) {
         return this.zHrChainInfoDao.deleteById(id) > 0;
     }
-    
+
 
     @Override
     public R validateChainName(ValidateChainNameDTO validateChainNameDTO) {
@@ -236,7 +246,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         // 主链群
         zHrChainInfo.setChainCode(chainCode);
-        zHrChainInfo.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfo.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         zHrChainInfo.setMasterCode(sysUser.getEmpSn());
         zHrChainInfo.setMasterName(sysUser.getEmpName());
         zHrChainInfo.setXwCode(currentUser.getLittleXwCode());
@@ -250,15 +260,20 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDao.insert(zHrChainInfo);
 
         List<String> minbuList = new ArrayList<>();
-        //2.保存链群的目标信息
-        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
-            z.setLqCode(chainCode);
-            z.setLqName(name);
-            minbuList.add(z.getNodeCode());
-            zNodeTargetPercentInfoDao.insert(z);
-        }
+        //2.保存链群的目标信息 兼容XwType3版本
+        SaveXwType3 saveXwType3Parent = zHrChainInfoDto.getSaveXwType3();
+        saveXwType3Parent.setLqCode(chainCode);
+        saveXwType3Parent.setLqName(name);
+        saveXwType3Parent.setPtCode(zHrChainInfoDto.getChainPtCode());
+        minbuList = saveXwType3(saveXwType3Parent);
+//        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
+//            z.setLqCode(chainCode);
+//            z.setLqName(name);
+//            minbuList.add(z.getNodeCode());
+//            zNodeTargetPercentInfoDao.insert(z);
+//        }
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+        List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTY){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(chainCode);
@@ -273,7 +288,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfoDto.setChainCode(chainCode);
         zHrChainInfoDto.setMasterCode(sysUser.getEmpSn());
         zHrChainInfoDto.setMasterName(sysUser.getEmpName());
-        zHrChainInfoDto.setChainPtCode(currentUser.getPtCode());
+        zHrChainInfoDto.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         zHrChainInfoDto.setXwCode(currentUser.getXwCode());
         zHrChainInfoDto.setXwName(currentUser.getXwName());
         zHrChainInfoDto.setChainName(name);
@@ -282,7 +297,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
         if(!zHrChainInfoDto.getIsModel().equals("1")){
-            List<String> codeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),minbuList);
+            List<String> codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
             codeList.add(sysUser.getEmpSn());
             String[] toBeStored = new String[codeList.size()];
             codeList.toArray(toBeStored);
@@ -310,7 +325,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
                 ZHrChainInfo fuck = new ZHrChainInfo();
                 fuck.setChainCode(modelCode);
-                fuck.setChainPtCode(currentUser.getPtCode());
+                fuck.setChainPtCode(zHrChainInfoDto.getChainPtCode());
                 fuck.setMasterCode(sysUser.getEmpSn());
                 fuck.setMasterName(sysUser.getEmpName());
                 fuck.setXwCode(currentUser.getLittleXwCode());
@@ -324,17 +339,22 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 zHrChainInfoDao.insert(fuck);
 
                 List<String> modelMinbuList = new ArrayList<>();
-                // 保存链群的目标信息
-                for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
-                    z.setLqCode(modelCode);
-                    z.setLqName(modelName);
-                    z.setParentChainCode(chainCode);
-                    modelMinbuList.add(z.getNodeCode());
-                    zNodeTargetPercentInfoDao.insert(z);
-                }
+                // 保存链群的目标信息  兼容XwType3版本
+                SaveXwType3 saveXwType3Child = zHrChainInfoDto.getSaveXwType3();
+                saveXwType3Child.setLqCode(modelCode);
+                saveXwType3Child.setLqName(modelName);
+                saveXwType3Child.setPtCode(zHrChainInfoDto.getChainPtCode());
+                modelMinbuList = saveXwType3(saveXwType3Child);
+//                for (ZNodeTargetPercentInfo z:chain.getZNodeTargetPercentInfos()) {
+//                    z.setLqCode(modelCode);
+//                    z.setLqName(modelName);
+//                    z.setParentChainCode(chainCode);
+//                    modelMinbuList.add(z.getNodeCode());
+//                    zNodeTargetPercentInfoDao.insert(z);
+//                }
 
                 //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-                List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+                List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
                 for (TOdsMinbu tOdsMinbu:getIsTYModel){
                     ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
                     zNodeTargetPercentInfo.setLqCode(modelCode);
@@ -348,7 +368,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 }
 
                 //4.新增创建群组，在创建链群的时候创建
-                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
@@ -364,7 +384,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 chain.setChainCode(modelCode);
                 chain.setMasterCode(sysUser.getEmpSn());
                 chain.setMasterName(sysUser.getEmpName());
-                chain.setChainPtCode(currentUser.getPtCode());
+                chain.setChainPtCode(zHrChainInfoDto.getChainPtCode());
                 chain.setXwCode(currentUser.getXwCode());
                 chain.setXwName(currentUser.getXwName());
                 chain.setChainName(modelName);
@@ -382,7 +402,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     }
 
     @Override
-    public List<TOdsMinbu> getMinbuList() {
+    public List<TOdsMinbu> getMinbuList(String ptCode) {
         //1获取当前登陆人的平台信息
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
@@ -394,7 +414,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
         //2获取数据库中这个平台的所有最小单元
 
-        return tOdsMinbuDao.getListByPtCode(currentUser.getPtCode());
+        return tOdsMinbuDao.getListByPtCode(ptCode);
     }
 
     @Override
@@ -516,7 +536,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         ZHrChainInfo fuck = new ZHrChainInfo();
         fuck.setChainCode(modelCode);
-        fuck.setChainPtCode(currentUser.getPtCode());
+        fuck.setChainPtCode(zHrChainInfoDto.getChainPtCode());
         fuck.setMasterCode(sysUser.getEmpSn());
         fuck.setMasterName(sysUser.getEmpName());
         fuck.setXwCode(currentUser.getLittleXwCode());
@@ -530,17 +550,22 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         int change = zHrChainInfoDao.insert(fuck);
 
         List<String> modelMinbuList = new ArrayList<>();
-        // 保存链群的目标信息
-        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
-            z.setLqCode(modelCode);
-            z.setLqName(zHrChainInfoDto.getChainName());
-            z.setParentChainCode(zHrChainInfoDto.getParentCode());
-            modelMinbuList.add(z.getNodeCode());
-            zNodeTargetPercentInfoDao.insert(z);
-        }
+        //2.保存链群的目标信息 兼容XwType3版本
+        SaveXwType3 saveXwType3Parent = zHrChainInfoDto.getSaveXwType3();
+        saveXwType3Parent.setLqCode(modelCode);
+        saveXwType3Parent.setLqName(modelName);
+        saveXwType3Parent.setPtCode(zHrChainInfoDto.getChainPtCode());
+        modelMinbuList = saveXwType3(saveXwType3Parent);
+//        for (ZNodeTargetPercentInfo z:zHrChainInfoDto.getZNodeTargetPercentInfos()) {
+//            z.setLqCode(modelCode);
+//            z.setLqName(zHrChainInfoDto.getChainName());
+//            z.setParentChainCode(zHrChainInfoDto.getParentCode());
+//            modelMinbuList.add(z.getNodeCode());
+//            zNodeTargetPercentInfoDao.insert(z);
+//        }
 
         //这个地方的逻辑是前端保存的时候只对创单进行设置百分比，后台处理的时候要将体验的同时也保存到数据库表中。
-        List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(currentUser.getPtCode());
+        List<TOdsMinbu> getIsTYModel = tOdsMinbuDao.getListByIsTY(zHrChainInfoDto.getChainPtCode());
         for (TOdsMinbu tOdsMinbu:getIsTYModel){
             ZNodeTargetPercentInfo zNodeTargetPercentInfo =new ZNodeTargetPercentInfo();
             zNodeTargetPercentInfo.setLqCode(modelCode);
@@ -554,7 +579,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         //4.新增创建群组，在创建链群的时候创建
-        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(currentUser.getPtCode(),modelMinbuList);
+        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);
@@ -652,6 +677,115 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             }
         }
         return num;
+    }
+
+    @Override
+    public List<TOdsDictionary> getOdsXwType3List() {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        return tOdsDictionaryDao.selectList(new QueryWrapper<TOdsDictionary>()
+                .eq("status" , "1")
+                .eq("Type " , "XWstyle"));
+    }
+
+
+
+    @Override
+    public List<TOdsDictionary> getOtherOdsXwType3List(String chainCode) {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        Map map = new HashMap<>();
+        map.put("chainCode" , chainCode.trim());
+        List<TOdsDictionary> list = tOdsDictionaryDao.getOtherOdsXwType3List(map);
+        return list;
+    }
+
+
+
+    @Override
+    public List<String> saveXwType3(SaveXwType3 saveXwType3) {
+        List<String> minbuList = new ArrayList<>();
+        List<ZNodeTargetPercentInfo> nodes = new ArrayList<>();
+        for(XwType3Info XwType3Info : saveXwType3.getXwType3List()){
+            Map map = new HashMap();
+            map.put("XwType3Code" , "|" + XwType3Info.getXwType3Code() + "|");
+            map.put("ptCode" , saveXwType3.getPtCode());
+            List<TOdsMinbu> minbus = tOdsMinbuDao.getListByXwType3Code(map);
+            for(TOdsMinbu min : minbus){
+                ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
+                zNodeTargetPercentInfo.setLqCode(saveXwType3.getLqCode());
+                zNodeTargetPercentInfo.setLqName(saveXwType3.getLqName());
+                zNodeTargetPercentInfo.setNodeCode(min.getLittleXwCode());
+                zNodeTargetPercentInfo.setNodeName(min.getLittleXwName());
+                zNodeTargetPercentInfo.setXwCode(min.getXwCode());
+                zNodeTargetPercentInfo.setXwName(min.getXwName());
+                zNodeTargetPercentInfo.setSharePercent(XwType3Info.getSharePercent());
+                zNodeTargetPercentInfo.setParentChainCode(saveXwType3.getParentChainCode());
+                zNodeTargetPercentInfo.setXwType3Code(XwType3Info.getXwType3Code());
+                zNodeTargetPercentInfo.setXwType3(XwType3Info.getXwType3());
+                nodes.add(zNodeTargetPercentInfo);
+                minbuList.add(zNodeTargetPercentInfo.getNodeCode());
+            }
+        }
+        if(nodes.size()>0){
+            int num = zNodeTargetPercentInfoDao.insertBatch(nodes);
+        }
+        return minbuList;
+    }
+
+
+    @Override
+    public int delXwType3Nodes(ZNodeTargetPercentInfo zNodeTargetPercentInfo) {
+        int num = zNodeTargetPercentInfoDao.delete(new QueryWrapper<ZNodeTargetPercentInfo>()
+                .eq("lq_code" , zNodeTargetPercentInfo.getLqCode())
+                .eq("xwType3Code" , zNodeTargetPercentInfo.getXwType3Code())
+                .isNotNull("share_percent"));
+        return num;
+    }
+
+
+    @Override
+    public int updateBatchXwType3Nodes(SaveXwType3 saveXwType3) {
+        int num = 0;
+        for(XwType3Info XwType3Info : saveXwType3.getXwType3List()){
+            ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
+            zNodeTargetPercentInfo.setLqCode(saveXwType3.getLqCode());
+            zNodeTargetPercentInfo.setXwType3Code(XwType3Info.getXwType3Code());
+            zNodeTargetPercentInfoDao.updateBatchXwType3Nodes(zNodeTargetPercentInfo);
+            num++ ;
+        }
+        return num;
+    }
+
+
+    @Override
+    public int syncMinbuListByXwType3(SaveXwType3 saveXwType3) {
+        int num = 0;
+
+        // 删除
+        for(XwType3Info XwType3Info : saveXwType3.getXwType3List()){
+            Map map = new HashMap();
+            map.put("lqCode" , saveXwType3.getLqCode());
+            map.put("xwType3Code" , XwType3Info.getXwType3Code());
+            zNodeTargetPercentInfoDao.deleteListByXwType3Code(map);
+        }
+        // 新增
+        List<String> minbuList = saveXwType3(saveXwType3);
+        return minbuList.size();
     }
 
 

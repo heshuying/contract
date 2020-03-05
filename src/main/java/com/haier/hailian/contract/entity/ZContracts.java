@@ -76,6 +76,12 @@ public class ZContracts extends Model<ZContracts> {
     @TableField(exist = false)
     private String joinTimeStr;
 
+    //链群主复核分享比例截止时间
+    private Date checkTime;
+
+    @TableField(exist = false)
+    private String checkTimeStr;
+
     /**
      * 开始时间
      */

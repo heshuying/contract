@@ -36,6 +36,10 @@ public class ZNodeTargetPercentInfo implements Serializable {
     private String sharePercent;
     //模块
     private String parentChainCode;
+    // xwType3Code
+    private String xwType3Code;
+    // xwType3
+    private String xwType3;
 
 
     public Integer getId() {
@@ -132,5 +136,21 @@ public class ZNodeTargetPercentInfo implements Serializable {
 
     public void setParentChainCode(String parentChainCode) {
         this.parentChainCode = parentChainCode;
+    }
+
+    public String getXwType3Code() {
+        return xwType3Code;
+    }
+
+    public void setXwType3Code(String xwType3Code) {
+        this.xwType3Code = xwType3Code;
+    }
+
+    public String getXwType3() {
+        return xwType3;
+    }
+
+    public void setXwType3(String xwType3) {
+        this.xwType3 = xwType3;
     }
 }

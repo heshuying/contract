@@ -41,4 +41,6 @@ public interface TOdsMinbuDao extends BaseMapper<TOdsMinbu> {
     List<TOdsMinbu> getChildOtherListByPtCode(Map map);
 
     List<LittleXWEmpDTO> getLittleXWEmp(Map map);
+
+    List<TOdsMinbu> getListByXwType3Code(Map map);
 }

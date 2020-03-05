@@ -83,5 +83,15 @@ public class ZContractsQuartz {
         zWaringPeriodConfigService.qdWarning();
         log.info("【抢单预警结束】");
     }
+
+    /**
+     * 同步ods_minbu最新数据到node表  一小时一次
+     */
+    @Scheduled(cron="0 0 */1 * * ?")
+    public void quartzMinbuListByXwType3(){
+        log.info("【同步ods_minbu最新数据到node表开始】");
+        zWaringPeriodConfigService.quartzMinbuListByXwType3();
+        log.info("【同步ods_minbu最新数据到node表结束】");
+    }
 }
 

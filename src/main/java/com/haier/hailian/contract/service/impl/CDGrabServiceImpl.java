@@ -78,26 +78,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 }
             }
 
-//            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
-//            if(chainInfos != null && !chainInfos.isEmpty()){
-//                responseDto.setChainName(chainInfos.get(0).getChainName());
-//            }
         }
-
-
-        /*// 分享比例查询
-        List<ZSharePercent> resultList = sharePercentDao.selectList(new QueryWrapper<ZSharePercent>().eq("xw_code", xwCode).eq("period_code", requestDto.getYearMonth()));
-        if(resultList!=null && !resultList.isEmpty()){
-            responseDto.setSharePercent(resultList.get(0).getPercent());
-        }*/
-
-//        List<String> chainCodeList = new ArrayList<>();
-//        List<ZHrChainInfo> chainList = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("xw_code", xwCode));
-//        if(chainList != null && !chainList.isEmpty()){
-//            for(ZHrChainInfo chainInfo : chainList){
-//                chainCodeList.add(chainInfo.getChainCode());
-//            }
-//        }
 
         List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
@@ -107,29 +88,22 @@ public class CDGrabServiceImpl implements CDGrabService {
         paraMap.put("chainCode", contracts.getChainCode());
         List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTargetNew(paraMap);
 
-        // 目标底线查询
-//        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_pt_code", currentUser.getPtcode()).like("role_code", xwCode)
-//                /*.eq("targe_year", requestDto.getYear()).eq("target_month", requestDto.getMonth())*/.in("chain_code", chainCodeList));
-        if(targetList != null && !targetList.isEmpty()){
-            for (CDGrabTargetEntity targetInfo : targetList){
-                CDGrabTargetDto target = new CDGrabTargetDto();
-                target.setTargetName(targetInfo.getTargetName());
-                target.setTargetCode(targetInfo.getTargetCode());
-//                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
-                target.setTargetUnit(targetInfo.getTargetUnit());
-//                target.setTargetTo(targetInfo.getTargetTo());
-                responseDto.getTargetList().add(target);
-                responseDto.setSharePercent(targetInfo.getSharePercent());
-            }
+        if(targetList !=null && !targetList.isEmpty()){
+            responseDto.setSharePercent(targetList.get(0).getSharePercent());
         }
 
-        // 分享比例查询
-//        List<ZNodeTargetPercentInfo> targetPercentInfos = targetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("xw_code", xwCode)
-//                                                           .in("lq_code", chainCodeList));
-//        if(targetPercentInfos != null && !targetPercentInfos.isEmpty()){
-//            responseDto.setSharePercent(targetPercentInfos.get(0).getSharePercent());
+//        if(targetList != null && !targetList.isEmpty()){
+//            for (CDGrabTargetEntity targetInfo : targetList){
+//                CDGrabTargetDto target = new CDGrabTargetDto();
+//                target.setTargetName(targetInfo.getTargetName());
+//                target.setTargetCode(targetInfo.getTargetCode());
+////                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
+//                target.setTargetUnit(targetInfo.getTargetUnit());
+////                target.setTargetTo(targetInfo.getTargetTo());
+//                responseDto.getTargetList().add(target);
+//                responseDto.setSharePercent(targetInfo.getSharePercent());
+//            }
 //        }
-
 
         return responseDto;
     }
