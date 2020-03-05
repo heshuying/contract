@@ -51,8 +51,8 @@
 
     <!-- 创单抢单合约列表xwType3 -->
     <resultMap id="cdGrabResultType3" type="com.haier.hailian.contract.dto.CDGrabDataDTO">
-        <collection property="targetList" column="contractId"  select="getCDGrabResultTargetType3List" />
-        <collection property="planList" column="contractId"  select="getCDGrabResultPlanType3" />
+        <collection property="targetList" column="grabId"  select="getCDGrabResultTargetType3List" />
+        <collection property="planList" column="grabId"  select="getCDGrabResultPlanType3" />
     </resultMap>
     <!-- 创单抢单目标列表xwType3 -->
     <resultMap id="cdGrabResultTargetType3" type="com.haier.hailian.contract.dto.TargetViewDTO">
@@ -63,6 +63,7 @@
 
     <select id="getCDGrabResultType3List" parameterType="map" resultMap="cdGrabResultType3">
         SELECT
+          c.id AS grabId,
           c.id AS contractId,
           c.`org_code` AS nodeCode,
           c.`org_name` AS nodeName,

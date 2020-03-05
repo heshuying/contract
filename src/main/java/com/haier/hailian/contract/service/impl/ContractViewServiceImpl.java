@@ -452,6 +452,16 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
+    public int updateCDSharePercent(String contractId, String sharePercent){
+        ZContracts contracts = contractsDao.selectById(contractId);
+        if(contracts == null){
+            return 0;
+        }
+        contracts.setSharePercent(sharePercent);
+        return contractsDao.updateById(contracts);
+    }
+
+    @Override
     public String getContractSize(String contractId) {
         Integer fact = contractsDao.selectCount(new QueryWrapper<ZContracts>()
                 .eq("parent_id" , contractId)
