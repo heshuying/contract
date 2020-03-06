@@ -60,8 +60,8 @@ public class ExportServiceImpl implements ExportService {
                 if(row.getFirstCellNum() == j){
                     String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
                     String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
-                    String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
-                    if("单元".equals(title1)&&"小微".equals(title2)&&"分享比例（100%）".equals(title3)){
+                    //String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                    if("资源类型".equals(title1)&&"分享比例（100%）".equals(title2)/*&&"分享比例（100%）".equals(title3)*/){
                         continue;
                     }else {
                         throw new RException("请先下载模板，再上传", Constant.CODE_VALIDFAIL);
@@ -71,9 +71,9 @@ public class ExportServiceImpl implements ExportService {
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
                     if(cell != null){
-                        if(y==0) exportChainUnitInfo.setLittleXwName(cell.getStringCellValue());
-                        if(y==1) exportChainUnitInfo.setXwName(cell.getStringCellValue());
-                        if(y==2) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
+                        if(y==0) exportChainUnitInfo.setXwType3(cell.getStringCellValue());
+                        if(y==1) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
+                        //if(y==2) exportChainUnitInfo.setSharePercent(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }
                 }
                 list.add(exportChainUnitInfo);
