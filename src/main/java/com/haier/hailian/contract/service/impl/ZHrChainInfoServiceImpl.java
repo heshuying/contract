@@ -302,7 +302,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
         if(!zHrChainInfoDto.getIsModel().equals("1")){
-            List<String> codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
+            List<String> codeList = new ArrayList<>(); //只有插入了节点才创建群组
+            if(minbuList.size()>0){
+                codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
+            }
             codeList.add(sysUser.getEmpSn());
             String[] toBeStored = new String[codeList.size()];
             codeList.toArray(toBeStored);
@@ -374,7 +377,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 }
 
                 //4.新增创建群组，在创建链群的时候创建
-                List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+                List<String> modelCodeList = new ArrayList<>();
+                if(modelMinbuList.size()>0){
+                    modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+                }
                 modelCodeList.add(sysUser.getEmpSn());
                 String[] modelToBeStored = new String[modelCodeList.size()];
                 modelCodeList.toArray(modelToBeStored);
@@ -587,7 +593,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         }
 
         //4.新增创建群组，在创建链群的时候创建
-        List<String> modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+        List<String> modelCodeList = new ArrayList<>();
+        if(modelMinbuList.size()>0){
+            modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+        }
         modelCodeList.add(sysUser.getEmpSn());
         String[] modelToBeStored = new String[modelCodeList.size()];
         modelCodeList.toArray(modelToBeStored);
