@@ -426,7 +426,7 @@ public class ZHrChainInfoController {
         try {
             List<String> nodes = zHrChainInfoService.saveXwType3(saveXwType3);
             if (nodes.size()==0){
-                return R.error("所选资源类型未匹配到最小作战单元，请去hr系统维护！");
+                return R.error("所选资源类型未匹配到最小作战单元，请到hr系统维护最小作战单元！");
             }
             return R.ok().put("data", nodes);
         } catch (Exception e) {
