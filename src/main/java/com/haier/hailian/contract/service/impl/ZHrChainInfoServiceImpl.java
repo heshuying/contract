@@ -707,9 +707,23 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (currentUser == null || currentUser.getXwCode() == null){
             return null;
         }
-        return tOdsDictionaryDao.selectList(new QueryWrapper<TOdsDictionary>()
+        List<TOdsDictionary> list = tOdsDictionaryDao.selectList(new QueryWrapper<TOdsDictionary>()
                 .eq("status" , "1")
                 .eq("Type " , "XWstyle"));
+
+        List<TOdsDictionary> realList = new ArrayList<>();
+        for(TOdsDictionary ods : list){
+            Map minbuMap = new HashMap();
+            minbuMap.put("XwType3Code" , "|" + ods.getCode() + "|");
+            List<TOdsMinbu> mins = tOdsMinbuDao.getListByXwType3Code(minbuMap);
+            if(mins.size()>0){
+                realList.add(ods);
+            }else{
+                continue;
+            }
+        }
+
+        return realList;
     }
 
 
@@ -728,7 +742,18 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         Map map = new HashMap<>();
         map.put("chainCode" , chainCode.trim());
         List<TOdsDictionary> list = tOdsDictionaryDao.getOtherOdsXwType3List(map);
-        return list;
+        List<TOdsDictionary> realList = new ArrayList<>();
+        for(TOdsDictionary ods : list){
+            Map minbuMap = new HashMap();
+            minbuMap.put("XwType3Code" , "|" + ods.getCode() + "|");
+            List<TOdsMinbu> mins = tOdsMinbuDao.getListByXwType3Code(minbuMap);
+            if(mins.size()>0){
+                realList.add(ods);
+            }else{
+                continue;
+            }
+        }
+        return realList;
     }
 
 
