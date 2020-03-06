@@ -783,6 +783,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             zNodeTargetPercentInfo.setLqCode(saveXwType3.getLqCode());
             zNodeTargetPercentInfo.setXwType3Code(XwType3Info.getXwType3Code());
             zNodeTargetPercentInfo.setSharePercent(XwType3Info.getSharePercent());
+            zNodeTargetPercentInfo.setTypeSharePercent(XwType3Info.getSharePercent());
             zNodeTargetPercentInfoDao.updateBatchXwType3Nodes(zNodeTargetPercentInfo);
             num++ ;
         }

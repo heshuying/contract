@@ -17,6 +17,7 @@
         <result property="parentChainCode" column="parent_chain_code" jdbcType="VARCHAR"/>
         <result property="xwType3Code" column="xwType3Code" jdbcType="VARCHAR"/>
         <result property="xwType3" column="xwType3" jdbcType="VARCHAR"/>
+        <result property="typeSharePercent" column="type_share_percent" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -86,8 +87,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3)
-        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{parentChainCode},#{xwType3Code},#{xwType3})
+        insert into chain_contract.z_node_target_percent_info(lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3,type_share_percent)
+        values (#{lqCode}, #{lqName}, #{nodeCode}, #{nodeName}, #{xwCode}, #{xwName}, #{targetCode}, #{targetName}, #{targetLine}, #{sharePercent},#{parentChainCode},#{xwType3Code},#{xwType3},#{typeSharePercent})
     </insert>
 
     <!--通过主键修改数据-->
@@ -166,7 +167,7 @@
     <!-- 批量插入数据 -->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into z_node_target_percent_info
-        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3)
+        (lq_code, lq_name, node_code, node_name, xw_code, xw_name, target_code, target_name, target_line, share_percent,parent_chain_code,xwType3Code,xwType3,type_share_percent)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -182,7 +183,8 @@
             #{item.sharePercent},
             #{item.parentChainCode},
             #{item.xwType3Code},
-            #{item.xwType3}
+            #{item.xwType3},
+            #{item.sharePercent}
             )
         </foreach>
     </insert>
@@ -292,6 +294,9 @@
             </if>
             <if test="parentChainCode != null and parentChainCode != ''">
                 parent_chain_code = #{parentChainCode},
+            </if>
+            <if test="typeSharePercent != null and typeSharePercent != ''">
+                type_share_percent = #{typeSharePercent},
             </if>
         </set>
         where lq_code = #{lqCode} and share_percent is not null and xwType3Code = #{xwType3Code}

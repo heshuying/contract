@@ -43,6 +43,15 @@ public class ZNodeTargetPercentInfo implements Serializable {
     @TableField(value = "xwType3")
     private String xwType3;
 
+    private String typeSharePercent;
+
+    public String getTypeSharePercent() {
+        return typeSharePercent;
+    }
+
+    public void setTypeSharePercent(String typeSharePercent) {
+        this.typeSharePercent = typeSharePercent;
+    }
 
     public Integer getId() {
         return id;
