@@ -50,5 +50,6 @@
         <if test="endDate != null and endDate != ''">
             and DATE_FORMAT(c.`join_time`,'%Y%m%d') <![CDATA[ <= ]]> #{endDate}
         </if>
+        order by c.id desc
     </select>
 </mapper>
