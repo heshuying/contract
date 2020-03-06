@@ -778,6 +778,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 zNodeTargetPercentInfo.setSharePercent(XwType3Info.getSharePercent());
                 zNodeTargetPercentInfo.setParentChainCode(saveXwType3.getParentChainCode());
                 zNodeTargetPercentInfo.setXwType3Code(XwType3Info.getXwType3Code());
+                zNodeTargetPercentInfo.setTypeSharePercent(XwType3Info.getSharePercent());
                 zNodeTargetPercentInfo.setXwType3(XwType3Info.getXwType3());
                 nodes.add(zNodeTargetPercentInfo);
                 minbuList.add(zNodeTargetPercentInfo.getNodeCode());
