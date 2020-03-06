@@ -82,6 +82,9 @@ public class ZContracts extends Model<ZContracts> {
     @TableField(exist = false)
     private String checkTimeStr;
 
+    // 是否已复核
+    private String isChecked;
+
     /**
      * 开始时间
      */

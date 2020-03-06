@@ -458,14 +458,16 @@ public class ContractViewServiceImpl implements ContractViewService {
         if(contracts == null){
             return 0;
         }
-        List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code", contracts.getChainCode()).eq("node_code", contracts.getOrgCode()));
-        if(nodes != null && !nodes.isEmpty()){
-            for(ZNodeTargetPercentInfo node : nodes){
-                node.setSharePercent(sharePercent);
-                zNodeTargetPercentInfoDao.updateById(node);
-            }
-        }
+        // 不需要同步更新
+//        List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code", contracts.getChainCode()).eq("node_code", contracts.getOrgCode()));
+//        if(nodes != null && !nodes.isEmpty()){
+//            for(ZNodeTargetPercentInfo node : nodes){
+//                node.setSharePercent(sharePercent);
+//                zNodeTargetPercentInfoDao.updateById(node);
+//            }
+//        }
         contracts.setSharePercent(sharePercent);
+        contracts.setIsChecked("1");
         return contractsDao.updateById(contracts);
     }
 
