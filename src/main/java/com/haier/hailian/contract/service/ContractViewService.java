@@ -21,7 +21,7 @@ public interface ContractViewService {
 
     Collection<ContractViewDataCDResponseDTO> getContractViewDataCD(String contractId, String xwName);
 
-    List<CDGrabType3> queryCDGrabDataXWType3(String contractId);
+    List<CDGrabType3> queryCDGrabDataXWType3(String contractId,String keyword);
 
     List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code);
 

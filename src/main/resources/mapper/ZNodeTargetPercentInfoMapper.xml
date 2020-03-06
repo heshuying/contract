@@ -315,6 +315,9 @@
           WHERE id = #{contractId})
           AND i.`share_percent` IS NOT NULL
           AND i.`xwType3Code` IS NOT NULL
+          <if test=" keyword != null and keyword != '' ">
+            AND i.xwType3 LIKE CONCAT('%',#{keyword}, '%')
+          </if>
         GROUP BY i.`xwType3Code`
     </select>
 

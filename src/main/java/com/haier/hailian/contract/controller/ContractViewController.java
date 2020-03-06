@@ -9,9 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @author 19033323
@@ -42,11 +41,16 @@ public class ContractViewController {
     @PostMapping(value = {"/getType3List"})
     @ApiOperation(value = "合约创单数据查询")
     public R getType3List(@RequestBody Map<String,String> paraMap) {
+        String orderStr = "desc";
         if(paraMap.get("contractId") == null){
             return R.error("请求参数错误，有为空的字段");
         }
+        if(!StringUtils.isBlank(paraMap.get("orderStr"))){
+            orderStr = paraMap.get("orderStr");
+        }
+
         int countGrabed = 0;
-        List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(paraMap.get("contractId"));
+        List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(paraMap.get("contractId"), paraMap.get("keyword"));
         if(type3List != null && !type3List.isEmpty()){
             for(CDGrabType3 item : type3List){
                 List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(paraMap.get("contractId"), item.getXwType3Code());
@@ -57,6 +61,31 @@ public class ContractViewController {
                     item.setGrabCount("0");
                 }
             }
+        }
+
+        // 排序
+        if("asc".equalsIgnoreCase(orderStr)){
+            Collections.sort(type3List, new Comparator<CDGrabType3>() {
+                @Override
+                public int compare(CDGrabType3 o1, CDGrabType3 o2) {
+                    if(Integer.parseInt(o2.getGrabCount()) > Integer.parseInt(o1.getGrabCount())){
+                        return -1;
+                    }else{
+                        return 1;
+                    }
+                }
+            });
+        }else if("desc".equalsIgnoreCase(orderStr)){
+            Collections.sort(type3List, new Comparator<CDGrabType3>() {
+                @Override
+                public int compare(CDGrabType3 o1, CDGrabType3 o2) {
+                    if(Integer.parseInt(o2.getGrabCount()) > Integer.parseInt(o1.getGrabCount())){
+                        return 1;
+                    }else{
+                        return -1;
+                    }
+                }
+            });
         }
 
         return R.ok().put("data", type3List).put("grabRate", countGrabed+"/"+type3List.size());

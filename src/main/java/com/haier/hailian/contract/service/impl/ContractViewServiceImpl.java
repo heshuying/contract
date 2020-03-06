@@ -435,9 +435,10 @@ public class ContractViewServiceImpl implements ContractViewService {
      * @return
      */
     @Override
-    public List<CDGrabType3> queryCDGrabDataXWType3(String contractId){
+    public List<CDGrabType3> queryCDGrabDataXWType3(String contractId, String keyword){
         Map<String,String> paraMap = new HashMap<>();
         paraMap.put("contractId", contractId);
+        paraMap.put("keyword", keyword);
 
         return zNodeTargetPercentInfoDao.queryCDGrabDataXWType3(paraMap);
     }
