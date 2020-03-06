@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 @Data
 public class ExportChainUnitInfo {
 
-    private String xwName;
+    //private String xwName;
 
-    private String littleXwName;
+    private String XwType3;
 
     private BigDecimal sharePercent;
 
