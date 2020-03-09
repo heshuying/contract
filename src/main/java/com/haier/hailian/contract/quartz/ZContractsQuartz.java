@@ -1,18 +1,13 @@
 package com.haier.hailian.contract.quartz;
 
-import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
 import com.haier.hailian.contract.service.GrabService;
-import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * Created by 19012964 on 2019/12/26.
@@ -35,6 +30,17 @@ public class ZContractsQuartz {
         log.info("【凌晨1点刷新合约状态任务开始】");
         grabService.refreshContractStatusJob();
         log.info("【凌晨1点刷新合约状态任务结束】");
+    }
+
+    /**
+     * 每天零点刷新抢单状态
+     * 链群主复核时间一过，请抢单更新为8 抢入成功
+     */
+    @Scheduled(cron="0 0 1 * * ?")
+    public void doRefreshGrabStatus(){
+        log.info("【凌晨1点刷新抢单状态任务开始】");
+        grabService.refreshGrabStatus();
+        log.info("【凌晨1点刷新抢单状态任务结束】");
     }
 
 
