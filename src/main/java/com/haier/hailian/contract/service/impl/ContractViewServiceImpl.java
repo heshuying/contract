@@ -5,6 +5,7 @@ import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ContractViewService;
+import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
@@ -15,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +34,8 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZContractsFactorDao factorDao;
     @Autowired
     ZContractsDao contractsDao;
+    @Autowired
+    ZContractsService contractsService;
     @Autowired
     ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
@@ -471,11 +475,13 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
+    @Transactional
     public int updateCDSharePercent(String contractId, String sharePercent){
         ZContracts contracts = contractsDao.selectById(contractId);
         if(contracts == null){
             return 0;
         }
+
         // 不需要同步更新
 //        List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code", contracts.getChainCode()).eq("node_code", contracts.getOrgCode()));
 //        if(nodes != null && !nodes.isEmpty()){
@@ -486,7 +492,120 @@ public class ContractViewServiceImpl implements ContractViewService {
 //        }
         contracts.setSharePercent(sharePercent);
         contracts.setIsChecked("1");
+        this.updateMasterContracts(contracts);
         return contractsDao.updateById(contracts);
+    }
+
+    /**
+     * 更新主合约分享比例
+     * @param contracts
+     */
+    public void updateMasterContracts(ZContracts contracts){
+        if(contracts == null ||  contracts.getParentId() ==0){
+            return;
+        }
+        ZContracts parentContract = contractsDao.selectById(contracts.getParentId());
+        if(parentContract == null || "1".equals(parentContract.getIsChecked())){
+            return;
+        }
+        parentContract.setIsChecked("1");
+        contractsDao.updateById(parentContract);
+
+        if(parentContract.getParentId() == 0){
+            return;
+        }
+
+        parentContract = contractsDao.selectById(parentContract.getParentId());
+        if(parentContract == null || "1".equals(parentContract.getIsChecked())){
+            return;
+        }
+        parentContract.setIsChecked("1");
+        contractsDao.updateById(parentContract);
+    }
+
+    @Override
+    public void updateSharePercentChainMaster(String contractId){
+        // 判断链群主是否复核过
+        ZContracts contracts = contractsDao.selectById(contractId);
+        // 如果已经复核过则不再重新计算
+        if(contracts == null || "1".equals(contracts.getIsChecked())){
+            return;
+        }
+
+        // 重新计算的逻辑
+        // 1、查询子合约列表
+        List<ZContracts> subContracts =  contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", contractId).eq("contract_type", "10"));
+        if(subContracts != null && !subContracts.isEmpty()){
+            // 有子合约
+            for(ZContracts zc : subContracts){
+                // 1、按资源类型分组
+                List<CDGrabType3> type3List =  queryCDGrabDataXWType3(String.valueOf(zc.getId()), "");
+                // 2、循环获取资源类型下面的抢单列表
+                if(type3List != null && !type3List.isEmpty()) {
+                    for (CDGrabType3 item : type3List) {
+                        BigDecimal percent = BigDecimal.ZERO;
+                        List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", String.valueOf(zc.getId()))
+                                .eq("status", "1").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
+                        if(list == null || list.isEmpty()){
+                            continue;
+                        }
+                        percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()));
+                        for(ZContracts c : list){
+                            c.setSharePercent(percent.toString());
+                            c.setIsChecked("1");
+                        }
+                        contractsService.updateBatchById(list);
+                    }
+                }
+                // 3、更新主合约复核状态
+                ZContracts c = new ZContracts();
+                c.setId(zc.getId());
+                c.setIsChecked("1");
+                contractsDao.updateById(c);
+            }
+        }else {
+            // 没有子合约
+            // 1、按资源类型分组
+            List<CDGrabType3> type3List =  queryCDGrabDataXWType3(contractId, "");
+            // 2、循环获取资源类型下面的抢单列表
+            if(type3List != null && !type3List.isEmpty()) {
+                for (CDGrabType3 item : type3List) {
+                    BigDecimal percent = BigDecimal.ZERO;
+                    List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", contractId)
+                            .eq("status", "1").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
+                    if(list == null || list.isEmpty()){
+                        continue;
+                    }
+                    percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()));
+                    for(ZContracts c : list){
+                        c.setSharePercent(percent.toString());
+                        c.setIsChecked("1");
+                    }
+                    contractsService.updateBatchById(list);
+                }
+            }
+
+        }
+
+        // 更新主合约复核状态
+        ZContracts c = new ZContracts();
+        c.setId(Integer.parseInt(contractId));
+        c.setIsChecked("1");
+        contractsDao.updateById(c);
+    }
+
+    /**
+     * 检索需要更新分享比例的举单合约列表
+     * @return
+     */
+    @Override
+    public List<ZContracts> getContractForUpdateSPercent(){
+        List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("contract_type", 10).eq("parent_id", "0")
+                .eq("is_checked", "0").lt("check_time", new Date()));
+        if(list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override

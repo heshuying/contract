@@ -1,10 +1,8 @@
 package com.haier.hailian.contract.quartz;
 
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
-import com.haier.hailian.contract.service.GrabService;
-import com.haier.hailian.contract.service.ZContractsService;
-import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
-import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
+import com.haier.hailian.contract.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 19012964 on 2019/12/26.
@@ -26,6 +25,8 @@ public class ZContractsQuartz {
     private ZReservePlanTeamworkService zReservePlanTeamworkService;
     @Autowired
     private ZWaringPeriodConfigService zWaringPeriodConfigService;
+    @Autowired
+    private ContractViewService contractViewService;
 
     /**
      * 每天零点刷新合约状态
@@ -92,6 +93,25 @@ public class ZContractsQuartz {
         log.info("【同步ods_minbu最新数据到node表开始】");
         zWaringPeriodConfigService.quartzMinbuListByXwType3();
         log.info("【同步ods_minbu最新数据到node表结束】");
+    }
+
+    /**
+     * (每天凌晨1点执行一次)
+     * 链群主复核截止日期之后，链群主未调整过分享比例：定时作业均分分享比例
+     */
+    @Scheduled(cron="0 0 1 * * ?")
+    public void updateSharePercent(){
+        log.info("【链群主复核截止日期之后,定时作业均分分享比例start】");
+        List<ZContracts> list = contractViewService.getContractForUpdateSPercent();
+        if(list == null || list.isEmpty()){
+            return;
+        }
+        log.info("待更新合约个数：" + list.size());
+        for(ZContracts c : list){
+            log.info("开始更新合约id：" + c.getId());
+            contractViewService.updateSharePercentChainMaster(String.valueOf(c.getId()));
+        }
+        log.info("【链群主复核截止日期之后,定时作业均分分享比例end】");
     }
 }
 
