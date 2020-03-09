@@ -18,4 +18,6 @@ public class MeshGrabEntity {
 
     //抢单收入
     private String income;
+    //抢单销量
+    private String sales;
 }

@@ -198,7 +198,8 @@ public class GrabServiceImpl implements GrabService {
         List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
         BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
                 AmountFormat.amtStr2D(m.getIncome())).sum());
-
+        BigDecimal sumSales=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
+                AmountFormat.amtStr2D(m.getSales())).sum());
         //根据目标维度 设置抢单的维度
         List<FactorDto> grabFactors=new ArrayList<>();
         List<FactorDto> e2eFactors=new ArrayList<>();
@@ -224,9 +225,9 @@ public class GrabServiceImpl implements GrabService {
                         .collect(Collectors.toList());
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                            AmountFormat.amtStr2D(m.getSales())).sum());
                     grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .divide(sumSales,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
@@ -239,9 +240,9 @@ public class GrabServiceImpl implements GrabService {
                         .collect(Collectors.toList());
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                            AmountFormat.amtStr2D(m.getSales())).sum());
                     grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .divide(sumSales,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
@@ -254,9 +255,9 @@ public class GrabServiceImpl implements GrabService {
                         .collect(Collectors.toList());
                 if(curr !=null && curr.size()>0){
                     BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getIncome())).sum());
+                            AmountFormat.amtStr2D(m.getSales())).sum());
                     grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(inc,4, RoundingMode.HALF_UP)
+                            .divide(sumSales,4, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal("100")).toString(),2)
                     );
                 }else{
