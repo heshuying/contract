@@ -106,7 +106,7 @@ public class TOdsMinbu extends Model<TOdsMinbu> {
     @TableField("xwType5")
     private String xwType5;
 
-    @TableField("xwType5Code 1创单;2体验")
+    @TableField("xwType5Code")
     private String xwType5Code;
 
     /**
