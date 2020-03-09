@@ -55,6 +55,7 @@ public class ShiroConfig {
         filterMap.put("/zHrChainInfo/getDepVCode", "anon");
         filterMap.put("/zHrChainInfo/updateAllGroupId", "anon");//更新groupId不需要校验
         filterMap.put("/zHrChainInfo/updateChainTYInfo", "anon");//插入体验节点不需要校验
+        filterMap.put("/zHrChainInfo/updateTargetNodesXwType3Code", "anon");//更新xwTypeCode3不需要校验
         filterMap.put("/talk/getA", "anon");
         filterMap.put("/talk/savePlan", "anon");
         filterMap.put("/test/**", "anon");
