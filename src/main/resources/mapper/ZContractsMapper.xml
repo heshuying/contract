@@ -676,28 +676,31 @@
     <select id="selectHomePageContract" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from (  select *
-                from z_contracts
-                where create_code = #{userCode}
-                and status = '1'
-                and contract_type in ('20','30')
-                and (DATE_FORMAT(create_time,'%Y%m')=#{month} or DATE_FORMAT(start_date,'%Y%m')=#{month} or DATE_FORMAT(end_date,'%Y%m')=#{month})
+        from (  select t.id,t.parent_id,t.contract_name,t.contract_type,p.STATUS,p.share_space,
+                t.chain_code,t.region_code,t.join_time,t.start_date,t.end_date,t.xiaowei_code,
+                t.create_code,t.create_name,t.create_time,t.org_code,t.org_name,t.org_type,
+                t.share_percent,t.group_id,t.open_valid,t.check_time,t.is_checked
+                from z_contracts t
+                LEFT JOIN z_contracts p
+                on t.parent_id=p.id
+                where t.create_code = #{userCode}
+                and t.status in ('1','8')
+                and t.contract_type in ('20','30')
              UNION all (
                 select *
                 from z_contracts c
                 where create_code = #{userCode}
                 and contract_type='10'
-                and (DATE_FORMAT(create_time,'%Y%m')=#{month} or DATE_FORMAT(start_date,'%Y%m')=#{month} or DATE_FORMAT(end_date,'%Y%m')=#{month})
                 and not EXISTS (
                     select 1
                     from z_contracts
                     where create_code = #{userCode}
-                    and status = '1'
+                    and status in ('1','8')
                     and contract_type in ('20','30')
                     and parent_id = c.id
                 )
         )) a
-        ORDER BY a.create_time DESC
+        ORDER BY a.start_date DESC
     </select>
 
 

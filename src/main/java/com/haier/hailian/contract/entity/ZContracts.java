@@ -135,7 +135,8 @@ public class ZContracts extends Model<ZContracts> {
     private String status2;//0 不可优化 1.可优化
     @TableField(exist = false)
     private String status3;//0 不可撤销 1.可撤销
-
+    @TableField(exist = false)
+    private String status4;//0 不可复核 1 可复核
     private String sharePercent;
 
     private String groupId;
