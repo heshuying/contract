@@ -587,7 +587,7 @@
             and contract_name like CONCAT(CONCAT('%', #{name}), '%')
         </if>
         and not EXISTS (select 1 from z_contracts where
-        parent_id=base.id and contract_type='20' and status=1 and org_code=#{loginBuCode}
+        parent_id=base.id and contract_type='20' and status in('1','8') and org_code=#{loginBuCode}
         )
         and not exists(select 1 from z_contracts where
         parent_id=base.id and contract_type='10')
@@ -601,7 +601,7 @@
         zc.contract_name, zc.create_name
         from z_contracts base
         join z_contracts zc on base.parent_id=zc.id
-        where base.contract_type='20' and base.status='1'
+        where base.contract_type='20' and base.status in('1','8')
         and base.create_code=#{empSn}
         <if test=" startDate != null and startDate != '' ">
             and DATE_FORMAT(base.start_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d')

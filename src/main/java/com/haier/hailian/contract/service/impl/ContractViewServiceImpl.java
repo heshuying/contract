@@ -141,17 +141,35 @@ public class ContractViewServiceImpl implements ContractViewService {
                 subContract.setChainName(chain.getChainName());
             }
 
-            String rate = getContractSize(subId);
-            subContract.setCountCD(rate);
+            // 计算体验个数
             Integer grabSize = selectContractsViewForTYCount(subId);
             Integer size = getContractSize2(subId);
             subContract.setCountTY(grabSize + "/" + size);
+
+            // 计算爆款个数
             List<ContractSerialDto> list = staticSerial(contract.getId());
             if (list == null || list.isEmpty()){
                 subContract.setCountBK("0");
             }else{
                 subContract.setCountBK(String.valueOf(list.size()));
             }
+
+            // 计算创单个数
+            int countGrabed = 0;
+            List<CDGrabType3> type3List = this.queryCDGrabDataXWType3(subId, "");
+            if(type3List != null && !type3List.isEmpty()){
+                for(CDGrabType3 item : type3List){
+                    List<CDGrabDataDTO> grabList = this.queryGrabListXWType3(subId, item.getXwType3Code());
+                    if(grabList != null && !grabList.isEmpty()){
+                        item.setGrabCount(String.valueOf(grabList.size()));
+                        countGrabed++;
+                    }else{
+                        item.setGrabCount("0");
+                    }
+                }
+            }
+            subContract.setCountCD(countGrabed+"/"+type3List.size());
+
             subList.add(subContract);
         }
         return subList;

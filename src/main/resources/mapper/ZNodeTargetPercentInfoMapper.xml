@@ -184,7 +184,7 @@
             #{item.parentChainCode},
             #{item.xwType3Code},
             #{item.xwType3},
-            #{item.sharePercent}
+            #{item.typeSharePercent}
             )
         </foreach>
     </insert>
