@@ -43,6 +43,7 @@
         <result column="wg_code" property="meshCode" />
         <result column="wg_name" property="meshName" />
         <result column="income" property="income" />
+        <result column="sales" property="sales" />
         <result column="product_code" property="productCode" />
         <result column="product_stru" property="productStru" />
     </resultMap>
@@ -83,7 +84,7 @@
     <!--查询网格E2E收入-->
     <select id="queryMeshE2EIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select mr.first_region_code as 'wg_code',mr.first_region_name as 'wg_name', sum(sales_amount) as 'income'
+        select mr.first_region_code as 'wg_code',mr.first_region_name as 'wg_name', sum(sales_amount) as 'income',0 as 'sales'
         FROM month_retail mr
         where chain_code=#{chainCode} and trade_code=#{regionCode}
         and mr.schedule_year=#{year} and mr.schedule_month IN
@@ -96,7 +97,7 @@
     <!--查询网格抢单收入-->
     <select id="queryMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select wg_code, wg_name, is_gzd as 'product_stru', sum(order_num) as 'income'
+        select wg_code, wg_name, is_gzd as 'product_stru', sum(order_amt) as 'income',sum(order_num) as 'sales'
         FROM month_chain_group_order
         where chain_code=#{chainCode} and trade_code=#{regionCode} and year=#{year} and month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
@@ -108,7 +109,7 @@
     <!--查询网格抢单收入按型号汇总-->
     <select id="sumStruMeshGrabIncome" parameterType="com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto"
             resultMap="wgGrabIncomeMapper" >
-        select is_gzd as 'product_stru', sum(order_num) as 'income'
+        select is_gzd as 'product_stru', sum(order_amt) as 'income',sum(order_num) as 'sales'
         FROM month_chain_group_order
         where chain_code=#{chainCode} and trade_code=#{regionCode} and year=#{year} and month IN
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
