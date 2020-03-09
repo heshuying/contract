@@ -28,4 +28,8 @@ public class QueryContractListDTO {
 
     private Integer parentId;
 
+    private Double startShare;
+
+    private Double endShare;
+
 }

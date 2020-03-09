@@ -36,7 +36,7 @@ public class ZContractsQuartz {
      * 每天零点刷新抢单状态
      * 链群主复核时间一过，请抢单更新为8 抢入成功
      */
-    @Scheduled(cron="0 30 1 * * ?")
+    @Scheduled(cron="0 0 1 * * ?")
     public void doRefreshGrabStatus(){
         log.info("【凌晨1点刷新抢单状态任务开始】");
         grabService.refreshGrabStatus();
