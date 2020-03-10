@@ -32,4 +32,6 @@ public class QueryContractListDTO {
 
     private Double endShare;
 
+    private String paixu;//1.分享额升序  2.分享额降序 3.合约开始升序 4 合约开始降序
+
 }

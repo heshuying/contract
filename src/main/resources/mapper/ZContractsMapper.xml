@@ -174,7 +174,21 @@
                 and parent_id = #{parentId}
             </if>
             and contract_type='10'
-            order by id desc
+            <if test=' paixu != null and paixu == "1" '>
+                order by share_space ASC
+            </if>
+            <if test=' paixu != null and paixu == "2" '>
+                order by share_space DESC
+            </if>
+            <if test=' paixu != null and paixu == "3" '>
+                order by  start_date ASC
+            </if>
+            <if test=' paixu != null and paixu == "4" '>
+                order by start_date DESC
+            </if>
+            <if test=" paixu == null ">
+                order by id desc
+            </if>
         </where>
     </select>
 
@@ -214,7 +228,21 @@
             and t.create_code = #{userCode}
             and t.status in ('1','8')
             and t.contract_type = '30'
-            order by t.id desc
+            <if test=' paixu != null and paixu == "1" '>
+                order by p.share_space ASC
+            </if>
+            <if test=' paixu != null and paixu == "2" '>
+                order by p.share_space DESC
+            </if>
+            <if test=' paixu != null and paixu == "3" '>
+                order by  p.start_date ASC
+            </if>
+            <if test=' paixu != null and paixu == "4" '>
+                order by p.start_date DESC
+            </if>
+            <if test=" paixu == null ">
+                order by t.id desc
+            </if>
         </where>
     </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
@@ -255,7 +283,21 @@
             parent_id=base.id and contract_type='10'
             )
             and contract_type='10' and status = '0'
-            order by id desc
+            <if test=' paixu != null and paixu == "1" '>
+                order by share_space ASC
+            </if>
+            <if test=' paixu != null and paixu == "2" '>
+                order by share_space DESC
+            </if>
+            <if test=' paixu != null and paixu == "3" '>
+                order by  start_date ASC
+            </if>
+            <if test=' paixu != null and paixu == "4" '>
+                order by start_date DESC
+            </if>
+            <if test=" paixu == null ">
+                order by id desc
+            </if>
         </where>
     </select>
     <select id="selectKickedOutContract" resultMap="BaseResultMap">
