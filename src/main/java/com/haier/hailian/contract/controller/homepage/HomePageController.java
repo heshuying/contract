@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.controller.homepage;
 
+import com.haier.hailian.contract.dto.ContractsShareSpaceInfo;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
@@ -89,4 +90,18 @@ public class HomePageController {
             return R.error("获取：" + e.getMessage());
         }
     }
+
+
+    @PostMapping(value = {"/updateContractsShareSpace"})
+    @ApiOperation(value = "批量更新合约增值空间")
+    public R updateContractsShareSpace(@RequestBody List<ContractsShareSpaceInfo> contractsShareSpaceInfos) {
+        try{
+            int num = homePageService.updateContractsShareSpace(contractsShareSpaceInfos);
+            return R.ok().put("data",num);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
 }

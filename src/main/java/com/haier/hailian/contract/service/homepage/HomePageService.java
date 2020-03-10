@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.service.homepage;
 
+import com.haier.hailian.contract.dto.ContractsShareSpaceInfo;
 import com.haier.hailian.contract.dto.homepage.*;
 
 import java.util.List;
@@ -34,4 +35,10 @@ public interface HomePageService {
      * @return
      */
     List<ChainDataInfo> getChainData();
+
+    /**
+     * @param contractsShareSpaceInfos
+     * @return
+     */
+    int updateContractsShareSpace(List<ContractsShareSpaceInfo> contractsShareSpaceInfos);
 }
