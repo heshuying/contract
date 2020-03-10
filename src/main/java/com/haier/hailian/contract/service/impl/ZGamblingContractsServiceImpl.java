@@ -202,7 +202,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 }else {
                     zContracts.setStatus2("1");
                 }
-                if(zContracts.getCheckTime().after(new Date())){
+                if(null != zContracts.getCheckTime() && zContracts.getCheckTime().after(new Date())){
                     zContracts.setStatus4("1");
                 }else {
                     zContracts.setStatus4("0");
