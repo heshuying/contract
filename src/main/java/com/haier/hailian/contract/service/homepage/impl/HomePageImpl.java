@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service.homepage.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
+import com.haier.hailian.contract.dto.ContractsShareSpaceInfo;
 import com.haier.hailian.contract.dto.grab.PlanInfoDto;
 import com.haier.hailian.contract.dto.homepage.*;
 import com.haier.hailian.contract.entity.ZContracts;
@@ -246,6 +247,19 @@ public class HomePageImpl implements HomePageService {
             list.add(chainDataInfo);
         }
         return list;
+    }
+
+    @Override
+    public int updateContractsShareSpace(List<ContractsShareSpaceInfo> contractsShareSpaceInfos) {
+        int num = 0;
+        for(ContractsShareSpaceInfo contractsShareSpaceInfo : contractsShareSpaceInfos){
+            ZContracts zContracts = new ZContracts();
+            zContracts.setId(contractsShareSpaceInfo.getContractId());
+            zContracts.setShareSpace(contractsShareSpaceInfo.getShareSpace());
+            zContractsDao.updateById(zContracts);
+            num = num + 1;
+        }
+        return num;
     }
 
 
