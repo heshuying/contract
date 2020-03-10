@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -96,6 +98,9 @@ public class SysUser extends Model<SysUser> {
      * 作为乙方表达式
      */
     private String yiExpression;
+
+    private Date createTime;
+
 
 
     @Override

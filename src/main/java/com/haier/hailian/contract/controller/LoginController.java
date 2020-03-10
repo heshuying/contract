@@ -8,6 +8,7 @@ import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.LoginMagicDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.dto.RegisterDto;
 import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
@@ -32,6 +33,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,6 +118,19 @@ public class LoginController {
     @ApiOperation(value = "没权限403")
     public ResponseEntity forbidden() {
         return new ResponseEntity(R.error(Constant.CODE_FORBIDDEN,Constant.MSG_FORBIDDEN), HttpStatus.FORBIDDEN);
+    }
+
+    @GetMapping(value = "/hasCellphone")
+    @ApiOperation(value = "判断手机号是否存在,true-存在；false-不存在")
+    public R hasCellphone(@RequestParam String cellphone) {
+        boolean exists=hacLoginService.hasCellphone(cellphone);
+        return R.ok().put("data",exists);
+    }
+
+    @PostMapping(value = "/register")
+    @ApiOperation(value = "手机号注册")
+    public R register(@RequestBody RegisterDto dto) {
+        return hacLoginService.register(dto);
     }
 
     @PostMapping(value = {"/ihaierLogin"})

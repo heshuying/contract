@@ -21,6 +21,9 @@ public class Constant {
     public static String CODE_DATA_NOTFOUND= "404001";
     public static String MSG_DATA_NOTFOUND= "数据不存在";
 
+    public static String CODE_DATA_FOUND= "404003";
+    public static String MSG_DATA_FOUND= "数据已存在";
+
     public static String CODE_NO_MINBU= "404002";
     public static String MSG_NO_MINBU= "当前列表无法查看";
 
