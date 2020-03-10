@@ -545,7 +545,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                     for (CDGrabType3 item : type3List) {
                         BigDecimal percent = BigDecimal.ZERO;
                         List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", String.valueOf(zc.getId()))
-                                .eq("status", "1").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
+                                .in("status", "1", "8").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
                         if(list == null || list.isEmpty()){
                             continue;
                         }
@@ -572,7 +572,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                 for (CDGrabType3 item : type3List) {
                     BigDecimal percent = BigDecimal.ZERO;
                     List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", contractId)
-                            .eq("status", "1").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
+                            .in("status", "1","8").eq("contract_type", 30).like("org_type", "|" + item.getXwType3Code() + "|"));
                     if(list == null || list.isEmpty()){
                         continue;
                     }
