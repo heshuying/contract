@@ -40,7 +40,7 @@
             ON xp.CONTRACT_ID = c.id
           JOIN z_hr_chain_info ch
             ON c.`chain_code` = ch.`chain_code`
-        WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` = 1
+        WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` in ('1','8')
         <if test="keyword != null and keyword != ''">
             and (ch.`chain_name` like "%"#{keyword}"%" or ch.master_name like "%"#{keyword}"%")
         </if>

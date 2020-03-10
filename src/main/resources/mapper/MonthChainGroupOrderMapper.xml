@@ -134,7 +134,7 @@
         max(case zcf.factor_code when 'T03001' then zcf.factor_value else 0 end) 'highPer'
         from z_contracts zc
           join z_contracts_factor zcf on zc.id=zcf.contract_id
-        where zc.parent_id=#{contractId} and zc.contract_type='20' and factor_type in('01','02') and zc.status=1
+        where zc.parent_id=#{contractId} and zc.contract_type='20' and factor_type in('01','02') and zc.status in ('1','8')
         GROUP BY zcf.contract_id,zcf.factor_type
           )base
         group by contract_id) fac
@@ -149,7 +149,7 @@
     from  z_contracts zc
     join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
     join z_contracts_factor zcf on zc.id=zcf.contract_id
-    where zc.parent_id=#{contractId} and zc.contract_type='30'  and zc.status=1
+    where zc.parent_id=#{contractId} and zc.contract_type='30'  and zc.status in ('1','8')
 
 </select>
 

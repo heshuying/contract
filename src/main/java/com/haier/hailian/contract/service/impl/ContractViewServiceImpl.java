@@ -613,7 +613,7 @@ public class ContractViewServiceImpl implements ContractViewService {
         Integer fact = contractsDao.selectCount(new QueryWrapper<ZContracts>()
                 .eq("parent_id" , contractId)
                 .eq("contract_type" , "30")
-                .eq("status", "1"));
+                .in("status", "1", "8"));
         Integer target = contractsDao.getContractSize(contractId);
         return fact + "/" + target;
     }

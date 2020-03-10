@@ -74,7 +74,7 @@
           z_contracts c
           JOIN sys_xiaowei_ehr e ON c.`xiaowei_code` = e.`xwCode`
         WHERE c.parent_id = #{contractId}
-          AND c.`status` = 1
+          AND c.`status` in ('1','8')
           AND c.`contract_type` = 30
           AND c.`org_type` LIKE CONCAT('%|',#{type3Code}, '|%');
     </select>
@@ -377,7 +377,7 @@
               JOIN z_contracts_factor cf
                 ON cf.`contract_id` = zc.`id`
             WHERE zc.parent_id = #{contractId}
-              AND zc.`status` = '1'
+              AND zc.`status` in ('1','8')
               AND zc.contract_type = '30') t2
             ON node.`node_code` = t2.org_code
         <where>
@@ -411,7 +411,7 @@
             ifnull(count(t1.id),0)
           FROM
             z_contracts t1
-          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND t1.`parent_id` = #{contractId}
+          WHERE t1.contract_type = '20' AND t1.`status` in ('1', '8') AND t1.`parent_id` = #{contractId}
     </select>
 
     <select id="selectContractsViewForTYNew" parameterType="map" resultMap="TYResultMap">
@@ -454,7 +454,7 @@
               FROM
                 z_contracts t1
               WHERE t1.contract_type = '20'
-                AND t1.`status` = '1'
+                AND t1.`status` in ('1','8')
                 AND t1.`parent_id` = #{contractId})
             ORDER BY CONVERT(cf.`factor_value`,DECIMAL) DESC)
             UNION
@@ -483,7 +483,7 @@
               FROM
                 z_contracts t1
               WHERE t1.contract_type = '20'
-                AND t1.`status` = '1'
+                AND t1.`status` in ('1','8')
                 AND t1.`xiaowei_code` = node.xw_code
                 AND t1.`parent_id` = #{contractId}))
           ) t
@@ -578,7 +578,7 @@
             t1.id
           FROM
             z_contracts t1
-          WHERE t1.contract_type = '20' AND t1.`status` = '1' AND (t1.`parent_id` = #{contractId} OR t1.`parent_id` IN (SELECT t2.id FROM z_contracts t2 WHERE t2.`parent_id` = #{contractId} AND t2.contract_type = '10')))
+          WHERE t1.contract_type = '20' AND t1.`status` in ('1', '8') AND (t1.`parent_id` = #{contractId} OR t1.`parent_id` IN (SELECT t2.id FROM z_contracts t2 WHERE t2.`parent_id` = #{contractId} AND t2.contract_type = '10')))
            GROUP BY factor_code
     </select>
 
