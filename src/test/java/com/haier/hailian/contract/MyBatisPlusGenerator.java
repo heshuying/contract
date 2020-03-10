@@ -29,7 +29,7 @@ public class MyBatisPlusGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D://codegen");
+        gc.setOutputDir("D://");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);
         gc.setEnableCache(false);// XML 二级缓存
@@ -62,7 +62,7 @@ public class MyBatisPlusGenerator {
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
 
-        strategy.setInclude(new String[]{"v_jdxp"}); // 排除生成的表，与setInclude二选一配置
+        strategy.setInclude(new String[]{"sys_user","sys_msg"}); // 排除生成的表，与setInclude二选一配置
         mpg.setStrategy(strategy);
 
         // 包配置
