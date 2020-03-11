@@ -568,6 +568,11 @@ public class ContractViewServiceImpl implements ContractViewService {
                         for(ZContracts c : list){
                             c.setSharePercent(percent.toString());
                             c.setIsChecked("1");
+                            CDGrabInfoSaveRequestDto dto = new CDGrabInfoSaveRequestDto();
+                            dto.setContractId(c.getParentId());
+                            dto.setSharePercent(percent.toString());
+                            BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
+                            c.setShareSpace(shareSpace);
                         }
                         contractsService.updateBatchById(list);
                     }
@@ -595,6 +600,11 @@ public class ContractViewServiceImpl implements ContractViewService {
                     for(ZContracts c : list){
                         c.setSharePercent(percent.toString());
                         c.setIsChecked("1");
+                        CDGrabInfoSaveRequestDto dto = new CDGrabInfoSaveRequestDto();
+                        dto.setContractId(c.getParentId());
+                        dto.setSharePercent(percent.toString());
+                        BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
+                        c.setShareSpace(shareSpace);
                     }
                     contractsService.updateBatchById(list);
                 }
