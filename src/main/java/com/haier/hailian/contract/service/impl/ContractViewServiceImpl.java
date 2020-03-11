@@ -511,6 +511,36 @@ public class ContractViewServiceImpl implements ContractViewService {
 
     }
 
+    @Override
+    public void updateCDShareSpace(String contractId){
+        ZContracts contracts = contractsDao.selectById(contractId);
+        if(contracts == null){
+            return;
+        }
+
+        List<ZContracts> list = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id", contractId).eq("contract_type","30").in("status","1","8"));
+
+        // 不需要同步更新
+//        List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code", contracts.getChainCode()).eq("node_code", contracts.getOrgCode()));
+//        if(nodes != null && !nodes.isEmpty()){
+//            for(ZNodeTargetPercentInfo node : nodes){
+//                node.setSharePercent(sharePercent);
+//                zNodeTargetPercentInfoDao.updateById(node);
+//            }
+//        }
+
+        // 重新计算分享筹并更新复核状态
+        for(ZContracts c : list){
+            CDGrabInfoSaveRequestDto dto = new CDGrabInfoSaveRequestDto();
+            dto.setContractId(c.getParentId());
+            dto.setSharePercent(c.getSharePercent());
+            BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
+            c.setShareSpace(shareSpace);
+        }
+        contractsService.updateBatchById(list);
+
+    }
+
     /**
      * 更新主合约分享比例
      * @param contracts

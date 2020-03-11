@@ -28,6 +28,8 @@ public interface ContractViewService {
 
     void updateCDSharePercent(String contractId, String sharePercent);
 
+    void updateCDShareSpace(String contractId);
+
     void updateSharePercentChainMaster(String contractId);
 
     List<ZContracts> getContractForUpdateSPercent();
