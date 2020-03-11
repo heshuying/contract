@@ -26,7 +26,7 @@ public interface ContractViewService {
 
     List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code);
 
-    int updateCDSharePercent(String contractId, String sharePercent);
+    void updateCDSharePercent(String contractId, String sharePercent);
 
     void updateSharePercentChainMaster(String contractId);
 

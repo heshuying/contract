@@ -3,13 +3,16 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.dto.grab.CDGrabInfoSaveRequestDto;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ContractViewService;
+import com.haier.hailian.contract.service.IncrementService;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.type.BigDecimalTypeHandler;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +45,8 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZContractsProductDao contractsProductDao;
     @Autowired
     ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
+    @Autowired
+    IncrementService incrementService;
 
     private static final ExcelUtil.CellHeadField[] Serial_Header = {
             new ExcelUtil.CellHeadField("系列", "serial"),
@@ -476,10 +481,10 @@ public class ContractViewServiceImpl implements ContractViewService {
 
     @Override
     @Transactional
-    public int updateCDSharePercent(String contractId, String sharePercent){
+    public void updateCDSharePercent(String contractId, String sharePercent){
         ZContracts contracts = contractsDao.selectById(contractId);
         if(contracts == null){
-            return 0;
+            return;
         }
 
         // 不需要同步更新
@@ -490,10 +495,20 @@ public class ContractViewServiceImpl implements ContractViewService {
 //                zNodeTargetPercentInfoDao.updateById(node);
 //            }
 //        }
+
+        // 重新计算分享筹并更新复核状态
+        CDGrabInfoSaveRequestDto dto = new CDGrabInfoSaveRequestDto();
+        dto.setContractId(contracts.getParentId());
+        dto.setSharePercent(sharePercent);
+        BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
+        contracts.setShareSpace(shareSpace);
         contracts.setSharePercent(sharePercent);
         contracts.setIsChecked("1");
+        contractsDao.updateById(contracts);
+
+        // 更新主合约复核状态
         this.updateMasterContracts(contracts);
-        return contractsDao.updateById(contracts);
+
     }
 
     /**
