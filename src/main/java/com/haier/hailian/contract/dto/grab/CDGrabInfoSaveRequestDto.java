@@ -21,6 +21,10 @@ public class CDGrabInfoSaveRequestDto {
     private String sharePercent;
     @ApiModelProperty(value="达成目标预计分享酬",name="达成目标预计分享酬",example="3000")
     private String targetShareMoney;
+    @ApiModelProperty(value="xwType3编码",name="xwType3编码")
+    private String xwType3Code;
+    @ApiModelProperty(value="xwType3名字",name="xwType3名字")
+    private String xwType3;
 //    @ApiModelProperty(value="链群目标",name="链群目标",example="400")
 //    private BigDecimal chainGoal;
 //    @ApiModelProperty(value="链群抢单目标",name="链群抢单目标",example="450")
