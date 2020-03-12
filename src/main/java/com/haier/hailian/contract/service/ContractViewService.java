@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.entity.ZContracts;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +26,13 @@ public interface ContractViewService {
 
     List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code);
 
-    int updateCDSharePercent(String contractId, String sharePercent);
+    void updateCDSharePercent(String contractId, String sharePercent);
+
+    void updateCDShareSpace(String contractId);
+
+    void updateSharePercentChainMaster(String contractId);
+
+    List<ZContracts> getContractForUpdateSPercent();
 
     String getContractSize(String contractId);
 

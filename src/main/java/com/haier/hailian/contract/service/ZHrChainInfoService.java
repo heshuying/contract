@@ -163,6 +163,8 @@ public interface ZHrChainInfoService {
 
     int updateChainTYInfo();
 
+    int updateTargetNodesXwType3Code();
+
     List<TOdsDictionary> getOdsXwType3List();
 
     List<TOdsDictionary> getOtherOdsXwType3List(String chainCode);

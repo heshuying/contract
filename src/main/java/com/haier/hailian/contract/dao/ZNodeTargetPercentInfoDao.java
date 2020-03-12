@@ -2,6 +2,7 @@ package com.haier.hailian.contract.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.dto.CDGrabType3;
+import com.haier.hailian.contract.dto.CDGrabType3DTO;
 import com.haier.hailian.contract.entity.CDGrabTargetEntity;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import org.apache.ibatis.annotations.Param;
@@ -96,4 +97,6 @@ public interface ZNodeTargetPercentInfoDao extends BaseMapper<ZNodeTargetPercent
     List<ZNodeTargetPercentInfo> selectChildListByXwType3Code(Map<String,Object> map);
 
     int deleteListByXwType3Code(Map<String,Object> map);
+
+    List<CDGrabType3DTO> getCDGrabType3List(Map<String,Object> map);
 }

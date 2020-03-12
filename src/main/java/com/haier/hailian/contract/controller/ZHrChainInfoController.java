@@ -388,6 +388,19 @@ public class ZHrChainInfoController {
     }
 
 
+    @GetMapping(value = {"/updateTargetNodesXwType3Code"})
+    @ApiOperation(value = "更新node表XwType3字段")
+    public R updateTargetNodesXwType3Code() {
+        try {
+            int num = zHrChainInfoService.updateTargetNodesXwType3Code();
+            return R.ok().put("data",num);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.updateTargetNodesXwType3Code,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
     @PostMapping(value = {"/getOdsXwType3List"})
     @ApiOperation(value = "查询最小作战单元类型  xwType3")
     public R getOdsXwType3List() {
