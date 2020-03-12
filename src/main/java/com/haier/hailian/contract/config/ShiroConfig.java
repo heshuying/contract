@@ -48,7 +48,8 @@ public class ShiroConfig {
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
         filterMap.put("/register", "anon");
-        filterMap.put("/sendSMS", "anon");
+        filterMap.put("/hasCellphone", "anon");
+        filterMap.put("/sms/sendSMS", "anon");
         filterMap.put("/loginMagic", "anon");
         filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/appStatistic", "anon");

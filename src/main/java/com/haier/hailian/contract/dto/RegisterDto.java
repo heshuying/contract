@@ -9,4 +9,5 @@ import lombok.Data;
 public class RegisterDto {
     private String cellphone;
     private String password;
+    private String validecode;
 }

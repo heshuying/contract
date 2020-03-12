@@ -14,6 +14,8 @@ public class SMSConstant {
     }
 
     public static  int SMS_Random_Length=6;
+    public static  int SMS_Invalid_Time=10;//十分钟
+
 
     /**
      * 通知下游公司短信模版

@@ -11,15 +11,21 @@ import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.RegisterDto;
 import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.SysMsg;
 import com.haier.hailian.contract.entity.SysUser;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.AppStatisticService;
 import com.haier.hailian.contract.service.HacLoginService;
+import com.haier.hailian.contract.service.SendMessageService;
+import com.haier.hailian.contract.service.SysMsgService;
 import com.haier.hailian.contract.service.SysUserService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.Md5Util;
+import com.haier.hailian.contract.util.SMSConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +38,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 19012964 on 2019/12/17.
@@ -49,6 +56,8 @@ public class HacLoginServiceImpl implements HacLoginService{
     private AppStatisticService appStatisticService;
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysMsgService sysMsgService;
 
     private Gson gson=new Gson();
 
@@ -112,10 +121,26 @@ public class HacLoginServiceImpl implements HacLoginService{
     @Override
     public R register(RegisterDto dto) {
         if(dto==null){
-            return R.error();
+            throw new RException(Constant.MSG_VALIDFAIL, Constant.CODE_VALIDFAIL);
         }
         if(hasCellphone(dto.getCellphone())){
             return R.error(Constant.CODE_DATA_FOUND,"手机号"+Constant.MSG_DATA_FOUND);
+        }
+        //查询验证码
+        List<SysMsg> validCodes=sysMsgService.list(new QueryWrapper<SysMsg>()
+            .eq("cellphone",dto.getCellphone())
+            .eq("template", SMSConstant.SmsBizType.Valid_Reg.toString()).orderByDesc("id")
+            .last("limit 1"));
+        if(validCodes==null||validCodes.size()==0){
+            throw new RException("请获取验证码", Constant.CODE_DATA_NOTFOUND);
+        }
+        long peroid=(new Date().getTime()-validCodes.get(0).getCreateTime().getTime())/(1000*60);
+        if(peroid>SMSConstant.SMS_Invalid_Time){
+            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
+        }
+        String validcode=validCodes.get(0).getValidCode();
+        if(!dto.getValidecode().equals(validcode)){
+            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
         }
         SysUser user=new SysUser();
         user.setUserphone(dto.getCellphone());

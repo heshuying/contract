@@ -86,7 +86,11 @@ public class SendMessageServiceImpl implements SendMessageService {
         Boolean sendResult=sendSMS(Arrays.asList(msg));
         msg.setStatus(sendResult?"1":"2");
         sysMsgService.updateById(msg);
-        return R.ok();
+        if (smsConf.getFlag()==false) {
+            return R.ok().put("validcode",validCode);
+        }else {
+            return R.ok();
+        }
     }
 
     /**
