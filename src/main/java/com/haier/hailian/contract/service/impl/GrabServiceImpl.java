@@ -33,6 +33,7 @@ import com.haier.hailian.contract.util.AmountFormat;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.IHaierUtil;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -532,13 +533,19 @@ public class GrabServiceImpl implements GrabService {
                 .eq("status","0")
                 .lt("join_time",new Date())
         );
+
         List<ZContracts> updateList=new ArrayList<>();
+        List<Integer> mainContracts=new ArrayList<>();
         for (ZContracts contract:list) {
-            //是否存在抢单记录
+            if(contract.getParentId()>0){
+                mainContracts.add(contract.getParentId());
+            }
             ZContracts updateContract=new ZContracts();
             updateContract.setId(contract.getId());
             List<ZContracts> sub=contractsService.list(new QueryWrapper<ZContracts>()
                     .eq("parent_id", contract.getId())
+                    .in("contract_type", new String[]{"20","30"})
+                    .in("status", new int[]{1,8})
                     .last("limit 1")
             );
             if(sub==null||sub.size()==0){
@@ -553,9 +560,30 @@ public class GrabServiceImpl implements GrabService {
         if(updateList!=null&&updateList.size()>0) {
             contractsService.updateBatchById(updateList);
         }
+
+        if(mainContracts.size()>0){
+            //判断子合约的状态
+            List<Integer> ids=mainContracts.stream().distinct().collect(Collectors.toList());
+            List<ZContracts> mainUpdates=new ArrayList<>();
+            for (Integer id :ids){
+                List<ZContracts> sub=contractsService.list(new QueryWrapper<ZContracts>()
+                        .eq("parent_id", id)
+                        .eq("contract_type", "10")
+                        .eq("status", "1")
+                        .last("limit 1")
+                );
+                if(sub.size()>0){
+                    ZContracts willUpdate=new ZContracts();
+                    willUpdate.setStatus("1");
+                    willUpdate.setId(id);
+                    mainUpdates.add(willUpdate);
+                }
+            }
+            contractsService.updateBatchById(mainUpdates);
+        }
         expiredContract();
     }
-
+    
     /**
      * 合约过期
      */
