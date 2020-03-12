@@ -248,7 +248,7 @@
           i.`node_name` AS nodeName,
           i.`xwType3Code`,
           i.`xwType3`,
-          i.`share_percent` AS sharePercent
+          IFNULL(i.`type_share_percent`, i.share_percent) AS sharePercent
         FROM
           z_node_target_percent_info i
         WHERE i.`lq_code` = #{lqCode}
