@@ -338,7 +338,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             }
 
             if(item.getJdList() != null && !item.getJdList().isEmpty() && item.getJdList().size() == 2){
-                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(1).getTargetValue())) < 0){
+                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getJdList().get(0).getTargetValue())) < 0){
                     filterListJD.add(item);
                 }
             }
@@ -352,7 +352,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             }
 
             if(item.getE2eList() != null && !item.getE2eList().isEmpty()){
-                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(0).getTargetValue())) < 0 || new BigDecimal(item.getQdList().get(1).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(1).getTargetValue())) < 0){
+                if(new BigDecimal(item.getQdList().get(0).getTargetValue()).compareTo(new BigDecimal(item.getE2eList().get(0).getTargetValue())) < 0){
                     filterListE2E.add(item);
                 }
             }
