@@ -240,6 +240,23 @@
         AND tpi.lq_code = #{chainCode}
     </select>
 
+    <select id="getCDGrabType3List" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabType3DTO">
+        SELECT
+          i.`lq_code` AS lqCode,
+          i.`lq_name` AS lqName,
+          i.`node_code` AS nodeCode,
+          i.`node_name` AS nodeName,
+          i.`xwType3Code`,
+          i.`xwType3`,
+          IFNULL(i.`type_share_percent`, i.share_percent) AS sharePercent
+        FROM
+          z_node_target_percent_info i
+        WHERE i.`lq_code` = #{lqCode}
+        AND i.`node_code` = #{nodeCode}
+        AND i.`share_percent` IS NOT NULL
+        GROUP BY i.`xwType3Code`
+    </select>
+
 
     <!-- 根据最小作战单元查询其相关链群-->
     <select id="selectChainByLittleXwCode"  resultMap="ZNodeTargetPercentInfoMap">
@@ -309,7 +326,7 @@
           i.`lq_code`,
           i.`xwType3Code`,
           i.`xwType3` AS xwType3Name,
-          i.share_percent AS sharePercent
+          IFNULL(i.`type_share_percent`, i.share_percent) AS sharePercent
         FROM
           z_node_target_percent_info i
         WHERE i.`lq_code` IN

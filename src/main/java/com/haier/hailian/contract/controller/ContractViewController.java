@@ -156,4 +156,20 @@ public class ContractViewController {
         contractViewService.exportContract(contractId);
     }
 
+    /**
+     * 批量计算分享筹并保存
+     * @param paramBean
+     * @return
+     */
+    @PostMapping(value = {"/updateSharePercentByHand"})
+    public R updateSharePercentByHand(@RequestBody Map<String,String> paramBean) {
+        try {
+            contractViewService.updateCDShareSpace(paramBean.get("contractId"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("计算更新分享筹异常");
+        }
+        return R.ok();
+    }
+
 }

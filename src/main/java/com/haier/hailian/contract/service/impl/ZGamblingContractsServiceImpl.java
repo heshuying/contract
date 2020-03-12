@@ -202,6 +202,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 }else {
                     zContracts.setStatus2("1");
                 }
+                if(null != zContracts.getCheckTime() && zContracts.getCheckTime().after(new Date())){
+                    zContracts.setStatus4("1");
+                }else {
+                    zContracts.setStatus4("0");
+                }
             }
         }
         return list;
@@ -518,39 +523,37 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         List<ZContracts> list2 = contractsDao.selectHomePageContract(queryDTO);
         //查当前月份的时候，链群主假数据
         SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
-        if(sf.format(new Date()).equals(queryDTO.getMonth())){
-            //1.查询链群主的链群
-            List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("master_code",sysUser.getEmpSn()));
-            //2.查询每个链群是否举了下个月的单，未举单的链群产生假数据
-            if(null != chainList && chainList.size() > 0){
-                for(ZHrChainInfo chainInfo : chainList){
-                    if(null != chainInfo.getParentCode() && !"0".equals(chainInfo.getParentCode()) && !"".equals(chainInfo.getParentCode())) continue;
-                    QueryContractListDTO dto = new QueryContractListDTO();
-                    dto.setChainCode(chainInfo.getChainCode());
-                    int next = DateFormatUtil.getMonthOfDate(new Date())+1;
-                    int year = DateFormatUtil.getYearOfDate(new Date());
-                    String nextMonth = "";
-                    nextMonth = next<10?year+"0"+next:year+""+next;
-                    dto.setNextMonth(nextMonth);
-                    List<ZContracts> contractsList = contractsDao.selectContractList(dto);
-                    if(null == contractsList || contractsList.size()==0){
-                        ZContracts zContracts = new ZContracts();
-                        zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
-                        //从z_waring_period_config表中查询举单开始日期
-                        Date begin = contractsDao.selectGamnlingBeginDate(chainInfo.getChainCode());
-                        int day = 0;
-                        if(begin != null){
-                            day = DateFormatUtil.getDAYOfDate(begin);
-                        }else {
-                            day = 20;
-                        }
-                        if(DateFormatUtil.getDAYOfDate(new Date())<day){
-                            zContracts.setStatus("close");
-                        }else{
-                            zContracts.setStatus("open");
-                        }
-                        list.add(zContracts);
+        //1.查询链群主的链群
+        List<ZHrChainInfo> chainList = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("master_code",sysUser.getEmpSn()));
+        //2.查询每个链群是否举了下个月的单，未举单的链群产生假数据
+        if(null != chainList && chainList.size() > 0){
+            for(ZHrChainInfo chainInfo : chainList){
+                if(null != chainInfo.getParentCode() && !"0".equals(chainInfo.getParentCode()) && !"".equals(chainInfo.getParentCode())) continue;
+                QueryContractListDTO dto = new QueryContractListDTO();
+                dto.setChainCode(chainInfo.getChainCode());
+                int next = DateFormatUtil.getMonthOfDate(new Date())+1;
+                int year = DateFormatUtil.getYearOfDate(new Date());
+                String nextMonth = "";
+                nextMonth = next<10?year+"0"+next:year+""+next;
+                dto.setNextMonth(nextMonth);
+                List<ZContracts> contractsList = contractsDao.selectContractList(dto);
+                if(null == contractsList || contractsList.size()==0){
+                    ZContracts zContracts = new ZContracts();
+                    zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
+                    //从z_waring_period_config表中查询举单开始日期
+                    Date begin = contractsDao.selectGamnlingBeginDate(chainInfo.getChainCode());
+                    int day = 0;
+                    if(begin != null){
+                        day = DateFormatUtil.getDAYOfDate(begin);
+                    }else {
+                        day = 20;
                     }
+                    if(DateFormatUtil.getDAYOfDate(new Date())<day){
+                        zContracts.setStatus("close");
+                    }else{
+                        zContracts.setStatus("open");
+                    }
+                    list.add(zContracts);
                 }
             }
         }

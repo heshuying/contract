@@ -85,30 +85,24 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         }
 
-        List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("nodeCode", littleXWCode);
-        paraMap.put("ptCode", currentUser.getPtCode());
-        paraMap.put("yearMonthList", yearMonthList);
-        paraMap.put("chainCode", contracts.getChainCode());
-        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTargetNew(paraMap);
+        paraMap.put("lqCode", contracts.getChainCode());
+        List<CDGrabType3DTO> type3List = targetPercentInfoDao.getCDGrabType3List(paraMap);
+        responseDto.setType3List(type3List);
 
-        if(targetList !=null && !targetList.isEmpty()){
-            responseDto.setSharePercent(targetList.get(0).getSharePercent());
-        }
-
-//        if(targetList != null && !targetList.isEmpty()){
-//            for (CDGrabTargetEntity targetInfo : targetList){
-//                CDGrabTargetDto target = new CDGrabTargetDto();
-//                target.setTargetName(targetInfo.getTargetName());
-//                target.setTargetCode(targetInfo.getTargetCode());
-////                target.setChainGoal(new BigDecimal(targetInfo.getTargetBottomLine()));
-//                target.setTargetUnit(targetInfo.getTargetUnit());
-////                target.setTargetTo(targetInfo.getTargetTo());
-//                responseDto.getTargetList().add(target);
-//                responseDto.setSharePercent(targetInfo.getSharePercent());
-//            }
+//        List<String> yearMonthList = getYearMonth(String.valueOf(requestDto.getContractId()));
+//        Map<String, Object> paraMap = new HashMap<>();
+//        paraMap.put("nodeCode", littleXWCode);
+//        paraMap.put("ptCode", currentUser.getPtCode());
+//        paraMap.put("yearMonthList", yearMonthList);
+//        paraMap.put("chainCode", contracts.getChainCode());
+//        List<CDGrabTargetEntity> targetList = targetPercentInfoDao.queryCDGrabTargetNew(paraMap);
+//
+//        if(targetList !=null && !targetList.isEmpty()){
+//            responseDto.setSharePercent(targetList.get(0).getSharePercent());
 //        }
+
 
         return responseDto;
     }
@@ -363,7 +357,11 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         contracts.setOrgCode(sysUser.getMinbu().getLittleXwCode());
         contracts.setOrgName(sysUser.getMinbu().getLittleXwName());
-        contracts.setOrgType(sysUser.getMinbu().getXwType3Code());
+        if(StringUtils.isNotBlank(requestDto.getXwType3Code()) && !requestDto.getXwType3Code().contains("|")){
+            contracts.setOrgType("|" + requestDto.getXwType3Code() + "|");
+        }else{
+            contracts.setOrgType(requestDto.getXwType3Code());
+        }
         contracts.setXiaoweiCode(sysUser.getMinbu().getXwCode());
 
         contractsDao.insert(contracts);
@@ -532,6 +530,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         // 保存新记录
         requestDto.setContractId(contracts.getParentId());
         requestDto.setIsUpdate("0");
+        requestDto.setXwType3Code(contracts.getOrgType());
         saveCDGrab(requestDto);
     }
 

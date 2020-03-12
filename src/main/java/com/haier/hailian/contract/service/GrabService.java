@@ -24,6 +24,11 @@ public interface GrabService {
     void refreshContractStatusJob();
 
     /**
+     * 定时任务刷新抢单状态，只刷类型为20和30的单
+     */
+    void refreshGrabStatus();
+
+    /**
      * 查询可抢入合约
      * @param queryDto
      * @return

@@ -17,6 +17,7 @@ import com.haier.hailian.contract.util.IHaierUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -691,6 +692,50 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             }
             if(getIsTY.size()>0){
                 num++;
+            }
+        }
+        return num;
+    }
+
+
+    @Override
+    public int updateTargetNodesXwType3Code() {
+        int num = 0;
+        List<ZNodeTargetPercentInfo> list = zNodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>()
+                .isNull("xwType3Code")
+                .isNull("xwType3")
+                .isNotNull("share_percent"));
+        for(ZNodeTargetPercentInfo node : list){
+            TOdsMinbu tOdsMinbu = tOdsMinbuDao.selectOne(new QueryWrapper<TOdsMinbu>()
+                    .eq("littleXwCode" , node.getNodeCode()));
+            String[] type3codes = tOdsMinbu.getXwType3Code().split("\\|");
+            String[] typesNames = tOdsMinbu.getXwType3().split("\\|");
+            if(type3codes.length == 2){
+                node.setXwType3Code(type3codes[1]);
+                node.setXwType3(typesNames[1]);
+                zNodeTargetPercentInfoDao.update(node);
+                num = num + 1;
+            }else{
+                for(int i = 0;i<type3codes.length;i++){
+                    if(type3codes[i] == null || ("").equals(type3codes[i])){
+                        continue;
+                    }else{
+                        if(node.getXwType3Code() == null || "".equals(node.getXwType3Code())){
+                            node.setXwType3Code(type3codes[i]);
+                            node.setXwType3(typesNames[i]);
+                            zNodeTargetPercentInfoDao.update(node);
+                            num = num + 1;
+                        }else{
+                            ZNodeTargetPercentInfo zNodeTargetPercentInfo = new ZNodeTargetPercentInfo();
+                            BeanUtils.copyProperties(node,zNodeTargetPercentInfo);
+                            zNodeTargetPercentInfo.setId(null);
+                            zNodeTargetPercentInfo.setXwType3Code(type3codes[i]);
+                            zNodeTargetPercentInfo.setXwType3(typesNames[i]);
+                            zNodeTargetPercentInfoDao.insert(zNodeTargetPercentInfo);
+                            num = num + 1;
+                        }
+                    }
+                }
             }
         }
         return num;

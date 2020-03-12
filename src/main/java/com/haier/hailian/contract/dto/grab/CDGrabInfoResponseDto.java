@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dto.grab;
 
+import com.haier.hailian.contract.dto.CDGrabType3DTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,4 +38,6 @@ public class CDGrabInfoResponseDto {
     @ApiModelProperty(value="链群主是否已复核",name="链群主是否已复核",example="true")
     private String isReviewed = "false";
     private List<CDGrabTargetDto> targetList = new ArrayList<>();
+    @ApiModelProperty(value="小微type3列表",name="小微type3列表")
+    private List<CDGrabType3DTO> type3List = new ArrayList<>();
 }
