@@ -16,6 +16,7 @@ import com.haier.hailian.contract.service.AppStatisticService;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.service.SysUserService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.Md5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -119,7 +120,7 @@ public class HacLoginServiceImpl implements HacLoginService{
         SysUser user=new SysUser();
         user.setUserphone(dto.getCellphone());
         user.setUsername(dto.getCellphone());
-        user.setPassword(dto.getPassword());
+        user.setPassword(Md5Util.getMD5(dto.getPassword()));
         user.setCreateTime(new Date());
         sysUserService.save(user);
         return R.ok();
