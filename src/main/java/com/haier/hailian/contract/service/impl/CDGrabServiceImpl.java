@@ -357,7 +357,7 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         contracts.setOrgCode(sysUser.getMinbu().getLittleXwCode());
         contracts.setOrgName(sysUser.getMinbu().getLittleXwName());
-        if(requestDto.getXwType3Code() != null && !requestDto.getXwType3Code().contains("|")){
+        if(StringUtils.isNotBlank(requestDto.getXwType3Code()) && !requestDto.getXwType3Code().contains("|")){
             contracts.setOrgType("|" + requestDto.getXwType3Code() + "|");
         }else{
             contracts.setOrgType(requestDto.getXwType3Code());
@@ -530,6 +530,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         // 保存新记录
         requestDto.setContractId(contracts.getParentId());
         requestDto.setIsUpdate("0");
+        requestDto.setXwType3Code(contracts.getOrgType());
         saveCDGrab(requestDto);
     }
 
