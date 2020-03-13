@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class ShiroConfig {
     public SecurityManager securityManager(HacLoginRealm hacLoginRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(hacLoginRealm);
+
         securityManager.setSessionManager(sessionManager());
         //使用缓存
         securityManager.setCacheManager(cacheManager());
@@ -49,6 +51,9 @@ public class ShiroConfig {
         filterMap.put("/login", "anon");
         filterMap.put("/register", "anon");
         filterMap.put("/hasCellphone", "anon");
+        filterMap.put("/phoneLogin", "anon");
+        filterMap.put("/resetPwd", "anon");
+        filterMap.put("/sms/validSmsCode", "anon");
         filterMap.put("/sms/sendSMS", "anon");
         filterMap.put("/loginMagic", "anon");
         filterMap.put("/ihaierLogin", "anon");

@@ -133,6 +133,18 @@ public class LoginController {
         return hacLoginService.register(dto);
     }
 
+    @PostMapping(value = {"/phoneLogin"})
+    @ApiOperation(value = "手机登陆登录")
+    public R phoneLogin(@RequestBody @Validated HacLoginDto hacSignInDTO) {
+        return hacLoginService.phoneLogin(hacSignInDTO);
+    }
+
+    @PostMapping(value = {"/resetPwd"})
+    @ApiOperation(value = "重置密码")
+    public R resetPwd(@RequestBody @Validated HacLoginDto hacSignInDTO) {
+        return R.ok();
+    }
+
     @PostMapping(value = {"/ihaierLogin"})
     @ApiOperation(value = "登录")
     public R ihaierLogin(String ticket,HttpServletResponse response) {

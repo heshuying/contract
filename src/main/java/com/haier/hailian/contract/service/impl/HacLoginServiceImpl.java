@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.config.HacLoginConfig;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
+import com.haier.hailian.contract.config.shiro.PhoneRealm;
+import com.haier.hailian.contract.config.shiro.PhoneToken;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.HacLoginRespDto;
 import com.haier.hailian.contract.dto.R;
@@ -106,6 +108,16 @@ public class HacLoginServiceImpl implements HacLoginService{
             log.error("=====登录异常{}====>", e.getMessage());
             throw new RException("登录异常");
         }
+    }
+
+    @Override
+    public R phoneLogin(HacLoginDto loginDto) {
+        //登陆成功
+        PhoneToken token = new PhoneToken(loginDto.getUserName(),loginDto.getPassword());
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(token);
+        return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
+                .put("data", token.getPhone());
     }
 
     @Override
