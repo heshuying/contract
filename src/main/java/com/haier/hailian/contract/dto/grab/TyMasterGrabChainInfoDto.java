@@ -23,6 +23,7 @@ public class TyMasterGrabChainInfoDto {
     private String grabEnd;
     private BigDecimal shareQuota;
     private String regionCode;
+    private String littleXwName;
 
     private Boolean canSubmit;
     private String errorMsg;
