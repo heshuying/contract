@@ -33,6 +33,8 @@ public class CDGrabInfoResponseDto {
     private String xwCode;
     @ApiModelProperty(value="小微名字",name="小微名字")
     private String xwName;
+    @ApiModelProperty(value="最小作战单元名字",name="最小作战单元名字")
+    private String littleXWName;
     @ApiModelProperty(value="增值分享比例",name="增值分享比例",example="1%")
     private String zzfxRate;//增值分享比例（新增字段）
     @ApiModelProperty(value="链群主是否已复核",name="链群主是否已复核",example="true")
