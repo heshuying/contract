@@ -60,6 +60,8 @@ public class CDGrabServiceImpl implements CDGrabService {
         TOdsMinbu currentUser = sysUser.getMinbu();
         String xwCode = currentUser.getXwCode();
         String littleXWCode = sysUser.getMinbu().getLittleXwCode();
+        String littleXWName = sysUser.getMinbu().getLittleXwName();
+        responseDto.setLittleXWName(littleXWName);
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){
@@ -113,8 +115,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        //获取用户首页选中的用户
-        TOdsMinbu currentUser = sysUser.getMinbu();
+        responseDto.setLittleXWName(sysUser.getMinbu().getLittleXwName());
 
         ZContracts contracts = contractsDao.selectById(requestDto.getContractId());
         if(contracts != null){

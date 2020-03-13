@@ -137,7 +137,7 @@ public class GrabServiceImpl implements GrabService {
         String chainName = contracts.getContractName();
         chainName = chainName.replace("链群", "-" + minBu.getRegionName() + "链群");
         tyMasterGrabChainInfoDto.setRegionCode(minBu.getRegionCode());
-
+        tyMasterGrabChainInfoDto.setLittleXwName(minBu.getLittleXwName());
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
         tyMasterGrabChainInfoDto.setContractName(chainName);

@@ -10,6 +10,7 @@ import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
 import com.haier.hailian.contract.util.EmailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -194,6 +195,7 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
     }
 
     @Override
+    @Transactional
     public void quartzMinbuListByXwType3() {
         ZHrChainInfo chainInfo = new ZHrChainInfo();
         chainInfo.setDeleted(0);
@@ -224,6 +226,9 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
 
             // 删除再同步
             zHrChainInfoService.syncMinbuListByXwType3(saveXwType3);
+            nodes = new ArrayList<>();
+            saveXwType3 = null;
+            map = new HashMap();
         }
 
     }
