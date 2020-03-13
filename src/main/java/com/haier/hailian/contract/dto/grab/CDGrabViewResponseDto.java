@@ -36,6 +36,8 @@ public class CDGrabViewResponseDto {
     private String xwCode;
     @ApiModelProperty(value="小微名字",name="小微名字")
     private String xwName;
+    @ApiModelProperty(value="最小作战单元名字",name="最小作战单元名字")
+    private String littleXWName;
     @ApiModelProperty(value="链群主是否已复核",name="链群主是否已复核",example="true")
     private String isReviewed = "false";
     @ApiModelProperty(value="预案信息",name="预案信息")
