@@ -490,7 +490,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             if(income.compareTo(BigDecimal.ZERO)==-1 ){
                                 throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，收入不能小于0", Constant.CODE_VALIDFAIL);
                             }
-                            marketTargetDTO3.setIncome(income.setScale(2,BigDecimal.ROUND_HALF_UP));
+                            marketTargetDTO3.setIncome(income.setScale(0,BigDecimal.ROUND_HALF_UP));
                         }
                     }
                     if(y==3) {
