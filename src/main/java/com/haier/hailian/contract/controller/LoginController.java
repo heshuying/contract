@@ -9,6 +9,7 @@ import com.haier.hailian.contract.dto.LoginMagicDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.RegisterDto;
+import com.haier.hailian.contract.dto.ResetPwdDto;
 import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
@@ -141,7 +142,7 @@ public class LoginController {
 
     @PostMapping(value = {"/resetPwd"})
     @ApiOperation(value = "重置密码")
-    public R resetPwd(@RequestBody @Validated HacLoginDto hacSignInDTO) {
+    public R resetPwd(@RequestBody @Validated ResetPwdDto dto) {
         return R.ok();
     }
 

@@ -93,6 +93,28 @@ public class SendMessageServiceImpl implements SendMessageService {
         }
     }
 
+    @Override
+    public boolean validSmsCode(SendMsgDto dto) {
+        //查询验证码
+        List<SysMsg> validCodes=sysMsgService.list(new QueryWrapper<SysMsg>()
+                .eq("cellphone",dto.getCellphone())
+                .eq("template", dto.getBizType())
+                .orderByDesc("id")
+                .last("limit 1"));
+        if(validCodes==null||validCodes.size()==0){
+            throw new RException("请获取验证码", Constant.CODE_DATA_NOTFOUND);
+        }
+        long peroid=(new Date().getTime()-validCodes.get(0).getCreateTime().getTime())/(1000*60);
+        if(peroid>SMSConstant.SMS_Invalid_Time){
+            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
+        }
+        String validcode=validCodes.get(0).getValidCode();
+        if(!dto.getValidCode().equals(validcode)){
+            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
+        }
+        return true;
+    }
+
     /**
      * 批量发送短信
      * @param list

@@ -34,6 +34,14 @@ public interface SendMessageService {
     R sendValidCode(SendMsgDto phoneMessages);
 
     /**
+     * 发送短信验证码
+     *
+     * @param dto
+     * @return
+     */
+    boolean validSmsCode(SendMsgDto dto);
+
+    /**
      * 批量发送短信
      *
      * @param list

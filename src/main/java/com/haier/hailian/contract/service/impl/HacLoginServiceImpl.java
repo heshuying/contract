@@ -11,6 +11,8 @@ import com.haier.hailian.contract.dto.HacLoginRespDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.RegisterDto;
+import com.haier.hailian.contract.dto.ResetPwdDto;
+import com.haier.hailian.contract.dto.sms.SendMsgDto;
 import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysMsg;
@@ -60,6 +62,8 @@ public class HacLoginServiceImpl implements HacLoginService{
     private SysUserService sysUserService;
     @Autowired
     private SysMsgService sysMsgService;
+    @Autowired
+    private SendMessageService sendMessageService;
 
     private Gson gson=new Gson();
 
@@ -121,6 +125,21 @@ public class HacLoginServiceImpl implements HacLoginService{
     }
 
     @Override
+    public R resetPwd(ResetPwdDto dto) {
+        if(!dto.getPassword().equals(dto.getConfirmPwd())){
+            throw new RException("确认密码和密码不一致，请重新输入", Constant.CODE_VALIDFAIL);
+        }
+        SysUser entity=sysUserService.getOne(new QueryWrapper<SysUser>()
+                .eq("userphone",dto.getCellphone()));
+        if(entity==null){
+            throw new RException("用户不存在", Constant.CODE_VALIDFAIL);
+        }
+        entity.setPassword(Md5Util.getMD5(dto.getPassword()));
+        sysUserService.updateById(entity);
+        return R.ok();
+    }
+
+    @Override
     public boolean hasCellphone(String cellphone) {
         if(StringUtils.isBlank(cellphone)){
             return  false;
@@ -143,23 +162,19 @@ public class HacLoginServiceImpl implements HacLoginService{
             .eq("cellphone",dto.getCellphone())
             .eq("template", SMSConstant.SmsBizType.Valid_Reg.toString()).orderByDesc("id")
             .last("limit 1"));
-        if(validCodes==null||validCodes.size()==0){
-            throw new RException("请获取验证码", Constant.CODE_DATA_NOTFOUND);
+        SendMsgDto sendMsgDto=new SendMsgDto();
+        sendMsgDto.setCellphone(dto.getCellphone());
+        sendMsgDto.setBizType(SMSConstant.SmsBizType.Valid_Reg.toString());
+        sendMsgDto.setValidCode(dto.getValidecode());
+        if(sendMessageService.validSmsCode(sendMsgDto)){
+            SysUser user=new SysUser();
+            user.setUserphone(dto.getCellphone());
+            user.setUsername(dto.getCellphone());
+            user.setPassword(Md5Util.getMD5(dto.getPassword()));
+            user.setCreateTime(new Date());
+            sysUserService.save(user);
+
         }
-        long peroid=(new Date().getTime()-validCodes.get(0).getCreateTime().getTime())/(1000*60);
-        if(peroid>SMSConstant.SMS_Invalid_Time){
-            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
-        }
-        String validcode=validCodes.get(0).getValidCode();
-        if(!dto.getValidecode().equals(validcode)){
-            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
-        }
-        SysUser user=new SysUser();
-        user.setUserphone(dto.getCellphone());
-        user.setUsername(dto.getCellphone());
-        user.setPassword(Md5Util.getMD5(dto.getPassword()));
-        user.setCreateTime(new Date());
-        sysUserService.save(user);
         return R.ok();
     }
 
