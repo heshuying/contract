@@ -143,7 +143,7 @@ public class LoginController {
     @PostMapping(value = {"/resetPwd"})
     @ApiOperation(value = "重置密码")
     public R resetPwd(@RequestBody @Validated ResetPwdDto dto) {
-        return R.ok();
+        return hacLoginService.resetPwd(dto);
     }
 
     @PostMapping(value = {"/ihaierLogin"})

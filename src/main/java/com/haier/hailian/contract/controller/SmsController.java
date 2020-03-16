@@ -39,7 +39,8 @@ public class SmsController {
     @PostMapping(value = {"/validSmsCode"})
     @ApiOperation(value = "校验短信验证码")
     public R validSmsCode(@RequestBody SendMsgDto dto) {
-        return R.ok();
+        boolean pass= sendMessageService.validSmsCode(dto);
+        return R.ok().put("data",pass);
     }
 
     @GetMapping(value = {"/send2Second"})

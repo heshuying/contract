@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.ehr.common.utils.MD5Util;
 import com.haier.hailian.contract.entity.SysUser;
 import com.haier.hailian.contract.service.SysUserService;
+import com.haier.hailian.contract.util.Md5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -21,8 +22,9 @@ import org.springframework.stereotype.Component;
  * </p>
  */
 @Slf4j
-@Component
 public class PhoneRealm extends AuthorizingRealm {
+    public static final String REALM_NAME = "phone_login_realm";
+
     @Autowired
     private SysUserService sysUserService;
 
@@ -38,11 +40,13 @@ public class PhoneRealm extends AuthorizingRealm {
         PhoneToken token =  (PhoneToken) authenticationToken;
         String phone = (String) token.getPrincipal();
         SysUser user = sysUserService.getOne(new QueryWrapper<SysUser>()
-                .eq("cellphone",phone));
+                .eq("userphone",phone));
         if (user == null) {
             throw new AuthenticationException("用户名或密码错误");
         }
-        if(!user.getPassword().equals(MD5Util.getMD5(token.getPwd()))){
+        String pwd=Md5Util.getMD5(token.getPwd());
+        log.info(pwd);
+        if(!user.getPassword().equals(pwd)){
             throw new AuthenticationException("用户名或密码错误");
         }
 
@@ -56,8 +60,8 @@ public class PhoneRealm extends AuthorizingRealm {
     }
 
     @Override
-    public boolean supports(AuthenticationToken var1){
-        return var1 instanceof PhoneToken;
+    public boolean supports(AuthenticationToken token){
+        return token instanceof PhoneToken;
     }
 }
 

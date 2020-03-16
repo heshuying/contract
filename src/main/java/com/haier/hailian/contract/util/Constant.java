@@ -28,7 +28,7 @@ public class Constant {
     public static String MSG_NO_MINBU= "当前列表无法查看";
 
     public static String CODE_ERROR= "500001";
-    public static String MSG_ERROR= "请联系管理员";
+    public static String MSG_ERROR= "网络错误，请稍后再试";
 
     public static String CHAIN_SEED= "海链-baas-";
 

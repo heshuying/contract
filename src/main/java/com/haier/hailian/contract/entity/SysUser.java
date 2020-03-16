@@ -77,7 +77,7 @@ public class SysUser extends Model<SysUser> {
     /**
      * 操作人账号
      */
-    private LocalDateTime optCode;
+    private String optCode;
 
     /**
      * 操作人姓名
@@ -87,7 +87,7 @@ public class SysUser extends Model<SysUser> {
     /**
      * 操作时间
      */
-    private LocalDateTime optDate;
+    private Date optDate;
 
     /**
      * 作为甲方表达式
