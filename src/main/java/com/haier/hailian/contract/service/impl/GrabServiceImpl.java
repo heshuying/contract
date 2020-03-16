@@ -74,7 +74,7 @@ public class GrabServiceImpl implements GrabService {
         for ( ZContracts contract: contracts
                 ) {
             TyMasterGrabChainInfoDto grabDto=this.queryChainInfo(contract.getId());
-            grabDto.setLittleXwName(minBu.getLittleXwName());
+
             list.add(grabDto);
         }
         return list;
@@ -627,6 +627,12 @@ public class GrabServiceImpl implements GrabService {
      */
     @Override
     public TyMasterGrabChainInfoDto queryChainInfo(Integer contractId) {
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu minBu = sysUser.getMinbu();
+
         ZContracts contracts = contractsService.getById(contractId);
         if (contracts == null) {
             throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
@@ -640,6 +646,7 @@ public class GrabServiceImpl implements GrabService {
                 .eq("chain_code", contracts.getChainCode()));
         tyMasterGrabChainInfoDto.setChainName(chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setContractOwner(chainInfo.getMasterName());
+        tyMasterGrabChainInfoDto.setLittleXwName(minBu.getLittleXwName());
 
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
