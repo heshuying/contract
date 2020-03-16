@@ -65,6 +65,7 @@ public class GrabServiceImpl implements GrabService {
         Subject subject = SecurityUtils.getSubject();
         //获取当前用户
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        TOdsMinbu minBu = sysUser.getMinbu();
         List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
         queryDto.setEmpSn(sysUser.getEmpSn());
 
@@ -73,6 +74,7 @@ public class GrabServiceImpl implements GrabService {
         for ( ZContracts contract: contracts
                 ) {
             TyMasterGrabChainInfoDto grabDto=this.queryChainInfo(contract.getId());
+            grabDto.setLittleXwName(minBu.getLittleXwName());
             list.add(grabDto);
         }
         return list;
