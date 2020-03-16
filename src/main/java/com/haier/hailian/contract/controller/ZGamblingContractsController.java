@@ -54,7 +54,7 @@ public class ZGamblingContractsController {
             return R.ok();
         }catch (Exception e){
             e.printStackTrace();
-            return R.error("保存失败，请联系管理员");
+            return R.error("保存失败，请稍后重试");
         }
 
     }
@@ -67,7 +67,7 @@ public class ZGamblingContractsController {
             return R.ok();
         }catch (Exception e){
             e.printStackTrace();
-            return R.error("保存失败，请联系管理员");
+            return R.error("保存失败，请稍后重试");
         }
 
     }
