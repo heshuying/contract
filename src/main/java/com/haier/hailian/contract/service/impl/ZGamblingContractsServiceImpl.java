@@ -363,13 +363,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         }
         dto.setMarketTargetList(marketTargetList);
         //4.查询产品目标
-        List<ZContractsProduct> productList = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId));
-        List<ContractProductDTO> productDTOs = new ArrayList<>();
-        for(ZContractsProduct product : productList){
-            ContractProductDTO productDTO = new ContractProductDTO();
-            BeanUtils.copyProperties(product,productDTO);
-            productDTOs.add(productDTO);
-        }
+        List<ContractProductDTO> productDTOs = contractsProductDao.selectProductByContractId(contractId);
         dto.setProductList(productDTOs);
         //5.查询子链群的合约
         List<ZContracts> children = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id",contractId));

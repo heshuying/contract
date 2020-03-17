@@ -191,12 +191,12 @@ public class ZGamblingContractsController {
         return R.ok().put("data",contractsList);
     }
 
-//    @PostMapping(value = {"/selectProductSeries"})
-//    @ApiOperation(value = "根据链群编码查询产品系列")
-//    public R selectProductSeries(@RequestBody QueryProductChainDTO dto) {
-//        List<ContractProductDTO> productList = gamblingContractsService.selectProductSeries(dto);
-//        return R.ok().put("data",productList);
-//    }
+    @PostMapping(value = {"/selectProductSeries"})
+    @ApiOperation(value = "根据链群编码查询产品系列")
+    public R selectProductSeries(@RequestBody QueryProductChainDTO dto) {
+        List<ContractProductDTO> productList = gamblingContractsService.selectProductSeries(dto);
+        return R.ok().put("data",productList);
+    }
 
 
     @GetMapping(value = {"/selectContractById/{contractId}"})
