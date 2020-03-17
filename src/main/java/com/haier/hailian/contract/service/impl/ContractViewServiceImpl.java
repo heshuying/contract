@@ -688,7 +688,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             }
             int year = DateFormatUtil.getYearOfDate(contracts.getStartDate());
             int mounth = DateFormatUtil.getMonthOfDate(contracts.getStartDate());
-            ZContractsProduct queryEntity = new ZContractsProduct();
+            ProductQueryEntity queryEntity = new ProductQueryEntity();
             queryEntity.setContractId(contractId);
             queryEntity.setQtyYear(year);
             //年度数据
@@ -710,8 +710,8 @@ public class ContractViewServiceImpl implements ContractViewService {
                 ZContractsProduct monthSale=monthSales.stream()
                         .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
                         .findAny().orElse(null);
-                dto.setYearSales(yearSale==null?0:yearSale.getQtyYear());
-                dto.setMonthSales(monthSale==null?0:monthSale.getQtyYear());
+                dto.setYearSales(yearSale==null?BigDecimal.ZERO:yearSale.getQtyYear());
+                dto.setMonthSales(monthSale==null?BigDecimal.ZERO:monthSale.getQtyYear());
                 list.add(dto);
             }
         }
