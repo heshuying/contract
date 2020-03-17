@@ -2,6 +2,8 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Created by 01431594 on 2020/1/8.
  */
@@ -14,13 +16,11 @@ public class ContractProductDTO {
     private String productSeries;
 
     /**
-     * 年度数量
+     * 场景
      */
-    private Integer qtyYear;
+    private String sceneName;
 
-    /**
-     * 月度数量
-     */
-    private Integer qtyMonth;
+    private List<ProductTargetDTO> targetList;
+
 
 }

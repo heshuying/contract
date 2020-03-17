@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -40,12 +41,20 @@ public class ZContractsProduct extends Model<ZContractsProduct> {
     /**
      * 年度数量
      */
-    private Integer qtyYear;
+    private BigDecimal qtyYear;
 
     /**
      * 月度数量
      */
-    private Integer qtyMonth;
+    private BigDecimal qtyMonth;
+
+    private String targetName;
+
+    private String targetCode;
+
+    private String targetUnit;
+
+    private String sceneName;
 
 
     @Override
