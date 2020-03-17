@@ -1,10 +1,13 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.haier.hailian.contract.dao.TargetBasicDao;
+import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.entity.TargetBasic;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +30,14 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
 
     @Autowired
     private TargetBasicDao targetBasicDao;
+    @Autowired
+    private ZHrChainInfoDao zHrChainInfoDao;
 
     @Override
     public List<TargetBasic> selectBottom(QueryBottomDTO dto){
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
+        targetBasic.setTargetDiffType("001");
         String date = dto.getStartDate();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
@@ -60,5 +66,44 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
             }
         }
         return list;
+    }
+
+    @Override
+    public List<TargetBasic> selectContractsFirstTarget(QueryBottomDTO dto) {
+        TargetBasic targetBasic = new TargetBasic();
+        targetBasic.setTargetDiffType("003");
+        targetBasic.setChainCode(dto.getChainCode());
+        return targetBasicDao.selectTarget(targetBasic);
+    }
+
+    @Override
+    public List<TargetBasic> selectContractsSecondTarget(QueryBottomDTO dto) {
+        TargetBasic targetBasic = new TargetBasic();
+        targetBasic.setTargetDiffType("004");
+        // 获取链群所在的平台 liuyq 2020年3月17日 10:51:39
+        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , dto.getChainCode()));
+        targetBasic.setTargetPtCode(zHrChainInfo.getChainPtCode());
+        return targetBasicDao.selectTarget(targetBasic);
+    }
+
+    @Override
+    public int updateContractsTarget(List<TargetBasic> targetBasicList) {
+        int num = 0;
+        for(TargetBasic targetBasic : targetBasicList){
+            targetBasicDao.updateById(targetBasic);
+            num++;
+        }
+        return num;
+    }
+
+    @Override
+    public int insertContractsTarget(List<TargetBasic> targetBasicList) {
+        int num = 0;
+        for(TargetBasic targetBasic : targetBasicList){
+            targetBasicDao.insert(targetBasic);
+            num++;
+        }
+        return num;
     }
 }

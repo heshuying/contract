@@ -17,4 +17,12 @@ import java.util.List;
 public interface TargetBasicService extends IService<TargetBasic> {
 
     List<TargetBasic> selectBottom(QueryBottomDTO dto);
+
+    List<TargetBasic> selectContractsFirstTarget(QueryBottomDTO dto);
+
+    List<TargetBasic> selectContractsSecondTarget(QueryBottomDTO dto);
+
+    int updateContractsTarget(List<TargetBasic> targetBasicList);
+
+    int insertContractsTarget(List<TargetBasic> targetBasicList);
 }

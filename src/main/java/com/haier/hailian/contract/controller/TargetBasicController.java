@@ -38,5 +38,37 @@ public class TargetBasicController {
         return R.ok().put("data",list);
     }
 
+
+    @PostMapping(value = {"/selectContractsFirstTarget"})
+    @ApiOperation(value = "查询一级单")
+    public R selectContractsFirstTarget(@RequestBody QueryBottomDTO dto) {
+        List<TargetBasic> list = targetBasicService.selectContractsFirstTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+
+    @PostMapping(value = {"/selectContractsSecondTarget"})
+    @ApiOperation(value = "查询二级单")
+    public R selectContractsSecondTarget(@RequestBody QueryBottomDTO dto) {
+        List<TargetBasic> list = targetBasicService.selectContractsSecondTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+
+    @PostMapping(value = {"/updateContractsTarget"})
+    @ApiOperation(value = "更新一、二级单")
+    public R updateContractsTarget(@RequestBody List<TargetBasic> targetBasicList) {
+        int num = targetBasicService.updateContractsTarget(targetBasicList);
+        return R.ok().put("data",num);
+    }
+
+
+    @PostMapping(value = {"/insertContractsTarget"})
+    @ApiOperation(value = "插入一、二级单")
+    public R insertContractsTarget(@RequestBody List<TargetBasic> targetBasicList) {
+        int num = targetBasicService.insertContractsTarget(targetBasicList);
+        return R.ok().put("data",num);
+    }
+
 }
 

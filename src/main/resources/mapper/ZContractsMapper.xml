@@ -712,7 +712,7 @@
         where join_time <![CDATA[ >= ]]> #{startTime}
         and join_time <![CDATA[ <= ]]> #{endTime}
         and group_id = #{groupId}
-        and parent_id = 0
+        and contract_type = '10'
         and status!='4'
     </select>
 
