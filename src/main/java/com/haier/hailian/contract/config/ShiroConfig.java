@@ -1,12 +1,17 @@
 
 package com.haier.hailian.contract.config;
 
+import com.haier.hailian.contract.config.shiro.CustomModularRealmAuthenticator;
 import com.haier.hailian.contract.config.shiro.HacLoginRealm;
 import com.haier.hailian.contract.config.shiro.MySessionManager;
+import com.haier.hailian.contract.config.shiro.PhoneRealm;
+import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -18,8 +23,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,10 +36,37 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Bean
+    public ModularRealmAuthenticator modularRealmAuthenticator(){
+        CustomModularRealmAuthenticator authenticator = new CustomModularRealmAuthenticator();
+        authenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
+        return authenticator;
+    }
+
+    @Bean
+    public HacLoginRealm hacLoginRealm(){
+        HacLoginRealm realm = new HacLoginRealm();
+        // 不需要加密，直接返回
+        return realm;
+    }
+
+    @Bean
+    public PhoneRealm phoneRealm() {
+        PhoneRealm userRealm = new PhoneRealm();
+        return userRealm;
+    }
+
     @Bean("securityManager")
-    public SecurityManager securityManager(HacLoginRealm hacLoginRealm) {
+    public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(hacLoginRealm);
+        // 设置验证器为自定义验证器
+        securityManager.setAuthenticator(modularRealmAuthenticator());
+        // 设置Realms
+        List<Realm> realms = new ArrayList<>(2);
+        realms.add(phoneRealm());
+        realms.add(hacLoginRealm());
+        securityManager.setRealms(realms);
+
         securityManager.setSessionManager(sessionManager());
         //使用缓存
         securityManager.setCacheManager(cacheManager());
@@ -47,6 +82,12 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/register", "anon");
+        filterMap.put("/hasCellphone", "anon");
+        filterMap.put("/phoneLogin", "anon");
+        filterMap.put("/resetPwd", "anon");
+        filterMap.put("/sms/validSmsCode", "anon");
+        filterMap.put("/sms/sendSMS", "anon");
         filterMap.put("/loginMagic", "anon");
         filterMap.put("/ihaierLogin", "anon");
         filterMap.put("/appStatistic", "anon");

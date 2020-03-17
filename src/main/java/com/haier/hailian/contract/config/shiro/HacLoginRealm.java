@@ -23,8 +23,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@Component
 public class HacLoginRealm extends AuthorizingRealm {
+    public static final String REALM_NAME = "hac_login_realm";
+
     @Autowired
     private SysEmployeeEhrService sysEmployeeEhrService;
     @Autowired

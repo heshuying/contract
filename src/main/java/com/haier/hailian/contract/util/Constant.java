@@ -21,11 +21,14 @@ public class Constant {
     public static String CODE_DATA_NOTFOUND= "404001";
     public static String MSG_DATA_NOTFOUND= "数据不存在";
 
+    public static String CODE_DATA_FOUND= "404003";
+    public static String MSG_DATA_FOUND= "数据已存在";
+
     public static String CODE_NO_MINBU= "404002";
     public static String MSG_NO_MINBU= "当前列表无法查看";
 
     public static String CODE_ERROR= "500001";
-    public static String MSG_ERROR= "请联系管理员";
+    public static String MSG_ERROR= "网络错误，请稍后再试";
 
     public static String CHAIN_SEED= "海链-baas-";
 
@@ -34,7 +37,19 @@ public class Constant {
     public static String RMB_MIL= "万元";
     public static String RMB_YUAN= "元";
 
+    /**
+     * 正则表达式:验证密码(不包含特殊字符) 大小写、特殊字符
+     * "^(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@&%#_])[a-zA-Z0-9~!@&%#_]{8,16}$"
+     */
+    public static final String REGEX_PASSWORD = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z~!@&%#_]{6,16}$";
 
+    /**
+     *说明：移动：134、135、136、137、138、139、150、151、157(TD)、158、159、187、188
+     * 联通：130、131、132、152、155、156、185、186
+     * 电信：133、153、180、189
+     * 正则表达式:验证手机号
+     */
+    public static final String REGEX_MOBILE = "^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$";
 
     /**
      * 链群状态 10待承接； 20抢入中 ；30已结束；40 已失效；

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.SysUserDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.SysUser">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="userphone" property="userphone" />
+        <result column="chain_name" property="chainName" />
+        <result column="chain_short_name" property="chainShortName" />
+        <result column="chain_role" property="chainRole" />
+        <result column="location_code" property="locationCode" />
+        <result column="location_name" property="locationName" />
+        <result column="xiaowei_code" property="xiaoweiCode" />
+        <result column="xiaowei_name" property="xiaoweiName" />
+        <result column="password" property="password" />
+        <result column="age" property="age" />
+        <result column="status" property="status" />
+        <result column="opt_code" property="optCode" />
+        <result column="opt_name" property="optName" />
+        <result column="opt_date" property="optDate" />
+        <result column="jia_expression" property="jiaExpression" />
+        <result column="yi_expression" property="yiExpression" />
+    </resultMap>
+
+</mapper>

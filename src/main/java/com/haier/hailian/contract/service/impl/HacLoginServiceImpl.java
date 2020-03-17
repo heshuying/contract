@@ -1,19 +1,35 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
 import com.haier.hailian.contract.config.HacLoginConfig;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
+import com.haier.hailian.contract.config.shiro.PhoneRealm;
+import com.haier.hailian.contract.config.shiro.PhoneToken;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.HacLoginRespDto;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.dto.RegisterDto;
+import com.haier.hailian.contract.dto.ResetPwdDto;
+import com.haier.hailian.contract.dto.sms.SendMsgDto;
 import com.haier.hailian.contract.entity.AppStatistic;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
+import com.haier.hailian.contract.entity.SysMsg;
+import com.haier.hailian.contract.entity.SysUser;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.AppStatisticService;
 import com.haier.hailian.contract.service.HacLoginService;
+import com.haier.hailian.contract.service.SendMessageService;
+import com.haier.hailian.contract.service.SysMsgService;
+import com.haier.hailian.contract.service.SysUserService;
 import com.haier.hailian.contract.util.Constant;
+import com.haier.hailian.contract.util.Md5Util;
+import com.haier.hailian.contract.util.SMSConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +42,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 19012964 on 2019/12/17.
@@ -41,6 +58,13 @@ public class HacLoginServiceImpl implements HacLoginService{
     private RestTemplate restTemplate;
     @Autowired
     private AppStatisticService appStatisticService;
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private SysMsgService sysMsgService;
+    @Autowired
+    private SendMessageService sendMessageService;
+
     private Gson gson=new Gson();
 
     @Override
@@ -88,6 +112,66 @@ public class HacLoginServiceImpl implements HacLoginService{
             log.error("=====登录异常{}====>", e.getMessage());
             throw new RException("登录异常");
         }
+    }
+
+    @Override
+    public R phoneLogin(HacLoginDto loginDto) {
+        //登陆成功
+        PhoneToken token = new PhoneToken(loginDto.getUserName(),loginDto.getPassword());
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(token);
+        return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
+                .put("data", token.getPhone());
+    }
+
+    @Override
+    public R resetPwd(ResetPwdDto dto) {
+        if(!dto.getPassword().equals(dto.getConfirmPwd())){
+            throw new RException("确认密码和密码不一致，请重新输入", Constant.CODE_VALIDFAIL);
+        }
+        SysUser entity=sysUserService.getOne(new QueryWrapper<SysUser>()
+                .eq("userphone",dto.getCellphone()));
+        if(entity==null){
+            throw new RException("用户不存在", Constant.CODE_VALIDFAIL);
+        }
+        entity.setPassword(Md5Util.getMD5(dto.getPassword()));
+        sysUserService.updateById(entity);
+        return R.ok();
+    }
+
+    @Override
+    public boolean hasCellphone(String cellphone) {
+        if(StringUtils.isBlank(cellphone)){
+            return  false;
+        }
+        SysUser entity=sysUserService.getOne(new QueryWrapper<SysUser>()
+        .eq("userphone",cellphone));
+        return entity!=null;
+    }
+
+    @Override
+    public R register(RegisterDto dto) {
+        if(dto==null){
+            throw new RException(Constant.MSG_VALIDFAIL, Constant.CODE_VALIDFAIL);
+        }
+        if(hasCellphone(dto.getCellphone())){
+            return R.error(Constant.CODE_DATA_FOUND,"手机号"+Constant.MSG_DATA_FOUND);
+        }
+        //校验验证码
+        SendMsgDto sendMsgDto=new SendMsgDto();
+        sendMsgDto.setCellphone(dto.getCellphone());
+        sendMsgDto.setBizType(SMSConstant.SmsBizType.Valid_Reg.toString());
+        sendMsgDto.setValidCode(dto.getValidecode());
+        if(sendMessageService.validSmsCode(sendMsgDto)){
+            SysUser user=new SysUser();
+            user.setUserphone(dto.getCellphone());
+            user.setUsername(dto.getCellphone());
+            user.setPassword(Md5Util.getMD5(dto.getPassword()));
+            user.setCreateTime(new Date());
+            sysUserService.save(user);
+
+        }
+        return R.ok();
     }
 
     @Override
