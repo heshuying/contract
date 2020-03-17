@@ -423,13 +423,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 }
                 childTargetDTO.setChildMarketList(childMarketList);
                 //8.查询子链群的产品目标
-                List<ZContractsProduct> childProducts = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",childId));
-                List<ContractProductDTO> childProductList = new ArrayList<>();
-                for(ZContractsProduct product : childProducts){
-                    ContractProductDTO productDTO = new ContractProductDTO();
-                    BeanUtils.copyProperties(product,productDTO);
-                    childProductList.add(productDTO);
-                }
+                List<ContractProductDTO> childProductList = contractsProductDao.selectProductByContractId(childId);
                 childTargetDTO.setChildProductList(childProductList);
                 childrenList.add(childTargetDTO);
             }
