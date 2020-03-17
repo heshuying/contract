@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.service.ContractViewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.*;
 /**
  * @author 19033323
  */
+@Slf4j
 @RestController
 @RequestMapping("/contractview")
 @Api(value = "合约查看页面相关接口", tags = "合约查看页面相关接口")
@@ -95,7 +97,7 @@ public class ContractViewController {
     @ApiOperation(value = "更新分享比例")
     public R updateSharePercent(@RequestBody List<Map<String,String>> paramList) {
         if(paramList == null || paramList.isEmpty()){
-            return R.error("没有传要更新的数据");
+            return R.error("没有传要修改分享比例的数据");
         }
 
         try {
@@ -104,7 +106,8 @@ public class ContractViewController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return R.error("更新失败");
+            log.error("修改分享比例失败: " + e.getMessage());
+            return R.error("修改分享比例失败");
         }
         return R.ok();
     }

@@ -713,6 +713,7 @@
         and join_time <![CDATA[ <= ]]> #{endTime}
         and group_id = #{groupId}
         and parent_id = 0
+        and status!='4'
     </select>
 
     <select id="selectHomePageContract" resultMap="BaseResultMap">

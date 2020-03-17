@@ -35,21 +35,26 @@ public class IncrementServiceImpl implements IncrementService {
      */
     @Override
     public BigDecimal incrementMoney(CDGrabInfoSaveRequestDto requestDto) {
-        BigDecimal bottom = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+        ZContractsFactor fBottom = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
-                .eq("factor_type" , Constant.FactorType.Bottom.getValue())).getFactorValue());
-
-        BigDecimal e2e = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
+        ZContractsFactor fE2E = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
-                .eq("factor_type" , Constant.FactorType.E2E.getValue())).getFactorValue());
-
-        BigDecimal grab = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                .eq("factor_type" , Constant.FactorType.E2E.getValue()));
+        ZContractsFactor fGrab = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
                 .eq("factor_type" , Constant.FactorType.Grab.getValue())
-                .isNull("region_code")).getFactorValue());
+                .isNull("region_code"));
+        if(fBottom == null || fE2E == null || fGrab == null){
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal bottom = new BigDecimal(fBottom.getFactorValue());
+        BigDecimal e2e = new BigDecimal(fE2E.getFactorValue());
+        BigDecimal grab = new BigDecimal(fGrab.getFactorValue());
 
 
         BigDecimal money = new BigDecimal("0");
@@ -85,25 +90,29 @@ public class IncrementServiceImpl implements IncrementService {
 
     @Override
     public BigDecimal incrementMoneyShareModify(CDGrabInfoSaveRequestDto requestDto) {
-        BigDecimal bottom = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+        ZContractsFactor fBottom = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
-                .eq("factor_type" , Constant.FactorType.Bottom.getValue())).getFactorValue());
-
-        BigDecimal e2e = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
+        ZContractsFactor fE2E = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
-                .eq("factor_type" , Constant.FactorType.E2E.getValue())).getFactorValue());
-
-        BigDecimal grab = new BigDecimal(zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+                .eq("factor_type" , Constant.FactorType.E2E.getValue()));
+        ZContractsFactor fGrab = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
                 .eq("factor_type" , Constant.FactorType.Grab.getValue())
-                .isNull("region_code")).getFactorValue());
+                .isNull("region_code"));
+        if(fBottom == null || fE2E == null || fGrab == null){
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal bottom = new BigDecimal(fBottom.getFactorValue());
+        BigDecimal e2e = new BigDecimal(fE2E.getFactorValue());
+        BigDecimal grab = new BigDecimal(fGrab.getFactorValue());
 
 
         BigDecimal money = new BigDecimal("0");
-
 
         // 抢单利润大于  e2e 利润才有 第二阶梯  50%
         if(grab.compareTo(e2e)>0){
