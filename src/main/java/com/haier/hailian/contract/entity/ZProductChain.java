@@ -1,12 +1,13 @@
 package com.haier.hailian.contract.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -45,6 +46,11 @@ public class ZProductChain extends Model<ZProductChain> {
      * 链群编码
      */
     private String chainCode;
+
+    /**
+     * 场景名称
+     */
+    private String sceneName;
 
 
     @Override

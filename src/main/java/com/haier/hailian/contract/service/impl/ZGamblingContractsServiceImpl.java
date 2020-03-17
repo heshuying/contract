@@ -142,8 +142,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 ZContractsProduct contractsProduct = new ZContractsProduct();
                 contractsProduct.setContractId(contracts.getId());
                 contractsProduct.setProductSeries(productDTO.getProductSeries());
-                contractsProduct.setQtyYear(productDTO.getQtyYear());
-                contractsProduct.setQtyMonth(productDTO.getQtyMonth());
                 contractsProductDao.insert(contractsProduct);
             }
         }
@@ -276,13 +274,30 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public List<ContractProductDTO> selectProductSeries(QueryProductChainDTO dto) {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+        //1.z_target_basic 表查询爆款产品目标
+        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("chain_code",dto.getChainCode()).eq("period_code",sf.format(new Date())).eq("target_diff_type","002"));
+        if( targetList == null || targetList.size() == 0 ) {
+            targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_diff_type","002"));
+        }
+        //2.查询链群下的爆款产品的系列和场景
         List<ZProductChain> list = productChainDao.selectSeriesByChainCode(dto.getChainCode());
         List<ContractProductDTO> productList = new ArrayList<>();
         for(ZProductChain productChain : list){
             ContractProductDTO productDTO = new ContractProductDTO();
             productDTO.setProductSeries(productChain.getProductSeries());
-            productDTO.setQtyMonth(null);
-            productDTO.setQtyYear(null);
+            productDTO.setSceneName(productChain.getSceneName());
+            List<ProductTargetDTO> productTargetList = new ArrayList<>();
+            for(TargetBasic targetBasic:targetList){
+                ProductTargetDTO targetDTO = new ProductTargetDTO();
+                targetDTO.setTargetCode(targetBasic.getTargetCode());
+                targetDTO.setTargetName(targetBasic.getTargetName());
+                targetDTO.setTargetUnit(targetBasic.getTargetUnit());
+                targetDTO.setQtyMonth(null);
+                targetDTO.setQtyYear(null);
+                productTargetList.add(targetDTO);
+            }
+            productDTO.setTargetList(productTargetList);
             productList.add(productDTO);
         }
         return productList;
@@ -490,7 +505,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             if(income.compareTo(BigDecimal.ZERO)==-1 ){
                                 throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，收入不能小于0", Constant.CODE_VALIDFAIL);
                             }
-                            marketTargetDTO3.setIncome(income.setScale(2,BigDecimal.ROUND_HALF_UP));
+                            marketTargetDTO3.setIncome(income.setScale(0,BigDecimal.ROUND_HALF_UP));
                         }
                     }
                     if(y==3) {
@@ -615,7 +630,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             if(qty.compareTo(BigDecimal.ZERO)==-1 || qty.compareTo(new BigDecimal(qty.intValue()))==1){
                                 throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，销量必须为大于等于零的整数", Constant.CODE_VALIDFAIL);
                             }
-                            dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
+                            //dto.setQtyYear(Integer.valueOf((int) cell.getNumericCellValue()));
                         }
                     }
                     if(y==2){
@@ -626,7 +641,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             if(qty.compareTo(BigDecimal.ZERO)==-1 || qty.compareTo(new BigDecimal(qty.intValue()))==1){
                                 throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，销量必须为大于零的整数", Constant.CODE_VALIDFAIL);
                             }
-                            dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
+                            //dto.setQtyMonth(Integer.valueOf((int) cell.getNumericCellValue()));
                         }
                     }
                 }
@@ -727,8 +742,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             for (ContractProductDTO productDTO : productList){
                 ZContractsProduct contractsProduct = new ZContractsProduct();
                 contractsProduct.setContractId(contracts.getId());
-                contractsProduct.setQtyYear(productDTO.getQtyYear());
-                contractsProduct.setQtyMonth(productDTO.getQtyMonth());
                 contractsProduct.setProductSeries(productDTO.getProductSeries());
                 contractsProductDao.insert(contractsProduct);
             }
@@ -818,8 +831,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                         ZContractsProduct contractsProduct = new ZContractsProduct();
                         contractsProduct.setProductSeries(chilidProduct.getProductSeries());
                         contractsProduct.setContractId(childContracts.getId());
-                        contractsProduct.setQtyYear(chilidProduct.getQtyYear());
-                        contractsProduct.setQtyMonth(chilidProduct.getQtyMonth());
                         contractsProductDao.insert(contractsProduct);
                     }
                 }

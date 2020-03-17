@@ -9,9 +9,10 @@
         <result column="model_name" property="modelName" />
         <result column="model_code" property="modelCode" />
         <result column="chain_code" property="chainCode" />
+        <result column="scene_name" property="sceneName" />
     </resultMap>
     <select id="selectSeriesByChainCode" resultMap="BaseResultMap">
-        select DISTINCT product_series from z_product_chain
+        select DISTINCT product_series,scene_name from z_product_chain
         where chain_code = #{chainCode}
     </select>
 
