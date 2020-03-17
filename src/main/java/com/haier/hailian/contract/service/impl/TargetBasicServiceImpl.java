@@ -37,7 +37,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     public List<TargetBasic> selectBottom(QueryBottomDTO dto){
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
-        targetBasic.setTargetDiffType("001");
+        targetBasic.setTargetDiffType("000");
         String date = dto.getStartDate();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
