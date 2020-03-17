@@ -38,9 +38,10 @@ public class Constant {
     public static String RMB_YUAN= "元";
 
     /**
-     * 正则表达式:验证密码(不包含特殊字符)
+     * 正则表达式:验证密码(不包含特殊字符) 大小写、特殊字符
+     * "^(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@&%#_])[a-zA-Z0-9~!@&%#_]{8,16}$"
      */
-    public static final String REGEX_PASSWORD = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@&%#_])[a-zA-Z0-9~!@&%#_]{8,16}$";
+    public static final String REGEX_PASSWORD = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z~!@&%#_]{8,16}$";
 
     /**
      *说明：移动：134、135、136、137、138、139、150、151、157(TD)、158、159、187、188
