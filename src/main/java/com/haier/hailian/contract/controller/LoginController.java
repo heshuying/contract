@@ -130,7 +130,7 @@ public class LoginController {
 
     @PostMapping(value = "/register")
     @ApiOperation(value = "手机号注册")
-    public R register(@RequestBody RegisterDto dto) {
+    public R register(@RequestBody @Validated RegisterDto dto) {
         return hacLoginService.register(dto);
     }
 

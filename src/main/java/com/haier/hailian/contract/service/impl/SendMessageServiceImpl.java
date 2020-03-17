@@ -102,7 +102,7 @@ public class SendMessageServiceImpl implements SendMessageService {
                 .orderByDesc("id")
                 .last("limit 1"));
         if(validCodes==null||validCodes.size()==0){
-            throw new RException("请获取验证码", Constant.CODE_DATA_NOTFOUND);
+            throw new RException("验证码校验失败", Constant.CODE_DATA_NOTFOUND);
         }
         long peroid=(new Date().getTime()-validCodes.get(0).getCreateTime().getTime())/(1000*60);
         if(peroid>SMSConstant.SMS_Invalid_Time){

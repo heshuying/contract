@@ -1,8 +1,10 @@
 package com.haier.hailian.contract.dto;
 
+import com.haier.hailian.contract.util.Constant;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * Created by 19012964 on 2020/3/16.
@@ -10,9 +12,12 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class ResetPwdDto {
     @NotBlank(message = "手机号不可以为空！")
+    @Pattern(regexp = Constant.REGEX_MOBILE, message = "手机号校验失败")
     private String cellphone;
     @NotBlank(message = "密码不可以为空！")
+    @Pattern(regexp = Constant.REGEX_PASSWORD, message = "密码不满足格式要求")
     private String password;
     @NotBlank(message = "确认密码不可以为空！")
+    @Pattern(regexp = Constant.REGEX_PASSWORD, message = "密码不满足格式要求")
     private String confirmPwd;
 }

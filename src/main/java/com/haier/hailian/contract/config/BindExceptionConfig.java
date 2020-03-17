@@ -22,7 +22,7 @@ public class BindExceptionConfig {
         FieldError  fieldError=e.getBindingResult().getFieldError();
         assert fieldError != null;
         return R.error(Constant.CODE_VALIDFAIL,
-                Constant.MSG_VALIDFAIL);
+                fieldError.getDefaultMessage());
     }
 
     @ExceptionHandler(Exception.class)

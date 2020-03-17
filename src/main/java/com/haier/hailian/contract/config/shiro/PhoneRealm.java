@@ -1,7 +1,6 @@
 package com.haier.hailian.contract.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.haier.ehr.common.utils.MD5Util;
 import com.haier.hailian.contract.entity.SysUser;
 import com.haier.hailian.contract.service.SysUserService;
 import com.haier.hailian.contract.util.Md5Util;

@@ -157,11 +157,7 @@ public class HacLoginServiceImpl implements HacLoginService{
         if(hasCellphone(dto.getCellphone())){
             return R.error(Constant.CODE_DATA_FOUND,"手机号"+Constant.MSG_DATA_FOUND);
         }
-        //查询验证码
-        List<SysMsg> validCodes=sysMsgService.list(new QueryWrapper<SysMsg>()
-            .eq("cellphone",dto.getCellphone())
-            .eq("template", SMSConstant.SmsBizType.Valid_Reg.toString()).orderByDesc("id")
-            .last("limit 1"));
+        //校验验证码
         SendMsgDto sendMsgDto=new SendMsgDto();
         sendMsgDto.setCellphone(dto.getCellphone());
         sendMsgDto.setBizType(SMSConstant.SmsBizType.Valid_Reg.toString());
