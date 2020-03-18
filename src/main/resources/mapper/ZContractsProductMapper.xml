@@ -19,7 +19,10 @@
     <select id="calContractProduct" parameterType="com.haier.hailian.contract.entity.ZContractsProduct"
     resultMap="BaseResultMap"
     >
-        select cp.product_series as 'product_series', sum(ifnull(mcgo.order_num,0)) as 'qty_year' from z_contracts_product cp
+        select cp.product_series as 'product_series',
+        sum(ifnull(mcgo.order_num,0)) as 'qty_year'
+        ,sum(ifnull(mcgo.order_amt,0)) as 'qty_month'
+        from z_contracts_product cp
         join z_product_chain zpc on cp.product_series=zpc.product_series
         left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code
         where cp.contract_id=#{contractId}
