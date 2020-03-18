@@ -2,19 +2,26 @@ package com.haier.hailian.contract.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
 import com.haier.hailian.contract.dao.TargetBasicDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
 import com.haier.hailian.contract.dto.RException;
+import com.haier.hailian.contract.dto.TargetBasicInfo;
+import com.haier.hailian.contract.entity.SysXiaoweiEhr;
 import com.haier.hailian.contract.entity.TargetBasic;
+import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.util.Constant;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +39,8 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     private TargetBasicDao targetBasicDao;
     @Autowired
     private ZHrChainInfoDao zHrChainInfoDao;
+    @Autowired
+    private SysXiaoweiEhrDao sysXiaoweiEhrDao;
 
     @Override
     public List<TargetBasic> selectBottom(QueryBottomDTO dto){
@@ -80,10 +89,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     public List<TargetBasic> selectContractsSecondTarget(QueryBottomDTO dto) {
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("004");
-        // 获取链群所在的平台 liuyq 2020年3月17日 10:51:39
-        ZHrChainInfo zHrChainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
-                .eq("chain_code" , dto.getChainCode()));
-        targetBasic.setTargetPtCode(zHrChainInfo.getChainPtCode());
+        targetBasic.setChainCode(dto.getChainCode());
         return targetBasicDao.selectTarget(targetBasic);
     }
 
@@ -101,9 +107,60 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     public int insertContractsTarget(List<TargetBasic> targetBasicList) {
         int num = 0;
         for(TargetBasic targetBasic : targetBasicList){
+            targetBasic.setChainCode("LQ" + getNum());
             targetBasicDao.insert(targetBasic);
             num++;
         }
         return num;
     }
+
+    @Override
+    public List<TargetBasicInfo> selectContractsTarget(QueryBottomDTO dto) {
+        TargetBasic targetBasic = new TargetBasic();
+        targetBasic.setTargetDiffType("003");
+        targetBasic.setChainCode(dto.getChainCode());
+        List<TargetBasic> targetList = targetBasicDao.selectTarget(targetBasic);
+        List<TargetBasicInfo> infos = new ArrayList<>();
+        for(TargetBasic basic : targetList){
+            targetBasic.setTargetDiffType("004");
+            targetBasic.setJudanFlag(String.valueOf(basic.getId()));
+            List<TargetBasic> childTargetList = targetBasicDao.selectTarget(targetBasic);
+
+            TargetBasicInfo info = new TargetBasicInfo();
+            BeanUtils.copyProperties(basic , info);
+            info.setChildTargetBasicList(childTargetList);
+            infos.add(info);
+
+        }
+        return infos;
+    }
+
+    @Override
+    public int deleteContractsTarget(Integer id) {
+        TargetBasic targetBasic = targetBasicDao.selectById(id);
+        if("0".equals(targetBasic.getJudanFlag())){ // 是一级单
+            targetBasicDao.delete(new QueryWrapper<TargetBasic>()
+                    .eq("judan_flag" , String.valueOf(id)));
+
+        }
+        int num = targetBasicDao.deleteById(id);
+        return num;
+    }
+
+    @Override
+    public List<SysXiaoweiEhr> selectXwAll(XiaoweiEhr xiaoweiEhr) {
+        List<SysXiaoweiEhr> list = sysXiaoweiEhrDao.queryAll(xiaoweiEhr);
+        return list;
+    }
+
+    @Override
+    public int getNum() {
+        // 获取计数器
+        int num = zHrChainInfoDao.getNum();
+        // 更新计数器表
+        zHrChainInfoDao.updateNum();
+        return num;
+    }
+
+
 }

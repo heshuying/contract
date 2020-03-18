@@ -2,8 +2,11 @@ package com.haier.hailian.contract.controller;
 
 
 import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.dto.TargetBasicInfo;
+import com.haier.hailian.contract.entity.SysXiaoweiEhr;
 import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.entity.XiaoweiEhr;
 import com.haier.hailian.contract.service.TargetBasicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +72,30 @@ public class TargetBasicController {
         int num = targetBasicService.insertContractsTarget(targetBasicList);
         return R.ok().put("data",num);
     }
+
+
+    @PostMapping(value = {"/selectContractsTarget"})
+    @ApiOperation(value = "查询一级以及二级单")
+    public R selectContractsTarget(@RequestBody QueryBottomDTO dto) {
+        List<TargetBasicInfo> list = targetBasicService.selectContractsTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+    @PostMapping(value = {"/deleteContractsTarget"})
+    @ApiOperation(value = "删除一级单以及二级单（支持只删除2级单）")
+    public R deleteContractsTarget(@RequestBody Integer id) {
+        int num = targetBasicService.deleteContractsTarget(id);
+        return R.ok().put("data",num);
+    }
+
+
+    @PostMapping(value = {"/selectXwAll"})
+    @ApiOperation(value = "查询小微列表")
+    public R selectXwAll(@RequestBody XiaoweiEhr xiaoweiEhr) {
+        List<SysXiaoweiEhr> list = targetBasicService.selectXwAll(xiaoweiEhr);
+        return R.ok().put("data",list);
+    }
+
 
 }
 

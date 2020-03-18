@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.dao;
 
+import com.haier.hailian.contract.dto.ContractProductDTO;
 import com.haier.hailian.contract.entity.ProductQueryEntity;
 import com.haier.hailian.contract.entity.ZContractsProduct;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -17,4 +18,6 @@ import java.util.List;
  */
 public interface ZContractsProductDao extends BaseMapper<ZContractsProduct> {
     List<ZContractsProduct> calContractProduct(ProductQueryEntity entity);
+
+    List<ContractProductDTO> selectProductByContractId(Integer contractId);
 }

@@ -18,4 +18,6 @@ public interface SysXiaoweiEhrDao extends BaseMapper<SysXiaoweiEhr> {
 
     List<XiaoweiEhr> selectMarket();
 
+    List<SysXiaoweiEhr> queryAll(XiaoweiEhr xiaoweiEhr);
+
 }

@@ -19,8 +19,7 @@
     <select id="calContractProduct" parameterType="com.haier.hailian.contract.entity.ZContractsProduct"
     resultMap="BaseResultMap"
     >
-        select cp.product_series as 'product_series', sum(ifnull(mcgo.order_num,0)) as 'qty_year'
-        ,sum(ifnull(mcgo.order_amt,0)) as 'qty_month' from z_contracts_product cp
+        select cp.product_series as 'product_series', sum(ifnull(mcgo.order_num,0)) as 'qty_year' from z_contracts_product cp
         join z_product_chain zpc on cp.product_series=zpc.product_series
         left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code
         where cp.contract_id=#{contractId}
@@ -33,5 +32,25 @@
         group by cp.product_series
     </select>
 
+
+    <resultMap id="ResultMap1" type="com.haier.hailian.contract.dto.ContractProductDTO">
+        <result column="product_series" property="productSeries" />
+        <result column="scene_name" property="sceneName" />
+        <collection property="targetList" ofType="com.haier.hailian.contract.dto.ProductTargetDTO">
+            <result column="qty_year" property="qtyYear" />
+            <result column="qty_month" property="qtyMonth" />
+            <result column="target_name" property="targetName" />
+            <result column="target_code" property="targetCode" />
+            <result column="target_unit" property="targetUnit" />
+        </collection>
+    </resultMap>
+    <select id="selectProductByContractId" parameterType="java.lang.Integer" resultMap="ResultMap1">
+        select DISTINCT(t1.product_series),t1.scene_name,t2.qty_month,t2.qty_year,t2.target_code,t2.target_name,t2.target_unit
+        from z_contracts_product t1
+        LEFT JOIN z_contracts_product t2
+        on t1.contract_id=t2.contract_id
+        and t1.product_series=t2.product_series
+        where t1.contract_id=#{contractId}
+    </select>
 
 </mapper>

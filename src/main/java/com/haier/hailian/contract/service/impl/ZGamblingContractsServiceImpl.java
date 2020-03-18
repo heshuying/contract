@@ -363,13 +363,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         }
         dto.setMarketTargetList(marketTargetList);
         //4.查询产品目标
-        List<ZContractsProduct> productList = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId));
-        List<ContractProductDTO> productDTOs = new ArrayList<>();
-        for(ZContractsProduct product : productList){
-            ContractProductDTO productDTO = new ContractProductDTO();
-            BeanUtils.copyProperties(product,productDTO);
-            productDTOs.add(productDTO);
-        }
+        List<ContractProductDTO> productDTOs = contractsProductDao.selectProductByContractId(contractId);
         dto.setProductList(productDTOs);
         //5.查询子链群的合约
         List<ZContracts> children = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id",contractId));
@@ -429,13 +423,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 }
                 childTargetDTO.setChildMarketList(childMarketList);
                 //8.查询子链群的产品目标
-                List<ZContractsProduct> childProducts = contractsProductDao.selectList(new QueryWrapper<ZContractsProduct>().eq("contract_id",childId));
-                List<ContractProductDTO> childProductList = new ArrayList<>();
-                for(ZContractsProduct product : childProducts){
-                    ContractProductDTO productDTO = new ContractProductDTO();
-                    BeanUtils.copyProperties(product,productDTO);
-                    childProductList.add(productDTO);
-                }
+                List<ContractProductDTO> childProductList = contractsProductDao.selectProductByContractId(childId);
                 childTargetDTO.setChildProductList(childProductList);
                 childrenList.add(childTargetDTO);
             }
@@ -743,7 +731,16 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 ZContractsProduct contractsProduct = new ZContractsProduct();
                 contractsProduct.setContractId(contracts.getId());
                 contractsProduct.setProductSeries(productDTO.getProductSeries());
-                contractsProductDao.insert(contractsProduct);
+                contractsProduct.setSceneName(productDTO.getSceneName());
+                List<ProductTargetDTO>  targetList = productDTO.getTargetList();
+                for(ProductTargetDTO targetDTO:targetList){
+                    contractsProduct.setQtyMonth(targetDTO.getQtyMonth());
+                    contractsProduct.setQtyYear(targetDTO.getQtyYear());
+                    contractsProduct.setTargetUnit(targetDTO.getTargetUnit());
+                    contractsProduct.setTargetName(targetDTO.getTargetName());
+                    contractsProduct.setTargetCode(targetDTO.getTargetCode());
+                    contractsProductDao.insert(contractsProduct);
+                }
             }
         }
         //5.保存子链群合约
@@ -831,7 +828,16 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                         ZContractsProduct contractsProduct = new ZContractsProduct();
                         contractsProduct.setProductSeries(chilidProduct.getProductSeries());
                         contractsProduct.setContractId(childContracts.getId());
-                        contractsProductDao.insert(contractsProduct);
+                        contractsProduct.setSceneName(chilidProduct.getSceneName());
+                        List<ProductTargetDTO>  targetList = chilidProduct.getTargetList();
+                        for(ProductTargetDTO targetDTO:targetList){
+                            contractsProduct.setTargetUnit(targetDTO.getTargetUnit());
+                            contractsProduct.setTargetName(targetDTO.getTargetName());
+                            contractsProduct.setTargetCode(targetDTO.getTargetCode());
+                            contractsProduct.setQtyMonth(targetDTO.getQtyMonth());
+                            contractsProduct.setQtyYear(targetDTO.getQtyYear());
+                            contractsProductDao.insert(contractsProduct);
+                        }
                     }
                 }
             }
