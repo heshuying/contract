@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,11 +50,14 @@ public class ContractViewServiceImpl implements ContractViewService {
     IncrementService incrementService;
 
     private static final ExcelUtil.CellHeadField[] Serial_Header = {
-            new ExcelUtil.CellHeadField("系列", "serial"),
-            new ExcelUtil.CellHeadField("年计划", "yearPlan"),
-            new ExcelUtil.CellHeadField("年累", "yearSales"),
-            new ExcelUtil.CellHeadField("月计划", "monthPlan"),
-            new ExcelUtil.CellHeadField("月累", "monthSales")
+            new ExcelUtil.CellHeadField("场景", "sceneName"),
+            new ExcelUtil.CellHeadField("系列", "productSeries"),
+            new ExcelUtil.CellHeadField("维度", "targetName"),
+            new ExcelUtil.CellHeadField("单位", "targetUnit"),
+            new ExcelUtil.CellHeadField("年计划", "qtyYear"),
+            new ExcelUtil.CellHeadField("年累", "actualYear"),
+            new ExcelUtil.CellHeadField("月计划", "qtyMonth"),
+            new ExcelUtil.CellHeadField("月累", "actualMonth")
 
     };
     private static final ExcelUtil.CellHeadField[] Ty_Export_Header = {
@@ -156,7 +160,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             subContract.setCountTY(grabSize + "/" + size);
 
             // 计算爆款个数
-            List<ContractSerialDto> list = staticSerial(contract.getId());
+            List<ContractProductDTO> list = this.staticSerial(contract.getId());
+
             if (list == null || list.isEmpty()){
                 subContract.setCountBK("0");
             }else{
@@ -674,14 +679,16 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public List<ContractSerialDto> staticSerial(Integer contractId) {
+    public List<ContractProductDTO> staticSerial(Integer contractId) {
         //计划数据
-        List<ZContractsProduct> products=contractsProductDao.selectList(
-                new QueryWrapper<ZContractsProduct>()
-                .eq("contract_id",contractId)
-        );
-        List<ContractSerialDto> list=new ArrayList<>();
-        if(products!=null&&products.size()>0) {
+        List<ContractProductDTO> list=new ArrayList<>();
+
+        List<ZContractsProduct> contractsProducts=contractsProductDao.selectList(
+                new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId));
+        List<String> serials=contractsProducts.stream().map(m->m.getProductSeries())
+                .distinct().collect(Collectors.toList());
+
+        if(serials!=null&&serials.size()>0) {
             ZContracts contracts = contractsDao.selectById(contractId);
             if (contracts == null) {
                 throw new RException("合约" + Constant.MSG_DATA_NOTFOUND, Constant.CODE_DATA_NOTFOUND);
@@ -698,21 +705,41 @@ public class ContractViewServiceImpl implements ContractViewService {
             queryEntity.setQtyMonth(mounth);
             List<ZContractsProduct> monthSales = contractsProductDao.calContractProduct(queryEntity);
 
-            for (ZContractsProduct zcp:products) {
+            for (String serial:serials) {
+                ZContractsProduct yearSale = yearSales.stream()
+                        .filter(m -> serial.equals(m.getProductSeries()))
+                        .findAny().orElse(null);
+                ZContractsProduct monthSale = monthSales.stream()
+                        .filter(m -> serial.equals(m.getProductSeries()))
+                        .findAny().orElse(null);
 
-                ContractSerialDto dto=new ContractSerialDto();
-                dto.setSerial(zcp.getProductSeries());
-                dto.setYearPlan(zcp.getQtyYear());
-                dto.setMonthPlan(zcp.getQtyMonth());
-                ZContractsProduct yearSale=yearSales.stream()
-                        .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
-                        .findAny().orElse(null);
-                ZContractsProduct monthSale=monthSales.stream()
-                        .filter(m->zcp.getProductSeries().equals(m.getProductSeries()))
-                        .findAny().orElse(null);
-                dto.setYearSales(yearSale==null?BigDecimal.ZERO:yearSale.getQtyYear());
-                dto.setMonthSales(monthSale==null?BigDecimal.ZERO:monthSale.getQtyYear());
-                list.add(dto);
+                ContractProductDTO contractProductDTO = new ContractProductDTO();
+                contractProductDTO.setProductSeries(serial);
+
+                List<ZContractsProduct> currentSerials = contractsProducts.stream().filter(m -> serial.equals(m.getProductSeries())).collect(Collectors.toList());
+                List<ProductTargetDTO> targetDTOs = new ArrayList<>();
+                for (ZContractsProduct serialPlan : currentSerials) {
+                    ProductTargetDTO targetDTO = new ProductTargetDTO();
+                    BeanUtils.copyProperties(serialPlan, targetDTO);
+                    contractProductDTO.setSceneName(serialPlan.getSceneName());
+                    if (serialPlan.getTargetCode().equals("B00001")) {
+                        //收入
+                        targetDTO.setActualYear(yearSale == null ? BigDecimal.ZERO : yearSale.getQtyMonth().divide(
+                                new BigDecimal("10000"),2, RoundingMode.HALF_UP
+                        ));
+                        targetDTO.setActualMonth(monthSale == null ? BigDecimal.ZERO : monthSale.getQtyMonth().divide(
+                                new BigDecimal("10000"),2, RoundingMode.HALF_UP
+                        ));
+                    } else if (serialPlan.getTargetCode().equals("B00002")) {
+                        targetDTO.setActualYear(yearSale == null ? BigDecimal.ZERO : yearSale.getQtyYear());
+                        targetDTO.setActualMonth(monthSale == null ? BigDecimal.ZERO : monthSale.getQtyYear());
+                    }
+                    targetDTOs.add(targetDTO);
+                }
+
+                contractProductDTO.setTargetList(targetDTOs);
+                list.add(contractProductDTO);
+
             }
         }
         return  list;
@@ -772,8 +799,13 @@ public class ContractViewServiceImpl implements ContractViewService {
             ExcelUtil.buildSheet(workbook, "创单抢单数据", cdExports, Cd_Export_Header);
 
             //爆款
-            List<ContractSerialDto> product = this.staticSerial(contractId);
-            ExcelUtil.buildSheet(workbook, "爆款数据", product, Serial_Header);
+            List<ContractProductDTO> products = this.staticSerial(contractId);
+            List<ProductTargetDTO> details=new ArrayList<>();
+            for (ContractProductDTO dto:products
+                 ) {
+                details.addAll(dto.getTargetList());
+            }
+            ExcelUtil.buildSheet(workbook, "爆款数据", details, Serial_Header);
             ByteArrayOutputStream bot = new ByteArrayOutputStream();
             workbook.write(bot);
             ExcelUtil.export(request, response, workbook, "合约抢单信息.xls");

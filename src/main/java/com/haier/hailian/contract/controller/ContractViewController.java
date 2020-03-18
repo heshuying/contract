@@ -149,7 +149,7 @@ public class ContractViewController {
     @GetMapping(value = {"/serials/{contractId}"})
     @ApiOperation(value = "合约爆款数据统计")
     public R getContractInfo(@PathVariable Integer contractId) {
-         List<ContractSerialDto> list = contractViewService.staticSerial(contractId);
+         List<ContractProductDTO> list = contractViewService.staticSerial(contractId);
         return R.ok().put("data",list);
     }
 

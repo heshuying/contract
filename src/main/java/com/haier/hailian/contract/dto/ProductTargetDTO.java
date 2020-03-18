@@ -21,4 +21,10 @@ public class ProductTargetDTO {
     private BigDecimal qtyYear;
 
     private BigDecimal qtyMonth;
+
+    private BigDecimal actualYear;
+
+    private BigDecimal actualMonth;
+    private String productSeries;
+    private String sceneName;
 }

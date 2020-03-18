@@ -3,6 +3,7 @@ package com.haier.hailian.contract.dao;
 import com.haier.hailian.contract.entity.ProductQueryEntity;
 import com.haier.hailian.contract.entity.ZContractsProduct;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
