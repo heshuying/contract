@@ -32,4 +32,59 @@
         where ptCode='V0156' and xwGroupType='2'
     </select>
 
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" parameterType="com.haier.hailian.contract.entity.XiaoweiEhr" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_xiaowei_ehr
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="xwCode != null and xwCode != ''">
+                and xwCode = #{xwCode}
+            </if>
+            <if test="xwName != null and xwName != ''">
+                and xwName = #{xwName}
+            </if>
+            <if test="xwMasterCode != null and xwMasterCode != ''">
+                and xwMasterCode = #{xwMasterCode}
+            </if>
+            <if test="xwMasterName != null and xwMasterName != ''">
+                and xwMasterName = #{xwMasterName}
+            </if>
+            <if test="ptCode != null and ptCode != ''">
+                and ptCode = #{ptCode}
+            </if>
+            <if test="ptName != null and ptName != ''">
+                and ptName = #{ptName}
+            </if>
+            <if test="buCode != null and buCode != ''">
+                and buCode = #{buCode}
+            </if>
+            <if test="buName != null and buName != ''">
+                and buName = #{buName}
+            </if>
+            <if test="xwGroupType != null and xwGroupType != ''">
+                and xwGroupType = #{xwGroupType}
+            </if>
+            <if test="xwGroupName != null and xwGroupName != ''">
+                and xwGroupName = #{xwGroupName}
+            </if>
+            <if test="xwStyle != null and xwStyle != ''">
+                and xwStyle = #{xwStyle}
+            </if>
+            <if test="xwStyleCode != null and xwStyleCode != ''">
+                and xwStyleCode = #{xwStyleCode}
+            </if>
+            <if test="xwType != null and xwType != ''">
+                and xwType = #{xwType}
+            </if>
+            <if test="xwTypeCode != null and xwTypeCode != ''">
+                and xwTypeCode = #{xwTypeCode}
+            </if>
+        </where>
+    </select>
+
 </mapper>

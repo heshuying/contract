@@ -2,7 +2,10 @@ package com.haier.hailian.contract.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.dto.TargetBasicInfo;
+import com.haier.hailian.contract.entity.SysXiaoweiEhr;
 import com.haier.hailian.contract.entity.TargetBasic;
+import com.haier.hailian.contract.entity.XiaoweiEhr;
 
 import java.util.List;
 
@@ -25,4 +28,12 @@ public interface TargetBasicService extends IService<TargetBasic> {
     int updateContractsTarget(List<TargetBasic> targetBasicList);
 
     int insertContractsTarget(List<TargetBasic> targetBasicList);
+
+    List<TargetBasicInfo> selectContractsTarget(QueryBottomDTO dto);
+
+    int deleteContractsTarget(Integer id);
+
+    List<SysXiaoweiEhr> selectXwAll(XiaoweiEhr xiaoweiEhr);
+
+    int getNum();
 }
