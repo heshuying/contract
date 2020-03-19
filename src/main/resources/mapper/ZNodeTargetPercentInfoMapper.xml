@@ -349,7 +349,7 @@
         (SELECT
         *
         FROM
-        z_contracts_xwtype3 al
+        z_contracts_xw_type3 al
         WHERE al.contract_id = #{contractId}) al
         ON a1.xwType3Code = al.xwType3Code
         <if test=" keyword != null and keyword != '' ">
