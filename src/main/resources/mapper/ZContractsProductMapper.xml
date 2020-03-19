@@ -23,8 +23,9 @@
         sum(ifnull(mcgo.order_num,0)) as 'qty_year'
         ,sum(ifnull(mcgo.order_amt,0)) as 'qty_month'
         from z_contracts_product cp
-        join z_product_chain zpc on cp.product_series=zpc.product_series
-        left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code
+        join z_contracts zc on cp.contract_id=zc.id
+        join z_product_chain zpc on cp.product_series=zpc.product_series and zc.chain_code=zpc.chain_code
+        left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code and zpc.chain_code=mcgo.chain_code
         where cp.contract_id=#{contractId}
         <if test="qtyMonth!=null and qtyMonth != '' ">
             and mcgo.month=#{qtyMonth}
