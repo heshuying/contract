@@ -9,4 +9,5 @@ public class CDGrabType3 {
     private String xwType3Name;
     private String sharePercent;
     private String grabCount;
+    private String countTotal;
 }
