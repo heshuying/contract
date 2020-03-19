@@ -663,9 +663,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public int updateChainTYInfo() {
         int num = 0;
         List<ZHrChainInfo> list = zHrChainInfoDao.selectList(
-                new QueryWrapper<ZHrChainInfo>()
-                        .gt("create_date" , "2020-02-21 00:00:00")
-                        .lt("create_date" , "2020-02-21 23:59:59"));
+                new QueryWrapper<ZHrChainInfo>().eq("deleted" , "0"));
 
         for(ZHrChainInfo chainInfo : list){
 
@@ -676,7 +674,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             );
 
             if(nodes != null && nodes.size() > 0){
-                continue;
+                zNodeTargetPercentInfoDao.delete( new QueryWrapper<ZNodeTargetPercentInfo>()
+                        .eq("lq_code" , chainInfo.getChainCode())
+                        .isNull("share_percent"));
             }
 
             List<TOdsMinbu> getIsTY = tOdsMinbuDao.getListByIsTY(chainInfo.getChainPtCode());
