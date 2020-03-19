@@ -87,4 +87,9 @@
         </where>
     </select>
 
+    <select id="getListByXwStyleCode" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from sys_xiaowei_ehr base
+        where xwStyleCode like "%"#{xwStyleCode}"%"
+    </select>
+
 </mapper>

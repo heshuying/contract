@@ -96,6 +96,13 @@ public class TargetBasicController {
         return R.ok().put("data",list);
     }
 
+    @PostMapping(value = {"/getXwTypeList"})
+    @ApiOperation(value = "查询小微类型  xwStyleCode")
+    public R getXwTypeList() {
+        List list = targetBasicService.getXwTypeList();
+        return R.ok().put("data", list);
+    }
+
 
 }
 
