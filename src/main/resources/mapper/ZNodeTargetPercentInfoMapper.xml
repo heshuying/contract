@@ -323,25 +323,38 @@
     <!-- 创单抢单数据-->
     <select id="queryCDGrabDataXWType3" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabType3">
         SELECT
-          i.`lq_code`,
-          i.`xwType3Code`,
-          i.`xwType3` AS xwType3Name,
-          IFNULL(i.`type_share_percent`, i.share_percent) AS sharePercent,
-          '0' AS countTotal
+        a1.`lq_code`,
+        a1.`xwType3Code`,
+        a1.`xwType3` AS xwType3Name,
+        IFNULL(
+        a1.`type_share_percent`,
+        a1.share_percent
+        ) AS sharePercent,
+        IFNULL(al.node_number, 0) AS countTotal
         FROM
-          z_node_target_percent_info i
+        (SELECT
+        *
+        FROM
+        z_node_target_percent_info i
         WHERE i.`lq_code` IN
-          (SELECT
-            chain_code
-          FROM
-            z_contracts
-          WHERE id = #{contractId})
-          AND i.`share_percent` IS NOT NULL
-          AND i.`xwType3Code` IS NOT NULL
-          <if test=" keyword != null and keyword != '' ">
-            AND i.xwType3 LIKE CONCAT('%',#{keyword}, '%')
-          </if>
-        GROUP BY i.`xwType3Code`
+        (SELECT
+        chain_code
+        FROM
+        z_contracts
+        WHERE id = #{contractId})
+        AND i.`share_percent` IS NOT NULL
+        AND i.`xwType3Code` IS NOT NULL
+        GROUP BY i.`xwType3Code`) a1
+        LEFT JOIN
+        (SELECT
+        *
+        FROM
+        z_contracts_xw_type3 al
+        WHERE al.contract_id = #{contractId}) al
+        ON a1.xwType3Code = al.xwType3Code
+        <if test=" keyword != null and keyword != '' ">
+            where a1.xwType3 LIKE CONCAT('%',#{keyword}, '%')
+        </if>
     </select>
 
     <select id="selectListByXwType3Code" parameterType="map" resultMap="ZNodeTargetPercentInfoMap" >

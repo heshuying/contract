@@ -3,18 +3,18 @@ package com.haier.hailian.contract.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.haier.hailian.contract.dao.SysXiaoweiEhrDao;
+import com.haier.hailian.contract.dao.TOdsDictionaryDao;
 import com.haier.hailian.contract.dao.TargetBasicDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.TargetBasicInfo;
-import com.haier.hailian.contract.entity.SysXiaoweiEhr;
-import com.haier.hailian.contract.entity.TargetBasic;
-import com.haier.hailian.contract.entity.XiaoweiEhr;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.util.Constant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,6 +43,8 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     private ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
     private SysXiaoweiEhrDao sysXiaoweiEhrDao;
+    @Autowired
+    private TOdsDictionaryDao tOdsDictionaryDao;
 
     @Override
     public List<TargetBasic> selectBottom(QueryBottomDTO dto){
@@ -107,6 +111,19 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     public int insertContractsTarget(List<TargetBasic> targetBasicList) {
         int num = 0;
         for(TargetBasic targetBasic : targetBasicList){
+            if(StringUtils.isNotBlank(targetBasic.getRoleCode())){ // 2级单
+                String[] codes = targetBasic.getRoleCode().split("|");
+                String roleCode = "|";
+                for(String code : codes){
+                    Map minbuMap = new HashMap();
+                    minbuMap.put("xwStyleCode" , "|" + code + "|");
+                    List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+                    for(SysXiaoweiEhr xw : mins){
+                        roleCode = roleCode + xw.getXwcode() + "|";
+                    }
+                }
+                targetBasic.setRoleCode(roleCode);
+            }
             targetBasic.setChainCode("LQ" + getNum());
             targetBasicDao.insert(targetBasic);
             num++;
@@ -160,6 +177,37 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         // 更新计数器表
         zHrChainInfoDao.updateNum();
         return num;
+    }
+
+
+
+    @Override
+    public List<TOdsDictionary> getXwTypeList() {
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //获取用户首页选中的用户
+        TOdsMinbu currentUser = sysUser.getMinbu();
+        if (currentUser == null || currentUser.getXwCode() == null){
+            return null;
+        }
+        List<TOdsDictionary> list = tOdsDictionaryDao.selectList(new QueryWrapper<TOdsDictionary>()
+                .eq("status" , "1")
+                .eq("Type " , "XWstyle"));
+
+        List<TOdsDictionary> realList = new ArrayList<>();
+        for(TOdsDictionary ods : list){
+            Map minbuMap = new HashMap();
+            minbuMap.put("xwStyleCode" , "|" + ods.getCode() + "|");
+            List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+            if(mins.size()>0){
+                realList.add(ods);
+            }else{
+                continue;
+            }
+        }
+        return realList;
     }
 
 

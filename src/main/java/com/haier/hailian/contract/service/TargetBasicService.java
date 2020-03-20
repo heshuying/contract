@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
 import com.haier.hailian.contract.dto.TargetBasicInfo;
 import com.haier.hailian.contract.entity.SysXiaoweiEhr;
+import com.haier.hailian.contract.entity.TOdsDictionary;
 import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
 
@@ -36,4 +37,6 @@ public interface TargetBasicService extends IService<TargetBasic> {
     List<SysXiaoweiEhr> selectXwAll(XiaoweiEhr xiaoweiEhr);
 
     int getNum();
+
+    List<TOdsDictionary> getXwTypeList();
 }
