@@ -46,4 +46,6 @@ public interface ZGamblingContractsService {
     List<ContractProductDTO> getProductSeriesListByExcel(InputStream inputStream, String originalFilename)throws Exception;
 
     void saveGamblingNew(SaveGamblingContractDTO dto) throws Exception;
+
+    List<ContractXwType3DTO> selectXwType3(String chainCode);
 }

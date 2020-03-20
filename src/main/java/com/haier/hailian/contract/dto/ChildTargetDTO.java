@@ -18,4 +18,5 @@ public class ChildTargetDTO {
     private List<ChainGroupTargetDTO> childTargetList;
     private List<MarketTargetDTO> childMarketList;
     private List<ContractProductDTO> childProductList;
+    private List<ContractXwType3DTO> childXwType3List;
 }

@@ -109,19 +109,25 @@ public class ZGamblingContractsController {
                 dto1.setChainCode(chainCode);
                 List<ContractProductDTO> childProduct = gamblingContractsService.selectProductSeries(dto1);
                 targetDTO.setChildProduct(childProduct);
+                //6.查询子链群的xwType3资源类型和最大数量
+                List<ContractXwType3DTO> childXwType3 = gamblingContractsService.selectXwType3(chainCode);
+                targetDTO.setChildXwType3(childXwType3);
                 children.add(targetDTO);
             }
             targetAllDTO.setChildren(children);
         }else{
-            //4.查询主链群的42中心
+            //7.查询主链群的42中心
             MarketReturnDTO marketReturnDTO = gamblingContractsService.selectMarket(parentChain);
             List<TOdsMinbu> parentCenter = marketReturnDTO.getMarket();
             targetAllDTO.setParentCenter(parentCenter);
-            //5.查询主链群的爆款目标
+            //8.查询主链群的爆款目标
             QueryProductChainDTO dto1 = new QueryProductChainDTO();
             dto1.setChainCode(parentChain);
             List<ContractProductDTO> parentProduct = gamblingContractsService.selectProductSeries(dto1);
             targetAllDTO.setParentProduct(parentProduct);
+            //9.查询主链群的xwType3资源类型和最大数量
+            List<ContractXwType3DTO> childXwType3 = gamblingContractsService.selectXwType3(parentChain);
+            targetAllDTO.setParentXwType3(childXwType3);
         }
         return R.ok().put("data",targetAllDTO);
     }

@@ -55,6 +55,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private ZContractsProductDao contractsProductDao;
     @Autowired
     private ZHrChainInfoDao hrChainInfoDao;
+    @Autowired
+    private ZContractsXwType3Dao xwtype3Dao;
 
 
     @Override
@@ -365,6 +367,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //4.查询产品目标
         List<ContractProductDTO> productDTOs = contractsProductDao.selectProductByContractId(contractId);
         dto.setProductList(productDTOs);
+        //5.查询主链群的资源类型的最小作战单元个数
+        String chainCode = contracts.getChainCode();
+        List<ContractXwType3DTO> xwType3DTOs = xwtype3Dao.selectXwType3ByContractId(chainCode,contractId);
+        dto.setXwType3List(xwType3DTOs);
         //5.查询子链群的合约
         List<ZContracts> children = contractsDao.selectList(new QueryWrapper<ZContracts>().eq("parent_id",contractId));
         if(null != children && children.size()>0){
@@ -425,6 +431,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 //8.查询子链群的产品目标
                 List<ContractProductDTO> childProductList = contractsProductDao.selectProductByContractId(childId);
                 childTargetDTO.setChildProductList(childProductList);
+                //9.查询主链群的资源类型的最小作战单元个数
+                List<ContractXwType3DTO> childXwType3List = xwtype3Dao.selectXwType3ByContractId(chainCode,childId);
+                childTargetDTO.setChildXwType3List(childXwType3List);
                 childrenList.add(childTargetDTO);
             }
             dto.setChildren(childrenList);
@@ -677,6 +686,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             //修改时删除原有目标
             factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",dto.getId()));
             contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",dto.getId()));
+            xwtype3Dao.delete(new QueryWrapper<ZContractsXwType3>().eq("contract_id",dto.getId()));
+
         }
         //2.保存链群目标到目标表
         List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
@@ -743,7 +754,19 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 }
             }
         }
-        //5.保存子链群合约
+        //5.保存主链群资源类型下的最小作战单元数量
+        List<ContractXwType3DTO> xwType3List = dto.getXwType3List();
+        if(null != xwType3List){
+            for (ContractXwType3DTO xwType3DTO : xwType3List){
+                ZContractsXwType3 xwType3 = new ZContractsXwType3();
+                xwType3.setContractId(contracts.getId());
+                xwType3.setNodeNumber(xwType3DTO.getInputNumber());
+                xwType3.setXwType3(xwType3DTO.getXwType3());
+                xwType3.setXwType3Code(xwType3DTO.getXwType3Code());
+                xwtype3Dao.insert(xwType3);
+            }
+        }
+        //6.保存子链群合约
         List<ChildTargetDTO> children = dto.getChildren();
         if(null != children && children.size()>0){
             for(ChildTargetDTO child:children){
@@ -775,8 +798,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     //修改时删除原有目标
                     contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",child.getId()));
                     factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",child.getId()));
+                    xwtype3Dao.delete(new QueryWrapper<ZContractsXwType3>().eq("contract_id",child.getId()));
+
                 }
-                //6.保存子链群的链群目标
+                //7.保存子链群的链群目标
                 List<ChainGroupTargetDTO> childTargetList = child.getChildTargetList();
                 for(ChainGroupTargetDTO childTarget:childTargetList){
                     if(null==childTarget.getGrab()) continue;
@@ -801,7 +826,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     factor1.setIsLqTarget(childTarget.getIsLqTarget());
                     factorDao.insert(factor1);
                 }
-                //7.保存子链群的市场目标
+                //8.保存子链群的市场目标
                 List<MarketTargetDTO> chilidMarketList = child.getChildMarketList();
                 if(null != chilidMarketList){
                     for (MarketTargetDTO chilidMarket : chilidMarketList){
@@ -821,7 +846,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                         }
                     }
                 }
-                //8.保存子链群的产品目标
+                //9.保存子链群的产品目标
                 List<ContractProductDTO> childProductList = child.getChildProductList();
                 if(null != childProductList){
                     for (ContractProductDTO chilidProduct : childProductList){
@@ -840,11 +865,26 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                         }
                     }
                 }
+                //10.保存子链群资源类型下的最小作战单元数量
+                List<ContractXwType3DTO> childXwType3List = child.getChildXwType3List();
+                if(null != childXwType3List){
+                    for (ContractXwType3DTO xwType3DTO : childXwType3List){
+                        ZContractsXwType3 xwType3 = new ZContractsXwType3();
+                        xwType3.setNodeNumber(xwType3DTO.getInputNumber());
+                        xwType3.setContractId(childContracts.getId());
+                        xwType3.setXwType3(xwType3DTO.getXwType3());
+                        xwType3.setXwType3Code(xwType3DTO.getXwType3Code());
+                        xwtype3Dao.insert(xwType3);
+                    }
+                }
             }
-
         }
+    }
 
-
+    @Override
+    public List<ContractXwType3DTO> selectXwType3(String chainCode) {
+        List<ContractXwType3DTO> xwType3DTOList = nodeTargetPercentInfoDao.selectXwType3ListByChainCode(chainCode);
+        return xwType3DTOList;
     }
 
     //校验excle格式

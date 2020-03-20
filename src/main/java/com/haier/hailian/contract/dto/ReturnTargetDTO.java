@@ -17,4 +17,5 @@ public class ReturnTargetDTO {
     private List<TargetBasic> childTarget;
     private List<TOdsMinbu> childCenter;
     private List<ContractProductDTO> childProduct;
+    private List<ContractXwType3DTO> childXwType3;
 }

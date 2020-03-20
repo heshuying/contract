@@ -100,6 +100,8 @@ public class GamblingContractDTO {
 
     private List<ContractProductDTO> productList;
 
+    private List<ContractXwType3DTO> xwType3List;
+
     private List<ChildTargetDTO> children;
 
 }

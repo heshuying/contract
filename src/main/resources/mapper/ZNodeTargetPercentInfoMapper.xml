@@ -365,4 +365,18 @@
         delete from chain_contract.z_node_target_percent_info where lq_code = #{lqCode} and xwType3Code=#{xwType3Code} and share_percent IS NOT NULL
     </delete>
 
+
+
+    <!-- 举单页，根据链群编码，查询链群下的资源类型和最大数量-->
+    <resultMap type="com.haier.hailian.contract.dto.ContractXwType3DTO" id="xwType3Map">
+        <result property="xwType3" column="xwType3" />
+        <result property="xwType3Code" column="xwType3Code" />
+        <result property="maxNumber" column="maxNumber" />
+    </resultMap>
+    <select id="selectXwType3ListByChainCode" parameterType="java.lang.String" resultMap="xwType3Map" >
+        select t.xwType3Code,t.xwType3,count(t.node_code) as maxNumber  from z_node_target_percent_info t
+        where t.lq_code=#{chainCode} and t.share_percent is not NULL
+        GROUP BY t.xwType3Code
+    </select>
+
 </mapper>

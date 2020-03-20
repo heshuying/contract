@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.ZContractsXwType3Dao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.ZContractsXwType3">
+        <result column="id" property="id" />
+        <result column="contract_id" property="contractId" />
+        <result column="xwType3Code" property="xwType3Code" />
+        <result column="xwType3" property="xwType3" />
+        <result column="node_number" property="nodeNumber" />
+    </resultMap>
+
+    <resultMap type="com.haier.hailian.contract.dto.ContractXwType3DTO" id="xwType3Map">
+        <result property="xwType3" column="xwType3" />
+        <result property="xwType3Code" column="xwType3Code" />
+        <result property="maxNumber" column="maxNumber" />
+        <result property="inputNumber" column="inputNumber" />
+    </resultMap>
+    <select id="selectXwType3ByContractId"  resultMap="xwType3Map">
+        select xw.xwType3,xw.xwType3Code,xw.node_number as inputNumber,a.maxNumber
+        from z_contracts_xw_type3 xw
+        LEFT JOIN (
+            select t.xwType3Code,t.xwType3,count(t.node_code) as maxNumber  from z_node_target_percent_info t
+                where t.lq_code=#{chainCode} and t.share_percent is not NULL
+                GROUP BY t.xwType3Code
+        ) a
+        on xw.xwType3Code=a.xwType3Code
+        where xw.contract_id=#{contractId}
+    </select>
+</mapper>
