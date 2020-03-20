@@ -432,7 +432,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 List<ContractProductDTO> childProductList = contractsProductDao.selectProductByContractId(childId);
                 childTargetDTO.setChildProductList(childProductList);
                 //9.查询主链群的资源类型的最小作战单元个数
-                List<ContractXwType3DTO> childXwType3List = xwtype3Dao.selectXwType3ByContractId(chainCode,childId);
+                List<ContractXwType3DTO> childXwType3List = xwtype3Dao.selectXwType3ByContractId(child.getChainCode(),childId);
                 childTargetDTO.setChildXwType3List(childXwType3List);
                 childrenList.add(childTargetDTO);
             }
