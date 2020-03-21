@@ -69,7 +69,9 @@
           c.`org_name` AS nodeName,
           e.`xwCode`,
           e.`xwName`,
-          c.`share_percent` AS sharePercent
+          c.`share_percent` AS sharePercent,
+        IF(c.`check_time`<![CDATA[ < ]]>NOW(), 'false', 'true') AS checkEnable,
+        IF(c.`end_date`<![CDATA[ < ]]>NOW(),'false','true') AS kickoutEnable
         FROM
           z_contracts c
           JOIN sys_xiaowei_ehr e ON c.`xiaowei_code` = e.`xwCode`
