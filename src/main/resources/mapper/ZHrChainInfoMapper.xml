@@ -19,12 +19,13 @@
         <result property="cdShareRate" column="cd_share_rate" jdbcType="VARCHAR"/>
         <result property="tyShareRate" column="ty_share_rate" jdbcType="VARCHAR"/>
         <result property="parentCode" column="parent_code" jdbcType="VARCHAR"/>
+        <result property="grabFlag" column="grab_flag" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="ZHrChainInfoMap">
         select
-          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date,zzfx_rate,cd_share_rate,ty_share_rate
+          id, chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,group_id,fixed_position,create_date,zzfx_rate,cd_share_rate,ty_share_rate,parent_code,grab_flag
         from chain_contract.z_hr_chain_info
         where id = #{id}
     </select>
@@ -76,13 +77,16 @@
             <if test="parentCode != null and parentCode != ''">
                 and parent_code = #{parentCode}
             </if>
+            <if test="grabFlag != null and grabFlag != ''">
+                and grab_flag = #{grabFlag}
+            </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate,parent_code)
-        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate},#{parentCode})
+        insert into chain_contract.z_hr_chain_info(chain_code, chain_name, xw_code, xw_name, master_code, master_name, chain_pt_code, deleted,fixed_position,zzfx_rate,cd_share_rate,ty_share_rate,parent_code,grab_flag)
+        values (#{chainCode}, #{chainName}, #{xwCode}, #{xwName}, #{masterCode}, #{masterName}, #{chainPtCode}, #{deleted},#{fixedPosition},#{zzfxRate},#{cdShareRate},#{tyShareRate},#{parentCode},#{grabFlag})
     </insert>
 
     <!--通过主键修改数据-->
@@ -130,6 +134,9 @@
             </if>
             <if test="parentCode != null">
                 parent_code = #{parentCode},
+            </if>
+            <if test="grabFlag != null">
+                grab_flag = #{grabFlag},
             </if>
         </set>
         where id = #{id}

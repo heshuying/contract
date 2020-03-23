@@ -261,6 +261,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         zHrChainInfo.setCdShareRate(zHrChainInfoDto.getCdShareRate());
         zHrChainInfo.setTyShareRate(zHrChainInfoDto.getTyShareRate());
         zHrChainInfo.setParentCode("0");
+        zHrChainInfo.setGrabFlag(zHrChainInfoDto.getGrabFlag());
         zHrChainInfoDao.insert(zHrChainInfo);
 
         List<String> minbuList = new ArrayList<>();
@@ -345,6 +346,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 fuck.setCdShareRate(chain.getCdShareRate());
                 fuck.setTyShareRate(chain.getTyShareRate());
                 fuck.setParentCode(chainCode);
+                fuck.setGrabFlag(chain.getGrabFlag());
                 zHrChainInfoDao.insert(fuck);
 
                 List<String> modelMinbuList = new ArrayList<>();
@@ -562,6 +564,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         fuck.setCdShareRate(zHrChainInfoDto.getCdShareRate());
         fuck.setTyShareRate(zHrChainInfoDto.getTyShareRate());
         fuck.setParentCode(zHrChainInfoDto.getParentCode());
+        fuck.setGrabFlag(zHrChainInfoDto.getGrabFlag());
         int change = zHrChainInfoDao.insert(fuck);
 
         List<String> modelMinbuList = new ArrayList<>();
