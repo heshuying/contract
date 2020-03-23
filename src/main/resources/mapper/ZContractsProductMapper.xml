@@ -19,23 +19,26 @@
     <select id="calContractProduct" parameterType="com.haier.hailian.contract.entity.ZContractsProduct"
     resultMap="BaseResultMap"
     >
-        select cp.product_series as 'product_series',
+        select cp.scene_name as 'scene_name', cp.product_series as 'product_series',
         sum(ifnull(mcgo.order_num,0)) as 'qty_year'
         ,sum(ifnull(mcgo.order_amt,0)) as 'qty_month'
-        from (select DISTINCT product_series,contract_id from z_contracts_product) cp
+        from (select DISTINCT product_series,contract_id,scene_name from z_contracts_product where contract_id=#{contractId}) cp
         join z_contracts zc on cp.contract_id=zc.id
-        join z_product_chain zpc on cp.product_series=zpc.product_series and zc.chain_code=zpc.chain_code
+        join z_product_chain zpc on cp.product_series=zpc.product_series and cp.scene_name=zpc.scene_name
+        and zc.chain_code=zpc.chain_code
         left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code and zpc.chain_code=mcgo.chain_code
-        where cp.contract_id=#{contractId}
         <if test="qtyMonth!=null and qtyMonth != '' ">
             and mcgo.month=#{qtyMonth}
         </if>
         <if test="qtyYear!=null and qtyYear != '' ">
             and mcgo.year=#{qtyYear}
         </if>
-        group by cp.product_series
+        group by cp.scene_name,cp.product_series
     </select>
 
+    <select id="distinctSerialAndScene" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select DISTINCT product_series,scene_name from z_contracts_product where contract_id=#{contractId}
+    </select>
 
     <resultMap id="ResultMap1" type="com.haier.hailian.contract.dto.ContractProductDTO">
         <result column="product_series" property="productSeries" />
@@ -49,11 +52,12 @@
         </collection>
     </resultMap>
     <select id="selectProductByContractId" parameterType="java.lang.Integer" resultMap="ResultMap1">
-        select DISTINCT(t1.product_series),t1.scene_name,t2.qty_month,t2.qty_year,t2.target_code,t2.target_name,t2.target_unit
+        select DISTINCT t1.product_series,t1.scene_name,t2.qty_month,t2.qty_year,t2.target_code,t2.target_name,t2.target_unit
         from z_contracts_product t1
         LEFT JOIN z_contracts_product t2
         on t1.contract_id=t2.contract_id
         and t1.product_series=t2.product_series
+        and t1.scene_name = t2.scene_name
         where t1.contract_id=#{contractId}
     </select>
 

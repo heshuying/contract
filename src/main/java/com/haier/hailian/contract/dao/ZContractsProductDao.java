@@ -18,6 +18,6 @@ import java.util.List;
  */
 public interface ZContractsProductDao extends BaseMapper<ZContractsProduct> {
     List<ZContractsProduct> calContractProduct(ProductQueryEntity entity);
-
+    List<ZContractsProduct> distinctSerialAndScene(Integer contractId);
     List<ContractProductDTO> selectProductByContractId(Integer contractId);
 }

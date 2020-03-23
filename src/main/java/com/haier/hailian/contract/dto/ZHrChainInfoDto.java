@@ -56,4 +56,6 @@ public class ZHrChainInfoDto {
 
     private String isModel; // 是否开启模块
 
+    private String grabFlag; // 是否在oms抢单
+
 }
