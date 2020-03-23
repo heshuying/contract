@@ -685,8 +685,7 @@ public class ContractViewServiceImpl implements ContractViewService {
 
         List<ZContractsProduct> contractsProducts=contractsProductDao.selectList(
                 new QueryWrapper<ZContractsProduct>().eq("contract_id",contractId));
-        List<String> serials=contractsProducts.stream().map(m->m.getProductSeries())
-                .distinct().collect(Collectors.toList());
+        List<ZContractsProduct> serials=contractsProductDao.distinctSerialAndScene(contractId);
 
         if(serials!=null&&serials.size()>0) {
             ZContracts contracts = contractsDao.selectById(contractId);
@@ -705,23 +704,26 @@ public class ContractViewServiceImpl implements ContractViewService {
             queryEntity.setQtyMonth(mounth);
             List<ZContractsProduct> monthSales = contractsProductDao.calContractProduct(queryEntity);
 
-            for (String serial:serials) {
+            for (ZContractsProduct serial:serials) {
                 ZContractsProduct yearSale = yearSales.stream()
-                        .filter(m -> serial.equals(m.getProductSeries()))
+                        .filter(m -> serial.getProductSeries().equals(m.getProductSeries())
+                        &&serial.getSceneName().equals(m.getSceneName()))
                         .findAny().orElse(null);
                 ZContractsProduct monthSale = monthSales.stream()
-                        .filter(m -> serial.equals(m.getProductSeries()))
+                        .filter(m -> serial.equals(m.getProductSeries())
+                                &&serial.getSceneName().equals(m.getSceneName()))
                         .findAny().orElse(null);
 
                 ContractProductDTO contractProductDTO = new ContractProductDTO();
-                contractProductDTO.setProductSeries(serial);
-
-                List<ZContractsProduct> currentSerials = contractsProducts.stream().filter(m -> serial.equals(m.getProductSeries())).collect(Collectors.toList());
+                contractProductDTO.setProductSeries(serial.getProductSeries());
+                contractProductDTO.setSceneName(serial.getSceneName());
+                List<ZContractsProduct> currentSerials = contractsProducts.stream()
+                        .filter(m -> serial.getProductSeries().equals(m.getProductSeries())
+                        && serial.getSceneName().equals(m.getSceneName())).collect(Collectors.toList());
                 List<ProductTargetDTO> targetDTOs = new ArrayList<>();
                 for (ZContractsProduct serialPlan : currentSerials) {
                     ProductTargetDTO targetDTO = new ProductTargetDTO();
                     BeanUtils.copyProperties(serialPlan, targetDTO);
-                    contractProductDTO.setSceneName(serialPlan.getSceneName());
                     if (serialPlan.getTargetCode().equals("B00001")) {
                         //收入
                         targetDTO.setActualYear(yearSale == null ? BigDecimal.ZERO : yearSale.getQtyMonth().divide(

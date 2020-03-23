@@ -58,8 +58,10 @@ public class ContractViewController {
                 List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(paraMap.get("contractId"), item.getXwType3Code());
                 if(list != null && !list.isEmpty()){
                     item.setGrabCount(String.valueOf(list.size()));
+                    item.setGrabList(list);
                     countGrabed++;
                 }else{
+                    item.setGrabList(new ArrayList<>());
                     item.setGrabCount("0");
                 }
             }
