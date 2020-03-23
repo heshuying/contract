@@ -173,7 +173,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             List<CDGrabType3> type3List = this.queryCDGrabDataXWType3(subId, "");
             if(type3List != null && !type3List.isEmpty()){
                 for(CDGrabType3 item : type3List){
-                    List<CDGrabDataDTO> grabList = this.queryGrabListXWType3(subId, item.getXwType3Code());
+                    List<CDGrabDataDTO> grabList = this.queryGrabListXWType3(subId, item.getXwType3Code(), null);
                     if(grabList != null && !grabList.isEmpty()){
                         item.setGrabCount(String.valueOf(grabList.size()));
                         countGrabed++;
@@ -476,10 +476,11 @@ public class ContractViewServiceImpl implements ContractViewService {
     }
 
     @Override
-    public List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code){
+    public List<CDGrabDataDTO> queryGrabListXWType3(String contractId, String type3Code, String grabId){
         Map<String,Object> paraMap = new HashMap<>();
         paraMap.put("contractId", contractId);
         paraMap.put("type3Code", type3Code);
+        paraMap.put("grabId", grabId);
 
         return contractsDao.getCDGrabResultType3List(paraMap);
     }

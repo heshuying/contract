@@ -52,4 +52,6 @@ public class ZHrChainInfo implements Serializable {
 
     private String parentCode; //主链群编码
 
+    private String grabFlag; // 是否在oms抢单
+
 }

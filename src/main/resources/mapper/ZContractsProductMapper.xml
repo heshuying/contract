@@ -52,11 +52,12 @@
         </collection>
     </resultMap>
     <select id="selectProductByContractId" parameterType="java.lang.Integer" resultMap="ResultMap1">
-        select DISTINCT(t1.product_series),t1.scene_name,t2.qty_month,t2.qty_year,t2.target_code,t2.target_name,t2.target_unit
+        select DISTINCT t1.product_series,t1.scene_name,t2.qty_month,t2.qty_year,t2.target_code,t2.target_name,t2.target_unit
         from z_contracts_product t1
         LEFT JOIN z_contracts_product t2
         on t1.contract_id=t2.contract_id
         and t1.product_series=t2.product_series
+        and t1.scene_name = t2.scene_name
         where t1.contract_id=#{contractId}
     </select>
 
