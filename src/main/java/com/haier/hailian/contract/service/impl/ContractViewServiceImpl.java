@@ -711,7 +711,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                         &&serial.getSceneName().equals(m.getSceneName()))
                         .findAny().orElse(null);
                 ZContractsProduct monthSale = monthSales.stream()
-                        .filter(m -> serial.equals(m.getProductSeries())
+                        .filter(m -> serial.getProductSeries().equals(m.getProductSeries())
                                 &&serial.getSceneName().equals(m.getSceneName()))
                         .findAny().orElse(null);
 
