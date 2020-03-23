@@ -84,6 +84,9 @@ public class HacLoginRealm extends AuthorizingRealm {
                     if (xwRegion != null && xwRegion.size() > 0) {
                         bu.setRegionCode(xwRegion.get(0).getRegionCode());
                         bu.setRegionName(xwRegion.get(0).getRegionName());
+                        bu.setIn42Center(true);
+                    }else{
+                        bu.setIn42Center(false);
                     }
                 }
 
