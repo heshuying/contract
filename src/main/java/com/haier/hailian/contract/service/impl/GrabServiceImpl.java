@@ -167,112 +167,129 @@ public class GrabServiceImpl implements GrabService {
             dto.setHasInput(false);
             return dto;
         }).collect(Collectors.toList());
-
-        //网格抢单汇总
-        perfectQueryParam(queryDto);
-        queryDto.setLoginXwCode(minBu.getXwCode());
-        queryDto.setRegionCode(minBu.getRegionCode());
-
-        //e2e收入
-        List<MeshGrabEntity> meshE2EEntities=monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
-        BigDecimal e2eInc=new BigDecimal(meshE2EEntities.stream().mapToDouble(m->
-                AmountFormat.amtStr2D(m.getIncome())).sum());
-        //抢单收入
-        List<MeshGrabEntity> meshGrabEntities=monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
-        BigDecimal inc=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
-                AmountFormat.amtStr2D(m.getIncome())).sum());
-        BigDecimal sumSales=new BigDecimal(meshGrabEntities.stream().mapToDouble(m->
-                AmountFormat.amtStr2D(m.getSales())).sum());
-        //根据目标维度 设置抢单的维度
-        List<FactorDto> grabFactors=new ArrayList<>();
-        List<FactorDto> e2eFactors=new ArrayList<>();
-
-        String tip="";
-        for (FactorDto index : targetFactor) {
-            FactorDto e2eFactor=new FactorDto();
-            FactorDto grabFactor=new FactorDto();
-            BeanUtils.copyProperties(index, grabFactor);
-            BeanUtils.copyProperties(index, e2eFactor);
-            grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
-            e2eFactor.setFactorType(Constant.FactorType.E2E.getValue());
-            if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
-                BigDecimal incBill=inc.divide(
-                        new BigDecimal("10000"),2, RoundingMode.HALF_UP
-                );
-                grabFactor.setFactorValue(incBill.toString());//格式化万
-                e2eFactor.setFactorValue(e2eInc.toString());
-
-            } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
-                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
-                        Constant.ProductStru.High.getValue().equals(f.getProductStru()))
-                        .collect(Collectors.toList());
-                if(curr !=null && curr.size()>0){
-                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getSales())).sum());
-                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(sumSales,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString(),2)
-                    );
-                }else{
-                    grabFactor.setFactorValue("0");
-                }
-                e2eFactor.setFactorValue("0");
-            } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
-                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
-                        Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
-                        .collect(Collectors.toList());
-                if(curr !=null && curr.size()>0){
-                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getSales())).sum());
-                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(sumSales,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString(),2)
-                    );
-                }else{
-                    grabFactor.setFactorValue("0");
-                }
-                e2eFactor.setFactorValue("0");
-            } else if (Constant.FactorCode.MiddPercent.getValue().equals(index.getFactorCode())) {
-                List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f->
-                        Constant.ProductStru.Midd.getValue().equals(f.getProductStru()))
-                        .collect(Collectors.toList());
-                if(curr !=null && curr.size()>0){
-                    BigDecimal currIncom=new BigDecimal(curr.stream().mapToDouble(m->
-                            AmountFormat.amtStr2D(m.getSales())).sum());
-                    grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
-                            .divide(sumSales,4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).toString(),2)
-                    );
-                }else{
-                    grabFactor.setFactorValue("0");
-                }
-                e2eFactor.setFactorValue("0");
-            } else {
-                grabFactor.setFactorValue("0");
-                grabFactor.setHasInput(true);
-                e2eFactor.setFactorValue("0");
-            }
-            grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
-                    grabFactor.getFactorValue(),e2eFactor.getFactorValue()));
-            if(Constant.CompareResult.LT.getValue().equals(grabFactor.getDirection())){
-                if(StringUtils.isBlank(tip)){
-                    tip=grabFactor.getFactorName();
-                }else{
-                    tip=tip+"、"+grabFactor.getFactorName();
-                }
-            }
-            e2eFactors.add(e2eFactor);
-            grabFactors.add(grabFactor);
-        }
-        if(StringUtils.isNoneBlank(tip)){
-            //存在抢入小于目标
-            tyMasterGrabChainInfoDto.setCanSubmit(false);
-            tyMasterGrabChainInfoDto.setErrorMsg("抢单"+tip+"低于底线/E2E");
-        }
-        tyMasterGrabChainInfoDto.setE2eList(e2eFactors);
         tyMasterGrabChainInfoDto.setTargetList(targetFactor);
-        tyMasterGrabChainInfoDto.setGrabList(grabFactors);
 
+        //根据目标维度 设置抢单的维度
+        List<FactorDto> grabFactors = new ArrayList<>();
+        List<FactorDto> e2eFactors = new ArrayList<>();
+
+        if(minBu.isIn42Center()) {
+            //42中心，从OMS汇总取数
+            //网格抢单汇总
+            perfectQueryParam(queryDto);
+            queryDto.setLoginXwCode(minBu.getXwCode());
+            queryDto.setRegionCode(minBu.getRegionCode());
+
+            //e2e收入
+            List<MeshGrabEntity> meshE2EEntities = monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
+            BigDecimal e2eInc = new BigDecimal(meshE2EEntities.stream().mapToDouble(m ->
+                    AmountFormat.amtStr2D(m.getIncome())).sum());
+            //抢单收入
+            List<MeshGrabEntity> meshGrabEntities = monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
+            BigDecimal inc = new BigDecimal(meshGrabEntities.stream().mapToDouble(m ->
+                    AmountFormat.amtStr2D(m.getIncome())).sum());
+            BigDecimal sumSales = new BigDecimal(meshGrabEntities.stream().mapToDouble(m ->
+                    AmountFormat.amtStr2D(m.getSales())).sum());
+
+            String tip = "";
+            for (FactorDto index : targetFactor) {
+                FactorDto e2eFactor = new FactorDto();
+                FactorDto grabFactor = new FactorDto();
+                BeanUtils.copyProperties(index, grabFactor);
+                BeanUtils.copyProperties(index, e2eFactor);
+                grabFactor.setFactorType(Constant.FactorType.Grab.getValue());
+                e2eFactor.setFactorType(Constant.FactorType.E2E.getValue());
+                if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
+                    BigDecimal incBill = inc.divide(
+                            new BigDecimal("10000"), 2, RoundingMode.HALF_UP
+                    );
+                    grabFactor.setFactorValue(incBill.toString());//格式化万
+                    e2eFactor.setFactorValue(e2eInc.toString());
+
+                } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
+                    List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f ->
+                            Constant.ProductStru.High.getValue().equals(f.getProductStru()))
+                            .collect(Collectors.toList());
+                    if (curr != null && curr.size() > 0) {
+                        BigDecimal currIncom = new BigDecimal(curr.stream().mapToDouble(m ->
+                                AmountFormat.amtStr2D(m.getSales())).sum());
+                        grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
+                                .divide(sumSales, 4, RoundingMode.HALF_UP)
+                                .multiply(new BigDecimal("100")).toString(), 2)
+                        );
+                    } else {
+                        grabFactor.setFactorValue("0");
+                    }
+                    e2eFactor.setFactorValue("0");
+                } else if (Constant.FactorCode.LowPercent.getValue().equals(index.getFactorCode())) {
+                    List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f ->
+                            Constant.ProductStru.Low.getValue().equals(f.getProductStru()))
+                            .collect(Collectors.toList());
+                    if (curr != null && curr.size() > 0) {
+                        BigDecimal currIncom = new BigDecimal(curr.stream().mapToDouble(m ->
+                                AmountFormat.amtStr2D(m.getSales())).sum());
+                        grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
+                                .divide(sumSales, 4, RoundingMode.HALF_UP)
+                                .multiply(new BigDecimal("100")).toString(), 2)
+                        );
+                    } else {
+                        grabFactor.setFactorValue("0");
+                    }
+                    e2eFactor.setFactorValue("0");
+                } else if (Constant.FactorCode.MiddPercent.getValue().equals(index.getFactorCode())) {
+                    List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f ->
+                            Constant.ProductStru.Midd.getValue().equals(f.getProductStru()))
+                            .collect(Collectors.toList());
+                    if (curr != null && curr.size() > 0) {
+                        BigDecimal currIncom = new BigDecimal(curr.stream().mapToDouble(m ->
+                                AmountFormat.amtStr2D(m.getSales())).sum());
+                        grabFactor.setFactorValue(AmountFormat.amountFormat(currIncom
+                                .divide(sumSales, 4, RoundingMode.HALF_UP)
+                                .multiply(new BigDecimal("100")).toString(), 2)
+                        );
+                    } else {
+                        grabFactor.setFactorValue("0");
+                    }
+                    e2eFactor.setFactorValue("0");
+                } else {
+                    grabFactor.setFactorValue("0");
+                    grabFactor.setHasInput(true);
+                    e2eFactor.setFactorValue("0");
+                }
+                grabFactor.setDirection(this.compareTarget(index.getFactorValue(),
+                        grabFactor.getFactorValue(), e2eFactor.getFactorValue()));
+                if (Constant.CompareResult.LT.getValue().equals(grabFactor.getDirection())) {
+                    if (StringUtils.isBlank(tip)) {
+                        tip = grabFactor.getFactorName();
+                    } else {
+                        tip = tip + "、" + grabFactor.getFactorName();
+                    }
+                }
+                e2eFactors.add(e2eFactor);
+                grabFactors.add(grabFactor);
+            }
+            if (StringUtils.isNoneBlank(tip)) {
+                //存在抢入小于目标
+                tyMasterGrabChainInfoDto.setCanSubmit(false);
+                tyMasterGrabChainInfoDto.setErrorMsg("抢单" + tip + "低于底线/E2E");
+            }
+            tyMasterGrabChainInfoDto.setE2eList(e2eFactors);
+            tyMasterGrabChainInfoDto.setGrabList(grabFactors);
+        }else{
+            //非OMS汇总取数
+            for (FactorDto index : targetFactor) {
+                FactorDto e2eFactor = new FactorDto();
+                FactorDto grabFactor = new FactorDto();
+                BeanUtils.copyProperties(index, grabFactor);
+                BeanUtils.copyProperties(index, e2eFactor);
+                grabFactor.setFactorValue("0");
+                e2eFactor.setFactorValue("0");
+                e2eFactors.add(e2eFactor);
+                grabFactors.add(grabFactor);
+            }
+            tyMasterGrabChainInfoDto.setE2eList(e2eFactors);
+            tyMasterGrabChainInfoDto.setGrabList(grabFactors);
+        }
         return tyMasterGrabChainInfoDto;
     }
 
