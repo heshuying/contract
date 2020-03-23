@@ -78,7 +78,10 @@
         WHERE c.parent_id = #{contractId}
           AND c.`status` in ('1','8')
           AND c.`contract_type` = 30
-          AND c.`org_type` LIKE CONCAT('%|',#{type3Code}, '|%');
+          AND c.`org_type` LIKE CONCAT('%|',#{type3Code}, '|%')
+        <if test=" grabId != null and grabId != 'null' and grabId != '' ">
+            and c.id = #{grabId}
+        </if>
     </select>
     <select id="getCDGrabResultTargetType3List" parameterType="map" resultMap="cdGrabResultTargetType3">
         SELECT
