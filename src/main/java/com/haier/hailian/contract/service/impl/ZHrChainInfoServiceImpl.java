@@ -88,6 +88,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         parentMap.put("lqCode" , zHrChainInfo.getChainCode());
         List<ZNodeTargetPercentInfo> parentNodes = zNodeTargetPercentInfoDao.selectListByXwType3Code(parentMap);
         zHrChainInfoDto.setZNodeTargetPercentInfos(parentNodes);
+        zHrChainInfoDto.setGrabFlag(zHrChainInfo.getGrabFlag());
         // 获取子链群信息
         List<ZHrChainInfoDto> dtos = new ArrayList<>();
         ZHrChainInfo exp = new ZHrChainInfo();
@@ -103,6 +104,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             dto.setZzfxRate(fuck.getZzfxRate());
             dto.setCdShareRate(fuck.getCdShareRate());
             dto.setTyShareRate(fuck.getTyShareRate());
+            dto.setGrabFlag(fuck.getGrabFlag());
 //            ZNodeTargetPercentInfo nodeChild = new ZNodeTargetPercentInfo();
 //            nodeChild.setParentChainCode(zHrChainInfo.getChainCode());
 //            nodeChild.setLqCode(fuck.getChainCode());
