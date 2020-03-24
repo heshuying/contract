@@ -310,9 +310,18 @@ public class GrabServiceImpl implements GrabService {
      * @return
      */
     private String compareTarget(String target, String grab, String e2e){
-        BigDecimal bdTarget=new BigDecimal(target);
-        BigDecimal bdGrab=new BigDecimal(grab);
-        BigDecimal bdE2e=new BigDecimal(e2e);
+        BigDecimal bdTarget=BigDecimal.ZERO;
+        BigDecimal bdGrab=BigDecimal.ZERO;
+        BigDecimal bdE2e=BigDecimal.ZERO;
+        if(StringUtils.isNoneBlank(target)){
+            bdTarget=new BigDecimal(target);
+        }
+        if(StringUtils.isNoneBlank(grab)){
+            bdGrab=new BigDecimal(grab);
+        }
+        if(StringUtils.isNoneBlank(e2e)){
+            bdE2e=new BigDecimal(e2e);
+        }
 
         if(bdGrab.compareTo(bdTarget)>0&&bdGrab.compareTo(bdE2e)>0){
             return Constant.CompareResult.GT.getValue();
@@ -671,6 +680,16 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setContractName(contracts.getContractName());
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
+        if("1".equals(chainInfo.getGrabFlag()) ){
+            //链群闸口
+            tyMasterGrabChainInfoDto.setCanEdit(true);
+        }else{
+            if(!minBu.isIn42Center()){
+                tyMasterGrabChainInfoDto.setCanEdit(true);
+            }else {
+                tyMasterGrabChainInfoDto.setCanEdit(false);
+            }
+        }
         tyMasterGrabChainInfoDto.setChainName(chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setContractOwner(chainInfo.getMasterName());
         tyMasterGrabChainInfoDto.setLittleXwName(minBu.getLittleXwName());
@@ -696,7 +715,7 @@ public class GrabServiceImpl implements GrabService {
             dto.setFactorUnit(m.getFactorUnit());
             return dto;
         }).collect(Collectors.toList());
-        //网格抢单汇总
+        //网格E2E抢单汇总
         List<FactorDto> e2eFactors = factors.stream().filter(m->Constant.FactorType.E2E
                 .getValue().equals(m.getFactorType())).map(m -> {
             FactorDto dto = new FactorDto();
