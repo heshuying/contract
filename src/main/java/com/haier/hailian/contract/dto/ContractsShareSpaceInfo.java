@@ -11,4 +11,6 @@ public class ContractsShareSpaceInfo {
 
     private BigDecimal shareSpace;
 
+    private BigDecimal shareMoney;
+
 }

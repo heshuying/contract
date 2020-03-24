@@ -352,8 +352,9 @@
         z_contracts_xw_type3 al
         WHERE al.contract_id = #{contractId}) al
         ON a1.xwType3Code = al.xwType3Code
+        where al.node_number > 0
         <if test=" keyword != null and keyword != '' ">
-            where a1.xwType3 LIKE CONCAT('%',#{keyword}, '%')
+            and a1.xwType3 LIKE CONCAT('%',#{keyword}, '%')
         </if>
     </select>
 

@@ -85,6 +85,9 @@ public class ZContracts extends Model<ZContracts> {
     // 是否已复核
     private String isChecked;
 
+    //  链群分享额
+    private BigDecimal shareMoney;
+
     /**
      * 开始时间
      */

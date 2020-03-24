@@ -104,4 +104,17 @@ public class HomePageController {
         }
     }
 
+
+    @PostMapping(value = {"/updateChainShareMoney"})
+    @ApiOperation(value = "批量更新链群增值分享额")
+    public R updateChainShareMoney(@RequestBody List<ContractsShareSpaceInfo> contractsShareSpaceInfos) {
+        try{
+            int num = homePageService.updateChainShareMoney(contractsShareSpaceInfos);
+            return R.ok().put("data",num);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
 }

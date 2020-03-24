@@ -41,4 +41,10 @@ public interface HomePageService {
      * @return
      */
     int updateContractsShareSpace(List<ContractsShareSpaceInfo> contractsShareSpaceInfos);
+
+    /**
+     * @param contractsShareSpaceInfos
+     * @return
+     */
+    int updateChainShareMoney(List<ContractsShareSpaceInfo> contractsShareSpaceInfos);
 }
