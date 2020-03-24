@@ -142,9 +142,19 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setLittleXwName(minBu.getLittleXwName());
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
+        if("1".equals(chainInfo.getGrabFlag()) ){
+            //链群闸口
+            tyMasterGrabChainInfoDto.setCanEdit(true);
+        }else{
+            if(!minBu.isIn42Center()){
+                tyMasterGrabChainInfoDto.setCanEdit(true);
+            }else {
+                tyMasterGrabChainInfoDto.setCanEdit(false);
+            }
+        }
         tyMasterGrabChainInfoDto.setContractName(chainName);
         tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
-        tyMasterGrabChainInfoDto.setChainName(chainInfo==null?"":chainInfo.getChainName());
+        tyMasterGrabChainInfoDto.setChainName(chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setStart(
                 DateFormatUtil.format(contracts.getStartDate()));
         tyMasterGrabChainInfoDto.setEnd(
@@ -173,7 +183,7 @@ public class GrabServiceImpl implements GrabService {
         List<FactorDto> grabFactors = new ArrayList<>();
         List<FactorDto> e2eFactors = new ArrayList<>();
 
-        if(minBu.isIn42Center()) {
+        if(!tyMasterGrabChainInfoDto.getCanEdit()) {
             //42中心，从OMS汇总取数
             //网格抢单汇总
             perfectQueryParam(queryDto);
