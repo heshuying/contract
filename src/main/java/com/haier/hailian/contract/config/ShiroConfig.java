@@ -103,6 +103,7 @@ public class ShiroConfig {
         filterMap.put("/contractData", "anon"); // 外部系统获取数据暂时不用校验
         filterMap.put("/chainData", "anon"); // 外部系统获取数据暂时不用校验
         filterMap.put("/updateContractsShareSpace", "anon"); // 外部系统更新数据暂时不用校验
+        filterMap.put("/updateChainShareMoney", "anon"); // 外部系统更新数据暂时不用校验
         filterMap.put("/favicon.ico", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/v2/api-docs", "anon");
