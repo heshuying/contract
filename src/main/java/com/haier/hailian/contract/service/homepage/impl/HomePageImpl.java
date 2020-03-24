@@ -262,6 +262,19 @@ public class HomePageImpl implements HomePageService {
         return num;
     }
 
+    @Override
+    public int updateChainShareMoney(List<ContractsShareSpaceInfo> contractsShareSpaceInfos) {
+        int num = 0;
+        for(ContractsShareSpaceInfo contractsShareSpaceInfo : contractsShareSpaceInfos){
+            ZContracts zContracts = new ZContracts();
+            zContracts.setId(contractsShareSpaceInfo.getContractId());
+            zContracts.setShareMoney(contractsShareSpaceInfo.getShareMoney());
+            zContractsDao.updateById(zContracts);
+            num = num + 1;
+        }
+        return num;
+    }
+
 
     /**
      * 获取 ZContractsFactor部分信息

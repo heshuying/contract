@@ -26,6 +26,8 @@ public class TyMasterGrabChainInfoDto {
     private String littleXwName;
 
     private Boolean canSubmit;
+    private Boolean canEdit;
+
     private String errorMsg;
 
     List<FactorDto> targetList;
