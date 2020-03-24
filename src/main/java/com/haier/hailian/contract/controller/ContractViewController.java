@@ -177,4 +177,32 @@ public class ContractViewController {
         return R.ok();
     }
 
+    @PostMapping(value = {"/updateType3List"})
+    @ApiOperation(value = "初始化抢单个数")
+    public R updateType3List(@RequestBody Map<String,String> paraMap) {
+        List<String> contractIdList =  contractViewService.queryContractsForUpdate();
+
+        for(String id : contractIdList){
+            int countGrabed = 0;
+            List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(id, "");
+            if(type3List != null && !type3List.isEmpty()){
+                for(CDGrabType3 item : type3List){
+                    List<CDGrabDataDTO> list = contractViewService.queryGrabListXWType3(id, item.getXwType3Code(), null);
+                    if(list != null && !list.isEmpty()){
+                        item.setGrabCount(String.valueOf(list.size()));
+                        item.setGrabList(list);
+                        countGrabed++;
+                    }else{
+                        item.setGrabList(new ArrayList<>());
+                        item.setGrabCount("0");
+                    }
+
+                    contractViewService.insertXWType3Count(id, item);
+                }
+            }
+        }
+
+        return R.ok();
+    }
+
 }

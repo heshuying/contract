@@ -766,6 +766,29 @@
       and  DATE_FORMAT(start_date,'%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m' )
     </select>
 
+    <select id="getContractsForCountUpdate" parameterType="map" resultType="string">
+        SELECT
+          c.id
+        FROM
+          z_contracts c
+        WHERE c.`contract_type` = 10
+          AND c.`status` != 4
+          AND NOT EXISTS
+          (SELECT
+            *
+          FROM
+            z_contracts t
+          WHERE t.`contract_type` = 10
+            AND t.`parent_id` = c.id)
+          AND c.id NOT IN
+          (SELECT
+            t.contract_id
+          FROM
+            z_contracts_xw_type3 t
+          GROUP BY t.`contract_id`)
+        ORDER BY c.id DESC
+    </select>
+
     <select id="selectContractsViewForCDNew" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabDataDTO">
     </select>
 </mapper>

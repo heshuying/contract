@@ -48,6 +48,8 @@ public class ContractViewServiceImpl implements ContractViewService {
     ZNodeTargetPercentInfoDao zNodeTargetPercentInfoDao;
     @Autowired
     IncrementService incrementService;
+    @Autowired
+    ZContractsXwType3Dao xwType3Dao;
 
     private static final ExcelUtil.CellHeadField[] Serial_Header = {
             new ExcelUtil.CellHeadField("场景", "sceneName"),
@@ -483,6 +485,21 @@ public class ContractViewServiceImpl implements ContractViewService {
         paraMap.put("grabId", grabId);
 
         return contractsDao.getCDGrabResultType3List(paraMap);
+    }
+
+    @Override
+    public List<String> queryContractsForUpdate(){
+        return contractsDao.getContractsForCountUpdate(new HashMap<>());
+    }
+
+    @Override
+    public void insertXWType3Count(String contractId, CDGrabType3 cdGrabType3){
+        ZContractsXwType3 type3 = new ZContractsXwType3();
+        type3.setContractId(Integer.parseInt(contractId));
+        type3.setXwType3(cdGrabType3.getXwType3Name());
+        type3.setXwType3Code(cdGrabType3.getXwType3Code());
+        type3.setNodeNumber(Integer.parseInt(cdGrabType3.getGrabCount()));
+        xwType3Dao.insert(type3);
     }
 
     @Override
