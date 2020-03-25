@@ -524,7 +524,9 @@ public class ContractViewServiceImpl implements ContractViewService {
         dto.setContractId(contracts.getParentId());
         dto.setSharePercent(sharePercent);
         BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
-        contracts.setShareSpace(shareSpace);
+        if(shareSpace != null){
+            contracts.setShareSpace(shareSpace);
+        }
         contracts.setSharePercent(sharePercent);
         contracts.setIsChecked("1");
         contractsDao.updateById(contracts);
@@ -558,7 +560,9 @@ public class ContractViewServiceImpl implements ContractViewService {
             dto.setContractId(c.getParentId());
             dto.setSharePercent(c.getSharePercent());
             BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
-            c.setShareSpace(shareSpace);
+            if(shareSpace != null){
+                c.setShareSpace(shareSpace);
+            }
         }
         contractsService.updateBatchById(list);
 
@@ -625,7 +629,9 @@ public class ContractViewServiceImpl implements ContractViewService {
                             dto.setContractId(c.getParentId());
                             dto.setSharePercent(percent.toString());
                             BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
-                            c.setShareSpace(shareSpace);
+                            if(shareSpace != null){
+                                c.setShareSpace(shareSpace);
+                            }
                         }
                         contractsService.updateBatchById(list);
                     }
@@ -657,7 +663,9 @@ public class ContractViewServiceImpl implements ContractViewService {
                         dto.setContractId(c.getParentId());
                         dto.setSharePercent(percent.toString());
                         BigDecimal shareSpace = incrementService.incrementMoneyShareModify(dto);
-                        c.setShareSpace(shareSpace);
+                        if(shareSpace != null){
+                            c.setShareSpace(shareSpace);
+                        }
                     }
                     contractsService.updateBatchById(list);
                 }

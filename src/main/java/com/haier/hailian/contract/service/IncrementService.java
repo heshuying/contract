@@ -13,5 +13,7 @@ public interface IncrementService {
      */
     BigDecimal incrementMoney(CDGrabInfoSaveRequestDto requestDto);
 
+    BigDecimal incrementMoneyShareModifyOld(CDGrabInfoSaveRequestDto requestDto);
+
     BigDecimal incrementMoneyShareModify(CDGrabInfoSaveRequestDto requestDto);
 }
