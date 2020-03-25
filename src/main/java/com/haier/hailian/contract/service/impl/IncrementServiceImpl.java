@@ -89,7 +89,7 @@ public class IncrementServiceImpl implements IncrementService {
     }
 
     @Override
-    public BigDecimal incrementMoneyShareModify(CDGrabInfoSaveRequestDto requestDto) {
+    public BigDecimal incrementMoneyShareModifyOld(CDGrabInfoSaveRequestDto requestDto) {
         ZContractsFactor fBottom = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
                 .eq("contract_id" , requestDto.getContractId())
                 .eq("factor_code" , Constant.FactorCode.Lre.getValue())
@@ -147,4 +147,33 @@ public class IncrementServiceImpl implements IncrementService {
 
     }
 
+    @Override
+    public BigDecimal incrementMoneyShareModify(CDGrabInfoSaveRequestDto requestDto) {
+        BigDecimal money = new BigDecimal("0");
+
+        // 乘以创单分享比例
+        ZContracts contracts = zContractsDao.selectById(requestDto.getContractId());
+        if(contracts == null){
+            return null;
+        }
+        List<ZHrChainInfo> chainInfos = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+        if(chainInfos == null || chainInfos.isEmpty()){
+            return null;
+        }
+        money = contracts.getShareMoney();
+        // 如果大数据那边没有推过来数，用原来的逻辑计算
+        if(money == null || money.compareTo(BigDecimal.ZERO) == 0){
+            return incrementMoneyShareModifyOld(requestDto);
+        }
+
+        // 分享比例
+        money = money.multiply(new BigDecimal(requestDto.getSharePercent())).divide(new BigDecimal("100"));
+
+        String cdShareRate = "100";
+        if(StringUtils.isNotBlank(chainInfos.get(0).getCdShareRate())){
+            cdShareRate = chainInfos.get(0).getCdShareRate();
+        }
+        BigDecimal cdShareRateDecimal = new BigDecimal(cdShareRate).divide(new BigDecimal("100"));
+        return money.multiply(cdShareRateDecimal);
+    }
 }
