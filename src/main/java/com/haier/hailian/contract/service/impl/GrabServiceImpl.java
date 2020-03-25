@@ -281,7 +281,8 @@ public class GrabServiceImpl implements GrabService {
             if (StringUtils.isNoneBlank(tip)) {
                 //存在抢入小于目标
                 tyMasterGrabChainInfoDto.setCanSubmit(false);
-                tyMasterGrabChainInfoDto.setErrorMsg("抢单" + tip + "低于底线/E2E");
+                tyMasterGrabChainInfoDto.setErrorMsg(chainInfo.getChainName()+"抢单" +
+                        tip + "低于底线/E2E，此时抢入会没有分享酬或少分享酬");
             }
             tyMasterGrabChainInfoDto.setE2eList(e2eFactors);
             tyMasterGrabChainInfoDto.setGrabList(grabFactors);
