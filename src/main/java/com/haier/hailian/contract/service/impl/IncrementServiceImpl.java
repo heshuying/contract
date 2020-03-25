@@ -161,8 +161,9 @@ public class IncrementServiceImpl implements IncrementService {
             return null;
         }
         money = contracts.getShareMoney();
+        // 如果大数据那边没有推过来数，用原来的逻辑计算
         if(money == null || money.compareTo(BigDecimal.ZERO) == 0){
-            return null;
+            return incrementMoneyShareModifyOld(requestDto);
         }
 
         // 分享比例
