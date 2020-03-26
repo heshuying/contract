@@ -52,6 +52,7 @@ public class ContractViewController {
         }
 
         int countGrabed = 0;
+        int grabNodeTotal = 0;
         List<CDGrabType3> type3List = contractViewService.queryCDGrabDataXWType3(paraMap.get("contractId"), paraMap.get("keyword"));
         if(type3List != null && !type3List.isEmpty()){
             for(CDGrabType3 item : type3List){
@@ -60,6 +61,7 @@ public class ContractViewController {
                     item.setGrabCount(String.valueOf(list.size()));
                     item.setGrabList(list);
                     countGrabed++;
+                    grabNodeTotal = grabNodeTotal + list.size();
                 }else{
                     item.setGrabList(new ArrayList<>());
                     item.setGrabCount("0");
@@ -92,7 +94,7 @@ public class ContractViewController {
             });
         }
 
-        return R.ok().put("data", type3List).put("grabRate", countGrabed+"/"+type3List.size());
+        return R.ok().put("data", type3List).put("grabRate", countGrabed+"/"+type3List.size()).put("grabNodeTotal", grabNodeTotal);
     }
 
     @PostMapping(value = {"/updateSharePercent"})
