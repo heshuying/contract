@@ -14,5 +14,9 @@ public class MarketTargetDTO {
 
     private String xwName;
 
+    private String nodeCode;
+
+    private String nodeName;
+
     private List<MarketTargetDTO2> targetList;
 }

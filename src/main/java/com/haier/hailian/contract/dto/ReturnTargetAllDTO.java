@@ -1,7 +1,7 @@
 package com.haier.hailian.contract.dto;
 
-import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.entity.TargetBasic;
+import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public class ReturnTargetAllDTO {
 
     private List<TargetBasic> parentTarget;
-    private List<TOdsMinbu> parentCenter;
+    private List<ZNodeTargetPercentInfo> parentCenter;
     private List<ContractProductDTO> parentProduct;
     private List<ContractXwType3DTO> parentXwType3;
     private List<ReturnTargetDTO> children;
