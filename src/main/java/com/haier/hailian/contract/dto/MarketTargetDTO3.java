@@ -12,6 +12,8 @@ public class MarketTargetDTO3 {
 
     private String xwCode;
     private String xwName;
+    private String nodeCode;
+    private String nodeName;
     private BigDecimal income;
     private BigDecimal high;
 }

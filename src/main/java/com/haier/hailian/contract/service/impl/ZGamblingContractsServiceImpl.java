@@ -446,15 +446,13 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException {
-        TOdsMinbu tOdsMinbu = new TOdsMinbu();
-        tOdsMinbu.setChainCode(chainCode);
-        List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
 
+        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent"));
         Workbook workbook = new HSSFWorkbook();
-        ExcelUtil.buildSheet(workbook, "42中心", list, TEMPLATE_TITLE_MARKET);
+        ExcelUtil.buildSheet(workbook, "中心", list, TEMPLATE_TITLE_MARKET);
         ByteArrayOutputStream bot = new ByteArrayOutputStream();
         workbook.write(bot);
-        ExcelUtil.export(request,response,workbook,"42中心.xls");
+        ExcelUtil.export(request,response,workbook,"中心.xls");
 
     }
 
@@ -484,7 +482,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
                 String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
                 String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
-                if("42中心".equals(title1)&&"42中心".equals(title2)&&"收入(万元)".equals(title3)&&"高端占比(%)".equals(title4)){
+                String title5 = row.getCell(4)==null?"":row.getCell(4).getStringCellValue();
+                String title6 = row.getCell(5)==null?"":row.getCell(5).getStringCellValue();
+                if("中心编码".equals(title1)&&"中心名称".equals(title2)&&"最小作战单元编码".equals(title3)&&"最小作战单元名称".equals(title4)&&"收入(万元)".equals(title5)&&"高端占比(%)".equals(title6)){
                     continue;
                 }else {
                     throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
@@ -496,7 +496,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 if(cell != null){
                     if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
                     if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
-                    if(y==2){
+                    if(y==2) marketTargetDTO3.setNodeCode(cell.getStringCellValue());
+                    if(y==3) marketTargetDTO3.setNodeName(cell.getStringCellValue());
+                    if(y==4){
                         if(cell.getCellTypeEnum().equals(CellType.STRING)){
                             throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
                         }else {
@@ -507,7 +509,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             marketTargetDTO3.setIncome(income.setScale(0,BigDecimal.ROUND_HALF_UP));
                         }
                     }
-                    if(y==3) {
+                    if(y==5) {
                         if(cell.getCellTypeEnum().equals(CellType.STRING)) {
                             throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，请填写数字，不需要单位", Constant.CODE_VALIDFAIL);
                         }else {
@@ -909,8 +911,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
 
     private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_MARKET = {
-            new ExcelUtil.CellHeadField("42中心", "xwCode"),
-            new ExcelUtil.CellHeadField("42中心", "xwName"),
+            new ExcelUtil.CellHeadField("中心编码", "xwCode"),
+            new ExcelUtil.CellHeadField("中心名称", "xwName"),
+            new ExcelUtil.CellHeadField("最小作战单元编码", "nodeCode"),
+            new ExcelUtil.CellHeadField("最小作战单元名称", "nodeName"),
             new ExcelUtil.CellHeadField("收入(万元)", "income"),
             new ExcelUtil.CellHeadField("高端占比(%)", "high")
     };
