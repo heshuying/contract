@@ -102,7 +102,7 @@ public class ZGamblingContractsController {
                 targetDTO.setChildChainName(chain.getChainName());
                 targetDTO.setChildTarget(childTarget);
                 //4.查询子链群的42中心
-                List<TOdsMinbu> childCenter = gamblingContractsService.selectMarket(chainCode).getMarket();
+                List<ZNodeTargetPercentInfo> childCenter = gamblingContractsService.selectMarket(chainCode).getMarket();
                 targetDTO.setChildCenter(childCenter);
                 //5.查询子链群的爆款目标
                 QueryProductChainDTO dto1 = new QueryProductChainDTO();
@@ -118,7 +118,7 @@ public class ZGamblingContractsController {
         }else{
             //7.查询主链群的42中心
             MarketReturnDTO marketReturnDTO = gamblingContractsService.selectMarket(parentChain);
-            List<TOdsMinbu> parentCenter = marketReturnDTO.getMarket();
+            List<ZNodeTargetPercentInfo> parentCenter = marketReturnDTO.getMarket();
             targetAllDTO.setParentCenter(parentCenter);
             //8.查询主链群的爆款目标
             QueryProductChainDTO dto1 = new QueryProductChainDTO();

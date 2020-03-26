@@ -134,6 +134,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     factor.setFactorUnit(dto2.getTargetUnit());
                     factor.setRegionCode(marketTarget.getXwCode());
                     factor.setRegionName(marketTarget.getXwName());
+                    factor.setMeshCode(marketTarget.getNodeCode());
+                    factor.setMeshName(marketTarget.getNodeName());
                     factorDao.insert(factor);
                 }
         }
@@ -155,15 +157,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
         MarketReturnDTO dto = new MarketReturnDTO();
         //查询42个市场小微
-        Subject subject = SecurityUtils.getSubject();
-        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        TOdsMinbu minbu = sysUser.getMinbu();
-        if(minbu == null){
-            throw new RException("没有维护最小作战单元，无法举单",Constant.CODE_VALIDFAIL);
-        }
-        TOdsMinbu tOdsMinbu = new TOdsMinbu();
-        tOdsMinbu.setChainCode(chainCode);
-        List<TOdsMinbu> list = tOdsMinbuDao.selectMarket(tOdsMinbu);
+        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent"));
         dto.setMarket(list);
         TargetBasic targetBasic = new TargetBasic();
         //查询链群主举单时商圈的必填目标
@@ -343,6 +337,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     targetList.add(marketTargetDTO2);
                     marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
                     marketTargetDTO.setXwName(zContractsFactor.getRegionName());
+                    marketTargetDTO.setNodeCode(zContractsFactor.getMeshCode());
+                    marketTargetDTO.setNodeName(zContractsFactor.getMeshName());
                 }else {
                     marketTargetDTO.setTargetList(targetList);
                     marketTargetList.add(marketTargetDTO);
@@ -358,6 +354,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     targetList.add(marketTargetDTO2);
                     marketTargetDTO.setXwCode(zContractsFactor.getRegionCode());
                     marketTargetDTO.setXwName(zContractsFactor.getRegionName());
+                    marketTargetDTO.setNodeCode(zContractsFactor.getMeshCode());
+                    marketTargetDTO.setNodeName(zContractsFactor.getMeshName());
                 }
             }
             marketTargetDTO.setTargetList(targetList);
@@ -407,6 +405,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             childMarket2.add(marketTargetDTO2);
                             childMarket.setXwCode(zContractsFactor.getRegionCode());
                             childMarket.setXwName(zContractsFactor.getRegionName());
+                            childMarket.setNodeCode(zContractsFactor.getMeshCode());
+                            childMarket.setNodeName(zContractsFactor.getMeshName());
                         }else {
                             childMarket.setTargetList(childMarket2);
                             childMarketList.add(childMarket);
@@ -422,6 +422,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             childMarket2.add(marketTargetDTO2);
                             childMarket.setXwCode(zContractsFactor.getRegionCode());
                             childMarket.setXwName(zContractsFactor.getRegionName());
+                            childMarket.setNodeCode(zContractsFactor.getMeshCode());
+                            childMarket.setNodeName(zContractsFactor.getMeshName());
                         }
                     }
                     childMarket.setTargetList(childMarket2);
@@ -729,6 +731,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     factor.setFactorUnit(dto2.getTargetUnit());
                     factor.setRegionCode(marketTarget.getXwCode());
                     factor.setRegionName(marketTarget.getXwName());
+                    factor.setMeshName(marketTarget.getNodeName());
+                    factor.setMeshCode(marketTarget.getNodeCode());
                     factor.setIsLqTarget(dto2.getIsLqTarget());
                     factorDao.insert(factor);
                 }
@@ -842,6 +846,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             factor.setFactorUnit(dto2.getTargetUnit());
                             factor.setRegionCode(chilidMarket.getXwCode());
                             factor.setRegionName(chilidMarket.getXwName());
+                            factor.setMeshCode(chilidMarket.getNodeCode());
+                            factor.setMeshName(chilidMarket.getNodeName());
                             factorDao.insert(factor);
                         }
                     }
