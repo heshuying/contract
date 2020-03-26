@@ -481,6 +481,7 @@
                 )
                 )
                 ) AS xwName,
+              zc.org_name AS nodeName,
               cf.factor_name,
               cf.`factor_code`,
               cf.`factor_value`,
@@ -509,6 +510,7 @@
               '' AS grabId,
               '' AS contract_name,
               node.xw_name AS xwName,
+              node.node_name AS nodeName,
               '' AS factor_name,
               '' AS factor_code,
               '' AS factor_value,

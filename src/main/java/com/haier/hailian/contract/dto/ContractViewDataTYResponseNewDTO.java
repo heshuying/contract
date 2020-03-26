@@ -15,6 +15,9 @@ public class ContractViewDataTYResponseNewDTO {
      */
     private String xwName;
 
+    /**节点名称*/
+    private String nodeName;
+
     /**
      * 是否已抢单 0：未抢单 1：已抢单
      */
