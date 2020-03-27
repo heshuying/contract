@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by 19012964 on 2019/12/26.
  */
-//@Component
+@Component
 public class ZContractsQuartz {
     private final Logger log =  LoggerFactory.getLogger(ZContractsQuartz.class);
     @Autowired

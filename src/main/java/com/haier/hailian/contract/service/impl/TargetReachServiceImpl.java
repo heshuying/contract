@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
 import com.haier.hailian.contract.dto.FactorGrabResDTO;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
+import com.haier.hailian.contract.dto.TargetListResDTO;
 import com.haier.hailian.contract.dto.TargetReachSaveReqDTO;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.ZContracts;
@@ -12,6 +13,7 @@ import com.haier.hailian.contract.service.ZContractsFactorService;
 import com.haier.hailian.contract.service.ZContractsService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,10 +58,25 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
     }
 
     @Override
-    public List<FactorGrabResDTO> getFactorGrabList(String contractId){
+    public List<TargetListResDTO> getFactorGrabList(String contractId){
         Map<String,Object> map = new HashMap<>();
         map.put("contractId", contractId);
-        return factorDao.getFactorGrabList(map);
+        List<TargetListResDTO> resultList = new ArrayList<>();
+
+        List<FactorGrabResDTO> list = factorDao.getFactorGrabList(map);
+        for(FactorGrabResDTO item : list){
+            TargetListResDTO target = new TargetListResDTO();
+            BeanUtils.copyProperties(item, target);
+            if(!resultList.contains(target)){
+                target.getGrabList().add(item);
+                resultList.add(target);
+            }else{
+                target = resultList.get(resultList.indexOf(target));
+                target.getGrabList().add(item);
+            }
+
+        }
+        return resultList;
     }
 
     @Override

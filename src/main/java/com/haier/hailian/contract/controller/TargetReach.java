@@ -1,9 +1,6 @@
 package com.haier.hailian.contract.controller;
 
-import com.haier.hailian.contract.dto.FactorGrabResDTO;
-import com.haier.hailian.contract.dto.QueryContractListDTO;
-import com.haier.hailian.contract.dto.R;
-import com.haier.hailian.contract.dto.TargetReachSaveReqDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.TargetReachService;
 import io.swagger.annotations.Api;
@@ -33,7 +30,7 @@ public class TargetReach {
     TargetReachService targetReachService;
 
     @PostMapping(value = {"/contractListForTarget"})
-    @ApiOperation(value = "查询我发起的合约列表")
+    @ApiOperation(value = "目标达成合约列表")
     public R selectContractListForTarget(@RequestBody QueryContractListDTO queryDTO) {
         List<ZContracts> contractsList = targetReachService.selectContractListForTarget(queryDTO);
         return R.ok().put("data",contractsList);
@@ -42,7 +39,7 @@ public class TargetReach {
     @PostMapping(value = {"/list"})
     @ApiOperation(value = "目标达成列表")
     public R queryInfo(@RequestBody Map<String,String> reqBean) {
-        List<FactorGrabResDTO> data= new ArrayList<>();
+        List<TargetListResDTO> data= new ArrayList<>();
         try {
             if(StringUtils.isBlank(reqBean.get("contractId"))){
                 return R.error("请求参数错误");
