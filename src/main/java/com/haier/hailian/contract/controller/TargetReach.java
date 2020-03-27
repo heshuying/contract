@@ -38,7 +38,7 @@ public class TargetReach {
 
     @PostMapping(value = {"/list"})
     @ApiOperation(value = "目标达成列表")
-    public R queryInfo(@RequestBody Map<String,String> reqBean) {
+    public R list(@RequestBody Map<String,String> reqBean) {
         List<TargetListResDTO> data= new ArrayList<>();
         try {
             if(StringUtils.isBlank(reqBean.get("contractId"))){
@@ -52,11 +52,16 @@ public class TargetReach {
         return R.ok().put("data",data);
     }
 
+    /**
+     * List<TargetReachSaveReqDTO>
+     * @param reqBean
+     * @return
+     */
     @PostMapping(value = {"/saveTarget"})
     @ApiOperation(value = "目标达成保存")
-    public R saveTarget(@RequestBody List<TargetReachSaveReqDTO> reqBean) {
-        if(reqBean == null || reqBean.isEmpty()){
-            return R.error("没有要更新的数据");
+    public R saveTarget(@RequestBody TargetReachSaveReqDTO reqBean) {
+        if(reqBean == null || StringUtils.isBlank(reqBean.getContractId()) || reqBean.getTargetList() == null){
+            return R.error("请求参数错误");
         }
 
         try {

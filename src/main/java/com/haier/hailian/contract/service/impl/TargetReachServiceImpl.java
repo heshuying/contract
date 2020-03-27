@@ -10,12 +10,12 @@ import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ZContractsFactorService;
-import com.haier.hailian.contract.service.ZContractsService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -80,19 +80,21 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
     }
 
     @Override
-    public void saveTargetActual(List<TargetReachSaveReqDTO> reqBean){
-        if(reqBean == null || reqBean.isEmpty()){
-            return;
-        }
-
+    @Transactional
+    public void saveTargetActual(TargetReachSaveReqDTO data){
         List<ZContractsFactor> factors = new ArrayList<>();
-        for(TargetReachSaveReqDTO item : reqBean){
+        for(FactorGrabResDTO item : data.getTargetList()){
             ZContractsFactor factor = new ZContractsFactor();
             factor.setId(Integer.parseInt(item.getFactId()));
-            factor.setFactorValueActual(item.getTargetActual());
+            factor.setFactorValueActual(item.getFactorValueActual());
             factors.add(factor);
         }
         factorService.updateBatchById(factors);
+
+        ZContracts contracts = new ZContracts();
+        contracts.setId(Integer.parseInt(data.getContractId()));
+        contracts.setTargetUpdateTime(new Date());
+        contractsDao.updateById(contracts);
     }
 
 }

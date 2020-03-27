@@ -18,5 +18,6 @@ public class FactorGrabResDTO {
     private String computeLogic;
 
     private String targetXwCategoryCode;
+    private String factorValueActual;
 
 }

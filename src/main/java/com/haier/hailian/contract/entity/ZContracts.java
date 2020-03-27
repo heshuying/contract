@@ -148,6 +148,11 @@ public class ZContracts extends Model<ZContracts> {
      */
     private Date targetUpdateTime;
 
+    /**
+     * 目标达成更新时间
+     */
+    private String targetUpdateTimeStr;
+
 
     @Override
     protected Serializable pkVal() {

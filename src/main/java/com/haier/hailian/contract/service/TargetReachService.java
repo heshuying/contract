@@ -13,5 +13,5 @@ public interface TargetReachService {
 
     List<TargetListResDTO> getFactorGrabList(String contractId);
 
-    void saveTargetActual(List<TargetReachSaveReqDTO> reqBean);
+    void saveTargetActual(TargetReachSaveReqDTO data);
 }

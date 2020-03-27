@@ -57,6 +57,7 @@
               '负向'
             ) AS factorDirecton,
             f.`factor_type` AS factorType,
+            f.factor_value_actual AS factorValueActual,
             c.`org_name` AS nodeName,
             c.`org_code` AS nodeCode
           FROM
