@@ -59,7 +59,8 @@
             f.`factor_type` AS factorType,
             f.factor_value_actual AS factorValueActual,
             c.`org_name` AS nodeName,
-            c.`org_code` AS nodeCode
+            c.`org_code` AS nodeCode,
+            c.share_percent AS sharePercent
           FROM
             z_contracts_factor f
             JOIN z_contracts c

@@ -19,5 +19,6 @@ public class FactorGrabResDTO {
 
     private String targetXwCategoryCode;
     private String factorValueActual;
+    private String sharePercent;
 
 }
