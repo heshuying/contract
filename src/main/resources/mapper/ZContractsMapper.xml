@@ -791,6 +791,18 @@
         ORDER BY c.id DESC
     </select>
 
-    <select id="selectContractsViewForCDNew" parameterType="map" resultType="com.haier.hailian.contract.dto.CDGrabDataDTO">
+    <select id="selectContractListForTarget" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_contracts c
+        WHERE c.`contract_type` = 10
+        AND c.`create_code` = #{userCode}
+        AND NOT EXISTS
+        (SELECT
+        t.id
+        FROM
+        z_contracts t
+        WHERE t.`parent_id` = c.id
+        AND t.`contract_type` = 10) ;
     </select>
 </mapper>

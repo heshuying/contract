@@ -143,6 +143,10 @@ public class ZContracts extends Model<ZContracts> {
     private String sharePercent;
 
     private String groupId;
+    /**
+     * 目标达成更新时间
+     */
+    private Date targetUpdateTime;
 
 
     @Override

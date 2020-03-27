@@ -1,10 +1,10 @@
 package com.haier.hailian.contract.controller;
 
 import com.haier.hailian.contract.dto.FactorGrabResDTO;
+import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.TargetReachSaveReqDTO;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoRequestDto;
-import com.haier.hailian.contract.dto.grab.CDGrabInfoResponseDto;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.service.TargetReachService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +31,13 @@ import java.util.Map;
 public class TargetReach {
     @Autowired
     TargetReachService targetReachService;
+
+    @PostMapping(value = {"/contractListForTarget"})
+    @ApiOperation(value = "查询我发起的合约列表")
+    public R selectContractListForTarget(@RequestBody QueryContractListDTO queryDTO) {
+        List<ZContracts> contractsList = targetReachService.selectContractListForTarget(queryDTO);
+        return R.ok().put("data",contractsList);
+    }
 
     @PostMapping(value = {"/list"})
     @ApiOperation(value = "目标达成列表")

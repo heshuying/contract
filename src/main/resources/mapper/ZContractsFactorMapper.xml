@@ -51,7 +51,11 @@
             f.`factor_name` AS factorName,
             f.`factor_value` AS factorValue,
             f.`factor_unit` AS factorUnit,
-            IF(f.`factor_directon`='1','正向','负向') AS factorDirecton,
+            IF(
+              f.`factor_directon` = '1',
+              '正向',
+              '负向'
+            ) AS factorDirecton,
             f.`factor_type` AS factorType,
             c.`org_name` AS nodeName,
             c.`org_code` AS nodeCode
@@ -71,15 +75,24 @@
           LEFT JOIN
             (SELECT
               b.`target_code`,
-              '' AS computeLogic
+              b.`target_logic` AS computeLogic,
+              b.target_xw_category_code AS targetXwCategoryCode
             FROM
               z_target_basic b
-            WHERE (
-                b.target_diff_type = '001'
-                OR b.target_diff_type = '004'
-              )
+            WHERE b.target_diff_type = '001'
               AND b.target_pt_code = ''
-              AND b.role_code = ''
+            GROUP BY b.`target_code`
+            UNION
+            ALL
+            SELECT
+              b.`target_code`,
+              b.`target_logic` AS computeLogic,
+              b.target_xw_category_code AS targetXwCategoryCode
+            FROM
+              z_target_basic b
+            WHERE b.target_diff_type = '004'
+              AND b.target_pt_code = ''
+              AND b.chain_code = ''
             GROUP BY b.`target_code`) t2
             ON t1.factorCode = t2.target_code
     </select>

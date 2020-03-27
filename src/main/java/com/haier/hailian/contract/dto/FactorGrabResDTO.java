@@ -17,4 +17,6 @@ public class FactorGrabResDTO {
     // 计算逻辑
     private String computeLogic;
 
+    private String targetXwCategoryCode;
+
 }
