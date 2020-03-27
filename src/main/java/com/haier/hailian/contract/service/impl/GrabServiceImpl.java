@@ -184,18 +184,15 @@ public class GrabServiceImpl implements GrabService {
         //根据目标维度 设置抢单的维度
         List<FactorDto> grabFactors = new ArrayList<>();
         List<FactorDto> e2eFactors = new ArrayList<>();
+        perfectQueryParam(queryDto);
+        queryDto.setLoginXwCode(minBu.getXwCode());
+        queryDto.setRegionCode(minBu.getRegionCode());
 
+        //e2e收入
+        BigDecimal e2eInc = calE2e(queryDto);
         if(!tyMasterGrabChainInfoDto.getCanEdit()) {
             //42中心，从OMS汇总取数
-            //网格抢单汇总
-            perfectQueryParam(queryDto);
-            queryDto.setLoginXwCode(minBu.getXwCode());
-            queryDto.setRegionCode(minBu.getRegionCode());
 
-            //e2e收入
-            List<MeshGrabEntity> meshE2EEntities = monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
-            BigDecimal e2eInc = new BigDecimal(meshE2EEntities.stream().mapToDouble(m ->
-                    AmountFormat.amtStr2D(m.getIncome())).sum());
             //抢单收入
             List<MeshGrabEntity> meshGrabEntities = monthChainGroupOrderService.sumStruMeshGrabIncome(queryDto);
             BigDecimal inc = new BigDecimal(meshGrabEntities.stream().mapToDouble(m ->
@@ -216,7 +213,7 @@ public class GrabServiceImpl implements GrabService {
                             new BigDecimal("10000"), 2, RoundingMode.HALF_UP
                     );
                     grabFactor.setFactorValue(incBill.toString());//格式化万
-                    e2eFactor.setFactorValue(e2eInc.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                    e2eFactor.setFactorValue(e2eInc.toString());
 
                 } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                     List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f ->
@@ -295,8 +292,13 @@ public class GrabServiceImpl implements GrabService {
                 FactorDto grabFactor = new FactorDto();
                 BeanUtils.copyProperties(index, grabFactor);
                 BeanUtils.copyProperties(index, e2eFactor);
-                grabFactor.setFactorValue("0");
-                e2eFactor.setFactorValue("0");
+                if (Constant.FactorCode.Incom.getValue().equals(index.getFactorCode())) {
+                    grabFactor.setFactorValue("0");
+                    e2eFactor.setFactorValue(e2eInc.toString());
+                }else {
+                    grabFactor.setFactorValue("0");
+                    e2eFactor.setFactorValue("0");
+                }
                 e2eFactors.add(e2eFactor);
                 grabFactors.add(grabFactor);
             }
@@ -304,6 +306,16 @@ public class GrabServiceImpl implements GrabService {
             tyMasterGrabChainInfoDto.setGrabList(grabFactors);
         }
         return tyMasterGrabChainInfoDto;
+    }
+
+    private BigDecimal calE2e(TyMasterGrabQueryDto queryDto){
+        BigDecimal e2eInc=BigDecimal.ZERO;
+        //e2e收入
+        List<MeshGrabEntity> meshE2EEntities = monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
+        if(meshE2EEntities!=null||meshE2EEntities.size()>0){
+            e2eInc = new BigDecimal(meshE2EEntities.get(0).getIncome());
+        }
+        return e2eInc.setScale(2,BigDecimal.ROUND_HALF_UP);
     }
 
     /**

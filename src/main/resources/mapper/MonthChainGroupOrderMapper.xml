@@ -91,7 +91,6 @@
         <foreach collection="month" item="item" index="index" open="(" close=")"  separator="," >
             #{item}
         </foreach>
-        GROUP BY first_region_code,first_region_name
     </select>
 
     <!--查询网格抢单收入-->
