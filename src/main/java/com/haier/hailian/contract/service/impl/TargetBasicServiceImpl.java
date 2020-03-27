@@ -112,7 +112,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         int num = 0;
         for(TargetBasic targetBasic : targetBasicList){
             if(StringUtils.isNotBlank(targetBasic.getRoleCode())){ // 2级单
-                String[] codes = targetBasic.getRoleCode().split("|");
+                String[] codes = targetBasic.getTargetXwCategoryCode().split("|");
                 String roleCode = "|";
                 for(String code : codes){
                     Map minbuMap = new HashMap();
@@ -129,6 +129,60 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
             num++;
         }
         return num;
+    }
+
+
+    @Override
+    public int saveContractsTarget(List<TargetBasicInfo> targetBasicInfos) {
+        int num = 0;
+        for(TargetBasicInfo targetBasicInfo : targetBasicInfos){
+
+            // 一级单数据
+            TargetBasic targetBasicFirst = new TargetBasic();
+            BeanUtils.copyProperties(targetBasicInfo , targetBasicFirst);
+
+            if(targetBasicInfo.getId() == null){ // 一级单id为空插入
+                targetBasicFirst.setChainCode("LQ" + getNum());
+                targetBasicDao.insert(targetBasicFirst);
+                // 一级单id为空，则二级单全部插入
+                for(TargetBasic targetBasicSecond : targetBasicInfo.getChildTargetBasicList()){
+                    targetBasicSecond = getXwInfo(targetBasicSecond);
+                    targetBasicDao.insert(targetBasicSecond);
+                }
+            } else { //一级单id 不为空 更新
+                targetBasicDao.updateById(targetBasicFirst);
+                for(TargetBasic targetBasicSecond : targetBasicInfo.getChildTargetBasicList()){
+                    targetBasicSecond = getXwInfo(targetBasicSecond);
+                    if(targetBasicSecond.getId() == null){ //二级单id为空则插入
+                        targetBasicDao.insert(targetBasicSecond);
+                    } else {
+                        targetBasicDao.updateById(targetBasicSecond);
+                    }
+
+                }
+            }
+        }
+        return num;
+    }
+
+
+    public TargetBasic  getXwInfo(TargetBasic targetBasicSecond){
+        String[] codes = targetBasicSecond.getTargetXwCategoryCode().split("|");
+        String roleCode = "|";
+        String roleName = "|";
+        for(String code : codes){
+            Map minbuMap = new HashMap();
+            minbuMap.put("xwStyleCode" , "|" + code + "|");
+            List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+            for(SysXiaoweiEhr xw : mins){
+                roleCode = roleCode + xw.getXwcode() + "|";
+                roleName = roleName + xw.getXwname() + "|";
+            }
+        }
+        targetBasicSecond.setRoleCode(roleCode);
+        targetBasicSecond.setRoleName(roleName);
+
+        return targetBasicSecond;
     }
 
     @Override

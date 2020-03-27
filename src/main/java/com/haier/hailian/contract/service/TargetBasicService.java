@@ -30,6 +30,8 @@ public interface TargetBasicService extends IService<TargetBasic> {
 
     int insertContractsTarget(List<TargetBasic> targetBasicList);
 
+    int saveContractsTarget(List<TargetBasicInfo> targetBasicInfos);
+
     List<TargetBasicInfo> selectContractsTarget(QueryBottomDTO dto);
 
     int deleteContractsTarget(Integer id);
