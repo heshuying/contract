@@ -721,6 +721,8 @@
         and group_id = #{groupId}
         and contract_type = '10'
         and status!='4'
+        ORDER BY id DESC
+        LIMIT 1
     </select>
 
     <select id="selectHomePageContract" resultMap="BaseResultMap">

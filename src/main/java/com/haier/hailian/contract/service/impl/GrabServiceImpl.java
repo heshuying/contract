@@ -137,7 +137,9 @@ public class GrabServiceImpl implements GrabService {
         TyMasterGrabChainInfoDto tyMasterGrabChainInfoDto = new TyMasterGrabChainInfoDto();
         tyMasterGrabChainInfoDto.setContractId(queryDto.getContractId());
         String chainName = contracts.getContractName();
-        chainName = chainName.replace("链群", "-" + minBu.getRegionName() + "链群");
+        if(StringUtils.isNotBlank(minBu.getRegionName())) {
+            chainName = chainName.replace("链群", "-" + minBu.getRegionName() + "链群");
+        }
         tyMasterGrabChainInfoDto.setRegionCode(minBu.getRegionCode());
         tyMasterGrabChainInfoDto.setLittleXwName(minBu.getLittleXwName());
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
@@ -165,7 +167,7 @@ public class GrabServiceImpl implements GrabService {
         //举单合约保存42中心数据，只取当前登录人所属中心
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
-                        .eq("region_code", minBu.getXwCode())
+                        .eq("region_code", minBu.getLittleXwCode())
         );
         List<FactorDto> targetFactor = factors.stream().map(m -> {
             FactorDto dto = new FactorDto();
@@ -214,7 +216,7 @@ public class GrabServiceImpl implements GrabService {
                             new BigDecimal("10000"), 2, RoundingMode.HALF_UP
                     );
                     grabFactor.setFactorValue(incBill.toString());//格式化万
-                    e2eFactor.setFactorValue(e2eInc.toString());
+                    e2eFactor.setFactorValue(e2eInc.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 
                 } else if (Constant.FactorCode.HighPercent.getValue().equals(index.getFactorCode())) {
                     List<MeshGrabEntity> curr = meshGrabEntities.stream().filter(f ->
@@ -484,7 +486,6 @@ public class GrabServiceImpl implements GrabService {
                         factor.setFactorValue(m.getFactorValue());
                         factor.setFactorUnit(m.getFactorUnit());
                         factor.setFactorType(Constant.FactorType.Bottom.getValue());
-                        factor.setMeshCode(contracts.getId().toString());//汇总
                         return factor;
                     }
             ).collect(Collectors.toList());
@@ -499,7 +500,6 @@ public class GrabServiceImpl implements GrabService {
                                 factor.setFactorValue(m.getFactorValue());
                                 factor.setFactorUnit(m.getFactorUnit());
                                 factor.setFactorType(Constant.FactorType.Grab.getValue());
-                                factor.setMeshCode(contracts.getId().toString());//汇总
                                 return factor;
                             }
                     ).collect(Collectors.toList())
@@ -514,7 +514,6 @@ public class GrabServiceImpl implements GrabService {
                                 factor.setFactorValue(m.getFactorValue());
                                 factor.setFactorUnit(m.getFactorUnit());
                                 factor.setFactorType(Constant.FactorType.E2E.getValue());
-                                factor.setMeshCode(contracts.getId().toString());//汇总
                                 return factor;
                             }
                     ).collect(Collectors.toList())
@@ -705,7 +704,6 @@ public class GrabServiceImpl implements GrabService {
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>()
                         .eq("contract_id", contracts.getId())
-                .eq("mesh_code",contracts.getId())
         );
         List<FactorDto> targetFactor = factors.stream().filter(m->Constant.FactorType.Bottom
                 .getValue().equals(m.getFactorType())).map(m -> {
