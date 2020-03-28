@@ -1,7 +1,9 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
+import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.FactorGrabResDTO;
 import com.haier.hailian.contract.dto.QueryContractListDTO;
 import com.haier.hailian.contract.dto.TargetListResDTO;
@@ -9,6 +11,7 @@ import com.haier.hailian.contract.dto.TargetReachSaveReqDTO;
 import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.ZContractsFactorService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -28,6 +31,8 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
     ZContractsFactorService factorService;
     @Autowired
     ZContractsDao contractsDao;
+    @Autowired
+    ZHrChainInfoDao chainInfoDao;
 
     @Override
     public List<ZContracts> selectContractListForTarget(QueryContractListDTO queryDTO) {
@@ -59,10 +64,18 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
 
     @Override
     public List<TargetListResDTO> getFactorGrabList(String contractId){
-        Map<String,Object> map = new HashMap<>();
-        map.put("contractId", contractId);
         List<TargetListResDTO> resultList = new ArrayList<>();
 
+        ZContracts contracts = contractsDao.selectById(Integer.parseInt(contractId));
+        if(contracts == null){
+            return new ArrayList<>();
+        }
+        ZHrChainInfo chain = chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("contractId", contractId);
+        map.put("chainCode", chain.getChainCode());
+        map.put("ptCode", chain.getChainPtCode());
         List<FactorGrabResDTO> list = factorDao.getFactorGrabList(map);
         for(FactorGrabResDTO item : list){
             TargetListResDTO target = new TargetListResDTO();

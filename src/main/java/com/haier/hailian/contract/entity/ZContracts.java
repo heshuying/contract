@@ -151,6 +151,7 @@ public class ZContracts extends Model<ZContracts> {
     /**
      * 目标达成更新时间
      */
+    @TableField(exist = false)
     private String targetUpdateTimeStr;
 
 

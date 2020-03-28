@@ -82,7 +82,7 @@
             FROM
               z_target_basic b
             WHERE b.target_diff_type = '001'
-              AND b.target_pt_code = ''
+              AND b.target_pt_code = #{ptCode}
             GROUP BY b.`target_code`
             UNION
             ALL
@@ -93,8 +93,8 @@
             FROM
               z_target_basic b
             WHERE b.target_diff_type = '004'
-              AND b.target_pt_code = ''
-              AND b.chain_code = ''
+              AND b.target_pt_code = #{ptCode}
+              AND b.chain_code = #{chainCode}
             GROUP BY b.`target_code`) t2
             ON t1.factorCode = t2.target_code
     </select>
