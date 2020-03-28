@@ -33,6 +33,7 @@ public class SysXwRegion extends Model<SysXwRegion> {
     private String regionCode;
 
     private String regionName;
+    private String calLevel;
 
 
     @Override

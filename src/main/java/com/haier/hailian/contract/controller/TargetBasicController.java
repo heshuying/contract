@@ -74,6 +74,14 @@ public class TargetBasicController {
     }
 
 
+    @PostMapping(value = {"/saveContractsTarget"})
+    @ApiOperation(value = "保存一、二级单")
+    public R saveContractsTarget(@RequestBody List<TargetBasicInfo> targetBasicInfos) {
+        int num = targetBasicService.saveContractsTarget(targetBasicInfos);
+        return R.ok().put("data",num);
+    }
+
+
     @PostMapping(value = {"/selectContractsTarget"})
     @ApiOperation(value = "查询一级以及二级单")
     public R selectContractsTarget(@RequestBody QueryBottomDTO dto) {

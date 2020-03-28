@@ -134,6 +134,8 @@ public class TOdsMinbu extends Model<TOdsMinbu> {
     private String regionName;
     @TableField(exist = false)
     private boolean in42Center;
+    @TableField(exist = false)
+    private String calLevel;
     private Date createTime;
 
     @TableField(exist = false)
