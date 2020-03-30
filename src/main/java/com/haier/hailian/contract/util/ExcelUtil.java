@@ -1,6 +1,8 @@
 package com.haier.hailian.contract.util;
 
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -252,7 +254,7 @@ public class ExcelUtil {
      * @param workbook
      * @return
      */
-    private static CellStyle getHeaderCellStyle(Workbook workbook){
+    public static CellStyle getHeaderCellStyle(Workbook workbook){
 
         //创建表头字体
         Font headerFont = workbook.createFont();
@@ -283,7 +285,7 @@ public class ExcelUtil {
      * @param workbook
      * @return
      */
-    private static CellStyle getContentCellStyle(Workbook workbook){
+    public static CellStyle getContentCellStyle(Workbook workbook){
 
         //内容列样式
         CellStyle contentCellStyle = workbook.createCellStyle();
@@ -351,6 +353,7 @@ public class ExcelUtil {
             }
         }
     }
+
     public static void export(HttpServletRequest request, HttpServletResponse response, Workbook workbook, String excelName) throws IOException {
         //设置响应上下文类型
         response.setContentType("APPLICATION/OCTET-STREAM");

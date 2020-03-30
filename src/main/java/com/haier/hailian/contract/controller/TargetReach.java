@@ -8,11 +8,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +61,12 @@ public class TargetReach {
     @PostMapping(value = {"/saveTarget"})
     @ApiOperation(value = "目标达成保存")
     public R saveTarget(@RequestBody TargetReachSaveReqDTO reqBean) {
-        if(reqBean == null || StringUtils.isBlank(reqBean.getContractId()) || reqBean.getTargetList() == null){
+        if(reqBean == null || StringUtils.isBlank(reqBean.getContractId())){
             return R.error("请求参数错误");
+        }
+        if(reqBean.getTargetList() == null || reqBean.getTargetList().isEmpty()){
+            log.info("请求参数中没有要更新的数据");
+            return R.ok();
         }
 
         try {
@@ -71,5 +76,43 @@ public class TargetReach {
             return R.error("保存失败: " + e.getMessage());
         }
         return R.ok();
+    }
+
+    @GetMapping(value = {"/templetDownload"})
+    @ApiOperation(value = "目标达成模板下载")
+    public void templetDownload(@RequestParam String contractId, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            if(StringUtils.isBlank(contractId)){
+                return;
+            }
+            targetReachService.templetDownload(contractId, request, response, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping(value = {"/export"})
+    @ApiOperation(value = "目标达成导出")
+    public void export(@RequestParam String contractId, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            if(StringUtils.isBlank(contractId)){
+                return;
+            }
+            targetReachService.templetDownload(contractId, request, response, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @PostMapping(value = {"/excelUpload"})
+    @ApiOperation(value = "excel上传")
+    public R excelUpload(MultipartFile file) throws Exception{
+        if (file.isEmpty()) {
+            return R.error().put("msg","文件为空");
+        }
+        InputStream inputStream = file.getInputStream();
+        List<TargetListResDTO> data = targetReachService.getDataByExcel(inputStream, file.getOriginalFilename());
+        inputStream.close();
+        return R.ok().put("data", data);
     }
 }
