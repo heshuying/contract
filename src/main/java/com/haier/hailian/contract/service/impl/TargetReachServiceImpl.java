@@ -284,9 +284,11 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
                             }
                         });
                     }
-                    final Cell contentCell = row.createCell(8);
-                    contentCell.setCellStyle(contentCellStyle);
-                    contentCell.setCellValue(grab.getFactId());
+                    if(isTemplet){
+                        final Cell contentCell = row.createCell(8);
+                        contentCell.setCellStyle(contentCellStyle);
+                        contentCell.setCellValue(grab.getFactId());
+                    }
                     //索引行自加 1
                     rowIndex++;
                     row = sheet.getRow(rowIndex);
