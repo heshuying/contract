@@ -51,7 +51,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ChainCommonService chainCommonService;
     //hr发版后放开
     @Reference(version = "ehr2.0", registry = "registry2", check = false)
-    //@Reference(version = "ehr2.0-test",registry = "registry2",check=false)
+//    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
     private ChainGroupClient chainGroupClient;
 
     /**

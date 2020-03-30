@@ -19,8 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,14 +49,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setChainCode(dto.getChainCode());
         targetBasic.setTargetDiffType("000");
-        String date = dto.getStartDate();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
-        try {
-            targetBasic.setPeriodCode(sf2.format(sf.parse(date)));
-        } catch (ParseException e) {
-            throw new RException("日期类型不正确", Constant.CODE_VALIDFAIL);
-        }
+        targetBasic.setPeriodCode(dto.getMonth());
         List<TargetBasic> list = targetBasicDao.selectTarget(targetBasic);
         for(TargetBasic targetBasic1:list){
             if(null != targetBasic1.getTargetBottomLine() && !"".equals(targetBasic1.getTargetBottomLine())){

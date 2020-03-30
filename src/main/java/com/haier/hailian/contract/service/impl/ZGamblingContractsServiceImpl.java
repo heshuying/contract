@@ -270,14 +270,13 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public List<ContractProductDTO> selectProductSeries(QueryProductChainDTO dto) {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
         //1.z_target_basic 表查询爆款产品目标
-        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("chain_code",dto.getChainCode()).eq("period_code",sf.format(new Date())).eq("target_diff_type","002"));
+        List<TargetBasic> targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("chain_code",dto.getChainCode()).eq("period_code",dto.getMonth()).eq("target_diff_type","002"));
         if( targetList == null || targetList.size() == 0 ) {
             targetList = targetBasicDao.selectList(new QueryWrapper<TargetBasic>().eq("target_diff_type","002"));
         }
         //2.查询链群下的爆款产品的系列和场景
-        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(dto.getChainCode());
+        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(dto.getChainCode(),dto.getMonth());
         List<ContractProductDTO> productList = new ArrayList<>();
         for(ZProductChain productChain : list){
             ContractProductDTO productDTO = new ContractProductDTO();
@@ -579,7 +578,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
     @Override
     public void exportProductSeries(String chainCode, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(chainCode);;
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+        List<ZProductChain> list = productChainDao.selectSeriesByChainCode(chainCode,sf.format(new Date()));
 
         Workbook workbook = new HSSFWorkbook();
         ExcelUtil.buildSheet(workbook, "产品系列", list, TEMPLATE_TITLE_PRODUCT);
@@ -663,6 +663,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         TOdsMinbu currentUser = sysUser.getMinbu();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
         //1.保存链群主抢单信息到合同主表
         ZContracts contracts = new ZContracts();
         if(null == dto.getId() || dto.getId() == 0){
@@ -756,6 +757,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     contractsProduct.setTargetUnit(targetDTO.getTargetUnit());
                     contractsProduct.setTargetName(targetDTO.getTargetName());
                     contractsProduct.setTargetCode(targetDTO.getTargetCode());
+                    contractsProduct.setPeriodCode(sf2.format(sf.parse(dto.getStartDate())));
+                    contractsProduct.setChainCode(dto.getChainCode());
+                    contractsProduct.setChainName(dto.getContractName());
                     contractsProductDao.insert(contractsProduct);
                 }
             }
@@ -869,6 +873,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                             contractsProduct.setTargetCode(targetDTO.getTargetCode());
                             contractsProduct.setQtyMonth(targetDTO.getQtyMonth());
                             contractsProduct.setQtyYear(targetDTO.getQtyYear());
+                            contractsProduct.setPeriodCode(sf2.format(sf.parse(dto.getStartDate())));
+                            contractsProduct.setChainCode(dto.getChainCode());
+                            contractsProduct.setChainName(dto.getContractName());
                             contractsProductDao.insert(contractsProduct);
                         }
                     }

@@ -8,6 +8,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
+import com.haier.hailian.contract.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +87,16 @@ public class ZGamblingContractsController {
     public R selectTargetAll(@RequestBody QueryBottomDTO dto) {
 
         ReturnTargetAllDTO targetAllDTO = new ReturnTargetAllDTO();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sf2 = new SimpleDateFormat("yyyyMM");
+        String month = "";
+        try {
+            month = sf2.format(sf.parse(dto.getStartDate()));
+        } catch (ParseException e) {
+            throw new RException("日期类型不正确", Constant.CODE_VALIDFAIL);
+        }
         //1.查询主链群目标
+        dto.setMonth(month);
         List<TargetBasic> targetBasicList = targetBasicService.selectBottom(dto);
         targetAllDTO.setParentTarget(targetBasicList);
         String parentChain = dto.getChainCode();
@@ -107,6 +119,7 @@ public class ZGamblingContractsController {
                 //5.查询子链群的爆款目标
                 QueryProductChainDTO dto1 = new QueryProductChainDTO();
                 dto1.setChainCode(chainCode);
+                dto1.setMonth(month);
                 List<ContractProductDTO> childProduct = gamblingContractsService.selectProductSeries(dto1);
                 targetDTO.setChildProduct(childProduct);
                 //6.查询子链群的xwType3资源类型和最大数量
@@ -123,6 +136,7 @@ public class ZGamblingContractsController {
             //8.查询主链群的爆款目标
             QueryProductChainDTO dto1 = new QueryProductChainDTO();
             dto1.setChainCode(parentChain);
+            dto1.setMonth(month);
             List<ContractProductDTO> parentProduct = gamblingContractsService.selectProductSeries(dto1);
             targetAllDTO.setParentProduct(parentProduct);
             //9.查询主链群的xwType3资源类型和最大数量

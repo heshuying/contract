@@ -13,6 +13,9 @@
         <result column="target_code" property="targetCode" />
         <result column="target_unit" property="targetUnit" />
         <result column="scene_name" property="sceneName" />
+        <result column="period_code" property="periodCode" />
+        <result column="chain_name" property="chainName" />
+        <result column="chain_code" property="chainCode" />
     </resultMap>
 
     <!-- 合约的爆款数据 -->

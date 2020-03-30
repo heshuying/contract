@@ -56,6 +56,12 @@ public class ZContractsProduct extends Model<ZContractsProduct> {
 
     private String sceneName;
 
+    private String periodCode;
+
+    private String chainCode;
+
+    private String chainName;
+
 
     @Override
     protected Serializable pkVal() {

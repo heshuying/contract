@@ -87,6 +87,11 @@ public class ZContractsFactor extends Model<ZContractsFactor> {
 
     private String isLqTarget;
 
+    /**
+     * 目标达成值
+     */
+    private String factorValueActual;
+
 
     @Override
     protected Serializable pkVal() {
