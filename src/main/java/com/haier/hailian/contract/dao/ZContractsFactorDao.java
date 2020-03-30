@@ -1,11 +1,13 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ChainGroupTargetDTO;
+import com.haier.hailian.contract.dto.FactorGrabResDTO;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,4 +30,6 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
      * @return
      */
     List<ChainGroupTargetDTO> selectChainFactorByContractId(Integer contractId);
+
+    List<FactorGrabResDTO> getFactorGrabList(Map<String, Object> map);
 }

@@ -142,4 +142,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<CDGrabDataDTO> getCDGrabResultType3List(Map<String,Object> paraMap);
 
     List<String> getContractsForCountUpdate(Map<String,Object> paraMap);
+
+    List<ZContracts> selectContractListForTarget(QueryContractListDTO queryDTO);
 }
