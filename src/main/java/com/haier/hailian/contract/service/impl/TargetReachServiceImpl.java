@@ -265,6 +265,7 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
                         final String fieldName = cellFields[i].getFieldName();
                         final Cell contentCell = row.createCell(i);
                         contentCell.setCellStyle(contentCellStyle);
+                        contentCell.setCellType(CellType.STRING);
                         final ExcelUtil.Converter converter = cellFields[i].getConverter();
                         ReflectionUtils.doWithFields(grab.getClass(), new ReflectionUtils.FieldCallback() {
                             @Override
@@ -273,12 +274,12 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
                                     field.setAccessible(true);
                                     Object value = field.get(grab);
                                     if (isTemplet && fieldName.equals("factorValueActual")) {
-                                        value = null;
+                                        value = "";
                                     }
                                     if (converter != null){
                                         contentCell.setCellValue(converter.convert(value));
                                     }else {
-                                        contentCell.setCellValue(null == value ? null : value.toString());
+                                        contentCell.setCellValue(null == value ? "" : value.toString());
                                     }
                                 }
                             }
@@ -355,6 +356,9 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
 
             log.info("第" + j + "行");
             cell = row.getCell(8);
+            if(cell == null){
+                continue;
+            }
             String factId;
             if(cell.getCellTypeEnum().equals(CellType.STRING)){
                 factId = cell.getStringCellValue();
@@ -373,7 +377,7 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
             if(StringUtils.isBlank(factId)){
                 throw new RException("不要修改excel模板格式");
             }
-            if(!DigitalUtils.isNumeric(factorValueActual)){
+            if(StringUtils.isNotBlank(factorValueActual) && !DigitalUtils.isNumeric(factorValueActual)){
                 log.error("目标达成只能填写数字:" + factorValueActual);
                 throw new RException("目标达成只能填写数字");
             }
