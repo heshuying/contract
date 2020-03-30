@@ -22,6 +22,8 @@ public class ContractViewResultDTO {
     private String endDate;
     @ApiModelProperty(value="分享空间",name="分享空间")
     private BigDecimal shareSpace;
+    @ApiModelProperty(value="分享额",name="分享额")
+    private BigDecimal shareMoney;
     @ApiModelProperty(value="状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期",name="状态，0抢入中，1抢入成功,（已审批），2已驳回，3：被踢出,4:已过期")
     private String status;
     @ApiModelProperty(value="状态名称",name="状态名称")
