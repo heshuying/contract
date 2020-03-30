@@ -167,7 +167,7 @@ public class GrabServiceImpl implements GrabService {
         //举单合约保存42中心数据，只取当前登录人所属中心
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
-                        .eq("region_code", minBu.getLittleXwCode())
+                        .eq("mesh_code", minBu.getLittleXwCode())
         );
         List<FactorDto> targetFactor = factors.stream().map(m -> {
             FactorDto dto = new FactorDto();
