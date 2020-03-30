@@ -313,7 +313,10 @@ public class GrabServiceImpl implements GrabService {
         //e2e收入
         List<MeshGrabEntity> meshE2EEntities = monthChainGroupOrderService.queryMeshE2EIncome(queryDto);
         if(meshE2EEntities!=null||meshE2EEntities.size()>0){
-            e2eInc = new BigDecimal(meshE2EEntities.get(0).getIncome());
+            if(meshE2EEntities.get(0)!=null&&meshE2EEntities.get(0).getIncome()!=null){
+                e2eInc = new BigDecimal(meshE2EEntities.get(0).getIncome());
+            }
+
         }
         return e2eInc.setScale(2,BigDecimal.ROUND_HALF_UP);
     }

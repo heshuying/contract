@@ -22,11 +22,14 @@
         select cp.scene_name as 'scene_name', cp.product_series as 'product_series',
         sum(ifnull(mcgo.order_num,0)) as 'qty_year'
         ,sum(ifnull(mcgo.order_amt,0)) as 'qty_month'
-        from (select DISTINCT product_series,contract_id,scene_name from z_contracts_product where contract_id=#{contractId}) cp
+        from (select DISTINCT product_series,contract_id,scene_name ,period_code from z_contracts_product where contract_id=#{contractId}) cp
         join z_contracts zc on cp.contract_id=zc.id
-        join z_product_chain zpc on cp.product_series=zpc.product_series and cp.scene_name=zpc.scene_name
+        join z_product_chain zpc on cp.product_series=zpc.product_series
+        and cp.scene_name=zpc.scene_name
         and zc.chain_code=zpc.chain_code
-        left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code and zpc.chain_code=mcgo.chain_code
+        and cp.period_code=zpc.`month`
+        left join month_chain_group_order mcgo on zpc.model_code=mcgo.product_code
+        and zpc.chain_code=mcgo.chain_code
         <if test="qtyMonth!=null and qtyMonth != '' ">
             and mcgo.month=#{qtyMonth}
         </if>
