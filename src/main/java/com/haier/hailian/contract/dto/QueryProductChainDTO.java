@@ -9,4 +9,6 @@ import lombok.Data;
 public class QueryProductChainDTO {
 
     private String chainCode;
+
+    private String month;
 }

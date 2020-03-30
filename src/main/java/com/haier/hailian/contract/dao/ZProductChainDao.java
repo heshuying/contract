@@ -2,6 +2,7 @@ package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.entity.ZProductChain;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface ZProductChainDao extends BaseMapper<ZProductChain> {
 
-    List<ZProductChain> selectSeriesByChainCode(String chainCode);
+    List<ZProductChain> selectSeriesByChainCode(@Param(value = "chainCode") String chainCode, @Param(value = "month")String month);
 }

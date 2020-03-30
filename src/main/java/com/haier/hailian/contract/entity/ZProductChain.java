@@ -52,6 +52,8 @@ public class ZProductChain extends Model<ZProductChain> {
      */
     private String sceneName;
 
+    //月份
+    private String month;
 
     @Override
     protected Serializable pkVal() {
