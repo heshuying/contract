@@ -164,6 +164,7 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setGrabEnd(DateFormatUtil.format(contracts.getJoinTime()
                 ,DateFormatUtil.DATE_TIME_PATTERN));
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
+        tyMasterGrabChainInfoDto.setShareMoney(contracts.getShareMoney());
         //举单合约保存42中心数据，只取当前登录人所属中心
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>().eq("contract_id", contracts.getId())
@@ -716,6 +717,7 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setGrabEnd(DateFormatUtil.format(contracts.getJoinTime()
                 ,DateFormatUtil.DATE_TIME_PATTERN));
         tyMasterGrabChainInfoDto.setShareQuota(contracts.getShareSpace());
+        tyMasterGrabChainInfoDto.setShareMoney(contracts.getShareMoney());
         List<ZContractsFactor> factors = contractsFactorService.list(
                 new QueryWrapper<ZContractsFactor>()
                         .eq("contract_id", contracts.getId())
