@@ -58,100 +58,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Autowired
     private ZContractsXwType3Dao xwtype3Dao;
 
-
-    @Override
-    public void saveGambling(GamblingContractDTO dto) throws Exception{
-        Subject subject = SecurityUtils.getSubject();
-        //获取当前用户
-        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
-        TOdsMinbu currentUser = sysUser.getMinbu();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        //1.保存链群主抢单信息到合同主表
-        ZContracts contracts = new ZContracts();
-        if(null == dto.getId() || dto.getId() == 0){
-           //ID 为空时为新增
-            BeanUtils.copyProperties(dto,contracts);
-            contracts.setStartDate(sf.parse(dto.getStartDate()));
-            contracts.setEndDate(sf.parse(dto.getEndDate()));
-            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
-            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
-            contracts.setContractType("10");
-            contracts.setStatus("0");
-            contracts.setCreateName(sysUser.getEmpName());
-            contracts.setCreateCode(sysUser.getEmpSn());
-            contracts.setCreateTime(new Date());
-            contracts.setXiaoweiCode(currentUser.getXwCode());
-            contracts.setOrgName(currentUser.getLittleXwName());
-            contracts.setOrgCode(currentUser.getLittleXwCode());
-            contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
-            contracts.setOpenValid(dto.getOpenValid());
-            contractsDao.insert(contracts);
-        }else{
-           //ID 不为0时，为修改
-            contracts = contractsDao.selectByContractId(dto.getId());
-            contracts.setStartDate(sf.parse(dto.getStartDate()));
-            contracts.setEndDate(sf.parse(dto.getEndDate()));
-            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
-            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
-            contracts.setShareSpace(dto.getShareSpace());
-            contractsDao.updateById(contracts);
-            //修改时删除原有目标
-            factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",dto.getId()));
-            contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",dto.getId()));
-        }
-        //2.保存链群目标到目标表
-        List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
-        for(ChainGroupTargetDTO chainGroupTarget:chainGroupTargetList){
-            if(null==chainGroupTarget.getGrab()) continue;
-                ZContractsFactor factor1 = new ZContractsFactor();
-                factor1.setContractId(contracts.getId());
-                factor1.setFactorValue(chainGroupTarget.getBottom()+"");
-                factor1.setFactorCode(chainGroupTarget.getTargetCode());
-                factor1.setFactorName(chainGroupTarget.getTargetName());
-                factor1.setFactorType(Constant.FactorType.Bottom.getValue());
-                factor1.setFactorUnit(chainGroupTarget.getTargetUnit());
-                factorDao.insert(factor1);
-                factor1.setId(null);
-                factor1.setFactorValue(chainGroupTarget.getE2E()+"");
-                factor1.setFactorType(Constant.FactorType.E2E.getValue());
-                factorDao.insert(factor1);
-                factor1.setId(null);
-                factor1.setFactorValue(chainGroupTarget.getGrab()+"");
-                factor1.setFactorType(Constant.FactorType.Grab.getValue());
-                factorDao.insert(factor1);
-        }
-        //3.保存市场目标到目标表
-        List<MarketTargetDTO> marketTargetList = dto.getMarketTargetList();
-        for (MarketTargetDTO marketTarget : marketTargetList){
-                List<MarketTargetDTO2> dto2List = marketTarget.getTargetList();
-                for(MarketTargetDTO2 dto2:dto2List){
-                    ZContractsFactor factor = new ZContractsFactor();
-                    factor.setContractId(contracts.getId());
-                    factor.setFactorValue(dto2.getTargetValue());
-                    factor.setFactorCode(dto2.getTargetCode());
-                    factor.setFactorName(dto2.getTargetName());
-                    factor.setFactorType(Constant.FactorType.Grab.getValue());
-                    factor.setFactorUnit(dto2.getTargetUnit());
-                    factor.setRegionCode(marketTarget.getXwCode());
-                    factor.setRegionName(marketTarget.getXwName());
-                    factor.setMeshCode(marketTarget.getNodeCode());
-                    factor.setMeshName(marketTarget.getNodeName());
-                    factorDao.insert(factor);
-                }
-        }
-        //4 保存产品系列目标到合约产品表
-        List<ContractProductDTO> productList = dto.getProductList();
-        if(null != productList){
-            for (ContractProductDTO productDTO : productList){
-                ZContractsProduct contractsProduct = new ZContractsProduct();
-                contractsProduct.setContractId(contracts.getId());
-                contractsProduct.setProductSeries(productDTO.getProductSeries());
-                contractsProductDao.insert(contractsProduct);
-            }
-        }
-
-    }
-
     @Override
     public MarketReturnDTO selectMarket(String chainCode) {
 
@@ -669,10 +575,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(null == dto.getId() || dto.getId() == 0){
             //ID 为空时为新增
             BeanUtils.copyProperties(dto,contracts);
-            contracts.setStartDate(sf.parse(dto.getStartDate()));
-            contracts.setEndDate(sf.parse(dto.getEndDate()));
-            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
-            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
+            if(dto.getStartDate() != null) contracts.setStartDate(sf.parse(dto.getStartDate()));
+            if(dto.getEndDate() != null) contracts.setEndDate(sf.parse(dto.getEndDate()));
+            if(dto.getJoinTime() != null) contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            if(dto.getCheckTime() != null) contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             contracts.setContractType("10");
             if("1".equals(dto.getIsDraft())){
                 contracts.setStatus("9");
@@ -691,10 +597,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             //ID 不为0时，为修改
             contracts = contractsDao.selectByContractId(dto.getId());
             contracts.setShareSpace(dto.getShareSpace());
-            contracts.setStartDate(sf.parse(dto.getStartDate()));
-            contracts.setEndDate(sf.parse(dto.getEndDate()));
-            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
-            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
+            if(dto.getStartDate() != null) contracts.setStartDate(sf.parse(dto.getStartDate()));
+            if(dto.getEndDate() != null) contracts.setEndDate(sf.parse(dto.getEndDate()));
+            if(dto.getJoinTime() != null) contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            if(dto.getCheckTime() != null) contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             if("1".equals(dto.getIsDraft())){
                 contracts.setStatus("9");
             }else{
@@ -799,10 +705,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     childContracts.setParentId(contracts.getId());
                     childContracts.setShareSpace(child.getShareSpace());
                     childContracts.setChainCode(child.getChildChainCode());
-                    childContracts.setStartDate(sf.parse(dto.getStartDate()));
-                    childContracts.setEndDate(sf.parse(dto.getEndDate()));
-                    childContracts.setJoinTime(sf.parse(dto.getJoinTime()));
-                    childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
+                    if(dto.getStartDate() != null) childContracts.setStartDate(sf.parse(dto.getStartDate()));
+                    if(dto.getEndDate() != null) childContracts.setEndDate(sf.parse(dto.getEndDate()));
+                    if(dto.getJoinTime() != null) childContracts.setJoinTime(sf.parse(dto.getJoinTime()));
+                    if(dto.getCheckTime() != null) childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
                     childContracts.setContractType("10");
                     childContracts.setStatus("0");
                     childContracts.setCreateName(sysUser.getEmpName());
@@ -817,6 +723,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     //ID 不为0时，为修改
                     childContracts = contractsDao.selectByContractId(child.getId());
                     childContracts.setShareSpace(child.getShareSpace());
+                    if(dto.getStartDate() != null) childContracts.setStartDate(sf.parse(dto.getStartDate()));
+                    if(dto.getEndDate() != null) childContracts.setEndDate(sf.parse(dto.getEndDate()));
+                    if(dto.getJoinTime() != null) childContracts.setJoinTime(sf.parse(dto.getJoinTime()));
+                    if(dto.getCheckTime() != null) childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
                     contractsDao.updateById(childContracts);
                     //修改时删除原有目标
                     contractsProductDao.delete(new QueryWrapper<ZContractsProduct>().eq("contract_id",child.getId()));
