@@ -674,7 +674,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             contracts.setJoinTime(sf.parse(dto.getJoinTime()));
             contracts.setCheckTime(sf.parse(dto.getCheckTime()));
             contracts.setContractType("10");
-            contracts.setStatus("0");
+            if("1".equals(dto.getIsDraft())){
+                contracts.setStatus("9");
+            }else{
+                contracts.setStatus("0");
+            }
             contracts.setCreateName(sysUser.getEmpName());
             contracts.setCreateCode(sysUser.getEmpSn());
             contracts.setCreateTime(new Date());
@@ -687,6 +691,15 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             //ID 不为0时，为修改
             contracts = contractsDao.selectByContractId(dto.getId());
             contracts.setShareSpace(dto.getShareSpace());
+            contracts.setStartDate(sf.parse(dto.getStartDate()));
+            contracts.setEndDate(sf.parse(dto.getEndDate()));
+            contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+            contracts.setCheckTime(sf.parse(dto.getCheckTime()));
+            if("1".equals(dto.getIsDraft())){
+                contracts.setStatus("9");
+            }else{
+                contracts.setStatus("0");
+            }
             contractsDao.updateById(contracts);
             //修改时删除原有目标
             factorDao.delete(new QueryWrapper<ZContractsFactor>().eq("contract_id",dto.getId()));
