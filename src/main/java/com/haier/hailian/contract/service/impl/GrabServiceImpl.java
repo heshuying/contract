@@ -579,7 +579,7 @@ public class GrabServiceImpl implements GrabService {
             List<ZContracts> sub=contractsService.list(new QueryWrapper<ZContracts>()
                     .eq("parent_id", contract.getId())
                     .in("contract_type", new String[]{"20","30"})
-                    .in("status", new int[]{1,8})
+                    .in("status", new Integer[]{1,8})
                     .last("limit 1")
             );
             if(sub==null||sub.size()==0){
