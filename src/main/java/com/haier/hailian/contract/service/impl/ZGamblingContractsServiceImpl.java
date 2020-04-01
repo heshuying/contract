@@ -616,7 +616,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         //2.保存链群目标到目标表
         List<ChainGroupTargetDTO> chainGroupTargetList = dto.getChainGroupTargetList();
         for(ChainGroupTargetDTO chainGroupTarget:chainGroupTargetList){
-            if(null==chainGroupTarget.getGrab()) continue;
+            if(!"1".equals(dto.getIsDraft()) && null==chainGroupTarget.getGrab()) continue;
             if(null == chainGroupTarget.getE2E() || null == chainGroupTarget.getBottom()) throw new RException("链群的底线和E2E目标未维护，无法举单",Constant.CODE_VALIDFAIL);
             ZContractsFactor factor1 = new ZContractsFactor();
             factor1.setContractId(contracts.getId());
@@ -746,7 +746,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 //7.保存子链群的链群目标
                 List<ChainGroupTargetDTO> childTargetList = child.getChildTargetList();
                 for(ChainGroupTargetDTO childTarget:childTargetList){
-                    if(null==childTarget.getGrab()) continue;
+                    if(!"1".equals(dto.getIsDraft()) && null==childTarget.getGrab()) continue;
                     if(null == childTarget.getE2E() || null == childTarget.getBottom()) throw new RException("链群的底线和E2E目标未维护，无法举单",Constant.CODE_VALIDFAIL);
                     ZContractsFactor factor1 = new ZContractsFactor();
                     factor1.setIsLqTarget(childTarget.getIsLqTarget());
