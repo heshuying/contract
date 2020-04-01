@@ -152,7 +152,7 @@ public class ZGamblingContractsController {
         String chainCode = dto.getChainCode();
         BigDecimal share = ZERO;
         String unit = "元";
-        List<ChainGroupTargetDTO> targetList = dto.getTargetList();
+        List<ChainGroupTargetDTO2> targetList = dto.getTargetList();
         if(null == targetList || targetList.size()==0) return R.error().put("msg","参数有误，无法计算");
         List<ZChainShare> chainShares = chainShareDao.selectList(new QueryWrapper<ZChainShare>().eq("chain_code",chainCode));
         if(null != chainShares && chainShares.size()>0 && "T02006*T01002".equals(chainShares.get(0).getShareExpression())){
@@ -160,7 +160,7 @@ public class ZGamblingContractsController {
             BigDecimal singleIncomeQD = ZERO;
             BigDecimal qtyDX = ZERO;
             BigDecimal singleIncomeDX = ZERO;
-           for(ChainGroupTargetDTO target:targetList){
+           for(ChainGroupTargetDTO2 target:targetList){
                if(target.getTargetCode().equals("T02006")){
                    singleIncomeDX = target.getBottom();
                    singleIncomeQD = target.getGrab();
@@ -176,7 +176,7 @@ public class ZGamblingContractsController {
             BigDecimal incomeQD = ZERO;
             BigDecimal incomeDX = ZERO;
             BigDecimal incomeE2E = ZERO;
-            for(ChainGroupTargetDTO target:targetList) {
+            for(ChainGroupTargetDTO2 target:targetList) {
                 if (target.getTargetCode().equals("T01017")) {
                     incomeDX = target.getBottom();
                     incomeQD = target.getGrab();

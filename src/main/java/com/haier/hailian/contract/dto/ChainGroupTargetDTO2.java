@@ -2,11 +2,13 @@ package com.haier.hailian.contract.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * Created by 01431594 on 2019/12/20.
  */
 @Data
-public class ChainGroupTargetDTO {
+public class ChainGroupTargetDTO2 {
 
     private String targetCode;
 
@@ -16,10 +18,10 @@ public class ChainGroupTargetDTO {
 
     private String isLqTarget;
 
-    private String bottom;
+    private BigDecimal bottom;
 
-    private String E2E;
+    private BigDecimal E2E;
 
-    private String grab;
+    private BigDecimal grab;
 
 }
