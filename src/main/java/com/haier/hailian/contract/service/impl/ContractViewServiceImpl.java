@@ -111,6 +111,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             result.setStartDate(DateFormatUtil.format(contracts.getStartDate(),DateFormatUtil.DATE_PATTERN));
             result.setEndDate(DateFormatUtil.format(contracts.getEndDate(),DateFormatUtil.DATE_PATTERN));
             result.setShareSpace(contracts.getShareSpace());
+            result.setShareMoney(contracts.getShareMoney());
             result.setStatus(contracts.getStatus());
             result.setStatusName(getStatusName(contracts.getStatus()));
         }

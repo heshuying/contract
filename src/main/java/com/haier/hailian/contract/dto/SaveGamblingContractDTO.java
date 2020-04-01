@@ -38,6 +38,9 @@ public class SaveGamblingContractDTO {
      */
     private String endDate;
 
+    //是否是保存草稿
+    private String isDraft;//0.提交 1 草稿
+
     private List<ChainGroupTargetDTO> chainGroupTargetList;
 
     private List<MarketTargetDTO> marketTargetList;
