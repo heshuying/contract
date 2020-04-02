@@ -255,5 +255,17 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         return realList;
     }
 
+    @Override
+    public List<ZHrChainInfo> selectChainByUserCode() {
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        // 未删除  +  当前登录人是链群主
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>()
+                .eq("deleted" , "0")
+                .eq("master_code" , sysUser.getEmpSn()));
+        return list;
+    }
+
 
 }
