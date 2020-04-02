@@ -620,7 +620,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             if(null == chainGroupTarget.getE2E() || null == chainGroupTarget.getBottom()) throw new RException("链群的底线和E2E目标未维护，无法举单",Constant.CODE_VALIDFAIL);
             ZContractsFactor factor1 = new ZContractsFactor();
             factor1.setContractId(contracts.getId());
-            factor1.setFactorValue(chainGroupTarget.getBottom()+"");
+            factor1.setFactorValue(chainGroupTarget.getBottom());
             factor1.setFactorCode(chainGroupTarget.getTargetCode());
             factor1.setFactorName(chainGroupTarget.getTargetName());
             factor1.setFactorType(Constant.FactorType.Bottom.getValue());
@@ -628,12 +628,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
             factorDao.insert(factor1);
             factor1.setId(null);
-            factor1.setFactorValue(chainGroupTarget.getE2E()+"");
+            factor1.setFactorValue(chainGroupTarget.getE2E());
             factor1.setFactorType(Constant.FactorType.E2E.getValue());
             factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
             factorDao.insert(factor1);
             factor1.setId(null);
-            factor1.setFactorValue(chainGroupTarget.getGrab()+"");
+            factor1.setFactorValue(chainGroupTarget.getGrab());
             factor1.setFactorType(Constant.FactorType.Grab.getValue());
             factor1.setIsLqTarget(chainGroupTarget.getIsLqTarget());
             factorDao.insert(factor1);
@@ -711,9 +711,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     if(dto.getCheckTime() != null) childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
                     childContracts.setContractType("10");
                     if("1".equals(dto.getIsDraft())){
-                        contracts.setStatus("9");
+                        childContracts.setStatus("9");
                     }else{
-                        contracts.setStatus("0");
+                        childContracts.setStatus("0");
                     }
                     childContracts.setCreateName(sysUser.getEmpName());
                     childContracts.setCreateCode(sysUser.getEmpSn());
@@ -727,9 +727,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     //ID 不为0时，为修改
                     childContracts = contractsDao.selectByContractId(child.getId());
                     if("1".equals(dto.getIsDraft())){
-                        contracts.setStatus("9");
+                        childContracts.setStatus("9");
                     }else{
-                        contracts.setStatus("0");
+                        childContracts.setStatus("0");
                     }
                     childContracts.setShareSpace(child.getShareSpace());
                     if(dto.getStartDate() != null) childContracts.setStartDate(sf.parse(dto.getStartDate()));
@@ -751,19 +751,19 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     ZContractsFactor factor1 = new ZContractsFactor();
                     factor1.setIsLqTarget(childTarget.getIsLqTarget());
                     factor1.setContractId(childContracts.getId());
-                    factor1.setFactorValue(childTarget.getBottom()+"");
+                    factor1.setFactorValue(childTarget.getBottom());
                     factor1.setFactorCode(childTarget.getTargetCode());
                     factor1.setFactorName(childTarget.getTargetName());
                     factor1.setFactorType(Constant.FactorType.Bottom.getValue());
                     factor1.setFactorUnit(childTarget.getTargetUnit());
                     factorDao.insert(factor1);
                     factor1.setId(null);
-                    factor1.setFactorValue(childTarget.getE2E()+"");
+                    factor1.setFactorValue(childTarget.getE2E());
                     factor1.setFactorType(Constant.FactorType.E2E.getValue());
                     factor1.setIsLqTarget(childTarget.getIsLqTarget());
                     factorDao.insert(factor1);
                     factor1.setId(null);
-                    factor1.setFactorValue(childTarget.getGrab()+"");
+                    factor1.setFactorValue(childTarget.getGrab());
                     factor1.setFactorType(Constant.FactorType.Grab.getValue());
                     factor1.setIsLqTarget(childTarget.getIsLqTarget());
                     factorDao.insert(factor1);

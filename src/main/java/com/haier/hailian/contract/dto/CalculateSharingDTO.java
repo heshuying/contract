@@ -11,5 +11,5 @@ import java.util.List;
 public class CalculateSharingDTO {
 
     private String chainCode;
-    private List<ChainGroupTargetDTO> targetList;
+    private List<ChainGroupTargetDTO2> targetList;
 }
