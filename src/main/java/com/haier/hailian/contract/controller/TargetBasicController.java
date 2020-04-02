@@ -7,14 +7,12 @@ import com.haier.hailian.contract.entity.SysXiaoweiEhr;
 import com.haier.hailian.contract.entity.TargetBasic;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
 import com.haier.hailian.contract.entity.XiaoweiEhr;
+import com.haier.hailian.contract.entity.ZHrChainInfo;
 import com.haier.hailian.contract.service.TargetBasicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -104,12 +102,24 @@ public class TargetBasicController {
         return R.ok().put("data",list);
     }
 
-    @PostMapping(value = {"/getXwTypeList"})
+    @GetMapping(value = {"/getXwTypeList"})
     @ApiOperation(value = "查询小微类型  xwStyleCode")
     public R getXwTypeList() {
         List list = targetBasicService.getXwTypeList();
         return R.ok().put("data", list);
     }
+
+
+
+    @GetMapping(value = {"/selectChainByUserCode"})
+    @ApiOperation(value = "当前登录人是链群主的链群列表")
+    public R selectChainByUserCode() {
+        List<ZHrChainInfo> list = targetBasicService.selectChainByUserCode();
+        return R.ok().put("data",list);
+    }
+
+
+
 
 
 }
