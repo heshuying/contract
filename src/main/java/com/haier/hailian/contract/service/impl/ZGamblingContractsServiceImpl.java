@@ -711,9 +711,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     if(dto.getCheckTime() != null) childContracts.setCheckTime(sf.parse(dto.getCheckTime()));
                     childContracts.setContractType("10");
                     if("1".equals(dto.getIsDraft())){
-                        contracts.setStatus("9");
+                        childContracts.setStatus("9");
                     }else{
-                        contracts.setStatus("0");
+                        childContracts.setStatus("0");
                     }
                     childContracts.setCreateName(sysUser.getEmpName());
                     childContracts.setCreateCode(sysUser.getEmpSn());
@@ -727,9 +727,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     //ID 不为0时，为修改
                     childContracts = contractsDao.selectByContractId(child.getId());
                     if("1".equals(dto.getIsDraft())){
-                        contracts.setStatus("9");
+                        childContracts.setStatus("9");
                     }else{
-                        contracts.setStatus("0");
+                        childContracts.setStatus("0");
                     }
                     childContracts.setShareSpace(child.getShareSpace());
                     if(dto.getStartDate() != null) childContracts.setStartDate(sf.parse(dto.getStartDate()));
