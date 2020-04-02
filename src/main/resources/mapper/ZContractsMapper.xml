@@ -163,10 +163,10 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             <if test=" startShare != null ">
-                and share_space <![CDATA[ >= ]]> #{startShare}
+                and share_money <![CDATA[ >= ]]> #{startShare}
             </if>
             <if test=" endShare != null ">
-                and #{endShare} <![CDATA[ >= ]]> share_space
+                and #{endShare} <![CDATA[ >= ]]> share_money
             </if>
             <if test=" userCode != null and userCode != '' ">
                 and create_code = #{userCode}
@@ -182,10 +182,10 @@
                 and parent_id = #{parentId}
             </if>
             <if test=' paixu != null and paixu == "1" '>
-                order by share_space ASC
+                order by share_money ASC
             </if>
             <if test=' paixu != null and paixu == "2" '>
-                order by share_space DESC
+                order by share_money DESC
             </if>
             <if test=' paixu != null and paixu == "3" '>
                 order by  start_date ASC
@@ -230,16 +230,16 @@
                 and t.contract_name like CONCAT('%', #{contractName}, '%')
             </if>
             <if test=" startShare != null ">
-                and p.share_space <![CDATA[ >= ]]> #{startShare}
+                and p.share_money <![CDATA[ >= ]]> #{startShare}
             </if>
             <if test=" endShare != null ">
-                and #{endShare} <![CDATA[ >= ]]> p.share_space
+                and #{endShare} <![CDATA[ >= ]]> p.share_money
             </if>
             <if test=' paixu != null and paixu == "1" '>
-                order by p.share_space ASC
+                order by p.share_money ASC
             </if>
             <if test=' paixu != null and paixu == "2" '>
-                order by p.share_space DESC
+                order by p.share_money DESC
             </if>
             <if test=' paixu != null and paixu == "3" '>
                 order by  p.start_date ASC
@@ -271,10 +271,10 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             <if test=" startShare != null ">
-                and share_space <![CDATA[ >= ]]> #{startShare}
+                and share_money <![CDATA[ >= ]]> #{startShare}
             </if>
             <if test=" endShare != null ">
-                and #{endShare} <![CDATA[ >= ]]> share_space
+                and #{endShare} <![CDATA[ >= ]]> share_money
             </if>
             <if test="chainCodeList != null">
                 and chain_code in
@@ -291,10 +291,10 @@
             parent_id=base.id and contract_type='10'
             )
             <if test=' paixu != null and paixu == "1" '>
-                order by share_space ASC
+                order by share_money ASC
             </if>
             <if test=' paixu != null and paixu == "2" '>
-                order by share_space DESC
+                order by share_money DESC
             </if>
             <if test=' paixu != null and paixu == "3" '>
                 order by  start_date ASC
@@ -326,10 +326,10 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(end_date,'%Y-%m-%d')
             </if>
             <if test=" startShare != null ">
-                and share_space <![CDATA[ >= ]]> #{startShare}
+                and share_money <![CDATA[ >= ]]> #{startShare}
             </if>
             <if test=" endShare != null ">
-                and #{endShare} <![CDATA[ >= ]]> share_space
+                and #{endShare} <![CDATA[ >= ]]> share_money
             </if>
             and EXISTS (
             select 1 from z_contracts
