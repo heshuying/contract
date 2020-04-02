@@ -145,10 +145,11 @@
     <select id="cdExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
     select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
     zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, zcf.factor_name,zcf.factor_value
-    from  z_contracts zc
+    from (select * from z_contracts where parent_id=#{contractId} and contract_type='30'  and status in ('1','8')) zc
     join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
     join z_contracts_factor zcf on zc.id=zcf.contract_id
-    where zc.parent_id=#{contractId} and zc.contract_type='30'  and zc.status in ('1','8')
+    join (select contract_id, concat('|',xwtype3code,'|') xwtype
+			from z_contracts_xw_type3 where contract_id=#{contractId} and node_number>0) zctype on zc.parent_id=zctype.contract_id and zc.org_type=xwtype
 
 </select>
 

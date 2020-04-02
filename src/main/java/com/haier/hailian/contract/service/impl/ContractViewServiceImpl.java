@@ -818,7 +818,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                     int index=1;
                     for (ZReservePlanDetail plan: currPlan
                          ) {
-                        content+="预案"+index+":"+plan.getContent()+"; ";
+                        content+="预案"+index+"  标题："+plan.getCost()+"， 内容："+plan.getContent()+"。 ";
                         index++;
                     }
                 }
