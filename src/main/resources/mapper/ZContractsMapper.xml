@@ -143,6 +143,7 @@
         <include refid="Base_Column_List" />
         from z_contracts
         <where>
+            contract_type='10'
             <if test=" contractName != null and contractName != '' ">
                 and contract_name like CONCAT('%', #{contractName}, '%')
             </if>
@@ -180,7 +181,6 @@
             <if test=" parentId != null ">
                 and parent_id = #{parentId}
             </if>
-            and contract_type='10'
             <if test=' paixu != null and paixu == "1" '>
                 order by share_space ASC
             </if>
@@ -211,6 +211,9 @@
         LEFT JOIN z_contracts p
         on t.parent_id=p.id
         <where>
+            t.create_code = #{userCode}
+            and t.status in ('1','8')
+            and t.contract_type = '30'
             <if test=" chainCode != null and chainCode != '' ">
                 and t.chain_code = #{chainCode}
             </if>
@@ -232,9 +235,6 @@
             <if test=" endShare != null ">
                 and #{endShare} <![CDATA[ >= ]]> p.share_space
             </if>
-            and t.create_code = #{userCode}
-            and t.status in ('1','8')
-            and t.contract_type = '30'
             <if test=' paixu != null and paixu == "1" '>
                 order by p.share_space ASC
             </if>
@@ -257,6 +257,7 @@
         <include refid="Base_Column_List" />
         from z_contracts base
         <where>
+            contract_type='10' and status = '0'
             <if test=" contractName != null and contractName != '' ">
                 and contract_name like CONCAT('%', #{contractName}, '%')
             </if>
@@ -289,7 +290,6 @@
             and not EXISTS (select 1 from z_contracts where
             parent_id=base.id and contract_type='10'
             )
-            and contract_type='10' and status = '0'
             <if test=' paixu != null and paixu == "1" '>
                 order by share_space ASC
             </if>
@@ -312,6 +312,7 @@
         <include refid="Base_Column_List" />
         from z_contracts base
         <where>
+            contract_type='10' and status = '1'
             <if test=" contractName != null and contractName != '' ">
                 and contract_name like CONCAT('%', #{contractName}, '%')
             </if>
@@ -340,7 +341,6 @@
             where parent_id=base.id and contract_type in ('20','30') and status in ('1','8')
             and org_code = #{littleXwCode}
             )
-            and contract_type='10' and status = '1'
             order by id desc
         </where>
     </select>
