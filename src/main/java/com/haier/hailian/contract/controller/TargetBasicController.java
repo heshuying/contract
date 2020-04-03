@@ -119,6 +119,17 @@ public class TargetBasicController {
     }
 
 
+    @PostMapping(value = {"/checkTargetName"})
+    @ApiOperation(value = "校验目标名称是否重复(参数：链群编码 + 目标名称) 暂时只校验一级单")
+    public R checkTargetName(@RequestBody TargetBasic targetBasic) {
+        int num = targetBasicService.checkTargetName(targetBasic);
+        if(num > 0){
+            return R.error("9001", "该链群下已存在同名目标");
+        }
+        return R.ok().put("data",num);
+    }
+
+
 
 
 

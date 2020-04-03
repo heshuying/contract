@@ -27,17 +27,14 @@
             c.`contract_name` AS contractName,
             DATE_FORMAT(c.`start_date`,'%Y-%m-%d') AS startDate,
             DATE_FORMAT(c.`end_date`,'%Y-%m-%d') AS endDate,
+            DATE_FORMAT(c.`end_date`,'%Y%m%d') AS monthEnd,
             ch.`chain_name` AS chainName,
             ch.master_code AS masterCode,
             ch.master_name AS masterName,
             c.`contract_type` AS contractType,
-            c.`status`,
-            xp.`PJ_M` AS pjM,
-            xp.`PJ_Y` AS pjY
+            c.`status`
         FROM
-          v_jdxp xp
-          JOIN z_contracts c
-            ON xp.CONTRACT_ID = c.id
+          z_contracts c
           JOIN z_hr_chain_info ch
             ON c.`chain_code` = ch.`chain_code`
         WHERE c.`create_code` = #{empCode} AND c.`contract_type` IN (20,30) AND c.`status` in ('1','8')
@@ -45,10 +42,10 @@
             and (ch.`chain_name` like "%"#{keyword}"%" or ch.master_name like "%"#{keyword}"%")
         </if>
         <if test="startDate != null and startDate != ''">
-            and DATE_FORMAT(c.`join_time`,'%Y%m%d') <![CDATA[ >= ]]> #{startDate}
+            and DATE_FORMAT(c.`start_date`,'%Y%m%d') <![CDATA[ >= ]]> #{startDate}
         </if>
         <if test="endDate != null and endDate != ''">
-            and DATE_FORMAT(c.`join_time`,'%Y%m%d') <![CDATA[ <= ]]> #{endDate}
+            and DATE_FORMAT(c.`start_date`,'%Y%m%d') <![CDATA[ <= ]]> #{endDate}
         </if>
         order by c.id desc
     </select>

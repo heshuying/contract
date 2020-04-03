@@ -40,4 +40,6 @@ public interface TargetBasicService extends IService<TargetBasic> {
     List<TOdsDictionary> getXwTypeList();
 
     List<ZHrChainInfo> selectChainByUserCode();
+
+    int checkTargetName(TargetBasic targetBasic);
 }

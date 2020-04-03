@@ -14,6 +14,7 @@ public class StarDTO {
     private String contractName;
     private String startDate;
     private String endDate;
+    private String monthEnd;
     private String chainName;
     private String masterCode;
     private String masterName;

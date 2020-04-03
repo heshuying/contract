@@ -20,6 +20,6 @@ public interface SysXiaoweiEhrDao extends BaseMapper<SysXiaoweiEhr> {
 
     List<SysXiaoweiEhr> queryAll(XiaoweiEhr xiaoweiEhr);
 
-    List<SysXiaoweiEhr> getListByXwStyleCode(Map map);
+    List<XiaoweiEhr> getListByXwStyleCode(Map map);
 
 }
