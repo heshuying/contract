@@ -18,6 +18,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,9 +109,9 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
                 for(String code : codes){
                     Map minbuMap = new HashMap();
                     minbuMap.put("xwStyleCode" , "|" + code + "|");
-                    List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
-                    for(SysXiaoweiEhr xw : mins){
-                        roleCode = roleCode + xw.getXwcode() + "|";
+                    List<XiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+                    for(XiaoweiEhr xw : mins){
+                        roleCode = roleCode + xw.getXwCode() + "|";
                     }
                 }
                 targetBasic.setRoleCode(roleCode);
@@ -123,6 +124,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
     }
 
 
+    @Transactional
     @Override
     public int saveContractsTarget(List<TargetBasicInfo> targetBasicInfos) {
         int num = 0;
@@ -133,18 +135,22 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
             BeanUtils.copyProperties(targetBasicInfo , targetBasicFirst);
 
             if(targetBasicInfo.getId() == null){ // 一级单id为空插入
-                targetBasicFirst.setChainCode("LQ" + getNum());
+                targetBasicFirst.setTargetCode("LQ" + getNum());
                 targetBasicDao.insert(targetBasicFirst);
                 // 一级单id为空，则二级单全部插入
                 for(TargetBasic targetBasicSecond : targetBasicInfo.getChildTargetBasicList()){
                     targetBasicSecond = getXwInfo(targetBasicSecond);
+                    targetBasicSecond.setJudanFlag(String.valueOf(targetBasicFirst.getId()));
+                    targetBasicSecond.setTargetCode("LQ" + getNum());
                     targetBasicDao.insert(targetBasicSecond);
                 }
             } else { //一级单id 不为空 更新
                 targetBasicDao.updateById(targetBasicFirst);
                 for(TargetBasic targetBasicSecond : targetBasicInfo.getChildTargetBasicList()){
                     targetBasicSecond = getXwInfo(targetBasicSecond);
+                    targetBasicSecond.setJudanFlag(String.valueOf(targetBasicFirst.getId()));
                     if(targetBasicSecond.getId() == null){ //二级单id为空则插入
+                        targetBasicSecond.setTargetCode("LQ" + getNum());
                         targetBasicDao.insert(targetBasicSecond);
                     } else {
                         targetBasicDao.updateById(targetBasicSecond);
@@ -158,20 +164,29 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
 
 
     public TargetBasic  getXwInfo(TargetBasic targetBasicSecond){
-        String[] codes = targetBasicSecond.getTargetXwCategoryCode().split("|");
+        String[] codes = targetBasicSecond.getTargetXwCategoryCode().split("\\|");
         String roleCode = "|";
         String roleName = "|";
         for(String code : codes){
+            if("".equals(code) || code == null){
+                continue;
+            }
             Map minbuMap = new HashMap();
             minbuMap.put("xwStyleCode" , "|" + code + "|");
-            List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
-            for(SysXiaoweiEhr xw : mins){
-                roleCode = roleCode + xw.getXwcode() + "|";
-                roleName = roleName + xw.getXwname() + "|";
+            List<XiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+            for(XiaoweiEhr xw : mins){
+                roleCode = roleCode + xw.getXwCode() + "|";
+                roleName = roleName + xw.getXwName() + "|";
             }
         }
-        targetBasicSecond.setRoleCode(roleCode);
-        targetBasicSecond.setRoleName(roleName);
+        if(roleCode.length()==1){
+            targetBasicSecond.setRoleCode(null);
+            targetBasicSecond.setRoleName(null);
+        }else{
+            targetBasicSecond.setRoleCode(roleCode);
+            targetBasicSecond.setRoleName(roleName);
+        }
+
 
         return targetBasicSecond;
     }
@@ -245,7 +260,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
         for(TOdsDictionary ods : list){
             Map minbuMap = new HashMap();
             minbuMap.put("xwStyleCode" , "|" + ods.getCode() + "|");
-            List<SysXiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
+            List<XiaoweiEhr> mins = sysXiaoweiEhrDao.getListByXwStyleCode(minbuMap);
             if(mins.size()>0){
                 realList.add(ods);
             }else{
@@ -265,6 +280,14 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
                 .eq("deleted" , "0")
                 .eq("master_code" , sysUser.getEmpSn()));
         return list;
+    }
+
+    @Override
+    public int checkTargetName(TargetBasic targetBasic) {
+        List<TargetBasic> list = targetBasicDao.selectList(new QueryWrapper<TargetBasic>()
+                .eq("target_name" , targetBasic.getTargetName())
+                .eq("chain_code" , targetBasic.getChainCode()));
+        return list.size();
     }
 
 
