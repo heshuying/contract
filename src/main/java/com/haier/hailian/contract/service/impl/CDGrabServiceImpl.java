@@ -397,6 +397,8 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
         }
 
+        List<String> titleList = new ArrayList<>();
+        Set<String> titleSet = new HashSet<>();
         if(requestDto.getPlanInfo() != null && !requestDto.getPlanInfo().isEmpty()){
             int index = 1;
             for(ReservePlanRequestDTO planInfo : requestDto.getPlanInfo()){
@@ -411,6 +413,8 @@ public class CDGrabServiceImpl implements CDGrabService {
                 plan.setExecuter(sysUser.getEmpSn());
                 plan.setOrderType(String.valueOf(index));
                 for(ReservePlanDetailDTO detail : planInfo.getPlanDetail()){
+                    titleList.add(detail.getTitle());
+                    titleSet.add(detail.getTitle());
                     plan.setTitle(detail.getTitle());
                     planDetail.setContent(detail.getContent());
                     reservePlanDao.insert(plan);
@@ -447,6 +451,10 @@ public class CDGrabServiceImpl implements CDGrabService {
 
         }
 
+        if(titleList.size() > titleSet.size()){
+            throw new RException("预案标题不能重复");
+        }
+
         //加入群组
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
@@ -463,6 +471,10 @@ public class CDGrabServiceImpl implements CDGrabService {
             }
         }).start();
 
+    }
+
+    public static void main(String[] args) {
+        System.out.println("hello");
     }
 
     @Override
