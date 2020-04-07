@@ -834,6 +834,17 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return xwType3DTOList;
     }
 
+    @Override
+    public List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO) {
+        //获取当前用户选择的最小作战单元
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        String xwCode = sysUser.getMinbu().getLittleXwCode();
+        queryDTO.setLittleXwCode(xwCode);
+        List<ZContracts> list = contractsDao.selectAllGrabContract(queryDTO);
+        return list;
+    }
+
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
         Workbook workbook = null;

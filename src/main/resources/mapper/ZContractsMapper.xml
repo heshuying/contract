@@ -252,6 +252,59 @@
             </if>
         </where>
     </select>
+    <select id="selectAllGrabContract" resultMap="BaseResultMap">
+        select
+        t.id,t.parent_id,t.contract_name,t.contract_type,t.status,p.share_space,t.chain_code,
+        t.region_code,t.join_time,DATE_FORMAT(t.join_time,'%Y-%m-%d %H:%i:%s') as join_time_str,t.start_date,DATE_FORMAT(t.start_date,'%Y-%m-%d %H:%i:%s') as start_date_str,
+        t.end_date,DATE_FORMAT(t.end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,
+        DATE_FORMAT(t.check_time,'%Y-%m-%d %H:%i:%s') as check_time_str,
+        t.xiaowei_code,t.create_code,
+        t.create_name,t.create_time,t.org_code,t.org_name,t.org_type,t.group_id,t.open_valid,p.share_money
+        from z_contracts t
+        LEFT JOIN z_contracts p
+        on t.parent_id=p.id
+        <where>
+            t.org_code=#{littleXwCode}
+            and t.status in ('1','8')
+            and t.contract_type in ('20','30')
+            <if test=" chainCode != null and chainCode != '' ">
+                and t.chain_code = #{chainCode}
+            </if>
+            <if test=" status != null and status != '' ">
+                and t.status = #{status}
+            </if>
+            <if test=" startDate != null and startDate != '' ">
+                and DATE_FORMAT(t.start_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d')
+            </if>
+            <if test=" endDate != null and endDate != ''">
+                and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(t.end_date,'%Y-%m-%d')
+            </if>
+            <if test=" contractName != null and contractName != '' ">
+                and t.contract_name like CONCAT('%', #{contractName}, '%')
+            </if>
+            <if test=" startShare != null ">
+                and p.share_money <![CDATA[ >= ]]> #{startShare}
+            </if>
+            <if test=" endShare != null ">
+                and #{endShare} <![CDATA[ >= ]]> p.share_money
+            </if>
+            <if test=' paixu != null and paixu == "1" '>
+                order by p.share_money ASC
+            </if>
+            <if test=' paixu != null and paixu == "2" '>
+                order by p.share_money DESC
+            </if>
+            <if test=' paixu != null and paixu == "3" '>
+                order by  p.start_date ASC
+            </if>
+            <if test=' paixu != null and paixu == "4" '>
+                order by p.start_date DESC
+            </if>
+            <if test=" paixu == null ">
+                order by t.id desc
+            </if>
+        </where>
+    </select>
     <select id="selectToGrabContract" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
