@@ -66,7 +66,8 @@
         <result column="grabHigh" property="grabHigh" />
         <result column="factor_name" property="factorName" />
         <result column="factor_value" property="factorValue" />
-
+        <result column="xwCode" property="xwCode" />
+        <result column="xwName" property="xwName" />
     </resultMap>
 
     <select id="getProductByContract" resultType="java.lang.String">
@@ -120,7 +121,7 @@
 <select id="tyExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
     select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
     zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, fac.bottomInc,
-     fac.bottomHigh, fac.grabInc ,fac.grabHigh
+     fac.bottomHigh, fac.grabInc ,fac.grabHigh,bu.xwCode,bu.xwName
      from (
         select contract_id,
         Max(case base.factor_type when '01' then base.inc else 0 end ) 'bottomInc',
@@ -139,18 +140,19 @@
         group by contract_id) fac
       join z_contracts zc on fac.contract_id=zc.id
       join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
+      join t_ods_minbu bu on zc.org_code=bu.littleXwCode
 
 </select>
 
     <select id="cdExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
     select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
-    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, zcf.factor_name,zcf.factor_value
+    zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time, zcf.factor_name,zcf.factor_value,bu.xwCode,bu.xwName
     from (select * from z_contracts where parent_id=#{contractId} and contract_type='30'  and status in ('1','8')) zc
     join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
     join z_contracts_factor zcf on zc.id=zcf.contract_id
     join (select contract_id, concat('|',xwtype3code,'|') xwtype
 			from z_contracts_xw_type3 where contract_id=#{contractId} and node_number>0) zctype on zc.parent_id=zctype.contract_id and zc.org_type=xwtype
-
+    join t_ods_minbu bu on zc.org_code=bu.littleXwCode
 </select>
 
 </mapper>

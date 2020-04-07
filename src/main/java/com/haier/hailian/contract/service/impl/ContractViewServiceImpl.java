@@ -12,12 +12,10 @@ import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.type.BigDecimalTypeHandler;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +67,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("合约开始时间", "startDate"),
             new ExcelUtil.CellHeadField("合约结束时间", "endDate"),
             new ExcelUtil.CellHeadField("抢单编码", "id"),
+            new ExcelUtil.CellHeadField("小微编码", "xwCode"),
+            new ExcelUtil.CellHeadField("小微名称", "xwName"),
             new ExcelUtil.CellHeadField("抢单组织编码", "orgCode"),
             new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
             new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
@@ -88,6 +88,8 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("合约开始时间", "startDate"),
             new ExcelUtil.CellHeadField("合约结束时间", "endDate"),
             new ExcelUtil.CellHeadField("抢单编码", "id"),
+            new ExcelUtil.CellHeadField("小微编码", "xwCode"),
+            new ExcelUtil.CellHeadField("小微名称", "xwName"),
             new ExcelUtil.CellHeadField("抢单组织编码", "orgCode"),
             new ExcelUtil.CellHeadField("抢单组织名称", "orgName"),
             new ExcelUtil.CellHeadField("抢单人工号", "createCode"),

@@ -25,4 +25,7 @@ public class ContractExportEntity {
     private String factorValue;
     private String content;
 
+    private String xwCode;
+    private String xwName;
+
 }
