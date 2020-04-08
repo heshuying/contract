@@ -68,7 +68,6 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
         Subject subject = SecurityUtils.getSubject();
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
         queryDTO.setUserCode(sysUser.getEmpSn());
-        queryDTO.setParentId(0);
         List<ZContracts> list = contractsDao.selectContractListForTarget(queryDTO);
         //查询还没有抢入、抢入未截止的合约
         String contractIds = contractsDao.selectContractToUpdate()+",";
