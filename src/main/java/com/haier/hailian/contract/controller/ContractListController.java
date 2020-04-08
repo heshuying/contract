@@ -54,4 +54,11 @@ public class ContractListController {
         return R.ok().put("data",contractsList);
     }
 
+    @PostMapping(value = {"/selectAllGrabContract"})
+    @ApiOperation(value = "事中显差，查询登录人所在最小作战单元抢入的所有合约")
+    public R selectAllGrabContract(@RequestBody QueryContractListDTO queryDTO) {
+        List<ZContracts> contractsList = gamblingContractsService.selectAllGrabContract(queryDTO);
+        return R.ok().put("data",contractsList);
+    }
+
 }

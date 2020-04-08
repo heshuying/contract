@@ -144,4 +144,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<String> getContractsForCountUpdate(Map<String,Object> paraMap);
 
     List<ZContracts> selectContractListForTarget(QueryContractListDTO queryDTO);
+
+    List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO);
 }

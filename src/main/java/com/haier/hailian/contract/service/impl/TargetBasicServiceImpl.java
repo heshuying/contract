@@ -7,6 +7,7 @@ import com.haier.hailian.contract.dao.TOdsDictionaryDao;
 import com.haier.hailian.contract.dao.TargetBasicDao;
 import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.dto.TargetBasicInfo;
 import com.haier.hailian.contract.entity.*;
@@ -20,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -126,8 +124,32 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
 
     @Transactional
     @Override
-    public int saveContractsTarget(List<TargetBasicInfo> targetBasicInfos) {
-        int num = 0;
+    public R saveContractsTarget(List<TargetBasicInfo> targetBasicInfos) {
+
+        List<String> secondNameList = new ArrayList<>();
+        Set<String> secondNameSet = new HashSet<>();
+        List<String> firstNameList = new ArrayList<>();
+        Set<String> firstNameSet = new HashSet<>();
+
+
+        for(TargetBasicInfo targetBasicInfo : targetBasicInfos){
+
+            firstNameList.add(targetBasicInfo.getTargetName());
+            firstNameSet.add(targetBasicInfo.getTargetName());
+
+            // 校验2级单无重复
+            for(TargetBasic sic : targetBasicInfo.getChildTargetBasicList()){
+                secondNameList.add(sic.getTargetName());
+                secondNameSet.add(sic.getTargetName());
+            }
+        }
+        if(firstNameList.size() != firstNameSet.size()){
+            return R.error("9002", "该链群下一级单存在同名目标");
+        }
+        if(secondNameList.size() != secondNameSet.size()){
+            return R.error("9003", "该链群下二级单存在同名目标");
+        }
+
         for(TargetBasicInfo targetBasicInfo : targetBasicInfos){
 
             // 一级单数据
@@ -159,7 +181,7 @@ public class TargetBasicServiceImpl extends ServiceImpl<TargetBasicDao, TargetBa
                 }
             }
         }
-        return num;
+        return R.ok().put("data","succes");
     }
 
 

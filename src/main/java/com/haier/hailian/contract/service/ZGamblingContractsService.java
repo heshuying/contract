@@ -46,4 +46,6 @@ public interface ZGamblingContractsService {
     void saveGamblingNew(SaveGamblingContractDTO dto) throws Exception;
 
     List<ContractXwType3DTO> selectXwType3(String chainCode);
+
+    List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO);
 }
