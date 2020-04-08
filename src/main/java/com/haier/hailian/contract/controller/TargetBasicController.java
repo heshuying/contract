@@ -75,8 +75,8 @@ public class TargetBasicController {
     @PostMapping(value = {"/saveContractsTarget"})
     @ApiOperation(value = "保存一、二级单")
     public R saveContractsTarget(@RequestBody List<TargetBasicInfo> targetBasicInfos) {
-        int num = targetBasicService.saveContractsTarget(targetBasicInfos);
-        return R.ok().put("data",num);
+        R r = targetBasicService.saveContractsTarget(targetBasicInfos);
+        return r;
     }
 
 

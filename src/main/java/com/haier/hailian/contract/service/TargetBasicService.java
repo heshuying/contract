@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.haier.hailian.contract.dto.QueryBottomDTO;
+import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.dto.TargetBasicInfo;
 import com.haier.hailian.contract.entity.*;
 
@@ -27,7 +28,7 @@ public interface TargetBasicService extends IService<TargetBasic> {
 
     int insertContractsTarget(List<TargetBasic> targetBasicList);
 
-    int saveContractsTarget(List<TargetBasicInfo> targetBasicInfos);
+    R saveContractsTarget(List<TargetBasicInfo> targetBasicInfos);
 
     List<TargetBasicInfo> selectContractsTarget(QueryBottomDTO dto);
 
