@@ -19,6 +19,8 @@ public class CDGrabInfoResponseDto {
 //    @ApiModelProperty(value="链群目标",name="链群目标",example="400")
 //    private String chainGoal;
 
+    @ApiModelProperty(value="合约名称",name="合约名称")
+    private String contractName;
     @ApiModelProperty(value="链群名称",name="链群名称")
     private String chainName;
     @ApiModelProperty(value="合约有效期开始",name="合约有效期开始")

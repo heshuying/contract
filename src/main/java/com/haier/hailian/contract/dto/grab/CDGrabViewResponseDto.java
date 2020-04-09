@@ -24,6 +24,8 @@ public class CDGrabViewResponseDto {
     private String chainGrabGoal;
     @ApiModelProperty(value="链群名称",name="链群名称")
     private String chainName;
+    @ApiModelProperty(value="合约名称",name="合约名称")
+    private String contractName;
     @ApiModelProperty(value="合约有效期开始",name="合约有效期开始")
     private String startTime;
     @ApiModelProperty(value="合约有效期结束",name="合约有效期结束")

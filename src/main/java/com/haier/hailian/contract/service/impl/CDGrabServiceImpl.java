@@ -67,7 +67,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(contracts != null){
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
-            responseDto.setChainName(contracts.getContractName());
+            responseDto.setContractName(contracts.getContractName());
             if(contracts.getCheckTime() != null && new Date().after(contracts.getCheckTime())){
                 responseDto.setIsReviewed("true");
             }else{
@@ -80,6 +80,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 responseDto.setMasterName(chainInfos.get(0).getMasterName());
                 responseDto.setXwCode(chainInfos.get(0).getXwCode());
                 responseDto.setXwName(chainInfos.get(0).getXwName());
+                responseDto.setChainName(chainInfos.get(0).getChainName());
                 if(StringUtils.isNotBlank(chainInfos.get(0).getZzfxRate())){
                     responseDto.setZzfxRate(new BigDecimal(chainInfos.get(0).getZzfxRate()).divide(new BigDecimal("100")).toString());
                 }
@@ -123,7 +124,7 @@ public class CDGrabServiceImpl implements CDGrabService {
             responseDto.setTargetShareMoney(contracts.getShareSpace().toString());
             responseDto.setStartTime(DateFormatUtil.format(contracts.getStartDate(), DateFormatUtil.DATE_PATTERN));
             responseDto.setEndTime(DateFormatUtil.format(contracts.getEndDate(), DateFormatUtil.DATE_PATTERN));
-            responseDto.setChainName(contracts.getContractName());
+            responseDto.setContractName(contracts.getContractName());
             if(contracts.getCheckTime() != null && new Date().after(contracts.getCheckTime())){
                 responseDto.setIsReviewed("true");
             }else{
@@ -136,6 +137,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 responseDto.setMasterName(chainInfos.get(0).getMasterName());
                 responseDto.setXwCode(chainInfos.get(0).getXwCode());
                 responseDto.setXwName(chainInfos.get(0).getXwName());
+                responseDto.setChainName(chainInfos.get(0).getChainName());
             }
 //            List<ZHrChainInfo> chainInfos = chainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
 //            if(chainInfos != null && !chainInfos.isEmpty()){
