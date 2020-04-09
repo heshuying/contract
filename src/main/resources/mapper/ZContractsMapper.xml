@@ -853,6 +853,7 @@
         <include refid="Base_Column_List" />
         from z_contracts c
         WHERE c.`contract_type` = 10
+        AND c.`status` != 9
         AND c.`create_code` = #{userCode}
         AND NOT EXISTS
         (SELECT

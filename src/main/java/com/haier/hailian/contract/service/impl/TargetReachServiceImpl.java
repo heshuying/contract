@@ -380,6 +380,9 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
                 log.error("目标达成只能填写数字:" + factorValueActual);
                 throw new RException("目标达成只能填写数字");
             }
+            if(StringUtils.isNotBlank(factorValueActual) && factorValueActual.endsWith(".0")){
+                factorValueActual = factorValueActual.substring(0,factorValueActual.length()-2);
+            }
             // 填充实际达成
             list.stream().filter(s -> s.getFactId().equals(factId)).findFirst().get().setFactorValueActual(factorValueActual);
 
