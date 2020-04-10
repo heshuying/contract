@@ -99,4 +99,16 @@
             ON t1.factorCode = t2.target_code
     </select>
 
+    <select id="selectChainGamblingTarget" parameterType="com.haier.hailian.contract.dto.EventMiddleDTO" resultMap="BaseResultMap">
+        select f.factor_code,f.factor_name,f.factor_unit,f.factor_value from z_contracts c
+        join z_contracts_factor f
+        on c.id = f.contract_id
+        where c.contract_type='10'
+        and c.chain_code = #{chainCode}
+        and c.`status` != 4
+        and f.factor_type='02'
+        and f.region_code is NULL
+        and DATE_FORMAT(c.start_date,'%Y%m') = #{date}
+    </select>
+
 </mapper>

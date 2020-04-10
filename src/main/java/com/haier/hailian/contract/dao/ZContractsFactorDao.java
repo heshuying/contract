@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.ChainGroupTargetDTO;
+import com.haier.hailian.contract.dto.EventMiddleDTO;
 import com.haier.hailian.contract.dto.FactorGrabResDTO;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -32,4 +33,11 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<ChainGroupTargetDTO> selectChainFactorByContractId(Integer contractId);
 
     List<FactorGrabResDTO> getFactorGrabList(Map<String, Object> map);
+
+    /**
+     * 根据链群编码和月份查询链群的举单目标
+     * @param dto
+     * @return
+     */
+    List<ZContractsFactor> selectChainGamblingTarget(EventMiddleDTO dto);
 }
