@@ -146,4 +146,7 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<ZContracts> selectContractListForTarget(QueryContractListDTO queryDTO);
 
     List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO);
+
+    //查询复核截止时间将要截止，需要邮件提醒复核的合约
+    List<ZContracts> selectContractsForCheckWarning();
 }

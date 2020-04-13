@@ -915,4 +915,11 @@
                 order by id desc
             </if>
     </select>
+
+    <select id="selectContractsForCheckWarning" resultMap="BaseResultMap">
+        select t.contract_name,t.create_code from z_contracts t
+        where TO_DAYS(t.check_time)-TO_DAYS(NOW())=1
+        and contract_type='10'
+        and `status` in ('0','1')
+    </select>
 </mapper>

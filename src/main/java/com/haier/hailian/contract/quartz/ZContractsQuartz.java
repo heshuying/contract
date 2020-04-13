@@ -1,8 +1,7 @@
 package com.haier.hailian.contract.quartz;
 
 import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZReservePlanTeamwork;
-import com.haier.hailian.contract.service.*;
+import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.GrabService;
 import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
 import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -125,6 +123,17 @@ public class ZContractsQuartz {
             contractViewService.updateSharePercentChainMaster(String.valueOf(c.getId()));
         }
         log.info("【链群主复核截止日期之后,定时作业均分分享比例end】");
+    }
+
+    /**
+     * (每天晚上11点40执行一次，查询复核接着时间为明天的合约)
+     * 链群主复核截止前24小时，发邮件提醒链群主复核链群比例
+     */
+    @Scheduled(cron="0 40 23 * * ?")
+    public void checkWarning(){
+        log.info("【复核截止时间前，邮件提醒链群主复核分享比例定时任务start】");
+        zWaringPeriodConfigService.checkWarning();
+        log.info("【复核截止时间前，邮件提醒链群主复核分享比例定时任务end】");
     }
 }
 

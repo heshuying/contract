@@ -232,4 +232,20 @@ public class ZWaringPeriodConfigServiceImpl implements ZWaringPeriodConfigServic
         }
 
     }
+
+    @Override
+    public void checkWarning() {
+        //1.查询复核时间是明天截止的合约及链群主的邮箱
+        List<ZContracts> list = zContractsDao.selectContractsForCheckWarning();
+        //2.循环列表，发邮件给链群主，提醒复核
+        for(ZContracts contracts : list){
+            String contractName = contracts.getContractName();
+            String chainName = contractName.substring(0,contractName.indexOf("-"));
+            String masterCode = contracts.getCreateCode();
+            SysEmployeeEhr sysEmployeeEhr = sysEmployeeEhrDao.selectInfo(masterCode);
+            // 发邮件
+            EmailUtil.transmitMsg(sysEmployeeEhr.getNotesmail(),"合约复核预警",chainName+"的链群主您好，系统检测到24小时后是您的链群复核分享比例的截止时间，请您及时登录系统进行复核，逾期未复核的链群系统将判定所有抢入节点抢入成功并且自动均分分享比例。\n" +
+                    "            复核分享比例路径：链群合约→所有合约→我发起的→复核分享比例。注：所有抢入最小作战单元之和不得大于100%。");
+        }
+    }
 }
