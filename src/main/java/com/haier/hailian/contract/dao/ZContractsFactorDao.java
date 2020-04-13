@@ -32,4 +32,6 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<ChainGroupTargetDTO> selectChainFactorByContractId(Integer contractId);
 
     List<FactorGrabResDTO> getFactorGrabList(Map<String, Object> map);
+
+    int selectTyQualified(Map<String, Object> map);
 }

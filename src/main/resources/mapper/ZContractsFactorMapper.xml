@@ -99,4 +99,41 @@
             ON t1.factorCode = t2.target_code
     </select>
 
+
+    <select id="selectTyQualified" parameterType="map" resultType="integer">
+
+        select COUNT(1) from
+        (SELECT
+        a.factor_value as value1,a.contract_id
+        FROM
+        z_contracts_factor a
+        LEFT JOIN z_contracts b ON a.contract_id = b.id
+        WHERE
+        b.chain_code = #{chainCode}
+        AND b.`status` IN (1, 8)
+        AND b.contract_type = 20
+        AND b.end_date > #{startTime}
+        AND b.end_date <![CDATA[ < ]]> #{endTime}
+        AND a.factor_code = 'T01001'
+        AND a.factor_type='02') as t1
+
+        LEFT JOIN (
+
+        SELECT
+        c.factor_value as value2,c.contract_id
+        FROM
+        z_contracts_factor c
+        LEFT JOIN z_contracts b ON c.contract_id = b.id
+        WHERE
+        b.chain_code = #{chainCode}
+        AND b.`status` IN (1, 8)
+        AND b.contract_type = 20
+        AND b.end_date > #{startTime}
+        AND b.end_date <![CDATA[ < ]]> #{endTime}
+        AND c.factor_code = 'T01001'
+        AND c.factor_type='01') t2 on t1.contract_id=t2.contract_id
+        where value1 <![CDATA[ >= ]]> value2
+
+    </select>
+
 </mapper>
