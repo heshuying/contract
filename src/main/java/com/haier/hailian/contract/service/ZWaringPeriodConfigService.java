@@ -1,9 +1,5 @@
 package com.haier.hailian.contract.service;
 
-import com.haier.hailian.contract.entity.ZWaringPeriodConfig;
-
-import java.util.List;
-
 /**
  * 链群抢单举单预警配置表(ZWaringPeriodConfig)表服务接口
  *
@@ -21,5 +17,7 @@ public interface ZWaringPeriodConfigService {
 
     // 同步ods_minbu最新数据到node表  一小时一次
     void quartzMinbuListByXwType3();
+
+    void checkWarning();
 
 }
