@@ -921,5 +921,8 @@
         where TO_DAYS(t.check_time)-TO_DAYS(NOW())=1
         and contract_type='10'
         and `status` in ('0','1')
+        and not EXISTS (select 1 from z_contracts where
+                    parent_id=t.id and contract_type='10'
+                    )
     </select>
 </mapper>
