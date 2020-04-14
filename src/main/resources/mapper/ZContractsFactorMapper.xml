@@ -148,4 +148,30 @@
         and DATE_FORMAT(c.start_date,'%Y%m') = #{date}
     </select>
 
+
+    <select id="selectCdReach" parameterType="map" resultType="integer">
+
+        SELECT f.contract_id from z_contracts_factor f
+        LEFT JOIN z_contracts_factor m on m.contract_id=f.contract_id
+
+        WHERE f.contract_id in
+        (
+        SELECT
+        b.id
+        FROM
+        z_contracts b
+        WHERE
+        b.chain_code = #{chainCode}
+        AND b.`status` IN (1, 8)
+        AND b.contract_type = 30
+        AND b.end_date > #{startTime}
+        AND b.end_date <![CDATA[ < ]]> #{endTime}
+        )
+        and cast(f.factor_value_actual as DECIMAL) >= cast(f.factor_value as DECIMAL)
+        GROUP BY f.contract_id
+        HAVING COUNT(DISTINCT f.id)=COUNT(DISTINCT m.id)
+
+    </select>
+
+
 </mapper>

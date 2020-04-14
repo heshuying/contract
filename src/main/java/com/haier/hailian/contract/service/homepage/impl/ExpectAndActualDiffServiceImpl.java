@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,7 +34,7 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
 
 
     @Override
-    public Map<String, Object> getChainGrabNum(ExpectAndActualDiffDto expectAndActualDiffDto) {
+    public Map<String, Object> getChainGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto) {
 
         // 转换时间
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -83,8 +84,40 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
         );
         // 创单实际抢入
         res.put("cdActualNum" , cdActualNum);
-        // 创单达标
+        // 创单抢入达标
         res.put("cdQualifiedNum" , cdActualNum);
+        // 创单抢入未达标
+        res.put("cdNotQualifiedNum" , cdActualNum-cdActualNum);
+
+        // TODO 体验暂时没有实际数
+        res.put("tyReachNum" , 0);
+        res.put("tyNotReachNum" , 0);
+        // TODO 创单是否达成(按照实际达成全部满足计算)
+        // TODO 创单链群增值分享(按照实际达成全部满足计算)
+        List<Integer> cdReachList = zContractsFactorDao.selectCdReach(exp);
+        if(cdReachList.size()>0 && cdReachList!=null){
+            // 创单达成
+            res.put("cdReachNum" , cdReachList.size());
+            // 创单增值分享数量
+            res.put("cdShareNum" , cdReachList.size());
+            // 创单未达成
+            res.put("cdNotReachNum" , cdActualNum-cdReachList.size());
+            // 创单无增值分享数量
+            res.put("cdNotShareNum" , cdActualNum-cdReachList.size());
+        }else{
+            // 创单达成
+            res.put("cdReachNum" , 0);
+            // 创单增值分享数量
+            res.put("cdShareNum" , 0);
+            // 创单未达成
+            res.put("cdNotReachNum" , cdActualNum);
+            // 创单无增值分享数量
+            res.put("cdNotShareNum" , cdActualNum);
+        }
+
+
+
+
 
         return res;
     }

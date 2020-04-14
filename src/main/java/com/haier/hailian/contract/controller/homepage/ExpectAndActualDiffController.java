@@ -29,10 +29,10 @@ public class ExpectAndActualDiffController {
 
 
     @PostMapping(value = {"/getChainGrabNum"})
-    @ApiOperation(value = "链群应实抢入数量达标对比")
+    @ApiOperation(value = "链群应实抢入数量及达标对比")
     public R getChainGrabNum(@RequestBody ExpectAndActualDiffDto expectAndActualDiffDto) {
         try{
-            Map<String , Object> res = expectAndActualDiffService.getChainGrabNum(expectAndActualDiffDto);
+            Map<String , Object> res = expectAndActualDiffService.getChainGrabInfo(expectAndActualDiffDto);
             return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();
