@@ -136,16 +136,48 @@
 
     </select>
 
+    <!-- 事中显差查询接口开始 -->
     <select id="selectChainGamblingTarget" parameterType="com.haier.hailian.contract.dto.EventMiddleDTO" resultMap="BaseResultMap">
         select f.factor_code,f.factor_name,f.factor_unit,f.factor_value from z_contracts c
         join z_contracts_factor f
         on c.id = f.contract_id
         where c.contract_type='10'
-        and c.chain_code = #{chainCode}
+        and c.id=#{contractId}
         and c.`status` != 4
         and f.factor_type='02'
         and f.region_code is NULL
-        and DATE_FORMAT(c.start_date,'%Y%m') = #{date}
     </select>
-
+    <resultMap id="tyResultMap" type="com.haier.hailian.contract.dto.EventMiddleTYDTO">
+        <id column="create_name" property="userName" />
+        <id column="PJ_M" property="pjM" />
+        <id column="mesh_name" property="littleXwName" />
+        <id column="region_name" property="xwName" />
+        <id column="jdIncome" property="jdIncome" />
+        <id column="jdHigh" property="jdHigh" />
+        <id column="qdIncome" property="qdIncome" />
+        <id column="qdHigh" property="qdHigh" />
+    </resultMap>
+    <select id="selectTyTarget" resultMap="tyResultMap">
+        select c.create_name,v.PJ_M,f1.mesh_code,f1.mesh_name,f1.region_code,f1.region_name,
+                MAX(CASE f1.factor_code WHEN 'T01001' THEN f1.factor_value  END ) jdIncome,
+                MAX(CASE f1.factor_code WHEN 'T03001' THEN f1.factor_value  END ) jdHigh,
+                MAX(CASE f2.factor_code WHEN 'T01001' THEN f2.factor_value  END ) qdIncome,
+                MAX(CASE f2.factor_code WHEN 'T03001' THEN f2.factor_value  END ) qdHigh
+        from z_contracts t
+        RIGHT JOIN z_contracts_factor f1
+        on t.id =  f1.contract_id
+        and f1.region_code is not null
+        left join z_contracts c
+        on c.parent_id=t.id
+        and c.org_code=f1.mesh_code
+        left join z_contracts_factor f2
+        on f2.contract_id=c.id
+        and f2.factor_type='02'
+        LEFT JOIN v_jdxp v
+        on v.CONTRACT_ID=t.id
+        and v.JD_CODE=f1.mesh_code
+        where t.id=#{contractId}
+        GROUP BY f1.mesh_code
+        order by jdIncome desc
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.EventMiddleDTO;
+import com.haier.hailian.contract.dto.EventMiddleTYDTO;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 
 import java.util.List;
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface EventMiddleService {
     List<ZContractsFactor> selectChainTarget(EventMiddleDTO dto);
+
+    List<EventMiddleTYDTO> selectTyTarget(EventMiddleDTO dto);
 }
