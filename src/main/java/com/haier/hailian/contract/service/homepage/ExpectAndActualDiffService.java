@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface ExpectAndActualDiffService {
 
-    Map<String , Object> getChainGrabNum(ExpectAndActualDiffDto expectAndActualDiffDto);
+    Map<String , Object> getChainGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto);
 
 }
