@@ -41,4 +41,18 @@ public class ExpectAndActualDiffController {
     }
 
 
+
+    @PostMapping(value = {"/getGrabInfo"})
+    @ApiOperation(value = "获取节点抢单详情")
+    public R getGrabInfo(@RequestBody ExpectAndActualDiffDto expectAndActualDiffDto) {
+        try{
+            Map<String , Object> res = expectAndActualDiffService.getGrabInfo(expectAndActualDiffDto);
+            return R.ok().put("data",res);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
+
 }

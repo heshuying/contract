@@ -44,4 +44,6 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<ZContractsFactor> selectChainGamblingTarget(EventMiddleDTO dto);
 
     List<Integer> selectCdReach(Map<String, Object> map);
+
+    List<ZContractsFactor> selectGrabInfo(Map<String, Object> map);
 }

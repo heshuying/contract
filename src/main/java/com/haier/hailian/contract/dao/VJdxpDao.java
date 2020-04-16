@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.dao;
 
 import com.haier.hailian.contract.dto.StarDTO;
+import com.haier.hailian.contract.dto.homepage.ExpectAndActualDiffDto;
 import com.haier.hailian.contract.entity.VJdxp;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -17,4 +18,6 @@ import java.util.Map;
  */
 public interface VJdxpDao extends BaseMapper<VJdxp> {
     List<StarDTO> getStarList(Map<String,Object> paraMap);
+
+    VJdxp getOrgStar(ExpectAndActualDiffDto expectAndActualDiffDto);
 }

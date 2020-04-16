@@ -49,4 +49,13 @@
         </if>
         order by c.id desc
     </select>
+
+    <select id="getOrgStar" parameterType="com.haier.hailian.contract.dto.homepage.ExpectAndActualDiffDto" resultMap="BaseResultMap">
+        SELECT * FROM v_jdxp
+        where CONTRACT_ID=#{contractId} and JD_CODE=#{orgCode} and PERIOD_CODE like "%"#{month}"%"
+        ORDER BY PERIOD_CODE DESC
+        LIMIT 1
+    </select>
+
+
 </mapper>

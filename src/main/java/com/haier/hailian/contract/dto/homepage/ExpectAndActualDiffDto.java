@@ -11,4 +11,6 @@ public class ExpectAndActualDiffDto {
 
     private String contractId;
 
+    private String orgCode;
+
 }

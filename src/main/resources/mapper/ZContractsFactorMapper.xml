@@ -17,6 +17,7 @@
         <result column="mesh_code" property="meshCode" />
         <result column="mesh_name" property="meshName" />
         <result column="is_lq_target" property="isLqTarget" />
+        <result column="factor_value_actual" property="factorValueActual" />
     </resultMap>
 
     <resultMap id="ResultMap1" type="com.haier.hailian.contract.dto.ChainGroupTargetDTO">
@@ -172,6 +173,28 @@
         HAVING COUNT(DISTINCT f.id)=COUNT(DISTINCT m.id)
 
     </select>
+
+
+
+    <select id="selectGrabInfo" parameterType="map" resultMap="BaseResultMap">
+
+        SELECT
+        *
+        FROM
+        z_contracts_factor a
+        LEFT JOIN z_contracts b ON a.contract_id = b.id
+        WHERE
+        b.`status` IN (1, 8)
+        AND b.org_code = #{orgCode}
+        AND b.chain_code = #{chainCode}
+        AND b.end_date > #{startTime}
+        AND b.end_date <![CDATA[ < ]]> #{endTime}
+        AND b.contract_type = '30'
+
+    </select>
+
+
+
 
 
 </mapper>

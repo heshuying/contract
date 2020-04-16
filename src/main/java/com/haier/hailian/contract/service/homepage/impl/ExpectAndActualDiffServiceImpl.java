@@ -1,19 +1,19 @@
 package com.haier.hailian.contract.service.homepage.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.VJdxpDao;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dao.ZHrChainInfoDao;
 import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
 import com.haier.hailian.contract.dto.homepage.ExpectAndActualDiffDto;
+import com.haier.hailian.contract.entity.VJdxp;
 import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZHrChainInfo;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
 import com.haier.hailian.contract.service.homepage.ExpectAndActualDiffService;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +31,8 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
     private ZContractsDao zContractsDao;
     @Autowired
     private ZContractsFactorDao zContractsFactorDao;
+    @Autowired
+    private VJdxpDao vJdxpDao;
 
 
     @Override
@@ -115,9 +117,51 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
             res.put("cdNotShareNum" , cdActualNum);
         }
 
+        return res;
+    }
 
 
+    @Override
+    public Map<String, Object> getGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto) {
 
+        Map<String, Object> res = new HashMap<>();
+
+        // 转换时间
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = DateFormatUtil.stringToDate(expectAndActualDiffDto.getMonth() , "yyyy-MM");
+        String startTime = format.format(date);
+        Date endDate = DateFormatUtil.addDateMonths(date , 1);
+        String endTime = format.format(endDate);
+
+        Map<String , Object> exp = new HashMap<>();
+        exp.put("startTime" , startTime);
+        exp.put("endTime" , endTime);
+        exp.put("chainCode" , expectAndActualDiffDto.getChainCode());
+        exp.put("orgCode" , expectAndActualDiffDto.getOrgCode());
+        List<ZContractsFactor> list = zContractsFactorDao.selectGrabInfo(exp);
+        // 抢单目标
+        res.put("grabInfo" , list);
+        // 增值分享目标
+        if(list != null && list.size()>0){
+            ZContracts zContracts = zContractsDao.selectOne(new QueryWrapper<ZContracts>()
+                    .eq("id" , list.get(0).getContractId())
+            );
+
+            res.put("shareTarget" , zContracts.getShareSpace());
+        }else{
+            res.put("shareTarget" , 0);
+        }
+
+        // TODO 节点增值分享实际
+        // 评价
+        String newMonth = expectAndActualDiffDto.getMonth().replace("-" , "").replace(" ","");
+        expectAndActualDiffDto.setMonth(newMonth);
+        VJdxp vJdxp = vJdxpDao.getOrgStar(expectAndActualDiffDto);
+        if(vJdxp != null){
+            res.put("star" , vJdxp.getPjM());
+        }else {
+            res.put("star" , "");
+        }
 
         return res;
     }
