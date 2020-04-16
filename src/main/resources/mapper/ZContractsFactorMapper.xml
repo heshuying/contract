@@ -180,6 +180,52 @@
         GROUP BY f1.mesh_code
         order by jdIncome desc
     </select>
+    <resultMap id="cdTargetResult" type="com.haier.hailian.contract.dto.EventMiddleCdDTO">
+        <collection property="targetList" column="grabId"  select="getCDGrabResultTarget" />
+        <collection property="planList" column="grabId"  select="getCDGrabResultPlan" />
+    </resultMap>
+    <!-- 创单抢单目标列表xwType3 -->
+    <resultMap id="cdGrabResultTarget" type="com.haier.hailian.contract.dto.TargetViewDTO">
+    </resultMap>
+    <!-- 创单抢单预案列表xwType3 -->
+    <resultMap id="cdGrabResultPlan" type="com.haier.hailian.contract.dto.ReservePlanDetailDTO">
+    </resultMap>
+    <select id="selectCdTarget" resultMap="cdTargetResult">
+        select t.id as grabId,t.create_name as userName,o.littleXwCode,o.littleXwName,v.PJ_M,v.PJ_Y
+        from z_contracts t
+        LEFT JOIN t_ods_minbu o
+        on t.org_code=o.littleXwCode
+        LEFT JOIN v_jdxp v
+        on v.CONTRACT_ID=t.parent_id
+        and v.JD_CODE=t.org_code
+        where t.parent_id=#{contractId}
+        and t.contract_type='30'
+        and t.`status` in ('1','8')
+    </select>
+    <select id="getCDGrabResultTarget" parameterType="map" resultMap="cdGrabResultTarget">
+        SELECT
+        f.`contract_id` AS contractId,
+        f.`factor_code` AS targetCode,
+        f.`factor_name` AS targetName,
+        f.`factor_value`  AS targetValue,
+        f.`factor_unit` AS targetUnit,
+        f.`factor_type` AS targetType
+        FROM
+        z_contracts_factor f
+        WHERE f.`contract_id` = #{grabId};
+    </select>
+    <select id="getCDGrabResultPlan" parameterType="map" resultMap="cdGrabResultPlan">
+        SELECT
+        p.`parent_id`,
+        p.`title`,
+        pd.`content`
+        FROM
+        z_reserve_plan p
+        INNER JOIN z_reserve_plan_detail pd
+        ON pd.parent_id = p.`id`
+        WHERE p.`parent_id` = #{grabId};
+    </select>
+    <!-- 事中显差查询接口结束 -->
 
 
     <select id="selectCdReach" parameterType="map" resultType="integer">

@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
+import com.haier.hailian.contract.dto.EventMiddleCdDTO;
 import com.haier.hailian.contract.dto.EventMiddleDTO;
 import com.haier.hailian.contract.dto.EventMiddleTYDTO;
 import com.haier.hailian.contract.entity.ZContractsFactor;
@@ -43,6 +44,13 @@ public class EventMiddleServiceImpl implements EventMiddleService{
     public List<EventMiddleTYDTO> selectTyTarget(EventMiddleDTO dto) {
         List<EventMiddleTYDTO> resultList = new ArrayList<>();
         resultList = contractsFactorDao.selectTyTarget(dto.getContractId());
+        return resultList;
+    }
+
+    @Override
+    public List<EventMiddleCdDTO> selectCdTarget(EventMiddleDTO dto) {
+
+        List<EventMiddleCdDTO> resultList = contractsFactorDao.selectCdTarget(dto.getContractId());
         return resultList;
     }
 
