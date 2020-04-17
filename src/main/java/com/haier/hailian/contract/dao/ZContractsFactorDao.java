@@ -1,8 +1,6 @@
 package com.haier.hailian.contract.dao;
 
-import com.haier.hailian.contract.dto.ChainGroupTargetDTO;
-import com.haier.hailian.contract.dto.EventMiddleDTO;
-import com.haier.hailian.contract.dto.FactorGrabResDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
@@ -44,6 +42,10 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<ZContractsFactor> selectChainGamblingTarget(EventMiddleDTO dto);
 
     List<Integer> selectCdReach(Map<String, Object> map);
+
+    List<EventMiddleTYDTO> selectTyTarget(int contractId);
+
+    List<EventMiddleCdDTO> selectCdTarget(int contractId);
 
     List<ZContractsFactor> selectGrabInfo(Map<String, Object> map);
 }

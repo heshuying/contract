@@ -1,6 +1,8 @@
 package com.haier.hailian.contract.controller;
 
+import com.haier.hailian.contract.dto.EventMiddleCdDTO;
 import com.haier.hailian.contract.dto.EventMiddleDTO;
+import com.haier.hailian.contract.dto.EventMiddleTYDTO;
 import com.haier.hailian.contract.dto.R;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.EventMiddleService;
@@ -26,10 +28,28 @@ public class EventMiddleController {
     private EventMiddleService eventMiddleService;
 
     @PostMapping(value = {"/selectChainTarget"})
-    @ApiOperation(value = "事中显差显示链群目标")
+    @ApiOperation(value = "事中显差查询链群目标")
     public R selectChainTarget(@RequestBody EventMiddleDTO dto) {
 
          List<ZContractsFactor> list = eventMiddleService.selectChainTarget(dto);
          return R.ok().put("data",list);
     }
+
+    @PostMapping(value = {"/selectTyTarget"})
+    @ApiOperation(value = "事中显差查询体验链群抢单目标")
+    public R selectTyTarget(@RequestBody EventMiddleDTO dto) {
+
+        List<EventMiddleTYDTO> list = eventMiddleService.selectTyTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+    @PostMapping(value = {"/selectCdTarget"})
+    @ApiOperation(value = "事中显差查询创单链群抢单目标")
+    public R selectCdTarget(@RequestBody EventMiddleDTO dto) {
+
+        List<EventMiddleCdDTO> list = eventMiddleService.selectCdTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+
 }

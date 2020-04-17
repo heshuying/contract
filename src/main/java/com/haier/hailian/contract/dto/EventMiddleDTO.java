@@ -8,6 +8,5 @@ import lombok.Data;
 @Data
 public class EventMiddleDTO {
 
-    private String date;
-    private String chainCode;
+    private int contractId;
 }
