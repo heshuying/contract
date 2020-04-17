@@ -11,4 +11,6 @@ public interface ExpectAndActualDiffService {
 
     Map<String , Object> getGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto);
 
+    Map<String , Object> getTYGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto);
+
 }

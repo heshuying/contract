@@ -138,6 +138,7 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
         exp.put("endTime" , endTime);
         exp.put("chainCode" , expectAndActualDiffDto.getChainCode());
         exp.put("orgCode" , expectAndActualDiffDto.getOrgCode());
+        exp.put("contractId" ,expectAndActualDiffDto.getContractId());
         List<ZContractsFactor> list = zContractsFactorDao.selectGrabInfo(exp);
         // 抢单目标
         res.put("grabInfo" , list);
@@ -165,4 +166,35 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
 
         return res;
     }
+
+    @Override
+    public Map<String, Object> getTYGrabInfo(ExpectAndActualDiffDto expectAndActualDiffDto) {
+        Map<String, Object> res = new HashMap<>();
+
+        Map<String , Object> exp = new HashMap<>();
+        exp.put("chainCode" , expectAndActualDiffDto.getChainCode());
+        exp.put("orgCode" , expectAndActualDiffDto.getOrgCode());
+        exp.put("contractId" ,expectAndActualDiffDto.getContractId());
+        List<ZContractsFactor> list = zContractsFactorDao.selectTYGrabInfo(exp);
+        // 体验举单目标
+        if (list != null && list.size()>0){
+            res.put("targetIncome" , list.get(0).getFactorValue());
+        }else{
+            res.put("targetIncome" , 0);
+        }
+        res.put("actualIncome" , 0);
+        res.put("targetIncrease" , 0);
+        res.put("actualIncrease" , 0);
+
+
+        res.put("targetShareMoney" , 0);
+        res.put("actualShareMoney" , 0);
+        res.put("attract" , 1);
+
+        return res;
+    }
+
+
+
+
 }

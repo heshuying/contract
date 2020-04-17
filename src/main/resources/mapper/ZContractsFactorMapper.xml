@@ -264,11 +264,32 @@
         LEFT JOIN z_contracts b ON a.contract_id = b.id
         WHERE
         b.`status` IN (1, 8)
+        AND b.parent_id = #{contractId}
         AND b.org_code = #{orgCode}
         AND b.chain_code = #{chainCode}
         AND b.end_date > #{startTime}
         AND b.end_date <![CDATA[ < ]]> #{endTime}
         AND b.contract_type = '30'
+
+    </select>
+
+
+
+    <select id="selectTYGrabInfo" parameterType="map" resultMap="BaseResultMap">
+
+        SELECT
+            *
+        FROM
+            z_contracts_factor a
+        LEFT JOIN z_contracts b ON a.contract_id = b.id
+        WHERE
+            b.parent_id = #{contractId}
+        AND b.contract_type = 20
+        AND b.`status` IN (1, 8)
+        AND b.chain_code = #{chainCode}
+        AND b.org_code = #{orgCode}
+        AND a.factor_code = 'T01001'
+        AND a.factor_type = '01'
 
     </select>
 

@@ -55,4 +55,18 @@ public class ExpectAndActualDiffController {
     }
 
 
+
+    @PostMapping(value = {"/getTYGrabInfo"})
+    @ApiOperation(value = "获取体验节点抢单详情")
+    public R getTYGrabInfo(@RequestBody ExpectAndActualDiffDto expectAndActualDiffDto) {
+        try{
+            Map<String , Object> res = expectAndActualDiffService.getTYGrabInfo(expectAndActualDiffDto);
+            return R.ok().put("data",res);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
+
 }

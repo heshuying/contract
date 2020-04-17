@@ -48,4 +48,6 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<EventMiddleCdDTO> selectCdTarget(int contractId);
 
     List<ZContractsFactor> selectGrabInfo(Map<String, Object> map);
+
+    List<ZContractsFactor> selectTYGrabInfo(Map<String, Object> map);
 }
