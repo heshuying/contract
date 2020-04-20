@@ -284,7 +284,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 childTargetDTO.setId(childId);
                 childTargetDTO.setShareSpace(child.getShareSpace());
                 childTargetDTO.setChildChainCode(child.getChainCode());
-                childTargetDTO.setChildChainName(child.getContractName().substring(0,child.getContractName().lastIndexOf("-")));
+                childTargetDTO.setChildChainName(child.getContractName());
                 //6.查询子链群的链群目标
                 List<ChainGroupTargetDTO> childTarget = factorDao.selectChainFactorByContractId(childId);
                 childTargetDTO.setChildTargetList(childTarget);
@@ -460,7 +460,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 List<ZContracts> contractsList = contractsDao.selectContractList(dto);
                 if(null == contractsList || contractsList.size()==0){
                     ZContracts zContracts = new ZContracts();
-                    zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
+                    zContracts.setContractName(chainInfo.getChainName());
                     //从z_waring_period_config表中查询举单开始日期
                     Date begin = contractsDao.selectGamnlingBeginDate(chainInfo.getChainCode());
                     int day = 0;
@@ -591,7 +591,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             contracts.setXiaoweiCode(currentUser.getXwCode());
             contracts.setOrgName(currentUser.getLittleXwName());
             contracts.setOrgCode(currentUser.getLittleXwCode());
-            contracts.setContractName(dto.getContractName()+"-"+sysUser.getEmpName());
+            contracts.setContractName(dto.getContractName());
             contractsDao.insert(contracts);
         }else{
             //ID 不为0时，为修改
@@ -721,7 +721,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     childContracts.setXiaoweiCode(currentUser.getXwCode());
                     childContracts.setOrgName(currentUser.getLittleXwName());
                     childContracts.setOrgCode(currentUser.getLittleXwCode());
-                    childContracts.setContractName(child.getChildChainName()+"-"+sysUser.getEmpName());
+                    childContracts.setContractName(child.getChildChainName());
                     contractsDao.insert(childContracts);
                 }else{
                     //ID 不为0时，为修改
