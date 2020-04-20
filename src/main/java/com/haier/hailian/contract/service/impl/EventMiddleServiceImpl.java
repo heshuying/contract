@@ -2,10 +2,9 @@ package com.haier.hailian.contract.service.impl;
 
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dto.EventMiddleCdDTO;
-import com.haier.hailian.contract.dto.EventMiddleDTO;
-import com.haier.hailian.contract.dto.EventMiddleTYDTO;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContractsFactor;
+import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.EventMiddleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,8 @@ public class EventMiddleServiceImpl implements EventMiddleService{
     private ZContractsFactorDao contractsFactorDao;
     @Autowired
     private ZContractsDao contractsDao;
+    @Autowired
+    private ContractViewService contractViewService;
 
     @Override
     public List<ZContractsFactor> selectChainTarget(EventMiddleDTO dto) {
@@ -52,6 +53,12 @@ public class EventMiddleServiceImpl implements EventMiddleService{
 
         List<EventMiddleCdDTO> resultList = contractsFactorDao.selectCdTarget(dto.getContractId());
         return resultList;
+    }
+
+    @Override
+    public List<ContractProductDTO> selectProductTarget(EventMiddleDTO dto) {
+        List<ContractProductDTO> list = contractViewService.staticSerial(dto.getContractId());
+        return list;
     }
 
 }

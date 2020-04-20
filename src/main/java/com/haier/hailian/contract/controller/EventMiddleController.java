@@ -1,9 +1,6 @@
 package com.haier.hailian.contract.controller;
 
-import com.haier.hailian.contract.dto.EventMiddleCdDTO;
-import com.haier.hailian.contract.dto.EventMiddleDTO;
-import com.haier.hailian.contract.dto.EventMiddleTYDTO;
-import com.haier.hailian.contract.dto.R;
+import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.EventMiddleService;
 import io.swagger.annotations.Api;
@@ -48,6 +45,14 @@ public class EventMiddleController {
     public R selectCdTarget(@RequestBody EventMiddleDTO dto) {
 
         List<EventMiddleCdDTO> list = eventMiddleService.selectCdTarget(dto);
+        return R.ok().put("data",list);
+    }
+
+    @PostMapping(value = {"/selectProductTarget"})
+    @ApiOperation(value = "事中显差查询爆款举单、抢单目标")
+    public R selectProductTarget(@RequestBody EventMiddleDTO dto) {
+
+        List<ContractProductDTO> list = eventMiddleService.selectProductTarget(dto);
         return R.ok().put("data",list);
     }
 
