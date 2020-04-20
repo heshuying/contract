@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.service;
 
+import com.haier.hailian.contract.dto.ContractProductDTO;
 import com.haier.hailian.contract.dto.EventMiddleCdDTO;
 import com.haier.hailian.contract.dto.EventMiddleDTO;
 import com.haier.hailian.contract.dto.EventMiddleTYDTO;
@@ -16,4 +17,6 @@ public interface EventMiddleService {
     List<EventMiddleTYDTO> selectTyTarget(EventMiddleDTO dto);
 
     List<EventMiddleCdDTO> selectCdTarget(EventMiddleDTO dto);
+
+    List<ContractProductDTO> selectProductTarget(EventMiddleDTO dto);
 }
