@@ -69,4 +69,18 @@ public class ExpectAndActualDiffController {
     }
 
 
+
+    @PostMapping(value = {"/grabStarMap"})
+    @ApiOperation(value = "抢入星图")
+    public R grabStarMap(@RequestBody ExpectAndActualDiffDto expectAndActualDiffDto) {
+        try{
+            Map<String , Object> res = expectAndActualDiffService.grabStarMap(expectAndActualDiffDto);
+            return R.ok().put("data",res);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("获取：" + e.getMessage());
+        }
+    }
+
+
 }
