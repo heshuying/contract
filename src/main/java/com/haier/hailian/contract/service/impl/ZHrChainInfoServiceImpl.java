@@ -50,11 +50,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Resource
     private ChainCommonService chainCommonService;
     @Resource
-    private TChainAttrDao tChainAttrDao;
-    @Resource
-    private TMajorClassDao tMajorClassDao;
-    @Resource
-    private TSubClassDao tSubClassDao;
+    private TMdmChainAttrDao tMdmChainAttrDao;
     //hr发版后放开
     @Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -897,18 +893,21 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public Map<String, Object> getChainExtInfo() {
         Map<String, Object> res = new HashMap<>();
         // 链群属性
-        List<TChainAttr> chainAttrList = tChainAttrDao.selectList(new QueryWrapper<TChainAttr>());
+        List<TMdmChainAttr> chainAttrList = tMdmChainAttrDao.selectList(new QueryWrapper<TMdmChainAttr>()
+                .eq("value_set_id" , "chainAttr"));
         res.put("chainTypeList" , chainAttrList);
 
         // 项目大类 + 子项目
         List<Map> resList = new ArrayList<>();
-        List<TMajorClass> majorClassList = tMajorClassDao.selectList(new QueryWrapper<TMajorClass>());
-        for(TMajorClass bigSB : majorClassList){
+        List<TMdmChainAttr> majorClassList = tMdmChainAttrDao.selectList(new QueryWrapper<TMdmChainAttr>()
+                .eq("value_set_id" , "majorClass"));
+        for(TMdmChainAttr bigSB : majorClassList){
             Map<String, Object> info = new HashMap<>();
             // 查询子项目
             info.put("parent" , bigSB);
-            List<TSubClass> subClassList = tSubClassDao.selectList(new QueryWrapper<TSubClass>()
-                    .eq("major_class_code" , bigSB.getMajorClassCode()));
+            List<TMdmChainAttr> subClassList = tMdmChainAttrDao.selectList(new QueryWrapper<TMdmChainAttr>()
+                    .eq("value_set_id" , "subClass")
+                    .eq("parent_value_low" , bigSB.getValue()));
             info.put("child" , subClassList);
             resList.add(info);
         }
