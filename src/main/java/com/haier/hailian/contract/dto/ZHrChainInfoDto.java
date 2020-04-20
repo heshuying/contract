@@ -58,4 +58,16 @@ public class ZHrChainInfoDto {
 
     private String grabFlag; // 是否在oms抢单
 
+    /* 2020年4月20日 10:33:38 */
+
+    private String IN_MAJOR_CLASS;  // 项目大类
+
+    private String IN_SUB_CLASS;  // 子项目
+
+    private String IN_CHAIN_ATTR;   //  链群属性
+
+    private String IN_SHORT_NAME;   //  简称
+
+
+
 }

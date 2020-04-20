@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * (ZHrChainInfo)表控制层
@@ -499,6 +500,21 @@ public class ZHrChainInfoController {
             return R.error("系统异常，请稍后尝试！");
         }
     }
+
+
+
+    @GetMapping(value = {"/getChainExtInfo"})
+    @ApiOperation(value = "获取链群额外信息")
+    public R getChainExtInfo() {
+        try {
+            Map<String , Object> map = zHrChainInfoService.getChainExtInfo();
+            return R.ok().put("data",map);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getChainExtInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
 
 
 

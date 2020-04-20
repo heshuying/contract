@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * (ZHrChainInfo)表服务接口
@@ -178,4 +179,6 @@ public interface ZHrChainInfoService {
     int updateBatchXwType3Nodes(SaveXwType3 saveXwType3);
 
     int syncMinbuListByXwType3(SaveXwType3 saveXwType3);
+
+    Map<String , Object> getChainExtInfo();
 }

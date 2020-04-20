@@ -49,6 +49,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private TOdsDictionaryDao tOdsDictionaryDao;
     @Resource
     private ChainCommonService chainCommonService;
+    @Resource
+    private TChainAttrDao tChainAttrDao;
+    @Resource
+    private TMajorClassDao tMajorClassDao;
+    @Resource
+    private TSubClassDao tSubClassDao;
     //hr发版后放开
     @Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -239,7 +245,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
             return null;
         }
         //链群编码生成
-        String maxOne = zHrChainInfoDao.queryMaxOne();
+        //String maxOne = zHrChainInfoDao.queryMaxOne();
         //生成编码的方法
 //        String chainCode = frontCompWithZore(maxOne, 5, "H");
         //判断是否存在链群关键字，不存在则添加
@@ -885,6 +891,30 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         // 新增
         List<String> minbuList = saveXwType3(saveXwType3);
         return minbuList.size();
+    }
+
+    @Override
+    public Map<String, Object> getChainExtInfo() {
+        Map<String, Object> res = new HashMap<>();
+        // 链群属性
+        List<TChainAttr> chainAttrList = tChainAttrDao.selectList(new QueryWrapper<TChainAttr>());
+        res.put("chainTypeList" , chainAttrList);
+
+        // 项目大类 + 子项目
+        List<Map> resList = new ArrayList<>();
+        List<TMajorClass> majorClassList = tMajorClassDao.selectList(new QueryWrapper<TMajorClass>());
+        for(TMajorClass bigSB : majorClassList){
+            Map<String, Object> info = new HashMap<>();
+            // 查询子项目
+            info.put("parent" , bigSB);
+            List<TSubClass> subClassList = tSubClassDao.selectList(new QueryWrapper<TSubClass>()
+                    .eq("major_class_code" , bigSB.getMajorClassCode()));
+            info.put("child" , subClassList);
+            resList.add(info);
+        }
+        // 项目大类 + 子项目
+        res.put("chainCategory" , resList);
+        return res;
     }
 
 

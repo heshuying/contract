@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.TMajorClassDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.TMajorClass">
+        <id column="id" property="id" />
+        <result column="major_class_code" property="majorClassCode" />
+        <result column="major_class_name" property="majorClassName" />
+        <result column="major_class_english" property="majorClassEnglish" />
+    </resultMap>
+
+</mapper>

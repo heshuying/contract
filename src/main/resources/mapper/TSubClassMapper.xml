@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.TSubClassDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.TSubClass">
+        <id column="id" property="id" />
+        <result column="sub_class_code" property="subClassCode" />
+        <result column="sub_class_nam" property="subClassNam" />
+        <result column="sub_class_english" property="subClassEnglish" />
+        <result column="major_class_code" property="majorClassCode" />
+    </resultMap>
+
+</mapper>
