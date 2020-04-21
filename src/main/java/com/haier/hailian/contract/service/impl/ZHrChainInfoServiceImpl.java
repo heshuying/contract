@@ -14,6 +14,8 @@ import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ChainCommonService;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.IHaierUtil;
+import com.haier.hailian.contract.webservice.CreateChainGroup;
+import com.haier.hailian.contract.webservice.CreatechaingroupClientEp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.ws.Holder;
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,9 +56,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Resource
     private TMdmChainAttrDao tMdmChainAttrDao;
     //hr发版后放开
-    @Reference(version = "ehr2.0", registry = "registry2", check = false)
+    //@Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
-    private ChainGroupClient chainGroupClient;
+    //private ChainGroupClient chainGroupClient;
 
     /**
      * 通过ID查询单条数据
@@ -246,11 +250,30 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 //        String chainCode = frontCompWithZore(maxOne, 5, "H");
         //判断是否存在链群关键字，不存在则添加
         String name = zHrChainInfoDto.getChainName();
+
+        //hr接口获取编码
+        //String chainCode = chainGroupClient.getChainGroupCode(name);
+        // MDM获取链群编码
+        CreatechaingroupClientEp clientEp = new CreatechaingroupClientEp();
+        CreateChainGroup chainGroup = clientEp.getCreateChainGroupPt();
+        Holder<String> holder1 = new Holder<String>();
+        Holder<String> holder2 = new Holder<String>();
+        Holder<String> holder3 = new Holder<String>();
+        Holder<String> holder4 = new Holder<String>();
+        chainGroup.process("",name,zHrChainInfoDto.getIn_MAJOR_CLASS(),
+                zHrChainInfoDto.getIn_SUB_CLASS(),zHrChainInfoDto.getIn_CHAIN_ATTR(),
+                zHrChainInfoDto.getIn_SHORT_NAME(),"",sysUser.getEmpSn(),
+                "","",sysUser.getEmpSn()
+                ,holder1,holder2,holder3,holder4);
+        if(!holder1.value.equals("S")){
+            return null;
+        }
+        String chainCode = holder4.value;
+
         if (!name.contains("链群")) {
             name = name + "链群";
         }
-        //hr接口获取编码
-        String chainCode = chainGroupClient.getChainGroupCode(name);
+
 
         // 主链群
         zHrChainInfo.setChainCode(chainCode);

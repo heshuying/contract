@@ -60,13 +60,13 @@ public class ZHrChainInfoDto {
 
     /* 2020年4月20日 10:33:38 */
 
-    private String IN_MAJOR_CLASS;  // 项目大类
+    private String in_MAJOR_CLASS;  // 项目大类
 
-    private String IN_SUB_CLASS;  // 子项目
+    private String in_SUB_CLASS;  // 子项目
 
-    private String IN_CHAIN_ATTR;   //  链群属性
+    private String in_CHAIN_ATTR;   //  链群属性
 
-    private String IN_SHORT_NAME;   //  简称
+    private String in_SHORT_NAME;   //  简称
 
 
 

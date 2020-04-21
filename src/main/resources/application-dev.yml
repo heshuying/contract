@@ -5,19 +5,19 @@ spring:
   application:
       id: zzfz
       name: zzfx
-  dubbo:
-    server: false
-    registries:
-      registry1:
-        protocol: zookeeper
-        address: 10.135.13.22:2181,10.138.46.22:2181,10.135.12.166:2181
-      registry2:
-        protocol: zookeeper
-        address: 10.135.7.56:2181,10.135.7.58:2181,10.135.6.66:2181
-    consumer:
-      timeout: 60000
-      retries: 3
-      check: true
+#  dubbo:
+#    server: false
+#    registries:
+#      registry1:
+#        protocol: zookeeper
+#        address: 10.135.13.22:2181,10.138.46.22:2181,10.135.12.166:2181
+#      registry2:
+#        protocol: zookeeper
+#        address: 10.135.7.56:2181,10.135.7.58:2181,10.135.6.66:2181
+#    consumer:
+#      timeout: 60000
+#      retries: 3
+#      check: true
   datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       druid:
@@ -101,3 +101,7 @@ ehr:
 # 人才池接口地址
 card:
   url: http://card-dev.qd-ctcc.haier.net//api/v1/talentInformatica?cusId=
+
+# MDM获取链群编码地址
+chainName:
+  url: http://10.135.16.46:8001/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL
