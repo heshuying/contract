@@ -15,6 +15,7 @@ public class StarDTO {
     private String startDate;
     private String endDate;
     private String monthEnd;
+    private String monthStr;
     private String chainName;
     private String masterCode;
     private String masterName;

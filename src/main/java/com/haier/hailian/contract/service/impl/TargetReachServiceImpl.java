@@ -128,17 +128,22 @@ public class TargetReachServiceImpl implements com.haier.hailian.contract.servic
         }
 
         for(FactorGrabResDTO item : data.getTargetList()){
+            if(StringUtils.isBlank(item.getFactorValueActual())){
+                continue;
+            }
             ZContractsFactor factor = new ZContractsFactor();
             factor.setId(Integer.parseInt(item.getFactId()));
             factor.setFactorValueActual(item.getFactorValueActual());
             factors.add(factor);
         }
-        factorService.updateBatchById(factors);
+        if(!factors.isEmpty()){
+            factorService.updateBatchById(factors);
+            ZContracts contracts = new ZContracts();
+            contracts.setId(Integer.parseInt(data.getContractId()));
+            contracts.setTargetUpdateTime(new Date());
+            contractsDao.updateById(contracts);
+        }
 
-        ZContracts contracts = new ZContracts();
-        contracts.setId(Integer.parseInt(data.getContractId()));
-        contracts.setTargetUpdateTime(new Date());
-        contractsDao.updateById(contracts);
     }
 
     @Override

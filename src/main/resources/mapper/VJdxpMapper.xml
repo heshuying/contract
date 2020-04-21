@@ -28,6 +28,7 @@
             DATE_FORMAT(c.`start_date`,'%Y-%m-%d') AS startDate,
             DATE_FORMAT(c.`end_date`,'%Y-%m-%d') AS endDate,
             DATE_FORMAT(c.`end_date`,'%Y%m%d') AS monthEnd,
+            DATE_FORMAT(c.`end_date`,'%Y%m') AS monthStr,
             ch.`chain_name` AS chainName,
             ch.master_code AS masterCode,
             ch.master_name AS masterName,

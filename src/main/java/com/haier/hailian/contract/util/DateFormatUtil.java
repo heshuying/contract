@@ -15,6 +15,8 @@ public class DateFormatUtil {
     public final static String DATE_PATTERN = "yyyy-MM-dd";
     /** 时间格式(yyyyMM) */
     public final static String DATE_PATTERN_YM = "yyyyMM";
+    /** 时间格式(yyyyMM) */
+    public final static String DATE_PATTERN_YMD = "yyyyMMdd";
     /** 时间格式(yyyy-MM-dd HH:mm:ss) */
     public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     /** 时间格式(HH:mm:ss) */
@@ -44,7 +46,9 @@ public class DateFormatUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(DateFormatUtil.format(new Date(), DATE_PATTERN_YM));
+        System.out.println(DateFormatUtil.format(new Date(), DATE_PATTERN_YMD));
+        System.out.println(DateFormatUtil.addDateDays(new Date(), -22));
+        System.out.println(DateFormatUtil.getDAYOfDate(DateFormatUtil.addDateDays(new Date(), -20)));
     }
 
     /**
