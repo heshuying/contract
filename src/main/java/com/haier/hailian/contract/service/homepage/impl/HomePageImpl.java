@@ -302,6 +302,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("bottomTargetProfitRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals("T00000")){
+                map.put("bottomTargetSaleNum" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -326,6 +329,9 @@ public class HomePageImpl implements HomePageService {
             if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("e2eTargetProfitRate" , exp.getFactorValue());
             }
+            if(exp.getFactorCode().equals("T00000")){
+                map.put("e2eTargetSaleNum" , exp.getFactorValue());
+            }
         }
 
         /**
@@ -349,6 +355,9 @@ public class HomePageImpl implements HomePageService {
             }
             if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
                 map.put("grabTargetProfitRate" , exp.getFactorValue());
+            }
+            if(exp.getFactorCode().equals("T00000")){
+                map.put("grabTargetSaleNum" , exp.getFactorValue());
             }
         }
 
