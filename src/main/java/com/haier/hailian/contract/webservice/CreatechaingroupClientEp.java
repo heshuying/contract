@@ -18,9 +18,9 @@ import javax.xml.ws.WebServiceFeature;
  *
  */
 // 测试
-@WebServiceClient(name = "createchaingroup_client_ep", targetNamespace = "http://xmlns.oracle.com/Interface/CreateChainGroup", wsdlLocation = "http://10.135.16.46:8001/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL")
+//@WebServiceClient(name = "createchaingroup_client_ep", targetNamespace = "http://xmlns.oracle.com/Interface/CreateChainGroup", wsdlLocation = "http://10.135.16.46:8001/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL")
 // 生产
-//@WebServiceClient(name = "createchaingroup_client_ep", targetNamespace = "http://xmlns.oracle.com/Interface/CreateChainGroup", wsdlLocation = "http://bpel.mdm.haier.com:7778/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL")
+@WebServiceClient(name = "createchaingroup_client_ep", targetNamespace = "http://xmlns.oracle.com/Interface/CreateChainGroup", wsdlLocation = "http://bpel.mdm.haier.com:7778/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL")
 public class CreatechaingroupClientEp
         extends Service
 {
@@ -34,9 +34,9 @@ public class CreatechaingroupClientEp
         WebServiceException e = null;
         try {
             // 测试
-            url = new URL("http://10.135.16.46:8001/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL");
+            //url = new URL("http://10.135.16.46:8001/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL");
             // 生产
-            //url = new URL("http://bpel.mdm.haier.com:7778/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL");
+            url = new URL("http://bpel.mdm.haier.com:7778/soa-infra/services/interface/CreateChainGroup/createchaingroup_client_ep?WSDL");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
