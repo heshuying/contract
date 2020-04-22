@@ -166,6 +166,9 @@ public class ZHrChainInfoController {
 //            }
             if (res.get("code").equals(0)){
                 ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
+                if ("E".equals(z.getCode())){
+                    return R.error("MDM系统返回信息:" + z.getMsg());
+                }
                 if (z==null){
                     return R.error("保存出错了，请稍后重试！");
                 }

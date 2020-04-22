@@ -68,6 +68,10 @@ public class ZHrChainInfoDto {
 
     private String in_SHORT_NAME;   //  简称
 
+    private String code; // MDM返回信息
+
+    private String msg; // MDM返回信息
+
 
 
 }

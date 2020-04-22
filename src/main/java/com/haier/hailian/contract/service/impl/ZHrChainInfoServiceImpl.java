@@ -264,8 +264,10 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 zHrChainInfoDto.getIn_SHORT_NAME(),"","",
                 "",sysUser.getEmpSn(),sysUser.getEmpSn()
                 ,holder1,holder2,holder3,holder4);
-        if(!holder1.value.equals("S")){
-            return null;
+        if(holder1.value.equals("E")){
+            zHrChainInfoDto.setCode(holder1.value);
+            zHrChainInfoDto.setMsg(holder2.value);
+            return zHrChainInfoDto;
         }
         String chainCode = holder4.value;
 
