@@ -261,8 +261,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         Holder<String> holder4 = new Holder<String>();
         chainGroup.process("",name,zHrChainInfoDto.getIn_MAJOR_CLASS(),
                 zHrChainInfoDto.getIn_SUB_CLASS(),zHrChainInfoDto.getIn_CHAIN_ATTR(),
-                zHrChainInfoDto.getIn_SHORT_NAME(),"",sysUser.getEmpSn(),
-                "","",sysUser.getEmpSn()
+                zHrChainInfoDto.getIn_SHORT_NAME(),"","",
+                "",sysUser.getEmpSn(),sysUser.getEmpSn()
                 ,holder1,holder2,holder3,holder4);
         if(!holder1.value.equals("S")){
             return null;
