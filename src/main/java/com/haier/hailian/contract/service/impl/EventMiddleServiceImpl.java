@@ -3,13 +3,17 @@ package com.haier.hailian.contract.service.impl;
 import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
 import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.entity.TargetTrend;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.EventMiddleService;
+import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +62,31 @@ public class EventMiddleServiceImpl implements EventMiddleService{
     @Override
     public List<ContractProductDTO> selectProductTarget(EventMiddleDTO dto) {
         List<ContractProductDTO> list = contractViewService.staticSerial(dto.getContractId());
+        return list;
+    }
+
+    @Override
+    public List<EventMiddleTrendDTO> selectChainTargetTrend(EventMiddleDTO dto) {
+        SimpleDateFormat sf = new SimpleDateFormat("MM");
+        TargetTrend targetTrend = contractsFactorDao.selectChainTargetTrend(dto.getContractId());
+        Date startDate = targetTrend.getStartDate();
+        List<EventMiddleTrendDTO> list = new ArrayList<>();
+        EventMiddleTrendDTO trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue1());
+        trendDTO.setMonth(targetTrend.getStartDate1()==null? sf.format(DateFormatUtil.addDateMonths(startDate,-3)):sf.format(targetTrend.getStartDate1()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue2());
+        trendDTO.setMonth(targetTrend.getStartDate2()==null?sf.format(DateFormatUtil.addDateMonths(startDate,-2)):sf.format(targetTrend.getStartDate2()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue3());
+        trendDTO.setMonth(targetTrend.getStartDate3()==null?sf.format(DateFormatUtil.addDateMonths(startDate,-1)):sf.format(targetTrend.getStartDate3()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue());
+        trendDTO.setMonth(targetTrend.getStartDate()==null?"":sf.format(targetTrend.getStartDate()));
+        list.add(trendDTO);
         return list;
     }
 
