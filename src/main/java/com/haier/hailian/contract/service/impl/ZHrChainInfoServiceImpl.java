@@ -698,9 +698,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         for(ZHrChainInfo chainInfo : list){
 
-            if(chainInfo.getChainCode().equals("H00022")){
-                continue;
-            }
+//            if(chainInfo.getChainCode().equals("H00022")){
+//                continue;
+//            }
 
             List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(
                     new QueryWrapper<ZNodeTargetPercentInfo>()
