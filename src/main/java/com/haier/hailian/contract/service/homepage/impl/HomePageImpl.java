@@ -277,89 +277,97 @@ public class HomePageImpl implements HomePageService {
 
 
     /**
-     * 获取 ZContractsFactor部分信息
+     * 获取 ZContractsFactor部分举单信息
      * @return
      */
     public Map<String , Object> getContractsFactor(ZContracts zContracts , Map<String , Object> map){
-        /**
-         * 底线目标
-         */
-        List<ZContractsFactor> bottomFactorList = zContractsFactorDao.selectList(
-                new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
 
-        for (ZContractsFactor exp : bottomFactorList){
-            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
-                map.put("bottomTargetIncome" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
-                map.put("bottomTargetProfit" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
-                map.put("bottomTargetRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
-                map.put("bottomTargetProfitRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals("T00000")){
-                map.put("bottomTargetSaleNum" , exp.getFactorValue());
-            }
-        }
+        // 查询举单信息
+        List<ZContractsFactor> gamblingfactorList = zContractsFactorDao.selectList(
+        new QueryWrapper<ZContractsFactor>()
+                .eq("contract_id" , zContracts.getId())
+                .isNull("region_code"));
+        map.put("gamblingAttr" , gamblingfactorList);
 
-        /**
-         * e2e目标
-         */
-        List<ZContractsFactor> e2eFactorList = zContractsFactorDao.selectList(
-                new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.E2E.getValue()));
-
-        for (ZContractsFactor exp : e2eFactorList){
-
-            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
-                map.put("e2eTargetIncome" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
-                map.put("e2eTargetProfit" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
-                map.put("e2eTargetRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
-                map.put("e2eTargetProfitRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals("T00000")){
-                map.put("e2eTargetSaleNum" , exp.getFactorValue());
-            }
-        }
-
-        /**
-         * 抢单目标
-         */
-        List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
-                new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , zContracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Grab.getValue())
-                        .isNull("region_code"));
-
-        for (ZContractsFactor exp : grabFactorList){
-            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
-                map.put("grabTargetIncome" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
-                map.put("grabTargetProfit" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
-                map.put("grabTargetRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
-                map.put("grabTargetProfitRate" , exp.getFactorValue());
-            }
-            if(exp.getFactorCode().equals("T00000")){
-                map.put("grabTargetSaleNum" , exp.getFactorValue());
-            }
-        }
+//        /**
+//         * 底线目标
+//         */
+//        List<ZContractsFactor> bottomFactorList = zContractsFactorDao.selectList(
+//                new QueryWrapper<ZContractsFactor>()
+//                        .eq("contract_id" , zContracts.getId())
+//                        .eq("factor_type" , Constant.FactorType.Bottom.getValue()));
+//
+//        for (ZContractsFactor exp : bottomFactorList){
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+//                map.put("bottomTargetIncome" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+//                map.put("bottomTargetProfit" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+//                map.put("bottomTargetRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+//                map.put("bottomTargetProfitRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals("T00000")){
+//                map.put("bottomTargetSaleNum" , exp.getFactorValue());
+//            }
+//        }
+//
+//        /**
+//         * e2e目标
+//         */
+//        List<ZContractsFactor> e2eFactorList = zContractsFactorDao.selectList(
+//                new QueryWrapper<ZContractsFactor>()
+//                        .eq("contract_id" , zContracts.getId())
+//                        .eq("factor_type" , Constant.FactorType.E2E.getValue()));
+//
+//        for (ZContractsFactor exp : e2eFactorList){
+//
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+//                map.put("e2eTargetIncome" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+//                map.put("e2eTargetProfit" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+//                map.put("e2eTargetRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+//                map.put("e2eTargetProfitRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals("T00000")){
+//                map.put("e2eTargetSaleNum" , exp.getFactorValue());
+//            }
+//        }
+//
+//        /**
+//         * 抢单目标
+//         */
+//        List<ZContractsFactor> grabFactorList = zContractsFactorDao.selectList(
+//                new QueryWrapper<ZContractsFactor>()
+//                        .eq("contract_id" , zContracts.getId())
+//                        .eq("factor_type" , Constant.FactorType.Grab.getValue())
+//                        .isNull("region_code"));
+//
+//        for (ZContractsFactor exp : grabFactorList){
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Incom.getValue())){
+//                map.put("grabTargetIncome" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lre.getValue())){
+//                map.put("grabTargetProfit" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Mll.getValue())){
+//                map.put("grabTargetRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals(Constant.FactorCode.Lrl.getValue())){
+//                map.put("grabTargetProfitRate" , exp.getFactorValue());
+//            }
+//            if(exp.getFactorCode().equals("T00000")){
+//                map.put("grabTargetSaleNum" , exp.getFactorValue());
+//            }
+//        }
 
         return map;
     }
