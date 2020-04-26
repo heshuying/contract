@@ -181,4 +181,6 @@ public interface ZHrChainInfoService {
     int syncMinbuListByXwType3(SaveXwType3 saveXwType3);
 
     Map<String , Object> getChainExtInfo();
+
+    List<Map> getChainNameList();
 }
