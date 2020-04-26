@@ -949,6 +949,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
     @Override
     public List<Map> getChainNameList() {
+
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+
         List<Map> granpaList = new ArrayList<>();
         List<VwDmLqDim> majorClassList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
                 .groupBy( "major_class"));
@@ -965,9 +971,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 Map res2 = new HashMap<>();
                 res2.put("subCode" , sub.getSubClass());
                 res2.put("subName" , sub.getSubValueMeaning());
-                List<VwDmLqDim> chainList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
-                        .eq("major_class" , major.getMajorClass())
-                        .eq("sub_class" , sub.getSubClass()));
+                Map param = new HashMap();
+                param.put("majorClass" , major.getMajorClass());
+                param.put("subClass" , sub.getSubClass());
+                param.put("createdBy" , sysUser.getEmpSn());
+                List<VwDmLqDim> chainList = vwDmLqDimDao.selectChainList(param);
+//                List<VwDmLqDim> chainList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
+//                        .eq("major_class" , major.getMajorClass())
+//                        .eq("sub_class" , sub.getSubClass()));
                 res2.put("grandChild" , chainList);
                 fatherList.add(res2);
             }
