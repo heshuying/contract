@@ -145,7 +145,8 @@
         <where>
             contract_type='10'
             <if test=" contractName != null and contractName != '' ">
-                and contract_name like CONCAT('%', #{contractName}, '%')
+                and (contract_name like CONCAT('%', #{contractName}, '%')
+                or create_name like CONCAT('%', #{contractName}, '%'))
             </if>
             <if test=" chainCode != null and chainCode != '' ">
                 and chain_code = #{chainCode}
@@ -227,7 +228,8 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(t.end_date,'%Y-%m-%d')
             </if>
             <if test=" contractName != null and contractName != '' ">
-                and t.contract_name like CONCAT('%', #{contractName}, '%')
+                and (p.contract_name like CONCAT('%', #{contractName}, '%')
+                or p.create_name like CONCAT('%', #{contractName}, '%'))
             </if>
             <if test=" startShare != null ">
                 and p.share_money <![CDATA[ >= ]]> #{startShare}
@@ -280,7 +282,8 @@
                 and DATE_FORMAT(#{endDate},'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(t.end_date,'%Y-%m-%d')
             </if>
             <if test=" contractName != null and contractName != '' ">
-                and t.contract_name like CONCAT('%', #{contractName}, '%')
+                and (p.contract_name like CONCAT('%', #{contractName}, '%')
+                or p.create_name like CONCAT('%', #{contractName}, '%'))
             </if>
             <if test=" startShare != null ">
                 and p.share_money <![CDATA[ >= ]]> #{startShare}
@@ -312,7 +315,8 @@
         <where>
             contract_type='10' and status = '0'
             <if test=" contractName != null and contractName != '' ">
-                and contract_name like CONCAT('%', #{contractName}, '%')
+                and (contract_name like CONCAT('%', #{contractName}, '%')
+                or create_name like CONCAT('%', #{contractName}, '%'))
             </if>
             <if test=" chainCode != null and chainCode != '' ">
                 and chain_code = #{chainCode}
@@ -367,7 +371,8 @@
         <where>
             contract_type='10' and status = '1'
             <if test=" contractName != null and contractName != '' ">
-                and contract_name like CONCAT('%', #{contractName}, '%')
+                and (contract_name like CONCAT('%', #{contractName}, '%')
+                or create_name like CONCAT('%', #{contractName}, '%'))
             </if>
             <if test=" chainCode != null and chainCode != '' ">
                 and chain_code = #{chainCode}
