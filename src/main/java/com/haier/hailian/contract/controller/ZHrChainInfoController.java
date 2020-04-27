@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
@@ -154,6 +155,10 @@ public class ZHrChainInfoController {
 //                return R.error("链群定位未输入，请输入！");
 //            }
             if (res.get("code").equals(0)){
+
+                if(StringUtils.isEmpty(zHrChainInfoDto.getChainCode())){
+                    return R.error("请选择需要注册的链群!");
+                }
 
                 // 校验比例
                 if(!"1".equals(zHrChainInfoDto.getIsModel())){

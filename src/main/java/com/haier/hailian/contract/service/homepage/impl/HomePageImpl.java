@@ -124,7 +124,8 @@ public class HomePageImpl implements HomePageService {
         query.eq("chain_code"  , dataInfo.getChainCode())
                 .eq("contract_type" , "10")
                 .gt("end_date" , startTime)
-                .lt("end_date" , endTime);
+                .lt("end_date" , endTime)
+                .ne("status" , "4");
         if(dataInfo.getStatus() != null && !"".equals(dataInfo.getStatus())){
             query.eq("status" , dataInfo.getStatus());
         }
