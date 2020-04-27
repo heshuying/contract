@@ -18,4 +18,6 @@ public interface EventMiddleService {
     List<ContractProductDTO> selectProductTarget(EventMiddleDTO dto);
 
     List<EventMiddleTrendDTO> selectChainTargetTrend(EventMiddleDTO dto);
+
+    EventMiddleChainShareDTO selectChainShare(EventMiddleDTO dto);
 }

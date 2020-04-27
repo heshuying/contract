@@ -4,6 +4,7 @@ import com.haier.hailian.contract.dao.ZContractsDao;
 import com.haier.hailian.contract.dao.ZContractsFactorDao;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.TargetTrend;
+import com.haier.hailian.contract.entity.ZContracts;
 import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.EventMiddleService;
@@ -88,6 +89,15 @@ public class EventMiddleServiceImpl implements EventMiddleService{
         trendDTO.setMonth(targetTrend.getStartDate()==null?"":sf.format(targetTrend.getStartDate()));
         list.add(trendDTO);
         return list;
+    }
+
+    @Override
+    public EventMiddleChainShareDTO selectChainShare(EventMiddleDTO dto) {
+        ZContracts contracts = contractsDao.selectById(dto.getContractId());
+        EventMiddleChainShareDTO chainShareDTO = new EventMiddleChainShareDTO();
+        chainShareDTO.setPlan(contracts.getShareMoney()+"");
+        return chainShareDTO;
+
     }
 
 }
