@@ -226,6 +226,46 @@
         ON pd.parent_id = p.`id`
         WHERE p.`parent_id` = #{grabId};
     </select>
+    <select id="selectChainTargetTrend" resultType="com.haier.hailian.contract.entity.TargetTrend">
+        select t4.start_date,f4.factor_value,t1.start_date as start_date1,f1.factor_value as factor_value1,t2.start_date as start_date2,f2.factor_value as factor_value2 ,t3.start_date as start_date3,f3.factor_value as factor_value3
+        from z_contracts t4
+        LEFT JOIN z_contracts_factor f4
+        on t4.id = f4.contract_id
+        LEFT JOIN z_contracts t1
+        on t1.chain_code=t4.chain_code
+        and t1.`status` in ('0','1','7')
+        and t1.contract_type='10'
+        and date_format(t1.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 3 MONTH),'%Y-%m')
+        LEFT JOIN z_contracts_factor f1
+        on f1.contract_id=t1.id
+        and f1.factor_code='T01001'
+        and f1.region_code is NULL
+        and f1.factor_type='02'
+        LEFT JOIN z_contracts t2
+        on t2.chain_code=t4.chain_code
+        and t2.`status` in ('0','1','7')
+        and t2.contract_type='10'
+        and date_format(t2.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 2 MONTH),'%Y-%m')
+        LEFT JOIN z_contracts_factor f2
+        on f2.contract_id=t2.id
+        and f2.factor_code='T01001'
+        and f2.region_code is NULL
+        and f2.factor_type='02'
+        LEFT JOIN z_contracts t3
+        on t3.chain_code=t4.chain_code
+        and t3.`status` in ('0','1','7')
+        and t3.contract_type='10'
+        and date_format(t3.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 1 MONTH),'%Y-%m')
+        LEFT JOIN z_contracts_factor f3
+        on f3.contract_id=t3.id
+        and f3.factor_code='T01001'
+        and f3.region_code is NULL
+        and f3.factor_type='02'
+        where t4.id = #{contractId}
+        and f4.factor_code='T01001'
+        and f4.region_code is NULL
+        and f4.factor_type='02'
+    </select>
     <!-- 事中显差查询接口结束 -->
 
 
