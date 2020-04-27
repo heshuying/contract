@@ -154,6 +154,9 @@ public class ZContracts extends Model<ZContracts> {
     @TableField(exist = false)
     private String targetUpdateTimeStr;
 
+    @TableField(exist = false)
+    private String masterName;//链群主名字
+
 
     @Override
     protected Serializable pkVal() {

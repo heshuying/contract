@@ -33,6 +33,7 @@
         <result column="check_time_str" property="checkTimeStr" />
         <result column="targetUpdateTimeStr" property="targetUpdateTimeStr" />
         <result column="share_money" property="shareMoney"/>
+        <result column="master_name" property="masterName"/>
     </resultMap>
 
     <!-- 体验列表映射结果 -->
@@ -207,10 +208,12 @@
         t.end_date,DATE_FORMAT(t.end_date,'%Y-%m-%d %H:%i:%s') as end_date_str,
         DATE_FORMAT(t.check_time,'%Y-%m-%d %H:%i:%s') as check_time_str,
         t.xiaowei_code,t.create_code,
-        t.create_name,t.create_time,t.org_code,t.org_name,t.org_type,t.group_id,t.open_valid,p.share_money
+        t.create_name,t.create_time,t.org_code,t.org_name,t.org_type,t.group_id,t.open_valid,p.share_money,c.master_name
         from z_contracts t
         LEFT JOIN z_contracts p
         on t.parent_id=p.id
+        LEFT join z_hr_chain_info c
+        on c.chain_code=p.chain_code
         <where>
             t.create_code = #{userCode}
             and t.status in ('1','8')
