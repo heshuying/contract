@@ -974,7 +974,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 Map param = new HashMap();
                 param.put("majorClass" , major.getMajorClass());
                 param.put("subClass" , sub.getSubClass());
-                param.put("createdBy" , sysUser.getEmpSn());
+                param.put("chainMangerNo" , sysUser.getEmpSn());
                 List<VwDmLqDim> chainList = vwDmLqDimDao.selectChainList(param);
 //                List<VwDmLqDim> chainList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
 //                        .eq("major_class" , major.getMajorClass())

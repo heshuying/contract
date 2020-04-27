@@ -153,6 +153,11 @@ public class VwDmLqDim extends Model<VwDmLqDim> {
      */
     private Date lastUpd;
 
+    /**
+     * 链群主工号
+     */
+    private String chainMangerNo;
+
 
     @Override
     protected Serializable pkVal() {

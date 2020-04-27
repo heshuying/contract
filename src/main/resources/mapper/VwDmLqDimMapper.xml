@@ -30,12 +30,13 @@
         <result column="created" property="created" />
         <result column="last_upd_by" property="lastUpdBy" />
         <result column="last_upd" property="lastUpd" />
+        <result column="chain_manger_no" property="chainMangerNo" />
     </resultMap>
 
 
     <select id="selectChainList" parameterType="java.util.Map" resultMap="BaseResultMap">
         select * from vw_dm_lq_dim
-        where major_class=#{majorClass} and sub_class=#{subClass} and created_by=#{createdBy} and chain_name_l not in (
+        where major_class=#{majorClass} and sub_class=#{subClass} and chain_manger_no=#{chainMangerNo} and chain_name_l not in (
         SELECT chain_name from z_hr_chain_info where deleted=0
         )
     </select>
