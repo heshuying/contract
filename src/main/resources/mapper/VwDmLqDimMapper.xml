@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.VwDmLqDimDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.VwDmLqDim">
+        <result column="row_id" property="rowId" />
+        <result column="chain_group_code_l" property="chainGroupCodeL" />
+        <result column="chain_code_l" property="chainCodeL" />
+        <result column="chain_name_l" property="chainNameL" />
+        <result column="major_class" property="majorClass" />
+        <result column="major_value_meaning" property="majorValueMeaning" />
+        <result column="sub_class" property="subClass" />
+        <result column="sub_value_meaning" property="subValueMeaning" />
+        <result column="chain_attr" property="chainAttr" />
+        <result column="chain_value_meaning" property="chainValueMeaning" />
+        <result column="chain_no" property="chainNo" />
+        <result column="short_name" property="shortName" />
+        <result column="custom_ext" property="customExt" />
+        <result column="is_tpt" property="isTpt" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="active_flag" property="activeFlag" />
+        <result column="audit_flag" property="auditFlag" />
+        <result column="chain_code_z" property="chainCodeZ" />
+        <result column="chain_name_z" property="chainNameZ" />
+        <result column="chain_group_code_z" property="chainGroupCodeZ" />
+        <result column="sub_class_manager" property="subClassManager" />
+        <result column="chain_manager" property="chainManager" />
+        <result column="created_by" property="createdBy" />
+        <result column="created" property="created" />
+        <result column="last_upd_by" property="lastUpdBy" />
+        <result column="last_upd" property="lastUpd" />
+        <result column="chain_manger_no" property="chainMangerNo" />
+    </resultMap>
+
+
+    <select id="selectChainList" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from vw_dm_lq_dim
+        where major_class=#{majorClass} and sub_class=#{subClass} and chain_manger_no=#{chainMangerNo} and chain_name_l not in (
+        SELECT chain_name from z_hr_chain_info where deleted=0
+        )
+    </select>
+
+</mapper>

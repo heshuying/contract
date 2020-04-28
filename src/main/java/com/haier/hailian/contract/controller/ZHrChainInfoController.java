@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
@@ -145,27 +146,38 @@ public class ZHrChainInfoController {
     @ApiOperation(value = "保存链群信息")
     public R saveChainInfo(@RequestBody @Validated @ApiParam(value = "保存链群和目标", required = true) ZHrChainInfoDto zHrChainInfoDto) {
         try {
+
             //1.校验一下名字是否重复
             R res = zHrChainInfoService.validateChainName(new ValidateChainNameDTO(zHrChainInfoDto.getChainName()));
 
-            if(!"1".equals(zHrChainInfoDto.getIsModel())){
-                BigDecimal count = new BigDecimal(0);
-                for (XwType3Info xwType3Info:zHrChainInfoDto.getSaveXwType3().getXwType3List()){
-                    count = BigDecimal.valueOf(Double.parseDouble(xwType3Info.getSharePercent())).add(count);
-                }
-                if (count.intValue()>100){
-                    return R.error("分享比例不能大于100%");
-                }
-                if (count.intValue() == 0){
-                    return R.error("分享比例不能为0！");
-                }
-            }
 
 //            if (StringUtils.isBlank(zHrChainInfoDto.getFixedPosition())){
 //                return R.error("链群定位未输入，请输入！");
 //            }
             if (res.get("code").equals(0)){
+
+                if(StringUtils.isEmpty(zHrChainInfoDto.getChainCode())){
+                    return R.error("请选择需要注册的链群!");
+                }
+
+                // 校验比例
+                if(!"1".equals(zHrChainInfoDto.getIsModel())){
+                    BigDecimal count = new BigDecimal(0);
+                    for (XwType3Info xwType3Info:zHrChainInfoDto.getSaveXwType3().getXwType3List()){
+                        count = BigDecimal.valueOf(Double.parseDouble(xwType3Info.getSharePercent())).add(count);
+                    }
+                    if (count.intValue()>100){
+                        return R.error("分享比例不能大于100%");
+                    }
+                    if (count.intValue() == 0){
+                        return R.error("分享比例不能为0！");
+                    }
+                }
+
                 ZHrChainInfoDto z = zHrChainInfoService.saveChainInfo(zHrChainInfoDto);
+                if ("E".equals(z.getCode())){
+                    return R.error("MDM系统返回信息:" + z.getMsg());
+                }
                 if (z==null){
                     return R.error("保存出错了，请稍后重试！");
                 }
@@ -508,6 +520,20 @@ public class ZHrChainInfoController {
     public R getChainExtInfo() {
         try {
             Map<String , Object> map = zHrChainInfoService.getChainExtInfo();
+            return R.ok().put("data",map);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getChainExtInfo,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
+
+    @GetMapping(value = {"/getChainNameList"})
+    @ApiOperation(value = "获取MDM链群列表信息")
+    public R getChainNameList() {
+        try {
+            List<Map> map = zHrChainInfoService.getChainNameList();
             return R.ok().put("data",map);
         } catch (Exception e) {
             log.error("错误发生在ZHrChainInfoController.getChainExtInfo,", e);

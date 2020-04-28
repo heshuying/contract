@@ -1,8 +1,9 @@
 package com.haier.hailian.contract.dao;
 
-import com.haier.hailian.contract.dto.*;
-import com.haier.hailian.contract.entity.ZContractsFactor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.haier.hailian.contract.dto.*;
+import com.haier.hailian.contract.entity.TargetTrend;
+import com.haier.hailian.contract.entity.ZContractsFactor;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -50,4 +51,6 @@ public interface ZContractsFactorDao extends BaseMapper<ZContractsFactor> {
     List<ZContractsFactor> selectGrabInfo(Map<String, Object> map);
 
     List<ZContractsFactor> selectTYGrabInfo(Map<String, Object> map);
+
+    TargetTrend selectChainTargetTrend(int contractId);
 }

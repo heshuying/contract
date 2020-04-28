@@ -54,6 +54,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private ChainCommonService chainCommonService;
     @Resource
     private TMdmChainAttrDao tMdmChainAttrDao;
+    @Resource
+    private VwDmLqDimDao vwDmLqDimDao;
     //hr发版后放开
     //@Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -189,14 +191,14 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         if (StringUtils.isEmpty(name)){
             return R.error("链群名称不能为空，请输入链群名称！");
         }
-        zHrChainInfo.setChainName(name);// 子链群检验
-        List<ZHrChainInfo> childChainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
-        if (childChainNames.size() > 0) {
-            return R.error("链群名称已经存在");
-        }
-        if (!name.contains("链群")) {
-            name = name + "链群";
-        }
+//        zHrChainInfo.setChainName(name);// 子链群检验
+//        List<ZHrChainInfo> childChainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
+//        if (childChainNames.size() > 0) {
+//            return R.error("链群名称已经存在");
+//        }
+//        if (!name.contains("链群")) {
+//            name = name + "链群";
+//        }
         zHrChainInfo.setChainName(name);
         List<ZHrChainInfo> chainNames = zHrChainInfoDao.queryAll(zHrChainInfo);
         if (chainNames.size() > 0) {
@@ -253,25 +255,30 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //hr接口获取编码
         //String chainCode = chainGroupClient.getChainGroupCode(name);
         // MDM获取链群编码
-        CreatechaingroupClientEp clientEp = new CreatechaingroupClientEp();
-        CreateChainGroup chainGroup = clientEp.getCreateChainGroupPt();
-        Holder<String> holder1 = new Holder<String>();
-        Holder<String> holder2 = new Holder<String>();
-        Holder<String> holder3 = new Holder<String>();
-        Holder<String> holder4 = new Holder<String>();
-        chainGroup.process("",name,zHrChainInfoDto.getIn_MAJOR_CLASS(),
-                zHrChainInfoDto.getIn_SUB_CLASS(),zHrChainInfoDto.getIn_CHAIN_ATTR(),
-                zHrChainInfoDto.getIn_SHORT_NAME(),"",sysUser.getEmpSn(),
-                "","",sysUser.getEmpSn()
-                ,holder1,holder2,holder3,holder4);
-        if(!holder1.value.equals("S")){
-            return null;
-        }
-        String chainCode = holder4.value;
+//        CreatechaingroupClientEp clientEp = new CreatechaingroupClientEp();
+//        CreateChainGroup chainGroup = clientEp.getCreateChainGroupPt();
+//        Holder<String> holder1 = new Holder<String>();
+//        Holder<String> holder2 = new Holder<String>();
+//        Holder<String> holder3 = new Holder<String>();
+//        Holder<String> holder4 = new Holder<String>();
+//        chainGroup.process("",name,zHrChainInfoDto.getIn_MAJOR_CLASS(),
+//                zHrChainInfoDto.getIn_SUB_CLASS(),zHrChainInfoDto.getIn_CHAIN_ATTR(),
+//                zHrChainInfoDto.getIn_SHORT_NAME(),"","",
+//                "",sysUser.getEmpSn(),sysUser.getEmpSn()
+//                ,holder1,holder2,holder3,holder4);
+//        if(holder1.value.equals("E")){
+//            zHrChainInfoDto.setCode(holder1.value);
+//            zHrChainInfoDto.setMsg(holder2.value);
+//            return zHrChainInfoDto;
+//        }
+//        String chainCode = holder4.value;
 
-        if (!name.contains("链群")) {
-            name = name + "链群";
-        }
+        // 在excel中获取，暂时不走MDM
+        String chainCode = zHrChainInfoDto.getChainCode();
+
+//        if (!name.contains("链群")) {
+//            name = name + "链群";
+//        }
 
 
         // 主链群
@@ -696,9 +703,9 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
         for(ZHrChainInfo chainInfo : list){
 
-            if(chainInfo.getChainCode().equals("H00022")){
-                continue;
-            }
+//            if(chainInfo.getChainCode().equals("H00022")){
+//                continue;
+//            }
 
             List<ZNodeTargetPercentInfo> nodes = zNodeTargetPercentInfoDao.selectList(
                     new QueryWrapper<ZNodeTargetPercentInfo>()
@@ -936,6 +943,49 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         // 项目大类 + 子项目
         res.put("chainCategory" , resList);
         return res;
+    }
+
+
+
+    @Override
+    public List<Map> getChainNameList() {
+
+        //1获取当前登陆人的平台信息
+        Subject subject = SecurityUtils.getSubject();
+        //获取当前用户
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+
+        List<Map> granpaList = new ArrayList<>();
+        List<VwDmLqDim> majorClassList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
+                .groupBy( "major_class"));
+        for(VwDmLqDim major : majorClassList){
+            Map res1 = new HashMap<>();
+            res1.put("majorCode" , major.getMajorClass());
+            res1.put("majorName" , major.getMajorValueMeaning());
+            List<Map> fatherList = new ArrayList<>();
+            List<VwDmLqDim> subClassList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
+                    .eq("major_class" , major.getMajorClass())
+                    .groupBy( "sub_class"));
+            List<Map> childList = new ArrayList<>();
+            for(VwDmLqDim sub : subClassList){
+                Map res2 = new HashMap<>();
+                res2.put("subCode" , sub.getSubClass());
+                res2.put("subName" , sub.getSubValueMeaning());
+                Map param = new HashMap();
+                param.put("majorClass" , major.getMajorClass());
+                param.put("subClass" , sub.getSubClass());
+                param.put("chainMangerNo" , sysUser.getEmpSn());
+                List<VwDmLqDim> chainList = vwDmLqDimDao.selectChainList(param);
+//                List<VwDmLqDim> chainList = vwDmLqDimDao.selectList(new QueryWrapper<VwDmLqDim>()
+//                        .eq("major_class" , major.getMajorClass())
+//                        .eq("sub_class" , sub.getSubClass()));
+                res2.put("grandChild" , chainList);
+                fatherList.add(res2);
+            }
+            res1.put("child" , fatherList);
+            granpaList.add(res1);
+        }
+        return granpaList;
     }
 
 
