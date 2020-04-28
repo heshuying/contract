@@ -588,7 +588,7 @@
                 z_contracts t1
               WHERE t1.contract_type = '20'
                 AND t1.`status` in ('1','8')
-                AND t1.`xiaowei_code` = node.xw_code
+                AND t1.org_code = node.`node_code`
                 AND t1.`parent_id` = #{contractId}))
           ) t
         <where>
