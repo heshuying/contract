@@ -624,7 +624,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                         if(list == null || list.isEmpty()){
                             continue;
                         }
-                        percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()));
+                        percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()), 2, BigDecimal.ROUND_HALF_UP);
                         for(ZContracts c : list){
                             c.setSharePercent(percent.toString());
                             c.setIsChecked("1");
@@ -658,7 +658,7 @@ public class ContractViewServiceImpl implements ContractViewService {
                     if(list == null || list.isEmpty()){
                         continue;
                     }
-                    percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()));
+                    percent = new BigDecimal(item.getSharePercent()).divide(new BigDecimal(list.size()), 2, BigDecimal.ROUND_HALF_UP);
                     for(ZContracts c : list){
                         c.setSharePercent(percent.toString());
                         c.setIsChecked("1");
