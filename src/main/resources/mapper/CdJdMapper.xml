@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.CdJdDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.CdJd">
+        <id column="id" property="id" />
+        <result column="data_date" property="dataDate" />
+        <result column="cy_code" property="cyCode" />
+        <result column="cy_name" property="cyName" />
+        <result column="jd_code" property="jdCode" />
+        <result column="jd_name" property="jdName" />
+        <result column="jd_name_eazy" property="jdNameEazy" />
+        <result column="jd_type_code" property="jdTypeCode" />
+        <result column="jd_type" property="jdType" />
+        <result column="x" property="x" />
+        <result column="y" property="y" />
+        <result column="active_flag" property="activeFlag" />
+        <result column="create_date" property="createDate" />
+        <result column="create_by" property="createBy" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_by" property="updateBy" />
+        <result column="bz" property="bz" />
+        <result column="xw_type_code" property="xwTypeCode" />
+        <result column="xw_type" property="xwType" />
+        <result column="xw_code" property="xwCode" />
+        <result column="xw_name" property="xwName" />
+        <result column="xw_master_code" property="xwMasterCode" />
+        <result column="xw_master_name" property="xwMasterName" />
+        <result column="jd_master_code" property="jdMasterCode" />
+        <result column="jd_master_name" property="jdMasterName" />
+    </resultMap>
+
+    <select id="selectGrabStarMap" parameterType="map" resultMap="BaseResultMap">
+
+        SELECT
+            b.*
+        FROM
+            z_contracts a
+        LEFT JOIN cd_jd b ON a.org_code = b.jd_code
+        WHERE
+            a.`status` IN (1, 8)
+        AND a.contract_type != 10
+        AND a.chain_code = #{chainCode}
+        AND a.parent_id = #{contractId}
+        GROUP BY
+            a.org_code;
+
+    </select>
+
+</mapper>

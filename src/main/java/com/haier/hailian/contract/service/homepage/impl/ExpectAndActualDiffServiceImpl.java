@@ -1,18 +1,13 @@
 package com.haier.hailian.contract.service.homepage.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.haier.hailian.contract.dao.VJdxpDao;
-import com.haier.hailian.contract.dao.ZContractsDao;
-import com.haier.hailian.contract.dao.ZContractsFactorDao;
-import com.haier.hailian.contract.dao.ZNodeTargetPercentInfoDao;
+import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.homepage.ExpectAndActualDiffDto;
-import com.haier.hailian.contract.entity.VJdxp;
-import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.entity.ZContractsFactor;
-import com.haier.hailian.contract.entity.ZNodeTargetPercentInfo;
+import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.homepage.ExpectAndActualDiffService;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +28,8 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
     private ZContractsFactorDao zContractsFactorDao;
     @Autowired
     private VJdxpDao vJdxpDao;
+    @Autowired
+    private CdJdDao cdJdDao;
 
 
     @Override
@@ -196,7 +193,13 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
 
     @Override
     public Map<String, Object> grabStarMap(ExpectAndActualDiffDto expectAndActualDiffDto) {
-        return null;
+        Map<String, Object> res = new HashMap<>();
+        Map<String , Object> exp = new HashMap<>();
+        exp.put("chainCode" , expectAndActualDiffDto.getChainCode());
+        exp.put("contractId" ,expectAndActualDiffDto.getContractId());
+        List<CdJd> list = cdJdDao.selectGrabStarMap(exp);
+        res.put("data" , list);
+        return res;
     }
 
 
