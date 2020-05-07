@@ -263,6 +263,44 @@ public class ZGamblingContractsController {
         return R.ok().put("data",list);
     }
 
+    @GetMapping(value = "/exportGamblingContract",headers="Accept=application/octet-stream")
+    @ApiOperation(value = "举单详情导出")
+    public void exportGamblingContract(@RequestParam int contractId,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        gamblingContractsService.exportGamblingContract(contractId,request,response);
+    }
+
+
+    @GetMapping(value = "/exportChainProduct",headers="Accept=application/octet-stream")
+    @ApiOperation(value = "下载爆款模板")
+    public void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        gamblingContractsService.exportChainProduct(request,response);
+    }
+
+    @PostMapping(value = {"/importChainProduct"})
+    @ApiOperation(value = "导入链群爆款")
+    public R importChainProduct(MultipartFile file) throws Exception{
+        if (file.isEmpty()) {
+            return R.error().put("msg","文件为空");
+        }
+        InputStream inputStream = file.getInputStream();
+        List<ChainProductDTO> list = gamblingContractsService.getChainProductListByExcel(inputStream, file.getOriginalFilename());
+        inputStream.close();
+        return R.ok().put("data",list);
+    }
+
+    @PostMapping(value = {"/saveChainProduct"})
+    @ApiOperation(value = "链群爆款保存")
+    public R saveChainProduct(@RequestBody List<ChainProductDTO> list) {
+        try {
+            gamblingContractsService.saveChainProduct(list);
+            return R.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请稍后重试");
+        }
+
+    }
+
 
 }
 

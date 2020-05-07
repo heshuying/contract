@@ -845,6 +845,100 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return list;
     }
 
+    @Override
+    public void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response) {
+        GamblingContractDTO contract = this.selectContractById(contractId);
+        Workbook workbook = new HSSFWorkbook();
+    }
+
+    @Override
+    public void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List list = new ArrayList<>();
+        Workbook workbook = new HSSFWorkbook();
+        ExcelUtil.buildSheet(workbook, "链群爆款",list, TEMPLATE_TITLE_CHAIN_PRODUCT);
+        ByteArrayOutputStream bot = new ByteArrayOutputStream();
+        workbook.write(bot);
+        ExcelUtil.export(request,response,workbook,"链群爆款.xls");
+    }
+
+    @Override
+    public List<ChainProductDTO> getChainProductListByExcel(InputStream inputStream, String originalFilename) throws Exception {
+        Sheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+        List list = new ArrayList<>();
+        //创建Excel工作薄
+        Workbook work = this.getWorkbook(inputStream, originalFilename);
+        if (null == work) {
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
+        }
+        sheet = work.getSheetAt(0);
+        if (sheet == null) {
+            throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
+        }
+        for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
+            row = sheet.getRow(j);
+            if (row == null ) {
+                continue;
+            }
+            if(row.getFirstCellNum() == j){
+                String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
+                String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
+                String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
+                String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
+                String title5 = row.getCell(4)==null?"":row.getCell(4).getStringCellValue();
+                String title6 = row.getCell(5)==null?"":row.getCell(5).getStringCellValue();
+                if("链群编码".equals(title1)&&"月份（例202005）".equals(title2)&&"场景名称".equals(title3)&&"系列名称".equals(title4)&&"型号名称".equals(title5)&&"型号编码".equals(title6)){
+                    continue;
+                }else {
+                    throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
+                }
+            }
+            ChainProductDTO dto = new ChainProductDTO();
+            for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
+                cell = row.getCell(y);
+                if (cell != null) {
+                    if (y == 0) dto.setChainCode(cell.getStringCellValue());
+                    if (y == 1) dto.setMonth((cell.getNumericCellValue()+"").substring(0,6));
+                    if (y == 2) dto.setSceneName(cell.getStringCellValue());
+                    if (y == 3) dto.setProductSeries(cell.getStringCellValue());
+                    if (y == 4) dto.setModelName(cell.getStringCellValue());
+                    if (y == 5) dto.setModelCode(cell.getStringCellValue());
+                }
+            }
+            list.add(dto);
+        }
+
+        work.close();
+        return list;
+    }
+
+    @Override
+    public void saveChainProduct(List<ChainProductDTO> list) {
+        String chainCode="";
+        String month="";
+        if(null != list && list.size()>0){
+            chainCode = list.get(0).getChainCode();
+            month = list.get(0).getMonth();
+            //校验链群编码是否存在
+            List<ZHrChainInfo> chainInfos = hrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("chain_code", chainCode).eq("deleted", "0"));
+            if(null == chainInfos || chainInfos.size()==0) throw new RException("链群编码不存在",Constant.CODE_VALIDFAIL);
+            productChainDao.delete(new QueryWrapper<ZProductChain>().eq("chain_code",chainCode).eq("month",month));
+            for(ChainProductDTO dto:list){
+                ZProductChain productChain = new ZProductChain();
+                if(!chainCode.equals(dto.getChainCode())) throw new RException("链群编码不一致",Constant.CODE_VALIDFAIL);
+                productChain.setChainCode(dto.getChainCode());
+                productChain.setSceneName(dto.getSceneName());
+                productChain.setMonth(dto.getMonth());
+                productChain.setProductSeries(dto.getProductSeries());
+                productChain.setModelCode(dto.getModelCode());
+                productChain.setModelName(dto.getModelName());
+                productChainDao.insert(productChain);
+            }
+        }
+
+    }
+
     //校验excle格式
     public Workbook getWorkbook(InputStream inStr, String fileName) throws Exception {
         Workbook workbook = null;
@@ -875,6 +969,13 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             new ExcelUtil.CellHeadField("月度销量(台)", "")
     };
 
-
+    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_CHAIN_PRODUCT = {
+            new ExcelUtil.CellHeadField("链群编码", ""),
+            new ExcelUtil.CellHeadField("月份（例202005）", ""),
+            new ExcelUtil.CellHeadField("场景名称", ""),
+            new ExcelUtil.CellHeadField("系列名称", ""),
+            new ExcelUtil.CellHeadField("型号名称", ""),
+            new ExcelUtil.CellHeadField("型号编码", "")
+    };
 
 }

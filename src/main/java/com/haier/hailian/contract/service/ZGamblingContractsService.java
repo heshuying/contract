@@ -48,4 +48,12 @@ public interface ZGamblingContractsService {
     List<ContractXwType3DTO> selectXwType3(String chainCode);
 
     List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO);
+
+    void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response);
+
+    void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException;
+
+    List<ChainProductDTO> getChainProductListByExcel(InputStream inputStream, String originalFilename) throws Exception;
+
+    void saveChainProduct(List<ChainProductDTO> list);
 }
