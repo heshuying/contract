@@ -852,8 +852,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void exportChainProduct(String chainCode,String month,HttpServletRequest request, HttpServletResponse response) throws IOException {
         List list = new ArrayList<>();
+        list = productChainDao.selectList(new QueryWrapper<ZProductChain>().eq("chain_code",chainCode).eq("month",month));
         Workbook workbook = new HSSFWorkbook();
         ExcelUtil.buildSheet(workbook, "链群爆款",list, TEMPLATE_TITLE_CHAIN_PRODUCT);
         ByteArrayOutputStream bot = new ByteArrayOutputStream();
@@ -898,12 +899,23 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                 cell = row.getCell(y);
                 if (cell != null) {
-                    if (y == 0) dto.setChainCode(cell.getStringCellValue());
-                    if (y == 1) dto.setMonth((cell.getNumericCellValue()+"").substring(0,6));
-                    if (y == 2) dto.setSceneName(cell.getStringCellValue());
-                    if (y == 3) dto.setProductSeries(cell.getStringCellValue());
-                    if (y == 4) dto.setModelName(cell.getStringCellValue());
-                    if (y == 5) dto.setModelCode(cell.getStringCellValue());
+                    try{
+                        CellType cellType = cell.getCellTypeEnum();
+                        if (y == 0) dto.setChainCode(cell.getStringCellValue());
+                        if (y == 1) {
+                            if(CellType.NUMERIC.equals(cellType)){
+                                dto.setMonth((cell.getNumericCellValue()+"").substring(0,6));
+                            }else if(CellType.STRING.equals(cellType)){
+                                dto.setMonth(cell.getStringCellValue());
+                            }
+                        }
+                        if (y == 2) dto.setSceneName(cell.getStringCellValue());
+                        if (y == 3) dto.setProductSeries(cell.getStringCellValue());
+                        if (y == 4) dto.setModelName(cell.getStringCellValue());
+                        if (y == 5) dto.setModelCode(cell.getStringCellValue());
+                    }catch (IllegalStateException e){
+                        throw new RException("第"+(j+1)+"行第"+(y+1)+"列,格式不正确",Constant.CODE_VALIDFAIL);
+                    }
                 }
             }
             list.add(dto);
@@ -970,12 +982,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     };
 
     private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_CHAIN_PRODUCT = {
-            new ExcelUtil.CellHeadField("链群编码", ""),
-            new ExcelUtil.CellHeadField("月份（例202005）", ""),
-            new ExcelUtil.CellHeadField("场景名称", ""),
-            new ExcelUtil.CellHeadField("系列名称", ""),
-            new ExcelUtil.CellHeadField("型号名称", ""),
-            new ExcelUtil.CellHeadField("型号编码", "")
+            new ExcelUtil.CellHeadField("链群编码", "chainCode"),
+            new ExcelUtil.CellHeadField("月份（例202005）", "month"),
+            new ExcelUtil.CellHeadField("场景名称", "sceneName"),
+            new ExcelUtil.CellHeadField("系列名称", "productSeries"),
+            new ExcelUtil.CellHeadField("型号名称", "modelName"),
+            new ExcelUtil.CellHeadField("型号编码", "modelCode")
     };
 
 }

@@ -51,7 +51,7 @@ public interface ZGamblingContractsService {
 
     void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response);
 
-    void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    void exportChainProduct(String chainCode,String month,HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     List<ChainProductDTO> getChainProductListByExcel(InputStream inputStream, String originalFilename) throws Exception;
 

@@ -272,8 +272,8 @@ public class ZGamblingContractsController {
 
     @GetMapping(value = "/exportChainProduct",headers="Accept=application/octet-stream")
     @ApiOperation(value = "下载爆款模板")
-    public void exportChainProduct(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        gamblingContractsService.exportChainProduct(request,response);
+    public void exportChainProduct(@RequestParam String chainCode,@RequestParam String month,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        gamblingContractsService.exportChainProduct(chainCode,month,request,response);
     }
 
     @PostMapping(value = {"/importChainProduct"})
