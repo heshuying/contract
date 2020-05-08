@@ -72,6 +72,22 @@ public class EventMiddleController {
         return R.ok().put("data",shareDTO);
     }
 
+    @PostMapping(value = {"/selectChainShareTrend"})
+    @ApiOperation(value = "事中显差查询链群增值分享趋势")
+    public R selectChainShareTrend(@RequestBody EventMiddleDTO dto) {
+
+        List<EventMiddleTrendDTO> list = eventMiddleService.selectChainShareTrend(dto);
+        return R.ok().put("data",list);
+    }
+
+    @PostMapping(value = {"/selectCdShare"})
+    @ApiOperation(value = "事中显差查询创单链群增值分享")
+    public R selectCdShare(@RequestBody EventMiddleDTO dto) {
+
+        List<EventMiddleCdDTO> list = eventMiddleService.selectCdShare(dto);
+        return R.ok().put("data",list);
+    }
+
 
 
 }

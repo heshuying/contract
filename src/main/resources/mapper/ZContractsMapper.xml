@@ -933,4 +933,28 @@
                     parent_id=t.id and contract_type='10'
                     )
     </select>
+
+
+    <!-- 事中显差查询接口开始 -->
+    <select id="selectChainShareTrend" resultType="com.haier.hailian.contract.entity.TargetTrend">
+        select t4.start_date,t4.share_money as factor_value,t1.start_date as start_date1,t1.share_money as factor_value1,t2.start_date as start_date2,t2.share_money as factor_value2 ,t3.start_date as start_date3,t3.share_money as factor_value3
+        from z_contracts t4
+        LEFT JOIN z_contracts t1
+        on t1.chain_code=t4.chain_code
+        and t1.`status` in ('0','1','7')
+        and t1.contract_type='10'
+        and date_format(t1.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 3 MONTH),'%Y-%m')
+        LEFT JOIN z_contracts t2
+        on t2.chain_code=t4.chain_code
+        and t2.`status` in ('0','1','7')
+        and t2.contract_type='10'
+        and date_format(t2.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 2 MONTH),'%Y-%m')
+        LEFT JOIN z_contracts t3
+        on t3.chain_code=t4.chain_code
+        and t3.`status` in ('0','1','7')
+        and t3.contract_type='10'
+        and date_format(t3.start_date,'%Y-%m')=date_format(DATE_SUB(t4.start_date, INTERVAL 1 MONTH),'%Y-%m')
+        where t4.id = #{contractId}
+    </select>
+    <!-- 事中显差查询接口结束 -->
 </mapper>

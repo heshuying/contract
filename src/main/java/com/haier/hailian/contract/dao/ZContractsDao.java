@@ -3,6 +3,7 @@ package com.haier.hailian.contract.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyGrabListQueryDto;
+import com.haier.hailian.contract.entity.TargetTrend;
 import com.haier.hailian.contract.entity.ZContracts;
 
 import java.util.Date;
@@ -149,4 +150,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
 
     //查询复核截止时间将要截止，需要邮件提醒复核的合约
     List<ZContracts> selectContractsForCheckWarning();
+
+    TargetTrend selectChainShareTrend(int contractId);
 }

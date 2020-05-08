@@ -100,4 +100,35 @@ public class EventMiddleServiceImpl implements EventMiddleService{
 
     }
 
+    @Override
+    public List<EventMiddleTrendDTO> selectChainShareTrend(EventMiddleDTO dto) {
+        SimpleDateFormat sf = new SimpleDateFormat("MM");
+        TargetTrend targetTrend = contractsDao.selectChainShareTrend(dto.getContractId());
+        Date startDate = targetTrend.getStartDate();
+        List<EventMiddleTrendDTO> list = new ArrayList<>();
+        EventMiddleTrendDTO trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue1());
+        trendDTO.setMonth(targetTrend.getStartDate1()==null? sf.format(DateFormatUtil.addDateMonths(startDate,-3)):sf.format(targetTrend.getStartDate1()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue2());
+        trendDTO.setMonth(targetTrend.getStartDate2()==null?sf.format(DateFormatUtil.addDateMonths(startDate,-2)):sf.format(targetTrend.getStartDate2()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue3());
+        trendDTO.setMonth(targetTrend.getStartDate3()==null?sf.format(DateFormatUtil.addDateMonths(startDate,-1)):sf.format(targetTrend.getStartDate3()));
+        list.add(trendDTO);
+        trendDTO = new EventMiddleTrendDTO();
+        trendDTO.setTarget(targetTrend.getFactorValue());
+        trendDTO.setMonth(targetTrend.getStartDate()==null?"":sf.format(targetTrend.getStartDate()));
+        list.add(trendDTO);
+        return list;
+    }
+
+    @Override
+    public List<EventMiddleCdDTO> selectCdShare(EventMiddleDTO dto) {
+        List<EventMiddleCdDTO> resultList = contractsFactorDao.selectCdTarget(dto.getContractId());
+        return resultList;
+    }
+
 }

@@ -16,6 +16,8 @@ public class EventMiddleCdDTO {
     private String userName;
     private String pjM;
     private String pjY;
+    private String shareSpace;
+    private String sharePercent;
 
     /** 目标列表*/
     private List<TargetViewDTO> targetList = new ArrayList<>();

@@ -192,7 +192,7 @@
     <resultMap id="cdGrabResultPlan" type="com.haier.hailian.contract.dto.ReservePlanDetailDTO">
     </resultMap>
     <select id="selectCdTarget" resultMap="cdTargetResult">
-        select t.id as grabId,t.create_name as userName,o.littleXwCode,o.littleXwName,v.PJ_M,v.PJ_Y
+        select t.id as grabId,t.create_name as userName,o.littleXwCode,o.littleXwName,v.PJ_M,v.PJ_Y,t.share_space,t.share_percent
         from z_contracts t
         LEFT JOIN t_ods_minbu o
         on t.org_code=o.littleXwCode
