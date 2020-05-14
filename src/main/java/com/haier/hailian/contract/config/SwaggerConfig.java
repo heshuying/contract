@@ -65,7 +65,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(basePackage))
                 .paths(PathSelectors.any())
-                .build().globalOperationParameters(pars);
+                .build().globalOperationParameters(pars)
+                .enable(enable);
         return docket;
     }
 

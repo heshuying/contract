@@ -56,7 +56,7 @@ logging:
 
  # swagger 配置
 swagger:
-  enable: true
+  enable: false
   basePackage: com.haier.hailian.contract
   info:
     title: 增值分享API文档
