@@ -1,10 +1,7 @@
 package com.haier.hailian.contract.quartz;
 
 import com.haier.hailian.contract.entity.ZContracts;
-import com.haier.hailian.contract.service.ContractViewService;
-import com.haier.hailian.contract.service.GrabService;
-import com.haier.hailian.contract.service.ZReservePlanTeamworkService;
-import com.haier.hailian.contract.service.ZWaringPeriodConfigService;
+import com.haier.hailian.contract.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,8 @@ public class ZContractsQuartz {
     private ZWaringPeriodConfigService zWaringPeriodConfigService;
     @Autowired
     private ContractViewService contractViewService;
+    @Autowired
+    private ZHrChainInfoService zHrChainInfoService;
 
     /**
      * 每天零点刷新合约状态
@@ -104,6 +103,17 @@ public class ZContractsQuartz {
         log.info("【同步ods_minbu最新数据到node表开始】");
         zWaringPeriodConfigService.quartzMinbuListByXwType3();
         log.info("【同步ods_minbu最新数据到node表结束】");
+    }
+
+
+    /**
+     * 同步ods_minbu体验最新数据到node表  两小时一次
+     */
+    @Scheduled(cron="0 0 */2 * * ?")
+    public void quartzSyncTY(){
+        log.info("【同步ods_minbu最新体验数据到node表开始】");
+        zHrChainInfoService.updateChainTYInfo();
+        log.info("【同步ods_minbu最新体验数据到node表结束】");
     }
 
     /**
