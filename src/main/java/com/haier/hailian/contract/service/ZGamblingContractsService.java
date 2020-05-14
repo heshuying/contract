@@ -49,7 +49,7 @@ public interface ZGamblingContractsService {
 
     List<ZContracts> selectAllGrabContract(QueryContractListDTO queryDTO);
 
-    void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response);
+    void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response)  throws IOException;
 
     void exportChainProduct(String chainCode,String month,HttpServletRequest request, HttpServletResponse response) throws IOException;
 

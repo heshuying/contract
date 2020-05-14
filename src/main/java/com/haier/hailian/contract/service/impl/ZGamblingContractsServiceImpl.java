@@ -846,9 +846,376 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportGamblingContract(int contractId, HttpServletRequest request, HttpServletResponse response)  throws IOException{
         GamblingContractDTO contract = this.selectContractById(contractId);
         Workbook workbook = new HSSFWorkbook();
+        CellStyle contentCellStyle = ExcelUtil.getContentCellStyle(workbook);
+        CellStyle headerCellStyle = ExcelUtil.getHeaderCellStyle(workbook);
+        Sheet sheet = workbook.createSheet(contract.getContractName());
+        for(int i=0;i<6;i++){
+            sheet.setColumnWidth(i,5000);
+        }
+        int rowNum = 0;
+        Row row1 = sheet.createRow(0);
+        rowNum++;
+        Cell cell = row1.createCell(0);
+        cell.setCellValue("合约名称");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(1);
+        cell.setCellValue("合约开始日期");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(2);
+        cell.setCellValue("合约结束日期");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(3);
+        cell.setCellValue("合约截止抢入日期");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(4);
+        cell.setCellValue("链群主复核截止日期");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(5);
+        cell.setCellValue("链群分享空间");
+        cell.setCellStyle(headerCellStyle);
+        row1 = sheet.createRow(rowNum);
+        rowNum++;
+        cell = row1.createCell(0);
+        cell.setCellValue(contract.getContractName());
+        cell.setCellStyle(contentCellStyle);
+        cell = row1.createCell(1);
+        cell.setCellValue(contract.getStartDate());
+        cell.setCellStyle(contentCellStyle);
+        cell = row1.createCell(2);
+        cell.setCellValue(contract.getEndDate());
+        cell.setCellStyle(contentCellStyle);
+        cell = row1.createCell(3);
+        cell.setCellValue(contract.getJoinTime());
+        cell.setCellStyle(contentCellStyle);
+        cell = row1.createCell(4);
+        cell.setCellValue(contract.getCheckTime());
+        cell.setCellStyle(contentCellStyle);
+        cell = row1.createCell(5);
+        cell.setCellValue(contract.getShareSpace()+"");
+        cell.setCellStyle(contentCellStyle);
+        //链群目标
+        List<ChainGroupTargetDTO> chainGroupTargetList = contract.getChainGroupTargetList();
+        row1 = sheet.createRow(rowNum);
+        rowNum++;
+        cell = row1.createCell(0);
+        cell.setCellValue("链群目标");
+        cell.setCellStyle(headerCellStyle);
+        row1 = sheet.createRow(rowNum);
+        rowNum++;
+        cell = row1.createCell(0);
+        cell.setCellValue("目标名称");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(1);
+        cell.setCellValue("底线目标");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(2);
+        cell.setCellValue("E2E目标");
+        cell.setCellStyle(headerCellStyle);
+        cell = row1.createCell(3);
+        cell.setCellValue("举单目标");
+        cell.setCellStyle(headerCellStyle);
+        for(ChainGroupTargetDTO chaiTargetDTO:chainGroupTargetList){
+            row1 = sheet.createRow(rowNum);
+            rowNum++;
+            cell = row1.createCell(0);
+            cell.setCellStyle(contentCellStyle);
+            cell.setCellValue(chaiTargetDTO.getTargetName());
+            cell = row1.createCell(1);
+            cell.setCellStyle(contentCellStyle);
+            cell.setCellValue(chaiTargetDTO.getBottom());
+            cell = row1.createCell(2);
+            cell.setCellStyle(contentCellStyle);
+            cell.setCellValue(chaiTargetDTO.getE2E());
+            cell = row1.createCell(3);
+            cell.setCellStyle(contentCellStyle);
+            cell.setCellValue(chaiTargetDTO.getGrab());
+        }
+        //42中心目标
+        List<MarketTargetDTO> marketTargetList = contract.getMarketTargetList();
+        if(null != marketTargetList && marketTargetList.size() > 0){
+            row1 = sheet.createRow(rowNum);
+            rowNum++;
+            cell = row1.createCell(0);
+            cell.setCellValue("中心名称");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(1);
+            cell.setCellValue("最小作战单元");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(2);
+            cell.setCellValue("收入");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(3);
+            cell.setCellValue("高端占比");
+            cell.setCellStyle(headerCellStyle);
+            for(MarketTargetDTO marketTargetDTO:marketTargetList){
+                row1 = sheet.createRow(rowNum);
+                rowNum++;
+                cell = row1.createCell(0);
+                cell.setCellStyle(contentCellStyle);
+                cell.setCellValue(marketTargetDTO.getXwName());
+                cell = row1.createCell(1);
+                cell.setCellStyle(contentCellStyle);
+                cell.setCellValue(marketTargetDTO.getNodeName());
+                List<MarketTargetDTO2> targetList = marketTargetDTO.getTargetList();
+                for(MarketTargetDTO2 targetDTO2:targetList){
+                    if("T01001".equals(targetDTO2.getTargetCode())){
+                        cell = row1.createCell(2);
+                        cell.setCellStyle(contentCellStyle);
+                        cell.setCellValue(targetDTO2.getTargetValue());
+                    }
+                    if("T03001".equals(targetDTO2.getTargetCode())){
+                        cell = row1.createCell(3);
+                        cell.setCellStyle(contentCellStyle);
+                        cell.setCellValue(targetDTO2.getTargetValue());
+                    }
+                }
+            }
+        }
+        //爆款目标
+        List<ContractProductDTO> productList = contract.getProductList();
+        if(null != productList && productList.size() > 0){
+            row1 = sheet.createRow(rowNum);
+            rowNum++;
+            cell = row1.createCell(0);
+            cell.setCellValue("场景");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(1);
+            cell.setCellValue("系列名称");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(2);
+            cell.setCellValue("单");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(3);
+            cell.setCellValue("年度");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(4);
+            cell.setCellValue("月度");
+            cell.setCellStyle(headerCellStyle);
+            for(ContractProductDTO productDTO:productList){
+                String sceneName = productDTO.getSceneName();
+                String productSeries = productDTO.getProductSeries();
+                List<ProductTargetDTO> targetList = productDTO.getTargetList();
+                for(ProductTargetDTO targetDTO:targetList){
+                    row1 = sheet.createRow(rowNum);
+                    rowNum++;
+                    cell = row1.createCell(0);
+                    cell.setCellStyle(contentCellStyle);
+                    cell.setCellValue(sceneName);
+                    cell = row1.createCell(1);
+                    cell.setCellStyle(contentCellStyle);
+                    cell.setCellValue(productSeries);
+                    cell = row1.createCell(2);
+                    cell.setCellStyle(contentCellStyle);
+                    cell.setCellValue(targetDTO.getTargetName());
+                    cell = row1.createCell(3);
+                    cell.setCellStyle(contentCellStyle);
+                    cell.setCellValue(targetDTO.getQtyYear()+"");
+                    cell = row1.createCell(4);
+                    cell.setCellStyle(contentCellStyle);
+                    cell.setCellValue(targetDTO.getQtyMonth()+"");
+                }
+            }
+        }
+        //资源类型
+        List<ContractXwType3DTO> xwType3List = contract.getXwType3List();
+        if(null != xwType3List && xwType3List.size() > 0){
+            row1 = sheet.createRow(rowNum);
+            rowNum++;
+            cell = row1.createCell(0);
+            cell.setCellValue("资源类型名称");
+            cell.setCellStyle(headerCellStyle);
+            cell = row1.createCell(1);
+            cell.setCellValue("所需最小作战单元(个)");
+            cell.setCellStyle(headerCellStyle);
+            for(ContractXwType3DTO xwType3DTO:xwType3List){
+                row1 = sheet.createRow(rowNum);
+                rowNum++;
+                cell = row1.createCell(0);
+                cell.setCellStyle(contentCellStyle);
+                cell.setCellValue(xwType3DTO.getXwType3());
+                cell = row1.createCell(1);
+                cell.setCellStyle(contentCellStyle);
+                cell.setCellValue(xwType3DTO.getInputNumber());
+            }
+        }
+        //子合约
+        List<ChildTargetDTO> children = contract.getChildren();
+        if(null != children && children.size()>0){
+           for(ChildTargetDTO childTargetDTO:children){
+               sheet = workbook.createSheet(childTargetDTO.getChildChainName());
+               for(int i=0;i<6;i++){
+                   sheet.setColumnWidth(i,5000);
+               }
+               rowNum = 0;
+               row1 = sheet.createRow(0);
+               rowNum++;
+               cell = row1.createCell(0);
+               cell.setCellStyle(headerCellStyle);
+               cell.setCellValue("合约名称");
+               cell = row1.createCell(1);
+               cell.setCellStyle(headerCellStyle);
+               cell.setCellValue("链群分享空间");
+               row1 = sheet.createRow(1);
+               rowNum++;
+               cell = row1.createCell(0);
+               cell.setCellStyle(contentCellStyle);
+               cell.setCellValue(childTargetDTO.getChildChainName());
+               cell = row1.createCell(1);
+               cell.setCellStyle(contentCellStyle);
+               cell.setCellValue(childTargetDTO.getShareSpace()+"");
+               //子链群的链群目标
+               List<ChainGroupTargetDTO> childTargetList = childTargetDTO.getChildTargetList();
+               row1 = sheet.createRow(rowNum);
+               rowNum++;
+               cell = row1.createCell(0);
+               cell.setCellValue("链群目标");
+               cell.setCellStyle(headerCellStyle);
+               row1 = sheet.createRow(rowNum);
+               rowNum++;
+               cell = row1.createCell(0);
+               cell.setCellValue("目标名称");
+               cell.setCellStyle(headerCellStyle);
+               cell = row1.createCell(1);
+               cell.setCellValue("底线目标");
+               cell.setCellStyle(headerCellStyle);
+               cell = row1.createCell(2);
+               cell.setCellValue("E2E目标");
+               cell.setCellStyle(headerCellStyle);
+               cell = row1.createCell(3);
+               cell.setCellValue("举单目标");
+               cell.setCellStyle(headerCellStyle);
+               for(ChainGroupTargetDTO childGroupTargetDTO:childTargetList){
+                   row1 = sheet.createRow(rowNum);
+                   rowNum++;
+                   cell = row1.createCell(0);
+                   cell.setCellValue(childGroupTargetDTO.getTargetName());
+                   cell.setCellStyle(contentCellStyle);
+                   cell = row1.createCell(1);
+                   cell.setCellStyle(contentCellStyle);
+                   cell.setCellValue(childGroupTargetDTO.getBottom());
+                   cell = row1.createCell(2);
+                   cell.setCellStyle(contentCellStyle);
+                   cell.setCellValue(childGroupTargetDTO.getE2E());
+                   cell = row1.createCell(3);
+                   cell.setCellStyle(contentCellStyle);
+                   cell.setCellValue(childGroupTargetDTO.getGrab());
+               }
+               //子链群的42中心目标
+               List<MarketTargetDTO> childMarketList = childTargetDTO.getChildMarketList();
+               if(null != childMarketList && childMarketList.size() > 0){
+                   row1 = sheet.createRow(rowNum);
+                   rowNum++;
+                   cell = row1.createCell(0);
+                   cell.setCellStyle(headerCellStyle);
+                   cell.setCellValue("中心名称");
+                   cell = row1.createCell(1);
+                   cell.setCellValue("最小作战单元");
+                   cell.setCellStyle(headerCellStyle);
+                   cell = row1.createCell(2);
+                   cell.setCellValue("收入");
+                   cell.setCellStyle(headerCellStyle);
+                   cell = row1.createCell(3);
+                   cell.setCellValue("高端占比");
+                   cell.setCellStyle(headerCellStyle);
+                   for(MarketTargetDTO marketTargetDTO:childMarketList){
+                       row1 = sheet.createRow(rowNum);
+                       rowNum++;
+                       cell = row1.createCell(0);
+                       cell.setCellValue(marketTargetDTO.getXwName());
+                       cell.setCellStyle(contentCellStyle);
+                       cell = row1.createCell(1);
+                       cell.setCellStyle(contentCellStyle);
+                       cell.setCellValue(marketTargetDTO.getNodeName());
+                       List<MarketTargetDTO2> targetList = marketTargetDTO.getTargetList();
+                       for(MarketTargetDTO2 targetDTO2:targetList){
+                           if("T01001".equals(targetDTO2.getTargetCode())){
+                               cell = row1.createCell(2);
+                               cell.setCellValue(targetDTO2.getTargetValue());
+                               cell.setCellStyle(contentCellStyle);
+                           }
+                           if("T03001".equals(targetDTO2.getTargetCode())){
+                               cell = row1.createCell(3);
+                               cell.setCellValue(targetDTO2.getTargetValue());
+                               cell.setCellStyle(contentCellStyle);
+                           }
+                       }
+                   }
+               }
+               //子链群的爆款目标
+               List<ContractProductDTO> childProductList = childTargetDTO.getChildProductList();
+               if(null != childProductList && childProductList.size() > 0){
+                   row1 = sheet.createRow(rowNum);
+                   rowNum++;
+                   cell = row1.createCell(0);
+                   cell.setCellStyle(headerCellStyle);
+                   cell.setCellValue("场景");
+                   cell = row1.createCell(1);
+                   cell.setCellValue("系列名称");
+                   cell.setCellStyle(headerCellStyle);
+                   cell = row1.createCell(2);
+                   cell.setCellValue("单");
+                   cell.setCellStyle(headerCellStyle);
+                   cell = row1.createCell(3);
+                   cell.setCellValue("年度");
+                   cell.setCellStyle(headerCellStyle);
+                   cell = row1.createCell(4);
+                   cell.setCellValue("月度");
+                   cell.setCellStyle(headerCellStyle);
+                   for(ContractProductDTO productDTO:childProductList){
+                       String sceneName = productDTO.getSceneName();
+                       String productSeries = productDTO.getProductSeries();
+                       List<ProductTargetDTO> targetList = productDTO.getTargetList();
+                       for(ProductTargetDTO targetDTO:targetList){
+                           row1 = sheet.createRow(rowNum);
+                           rowNum++;
+                           cell = row1.createCell(0);
+                           cell.setCellValue(sceneName);
+                           cell.setCellStyle(contentCellStyle);
+                           cell = row1.createCell(1);
+                           cell.setCellStyle(contentCellStyle);
+                           cell.setCellValue(productSeries);
+                           cell = row1.createCell(2);
+                           cell.setCellStyle(contentCellStyle);
+                           cell.setCellValue(targetDTO.getTargetName());
+                           cell = row1.createCell(3);
+                           cell.setCellStyle(contentCellStyle);
+                           cell.setCellValue(targetDTO.getQtyYear()+"");
+                           cell = row1.createCell(4);
+                           cell.setCellStyle(contentCellStyle);
+                           cell.setCellValue(targetDTO.getQtyMonth()+"");
+                       }
+                   }
+               }
+               //子链群的资源类型
+               List<ContractXwType3DTO> childXwType3List = childTargetDTO.getChildXwType3List();
+               if(null != childXwType3List && childXwType3List.size() > 0){
+                   row1 = sheet.createRow(rowNum);
+                   rowNum++;
+                   cell = row1.createCell(0);
+                   cell.setCellStyle(headerCellStyle);
+                   cell.setCellValue("资源类型名称");
+                   cell = row1.createCell(1);
+                   cell.setCellValue("所需最小作战单元(个)");
+                   cell.setCellStyle(headerCellStyle);
+                   for(ContractXwType3DTO xwType3DTO:childXwType3List){
+                       row1 = sheet.createRow(rowNum);
+                       rowNum++;
+                       cell = row1.createCell(0);
+                       cell.setCellStyle(contentCellStyle);
+                       cell.setCellValue(xwType3DTO.getXwType3());
+                       cell = row1.createCell(1);
+                       cell.setCellValue(xwType3DTO.getInputNumber());
+                       cell.setCellStyle(contentCellStyle);
+                   }
+               }
+           }
+        }
+        ByteArrayOutputStream bot = new ByteArrayOutputStream();
+        workbook.write(bot);
+        ExcelUtil.export(request,response,workbook,"举单详情.xls");
     }
 
     @Override
