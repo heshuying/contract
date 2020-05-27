@@ -109,7 +109,9 @@ public class HomePageImpl implements HomePageService {
         String endTime = format.format(endDate);
 
         // 链群组织信息
-        ZHrChainInfo chainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code" , dataInfo.getChainCode()));
+        ZHrChainInfo chainInfo = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
+                .eq("chain_code" , dataInfo.getChainCode())
+                .eq("deleted" , 0));
 
         resMap.put("chainCode" , chainInfo.getChainCode());
         resMap.put("chainName" , chainInfo.getChainName());
