@@ -49,19 +49,6 @@ public class ZGamblingContractsController {
     @Autowired
     private ZChainShareDao chainShareDao;
 
-//    @PostMapping(value = {"/saveGambling"})
-//    @ApiOperation(value = "链群主抢单（举单）信息保存")
-//    public R saveGambling(@RequestBody GamblingContractDTO dto) {
-//        try {
-//            gamblingContractsService.saveGambling(dto);
-//            return R.ok();
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return R.error("保存失败，请稍后重试");
-//        }
-//
-//    }
-
     @PostMapping(value = {"/saveGamblingNew"})
     @ApiOperation(value = "新版链群主抢单（举单）信息保存")
     public R saveGamblingNew(@RequestBody SaveGamblingContractDTO dto) {
@@ -74,13 +61,6 @@ public class ZGamblingContractsController {
         }
 
     }
-
-//    @GetMapping(value = {"/selectMarket"})
-//    @ApiOperation(value = "查询42市场小微的名字和商圈目标名称")
-//    public R selectMarket(@RequestParam String chainCode) {
-//        MarketReturnDTO dto = gamblingContractsService.selectMarket(chainCode);
-//        return R.ok().put("data",dto);
-//    }
 
     @PostMapping(value = {"/selectTargetAll"})
     @ApiOperation(value = "查询主链群和子链群的所有链群目标、42中心和爆款")

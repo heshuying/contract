@@ -226,13 +226,13 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(null != maketList && maketList.size()>0){
             MarketTargetDTO marketTargetDTO = new MarketTargetDTO();
             List<MarketTargetDTO2> targetList = new ArrayList<>();
-            String reginCode = "";
+            String meshCode = "";
             for(int i=0;i<maketList.size();i++){
                 ZContractsFactor zContractsFactor = maketList.get(i);
                 if(i==0){
-                    reginCode = zContractsFactor.getRegionCode();
+                    meshCode = zContractsFactor.getMeshCode();
                 }
-                if(reginCode.equals(zContractsFactor.getRegionCode())){
+                if(meshCode.equals(zContractsFactor.getMeshCode())){
                     MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
                     marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
                     marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
@@ -249,7 +249,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     marketTargetList.add(marketTargetDTO);
                     marketTargetDTO = new MarketTargetDTO();
                     targetList = new ArrayList<>();
-                    reginCode = zContractsFactor.getRegionCode();
+                    meshCode = zContractsFactor.getMeshCode();
                     MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
                     marketTargetDTO2.setTargetCode(zContractsFactor.getFactorCode());
                     marketTargetDTO2.setTargetName(zContractsFactor.getFactorName());
