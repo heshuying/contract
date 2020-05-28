@@ -221,7 +221,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         List<ChainGroupTargetDTO> chainList = factorDao.selectChainFactorByContractId(contractId);
         dto.setChainGroupTargetList(chainList);
         //3.查询42市场的目标
-        List<ZContractsFactor> maketList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId).isNotNull("region_code").orderByAsc("region_code").orderByAsc("factor_code"));
+        List<ZContractsFactor> maketList = factorDao.selectList(new QueryWrapper<ZContractsFactor>().eq("contract_id",contractId).isNotNull("region_code").orderByAsc("mesh_code").orderByAsc("factor_code"));
         List<MarketTargetDTO> marketTargetList = new ArrayList<>();
         if(null != maketList && maketList.size()>0){
             MarketTargetDTO marketTargetDTO = new MarketTargetDTO();
