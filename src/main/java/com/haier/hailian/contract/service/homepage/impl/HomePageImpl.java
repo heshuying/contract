@@ -170,13 +170,15 @@ public class HomePageImpl implements HomePageService {
             if(childGamblings!=null && childGamblings.size()>0){
                 for(ZContracts child : childGamblings){
                     List<ZContracts> childGrabList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
-                            .eq("parent_id" , child.getId()));
+                            .eq("parent_id" , child.getId())
+                            .in("status" , new Integer[]{1,8}));
                     grabContractsList.addAll(childGrabList);
                 }
             }else{
                 // 获取单个抢单信息
                 grabContractsList = zContractsDao.selectList(new QueryWrapper<ZContracts>()
-                        .eq("parent_id" , zContracts.getId()));
+                        .eq("parent_id" , zContracts.getId())
+                        .in("status" , new Integer[]{1,8}));
             }
 
             // 抢单信息dto
@@ -185,7 +187,7 @@ public class HomePageImpl implements HomePageService {
                 // 抢单信息
                 GrabInfo2Outside grabInfo2Outside = new GrabInfo2Outside();
                 BeanUtils.copyProperties(contracts , grabInfo2Outside);
-                grabInfo2Outside.setXiaoweiName(""); // 暂时不知道怎么取
+                //grabInfo2Outside.setXiaoweiName(""); // 暂时不知道怎么取
 
 
                 // 获取抢单目标底线值
