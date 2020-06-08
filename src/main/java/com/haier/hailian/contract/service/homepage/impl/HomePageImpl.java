@@ -191,13 +191,13 @@ public class HomePageImpl implements HomePageService {
 
 
                 // 获取抢单目标底线值
-                ZContractsFactor bottomFactor = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
-                        .eq("contract_id" , contracts.getId())
-                        .eq("factor_type" , Constant.FactorType.Bottom.getValue())
-                        .eq("factor_code" , Constant.FactorCode.Incom.getValue()));
-                if(bottomFactor != null){
-                    grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
-                }
+//                ZContractsFactor bottomFactor = zContractsFactorDao.selectOne(new QueryWrapper<ZContractsFactor>()
+//                        .eq("contract_id" , contracts.getId())
+//                        .eq("factor_type" , Constant.FactorType.Bottom.getValue())
+//                        .eq("factor_code" , Constant.FactorCode.Incom.getValue()));
+//                if(bottomFactor != null){
+//                    grabInfo2Outside.setGrabTargetBottom(bottomFactor.getFactorValue());
+//                }
 
                 // 抢单目标抢单值 + 高中低端占比  /  抢单目标底线值
                 List<ZContractsFactor> factorList = zContractsFactorDao.selectList(new QueryWrapper<ZContractsFactor>()
