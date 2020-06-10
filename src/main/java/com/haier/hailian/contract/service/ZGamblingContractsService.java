@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service;
 
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.ZContracts;
+import com.haier.hailian.contract.entity.ZProductChain;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,4 +57,10 @@ public interface ZGamblingContractsService {
     List<ChainProductDTO> getChainProductListByExcel(InputStream inputStream, String originalFilename) throws Exception;
 
     void saveChainProduct(List<ChainProductDTO> list);
+
+    void updateContractDate(ContractDateUpdateDTO dto) throws Exception ;
+
+    List<ZProductChain> selectChainProductList() throws Exception ;
+
+    List<ZProductChain> selectChainProductDetail(ChainProductDTO chainProductDTO);
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
+import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
@@ -48,8 +49,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Autowired
     private ZNodeTargetPercentInfoDao nodeTargetPercentInfoDao;
     @Autowired
-    private TOdsMinbuDao tOdsMinbuDao;
-    @Autowired
     private ZProductChainDao productChainDao;
     @Autowired
     private ZContractsProductDao contractsProductDao;
@@ -57,6 +56,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private ZHrChainInfoDao hrChainInfoDao;
     @Autowired
     private ZContractsXwType3Dao xwtype3Dao;
+    @Autowired
+    private ZContractsService contractsService;
 
     @Override
     public MarketReturnDTO selectMarket(String chainCode) {
@@ -106,6 +107,11 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                     zContracts.setStatus4("1");
                 }else {
                     zContracts.setStatus4("0");
+                }
+                if(null != zContracts.getEndDate() && zContracts.getEndDate().after(new Date())){
+                    zContracts.setStatus5("1");
+                }else {
+                    zContracts.setStatus5("0");
                 }
             }
         }
@@ -1316,6 +1322,91 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             }
         }
 
+    }
+
+    @Override
+    public void updateContractDate(ContractDateUpdateDTO dto) throws Exception {
+
+        //更新举单
+        List<ZContracts> updateList=new ArrayList<>();
+        List<ZContracts> grabList = new ArrayList<>();
+        ZContracts contracts = contractsDao.selectByContractId(dto.getId());
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        if(dto.getJoinTime() != null) contracts.setJoinTime(sf.parse(dto.getJoinTime()));
+        if(dto.getCheckTime() != null) contracts.setCheckTime(sf.parse(dto.getCheckTime()));
+        if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(contracts.getJoinTime())){
+            contracts.setStatus("0");
+        }
+        updateList.add(contracts);
+        //查询子合约
+        List<ZContracts> childList=contractsService.list(new QueryWrapper<ZContracts>().eq("contract_type","10").eq("parent_id",dto.getId()));
+        if(null != childList && childList.size()>0 ){
+            String parentId = "";
+            for (ZContracts child:childList){
+                parentId += child.getId() +";";
+                if(dto.getJoinTime() != null) child.setJoinTime(sf.parse(dto.getJoinTime()));
+                if(dto.getCheckTime() != null) child.setCheckTime(sf.parse(dto.getCheckTime()));
+                if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(contracts.getJoinTime())){
+                    child.setStatus("0");
+                }
+                updateList.add(child);
+            }
+            //查询抢单
+            grabList = contractsService.list(new QueryWrapper<ZContracts>()
+                    .in("contract_type",new String[]{"20","30"})
+                    .in("parent_id",parentId.split(";"))
+            );
+        }else {
+            grabList=contractsService.list(new QueryWrapper<ZContracts>()
+                    .in("contract_type",new String[]{"20","30"})
+                    .eq("parent_id",dto.getId())
+            );
+        }
+
+        //查询抢单
+        for (ZContracts grab:grabList) {
+            ZContracts updateContract=new ZContracts();
+            updateContract.setId(grab.getId());
+            if(dto.getJoinTime() != null) updateContract.setJoinTime(sf.parse(dto.getJoinTime()));
+            if(dto.getCheckTime() != null) updateContract.setCheckTime(sf.parse(dto.getCheckTime()));
+            if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(contracts.getCheckTime())
+                    && contracts.getCheckTime().before(new Date())&& "8".equals(grab.getStatus())){
+                updateContract.setStatus("1");
+            }
+            updateList.add(updateContract);
+        }
+        if(updateList!=null&&updateList.size()>0) {
+            contractsService.updateBatchById(updateList);
+        }
+    }
+
+    @Override
+    public List<ZProductChain> selectChainProductList() throws Exception{
+        //获取当前用户
+        Subject subject = SecurityUtils.getSubject();
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        String userCode = sysUser.getEmpSn();
+        List<ZProductChain> list = productChainDao.selectChainProductList(userCode);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+        if(null != list && list.size()>0){
+            for(ZProductChain product : list){
+                String periodCode = product.getMonth();
+                Date date = sf.parse(periodCode);
+                String firstDay = DateFormatUtil.getFirstDayOfMonth(date);
+                String lastDay = DateFormatUtil.getLastDayOfMonth(date);
+                product.setFirstDay(firstDay);
+                product.setLastDay(lastDay);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ZProductChain> selectChainProductDetail(ChainProductDTO chainProductDTO) {
+        List<ZProductChain> list = productChainDao.selectList(new QueryWrapper<ZProductChain>()
+                .eq("chain_code",chainProductDTO.getChainCode())
+                .eq("month",chainProductDTO.getMonth()));
+        return list;
     }
 
     //校验excle格式

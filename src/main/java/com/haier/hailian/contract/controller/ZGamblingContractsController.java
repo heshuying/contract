@@ -281,6 +281,40 @@ public class ZGamblingContractsController {
 
     }
 
+    @PostMapping(value = {"/updateDate"})
+    @ApiOperation(value = "修改截止抢入时间和复核截止时间")
+    public R updateDate(@RequestBody ContractDateUpdateDTO dto) {
+        try {
+            gamblingContractsService.updateContractDate(dto);
+            return R.ok();
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请稍后重试");
+        }
 
+    }
+
+    @GetMapping(value = {"/selectProductList"})
+    @ApiOperation(value = "查询当前登录人为链群主的所有链群的爆款信息")
+    public R selectChainProductList() {
+        try {
+            List<ZProductChain> list = gamblingContractsService.selectChainProductList();
+            return R.ok().put("data",list);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请稍后重试");
+        }
+    }
+    @PostMapping(value = {"/selectChainProductDetail"})
+    @ApiOperation(value = "根据链群编码和月份查询爆款详情")
+    public R selectChainProductDetail(@RequestBody ChainProductDTO chainProductDTO) {
+        try {
+            List<ZProductChain> list = gamblingContractsService.selectChainProductDetail(chainProductDTO);
+            return R.ok().put("data",list);
+        }catch (Exception e){
+            e.printStackTrace();
+            return R.error("保存失败，请稍后重试");
+        }
+    }
 }
 

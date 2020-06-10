@@ -140,6 +140,9 @@ public class ZContracts extends Model<ZContracts> {
     private String status3;//0 不可撤销 1.可撤销
     @TableField(exist = false)
     private String status4;//0 不可复核 1 可复核
+    @TableField(exist = false)
+    private String status5;//0 不可修改截止抢入时间和复核时间 1 可以修改截止抢入时间和复核时间
+
     private String sharePercent;
 
     private String groupId;

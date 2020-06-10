@@ -18,4 +18,15 @@
         and month = #{month}
     </select>
 
+
+    <select id="selectChainProductList" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select t.chain_code,c.chain_name,t.`month`
+        from z_product_chain t
+        LEFT JOIN z_hr_chain_info c
+        on t.chain_code = c.chain_code
+        where c.master_code = #{userCode}
+        GROUP BY t.chain_code,t.`month`
+        ORDER BY t.`month` DESC,t.chain_code
+    </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.haier.hailian.contract.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -54,6 +55,13 @@ public class ZProductChain extends Model<ZProductChain> {
 
     //月份
     private String month;
+
+    @TableField(exist = false)
+    private String chainName;
+    @TableField(exist = false)
+    private String firstDay;
+    @TableField(exist = false)
+    private String lastDay;
 
     @Override
     protected Serializable pkVal() {
