@@ -56,6 +56,11 @@ public class DingDingServiceImpl implements DingDingService{
         String body=responseEntity.getBody();
         log.info("=====获取用户ID返回：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
-        return jsonObject.getString("userid");
+        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
+            return jsonObject.getString("userid");
+        }else{
+            throw new RException("登陆失败");
+        }
+
     }
 }
