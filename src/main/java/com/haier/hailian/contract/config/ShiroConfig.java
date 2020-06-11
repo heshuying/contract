@@ -90,6 +90,7 @@ public class ShiroConfig {
         filterMap.put("/sms/sendSMS", "anon");
         filterMap.put("/loginMagic", "anon");
         filterMap.put("/ihaierLogin", "anon");
+        filterMap.put("/iHaierDingLogin", "anon");
         filterMap.put("/appStatistic", "anon");
 
         filterMap.put("/zHrChainInfo/searchUsers", "anon");

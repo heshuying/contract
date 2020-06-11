@@ -35,4 +35,11 @@ mybatis-plus:
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
 
+#dingding
+dingding:
+  AppKey: dingr10i0x8ibn1iimdi
+  AppSecret: es-lv2_Oykjqb_mHrfdUT1eLHJSsCYhcWysmn3vrfhFmdDyHp1BulQyTHS4i1Inb
+  CorpId: ding98186c440907a0f5bc961a6cb783455b
+  baseUri: https://openapi.haier.net/gateway/ihaier
+
 

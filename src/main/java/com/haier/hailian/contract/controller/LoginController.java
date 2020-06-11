@@ -15,6 +15,7 @@ import com.haier.hailian.contract.entity.SysEmployeeEhr;
 import com.haier.hailian.contract.entity.SysXwRegion;
 import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.AppStatisticService;
+import com.haier.hailian.contract.service.DingDingService;
 import com.haier.hailian.contract.service.HacLoginService;
 import com.haier.hailian.contract.service.SysXwRegionService;
 import com.haier.hailian.contract.util.Constant;
@@ -56,6 +57,9 @@ public class LoginController {
     @Autowired
     private AppStatisticService appStatisticService;
     public static String JWT_AUTH_HEADER = "Authorization";
+
+    @Autowired
+    private DingDingService dingDingService;
 
     @PostMapping(value = {"/login"})
     @ApiOperation(value = "登录")
@@ -184,5 +188,31 @@ public class LoginController {
         }else{
             return R.error(Constant.CODE_LOGINFAIL, "登录失败");
         }
+    }
+
+    @PostMapping(value = {"/iHaierDingLogin"})
+    @ApiOperation(value = "登录")
+    public R iHaierDingLogin(String code,HttpServletResponse response) {
+
+        String userId = dingDingService.getUserIdByToken(code);
+        HacLoginToken token = new HacLoginToken(userId);
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(token);
+        SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
+        //报文头
+        response.setHeader(JWT_AUTH_HEADER, subject.getSession().getId().toString());
+        new Thread(new Runnable() {
+            public void run() {
+                AppStatistic appStatistic = new AppStatistic();
+                appStatistic.setCreateTime(new Date());
+                appStatistic.setEmpSn(sysUser.getEmpSn());
+                appStatistic.setPage("UV");
+                appStatistic.setSource("IhaierLogin");
+                appStatisticService.save(appStatistic);
+            }
+        }).start();
+
+        return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
+                .put("data", sysUser);
     }
 }
