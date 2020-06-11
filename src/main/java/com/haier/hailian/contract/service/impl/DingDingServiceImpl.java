@@ -3,6 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.haier.hailian.contract.config.DingDingConfig;
+import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.service.DingDingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,14 @@ public class DingDingServiceImpl implements DingDingService{
         map.put("appsecret", dingDingConfig.getAppSecret());
         ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,map);
         String body=responseEntity.getBody();
+        log.info("=====获取accessToken：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
-        return jsonObject.getString("access_token");
+        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
+            return jsonObject.getString("access_token");
+        }else{
+            throw new RException("获取accessToken失败");
+        }
+
     }
 
     @Override
