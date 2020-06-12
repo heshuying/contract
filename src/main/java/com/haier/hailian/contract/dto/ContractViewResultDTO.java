@@ -40,4 +40,12 @@ public class ContractViewResultDTO {
     private List<SubContractInfo> subContractList;
 
 
+    @ApiModelProperty(value="截止抢入时间",name="截止抢入时间")
+    private String joinTime;
+    @ApiModelProperty(value="复核截止时间",name="复核截止时间")
+    private String checkTime;
+    @ApiModelProperty(value="是否可以改截止抢入时间",name="是否可以改截止抢入时间")
+    private String status5;
+
+
 }

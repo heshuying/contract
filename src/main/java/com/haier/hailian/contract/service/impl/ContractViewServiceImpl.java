@@ -116,6 +116,13 @@ public class ContractViewServiceImpl implements ContractViewService {
             result.setShareMoney(contracts.getShareMoney());
             result.setStatus(contracts.getStatus());
             result.setStatusName(getStatusName(contracts.getStatus()));
+            result.setJoinTime(DateFormatUtil.format(contracts.getJoinTime(),DateFormatUtil.DATE_TIME_PATTERN));
+            result.setCheckTime(DateFormatUtil.format(contracts.getCheckTime(),DateFormatUtil.DATE_TIME_PATTERN));
+            if(null != contracts.getEndDate() && contracts.getEndDate().after(new Date())){
+                result.setStatus5("1");
+            }else {
+                result.setStatus5("0");
+            }
         }
 
         ZHrChainInfo chain = zHrChainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>().eq("chain_code", contracts.getChainCode()));
