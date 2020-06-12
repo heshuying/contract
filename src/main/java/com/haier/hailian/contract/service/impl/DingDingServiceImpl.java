@@ -28,7 +28,7 @@ public class DingDingServiceImpl implements DingDingService{
 
     @Override
     public String getAccessToken() {
-        String method="/gettoken?appkey={appkey}&appsecret={appsecret}";
+        String method="/gateway/ihaier/gettoken?appkey={appkey}&appsecret={appsecret}";
         String uri=dingDingConfig.getBaseUri().concat(method);
         Map<String, String> map = new HashMap<>();
         map.put("appkey",dingDingConfig.getAppKey());
@@ -47,7 +47,7 @@ public class DingDingServiceImpl implements DingDingService{
 
     @Override
     public String getUserIdByToken(String code) {
-        String method="/user/getuserinfo?access_token={accessToken}&code={code}";
+        String method="/gateway/ihaier/user/getuserinfo?access_token={accessToken}&code={code}";
         String uri=dingDingConfig.getBaseUri().concat(method);
         Map<String, String> map = new HashMap<>();
         map.put("accessToken",getAccessToken());
