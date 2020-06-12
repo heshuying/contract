@@ -1,9 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.haier.ehr.odssystem.chaingroup.service.ChainGroupClient;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.R;
@@ -12,23 +10,17 @@ import com.haier.hailian.contract.dto.ZHrChainInfoDto;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ChainCommonService;
+import com.haier.hailian.contract.service.DingDingService;
 import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.IHaierUtil;
-import com.haier.hailian.contract.webservice.CreateChainGroup;
-import com.haier.hailian.contract.webservice.CreatechaingroupClientEp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.annotation.Resource;
-import javax.xml.ws.Holder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (ZHrChainInfo)表服务实现类
@@ -56,6 +48,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private TMdmChainAttrDao tMdmChainAttrDao;
     @Resource
     private VwDmLqDimDao vwDmLqDimDao;
+    @Resource
+    private DingDingService dingDingService;
     //hr发版后放开
     //@Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -337,14 +331,25 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         //接口调用的时候会用到这个dto的实体类
         //4.新增创建群组，在创建链群的时候创建
         if(!zHrChainInfoDto.getIsModel().equals("1")){
-            List<String> codeList = new ArrayList<>(); //只有插入了节点才创建群组
-            if(minbuList.size()>0){
-                codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
+
+            String groupId = null;
+            // 判断是钉钉还是ihaier
+            if(!zHrChainInfoDto.getAppFlag().equals("ding")){
+                List<String> codeList = new ArrayList<>(); //只有插入了节点才创建群组
+                if(minbuList.size()>0){
+                    codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
+                }
+                codeList.add(sysUser.getEmpSn());
+                String[] toBeStored = new String[codeList.size()];
+                codeList.toArray(toBeStored);
+                groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
+
+            }else{ // 钉钉
+                List<String> codeList = Arrays.asList(sysUser.getEmpSn());
+                String[] toBeStored = new String[codeList.size()];
+                codeList.toArray(toBeStored);
+                groupId = dingDingService.createGroup(name , sysUser.getEmpSn() , toBeStored);
             }
-            codeList.add(sysUser.getEmpSn());
-            String[] toBeStored = new String[codeList.size()];
-            codeList.toArray(toBeStored);
-            String groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
             //更新链群的群组ID字段
             ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
             zHrChainInfo1.setId(zHrChainInfo.getId());
@@ -413,14 +418,24 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 }
 
                 //4.新增创建群组，在创建链群的时候创建
-                List<String> modelCodeList = new ArrayList<>();
-                if(modelMinbuList.size()>0){
-                    modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+                String modelGroupId = null;
+                // 判断是钉钉还是ihaier
+                if(!zHrChainInfoDto.getAppFlag().equals("ding")){
+                    List<String> modelCodeList = new ArrayList<>();
+                    if(modelMinbuList.size()>0){
+                        modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
+                    }
+                    modelCodeList.add(sysUser.getEmpSn());
+                    String[] modelToBeStored = new String[modelCodeList.size()];
+                    modelCodeList.toArray(modelToBeStored);
+                    modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
+                }else {
+                    List<String> modelCodeList = Arrays.asList(sysUser.getEmpSn());
+                    String[] modelToBeStored = new String[modelCodeList.size()];
+                    modelCodeList.toArray(modelToBeStored);
+                    modelGroupId = dingDingService.createGroup(name , sysUser.getEmpSn() , modelToBeStored);
                 }
-                modelCodeList.add(sysUser.getEmpSn());
-                String[] modelToBeStored = new String[modelCodeList.size()];
-                modelCodeList.toArray(modelToBeStored);
-                String modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
+
                 //更新链群的群组ID字段
                 ZHrChainInfo zHrChainInfoExp = new ZHrChainInfo();
                 zHrChainInfoExp.setId(fuck.getId());
