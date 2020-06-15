@@ -1372,7 +1372,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             if(dto.getJoinTime() != null) updateContract.setJoinTime(sf.parse(dto.getJoinTime()));
             if(dto.getCheckTime() != null) updateContract.setCheckTime(sf.parse(dto.getCheckTime()));
             if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(checkTime)
-                    && contracts.getCheckTime().before(new Date())&& "8".equals(grab.getStatus())){
+                    && checkTime.before(new Date())&& "8".equals(grab.getStatus())){
                 updateContract.setStatus("1");
             }
             updateList.add(updateContract);
