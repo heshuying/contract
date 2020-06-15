@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.service;
 
+import org.springframework.scheduling.annotation.Async;
+
 /**
  * Created by 19012964 on 2020/6/11.
  */

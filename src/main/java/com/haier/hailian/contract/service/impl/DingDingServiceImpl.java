@@ -67,7 +67,7 @@ public class DingDingServiceImpl implements DingDingService{
     }
 
     private String getJobNumber(String accessToken, String userId) {
-        String method="user/get?access_token={accessToken}&userid={userId}";
+        String method="/gateway/ihaier/user/get?access_token={accessToken}&userid={userId}";
         String uri=dingDingConfig.getBaseUri().concat(method);
         Map<String, String> map = new HashMap<>();
         map.put("accessToken",accessToken);
