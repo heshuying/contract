@@ -72,6 +72,8 @@ public class ZHrChainInfoDto {
 
     private String msg; // MDM返回信息
 
+    private String appFlag; // 标识钉钉还是ihaier
+
 
 
 }

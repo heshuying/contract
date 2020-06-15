@@ -6,5 +6,11 @@ package com.haier.hailian.contract.service;
 public interface DingDingService {
      String getAccessToken();
 
-     String getUserIdByToken(String code);
+    String getUserIdByToken(String code);
+
+    public String createGroup(String lqName , String chainMasterCode , String[] users);
+
+    @Async
+    public void addGroup(String groupId , String[] users , String updateType);
+
 }
