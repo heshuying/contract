@@ -49,18 +49,37 @@ public class DingDingServiceImpl implements DingDingService{
     public String getUserIdByToken(String code) {
         String method="/user/getuserinfo?access_token={accessToken}&code={code}";
         String uri=dingDingConfig.getBaseUri().concat(method);
+        String accessToken=getAccessToken();
         Map<String, String> map = new HashMap<>();
-        map.put("accessToken",getAccessToken());
+        map.put("accessToken",accessToken);
         map.put("code", code);
         ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,map);
         String body=responseEntity.getBody();
         log.info("=====获取用户ID返回：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
         if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
-            return jsonObject.getString("userid");
+            String userId= jsonObject.getString("userid");
+            return this.getJobNumber(accessToken, userId);
         }else{
             throw new RException("登陆失败");
         }
 
+    }
+
+    private String getJobNumber(String accessToken, String userId) {
+        String method="user/get?access_token={accessToken}&userid={userId}";
+        String uri=dingDingConfig.getBaseUri().concat(method);
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken",accessToken);
+        map.put("userId", userId);
+        ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,map);
+        String body=responseEntity.getBody();
+        log.info("=====获取用户工号返回：{}==",body);
+        JSONObject jsonObject= JSON.parseObject(body);
+        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
+            return jsonObject.getString("jobnumber");
+        }else{
+            throw new RException("登陆失败");
+        }
     }
 }
