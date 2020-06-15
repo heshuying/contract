@@ -1331,10 +1331,12 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         List<ZContracts> updateList=new ArrayList<>();
         List<ZContracts> grabList = new ArrayList<>();
         ZContracts contracts = contractsDao.selectByContractId(dto.getId());
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date joinTime = contracts.getJoinTime();
+        Date checkTime = contracts.getCheckTime();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if(dto.getJoinTime() != null) contracts.setJoinTime(sf.parse(dto.getJoinTime()));
         if(dto.getCheckTime() != null) contracts.setCheckTime(sf.parse(dto.getCheckTime()));
-        if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(contracts.getJoinTime())){
+        if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(joinTime)){
             contracts.setStatus("0");
         }
         updateList.add(contracts);
@@ -1346,7 +1348,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 parentId += child.getId() +";";
                 if(dto.getJoinTime() != null) child.setJoinTime(sf.parse(dto.getJoinTime()));
                 if(dto.getCheckTime() != null) child.setCheckTime(sf.parse(dto.getCheckTime()));
-                if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(contracts.getJoinTime())){
+                if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(joinTime)){
                     child.setStatus("0");
                 }
                 updateList.add(child);
@@ -1369,7 +1371,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             updateContract.setId(grab.getId());
             if(dto.getJoinTime() != null) updateContract.setJoinTime(sf.parse(dto.getJoinTime()));
             if(dto.getCheckTime() != null) updateContract.setCheckTime(sf.parse(dto.getCheckTime()));
-            if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(contracts.getCheckTime())
+            if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(checkTime)
                     && contracts.getCheckTime().before(new Date())&& "8".equals(grab.getStatus())){
                 updateContract.setStatus("1");
             }
@@ -1447,5 +1449,4 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             new ExcelUtil.CellHeadField("型号名称", "modelName"),
             new ExcelUtil.CellHeadField("型号编码", "modelCode")
     };
-
 }
