@@ -226,6 +226,15 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
         return targetBasicDao.selectTarget(targetBasic);
     }
 
+
+    @Override
+    public List<TargetBasic> getTYNodeTargetList(String chainCode) {
+        TargetBasic targetBasic = new TargetBasic();
+        targetBasic.setTargetDiffType("005");
+        targetBasic.setChainCode(chainCode);
+        return targetBasicDao.selectTarget(targetBasic);
+    }
+
     @Override
     @Transactional
     public ZHrChainInfoDto saveChainInfo(ZHrChainInfoDto zHrChainInfoDto) {

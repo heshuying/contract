@@ -142,6 +142,21 @@ public class ZHrChainInfoController {
     }
 
 
+    @ApiOperation(value = "查询链群体验目标")
+    public R getTYNodeTarget(@RequestBody @Validated @ApiParam(value = "链群编码", required = true) String chainCode) {
+        try {
+            JsonParser parse = new JsonParser();  //创建json解析器
+            JsonObject json = (JsonObject) parse.parse(chainCode);  //创建jsonObject对象
+            String result = json.get("chainCode").getAsString();
+            List<TargetBasic> list = zHrChainInfoService.getTYNodeTargetList(result);
+            return R.ok().put("data", list);
+        } catch (Exception e) {
+            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            return R.error("系统异常，请稍后尝试！");
+        }
+    }
+
+
     @PostMapping(value = {"/saveChainInfo"})
     @ApiOperation(value = "保存链群信息")
     public R saveChainInfo(@RequestBody @Validated @ApiParam(value = "保存链群和目标", required = true) ZHrChainInfoDto zHrChainInfoDto) {

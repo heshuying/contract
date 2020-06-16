@@ -90,6 +90,13 @@ public interface ZHrChainInfoService {
     List<TargetBasic> getNodeTargetList(String nodeCodeStr);
 
     /**
+     * 获取查询体验目标
+     * @param chainCode
+     * @return
+     */
+    List<TargetBasic> getTYNodeTargetList(String chainCode);
+
+    /**
      * 保存链群的全部信息
      * @param zHrChainInfoDto
      * @return
