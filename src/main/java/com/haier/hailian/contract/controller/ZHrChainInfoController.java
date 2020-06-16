@@ -151,7 +151,7 @@ public class ZHrChainInfoController {
             List<TargetBasic> list = zHrChainInfoService.getTYNodeTargetList(result);
             return R.ok().put("data", list);
         } catch (Exception e) {
-            log.error("错误发生在ZHrChainInfoController.getNodeTarget,", e);
+            log.error("错误发生在ZHrChainInfoController.getTYNodeTarget,", e);
             return R.error("系统异常，请稍后尝试！");
         }
     }
