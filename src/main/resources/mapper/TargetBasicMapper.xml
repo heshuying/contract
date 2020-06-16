@@ -83,4 +83,44 @@
     </select>
 
 
+    <select id="selectTYTarget" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from z_target_basic target
+        <where>
+            <if test=" targeYear != null ">
+                and targe_year = #{targeYear}
+            </if>
+            <if test=" targetMonth != null ">
+                and target_month = #{targetMonth}
+            </if>
+            <if test=" chainCode != null ">
+                and chain_code like CONCAT('%|', #{chainCode,jdbcType=VARCHAR}, '|%')
+            </if>
+            <if test=" targetDiffType != null ">
+                and target_diff_type = #{targetDiffType}
+            </if>
+            <if test=" targetDim != null ">
+                and target_dim = #{targetDim}
+            </if>
+            <if test=" judanFlag != null ">
+                and judan_flag = #{judanFlag}
+            </if>
+            <if test=" periodCode != null ">
+                and period_code = #{periodCode}
+            </if>
+            <if test=" targetPtCode != null ">
+                and target_pt_code = #{targetPtCode}
+            </if>
+            <if test=" targetXwCategoryCode != null ">
+                and target_xw_category_code like CONCAT('%|', #{targetXwCategoryCode,jdbcType=VARCHAR}, '|%')
+            </if>
+            <if test=" roleCode != null ">
+                and role_code like CONCAT('%|', #{roleCode,jdbcType=VARCHAR}, '|%')
+            </if>
+            order by target_code
+        </where>
+    </select>
+
+
 </mapper>
