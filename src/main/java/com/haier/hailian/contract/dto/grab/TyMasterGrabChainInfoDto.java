@@ -35,4 +35,7 @@ public class TyMasterGrabChainInfoDto {
     List<FactorDto> targetList;
     List<FactorDto> grabList;
     List<FactorDto> e2eList;
+
+    // 加入群聊标识
+    private String appFlag;
 }

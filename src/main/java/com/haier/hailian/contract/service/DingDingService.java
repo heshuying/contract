@@ -13,6 +13,6 @@ public interface DingDingService {
     public String createGroup(String lqName , String chainMasterCode , String[] users);
 
     @Async
-    public void addGroup(String groupId , String[] users , String updateType);
+    public void updateGroup(String groupId , String[] users , String updateType);
 
 }

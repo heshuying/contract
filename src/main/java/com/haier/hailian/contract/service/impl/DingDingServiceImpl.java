@@ -104,7 +104,7 @@ public class DingDingServiceImpl implements DingDingService{
     }
 
     @Override
-    public void addGroup(String groupId , String[] users , String updateType) {
+    public void updateGroup(String groupId , String[] users , String updateType) {
         String method="/chat/update?access_token=" + getAccessToken();
         String uri=dingDingConfig.getBaseUri().concat(method);
         Map<String, Object> map = new HashMap<>();

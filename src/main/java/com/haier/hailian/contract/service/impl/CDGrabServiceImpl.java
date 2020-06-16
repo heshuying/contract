@@ -8,6 +8,7 @@ import com.haier.hailian.contract.dto.grab.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.CDGrabService;
 import com.haier.hailian.contract.service.ChainCommonService;
+import com.haier.hailian.contract.service.DingDingService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.IHaierUtil;
@@ -49,6 +50,8 @@ public class CDGrabServiceImpl implements CDGrabService {
     ZHrChainInfoDao zHrChainInfoDao;
     @Autowired
     private ChainCommonService chainCommonService; //上链
+    @Autowired
+    private DingDingService dingDingService;
 
     @Override
     public CDGrabInfoResponseDto queryCDGrabInfo(CDGrabInfoRequestDto requestDto){
@@ -462,8 +465,18 @@ public class CDGrabServiceImpl implements CDGrabService {
                 .eq("chain_code", contracts.getChainCode()));
         if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())) {
             String groupId = chainInfo.getGroupId();
-            String[] users = new String[]{sysUser.getEmpSn()};
-            IHaierUtil.joinGroup(groupId, users);
+            // 判断是否是钉钉
+            if(!requestDto.getAppFlag().equals("ding")){
+                String[] users=new String[]{sysUser.getEmpSn()};
+                IHaierUtil.joinGroup(groupId, users);
+            }else{ // 钉钉
+                // TODO  根据工号获取userId
+                List<String> codeList = Arrays.asList(sysUser.getEmpSn());
+                String[] toBeStored = new String[codeList.size()];
+                codeList.toArray(toBeStored);
+                // 添加群聊
+                dingDingService.updateGroup(groupId , toBeStored , "add_useridlist");
+            }
         }
 
         //异步上链

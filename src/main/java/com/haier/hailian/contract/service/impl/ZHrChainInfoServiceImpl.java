@@ -345,6 +345,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
 
             }else{ // 钉钉
+                // TODO 根据工号获取userId
                 List<String> codeList = Arrays.asList(sysUser.getEmpSn());
                 String[] toBeStored = new String[codeList.size()];
                 codeList.toArray(toBeStored);
@@ -430,6 +431,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                     modelCodeList.toArray(modelToBeStored);
                     modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
                 }else {
+                    // TODO 根据工号获取userId
                     List<String> modelCodeList = Arrays.asList(sysUser.getEmpSn());
                     String[] modelToBeStored = new String[modelCodeList.size()];
                     modelCodeList.toArray(modelToBeStored);

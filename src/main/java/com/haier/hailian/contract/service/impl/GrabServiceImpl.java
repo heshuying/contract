@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +55,8 @@ public class GrabServiceImpl implements GrabService {
     private SysXwRegionService xwRegionService;
     @Autowired
     private ZHrChainInfoDao chainInfoDao;
+    @Autowired
+    private DingDingService dingDingService;
 
     /**
      * 已抢入列表
@@ -541,8 +544,19 @@ public class GrabServiceImpl implements GrabService {
                     .eq("chain_code", contracts.getChainCode()));
             if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())){
                 String groupId=chainInfo.getGroupId();
-                String[] users=new String[]{sysUser.getEmpSn()};
-                IHaierUtil.joinGroup(groupId, users);
+                // 判断是否是钉钉
+                if(!chainInfoDto.getAppFlag().equals("ding")){
+                    String[] users=new String[]{sysUser.getEmpSn()};
+                    IHaierUtil.joinGroup(groupId, users);
+                }else{ // 钉钉
+                    // TODO  根据工号获取userId
+                    List<String> codeList = Arrays.asList(sysUser.getEmpSn());
+                    String[] toBeStored = new String[codeList.size()];
+                    codeList.toArray(toBeStored);
+                    // 添加群聊
+                    dingDingService.updateGroup(groupId , toBeStored , "add_useridlist");
+                }
+
             }
             //异步上链
             new Thread(new Runnable(){

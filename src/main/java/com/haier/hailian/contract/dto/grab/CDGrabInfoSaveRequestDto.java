@@ -38,4 +38,6 @@ public class CDGrabInfoSaveRequestDto {
     @ApiModelProperty(value="预案信息",name="预案信息")
     private List<ReservePlanRequestDTO> planInfo;
 
+    private String appFlag; // 钉钉加入群聊标识
+
 }
