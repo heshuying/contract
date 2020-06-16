@@ -1,8 +1,11 @@
 package com.haier.hailian.contract.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haier.hailian.contract.dao.TOdsMinbuDao;
 import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.dto.grab.TyMasterGrabQueryDto;
+import com.haier.hailian.contract.entity.TOdsMinbu;
 import com.haier.hailian.contract.service.ContractViewService;
 import com.haier.hailian.contract.service.ExportService;
 import com.haier.hailian.contract.service.GrabService;
@@ -43,6 +46,8 @@ public class ExportController {
     private ExportService exportService;
     @Autowired
     private ContractViewService contractViewService;
+    @Autowired
+    private TOdsMinbuDao tOdsMinbuDao;
 
 
 
@@ -114,6 +119,12 @@ public class ExportController {
                 sheetName = "体验链群抢单信息";
                 fileName = "体验链群抢单信息.xls";
                 headFields = MASTER_GRAB_EXCEL_TITLE;
+                break;
+            case "odsType":
+                rows = tOdsMinbuDao.selectList(new QueryWrapper<TOdsMinbu>());
+                sheetName = "资源类型-最小作战单元对应关系";
+                fileName = "资源类型-最小作战单元对应关系.xls";
+                headFields = RES_TYPE_EXCEL_TITLE;
                 break;
             default:
                 System.out.println("暂无匹配类型");
@@ -220,6 +231,16 @@ public class ExportController {
             new ExcelUtil.CellHeadField("网格", "meshName"),
             new ExcelUtil.CellHeadField("收入（万元）", "income"),
             new ExcelUtil.CellHeadField("高端占比（%）", "struHighPercent"),
+    };
+
+    private static final ExcelUtil.CellHeadField[] RES_TYPE_EXCEL_TITLE = {
+            new ExcelUtil.CellHeadField("小微编码", "xwCode"),
+            new ExcelUtil.CellHeadField("小微名称", "xwName"),
+            new ExcelUtil.CellHeadField("最小作战单元编码", "littleXwCode"),
+            new ExcelUtil.CellHeadField("最小作战单元名称", "littleXwName"),
+            new ExcelUtil.CellHeadField("最小作战单元负责人", "littleXwMasterCode"),
+            new ExcelUtil.CellHeadField("资源类型", "xwType3"),
+
     };
 
 
