@@ -142,6 +142,7 @@ public class ZHrChainInfoController {
     }
 
 
+    @PostMapping(value = {"/getTYNodeTarget"})
     @ApiOperation(value = "查询链群体验目标")
     public R getTYNodeTarget(@RequestBody @Validated @ApiParam(value = "链群编码", required = true) String chainCode) {
         try {
