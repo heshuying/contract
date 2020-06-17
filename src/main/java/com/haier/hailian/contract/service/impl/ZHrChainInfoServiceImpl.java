@@ -354,11 +354,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 groupId = IHaierUtil.createGroup(toBeStored,name,chainCode);
 
             }else{ // 钉钉
-                // TODO 根据工号获取userId
-                List<String> codeList = Arrays.asList(sysUser.getEmpSn());
+                //  根据工号获取userId
+                String empNo = dingDingService.getUserId(sysUser.getEmpSn());
+                List<String> codeList = Arrays.asList(empNo);
                 String[] toBeStored = new String[codeList.size()];
                 codeList.toArray(toBeStored);
-                groupId = dingDingService.createGroup(name , sysUser.getEmpSn() , toBeStored);
+                groupId = dingDingService.createGroup(name , empNo , toBeStored);
             }
             //更新链群的群组ID字段
             ZHrChainInfo zHrChainInfo1 = new ZHrChainInfo();
@@ -440,11 +441,12 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                     modelCodeList.toArray(modelToBeStored);
                     modelGroupId = IHaierUtil.createGroup(modelToBeStored,modelName,chainCode);
                 }else {
-                    // TODO 根据工号获取userId
-                    List<String> modelCodeList = Arrays.asList(sysUser.getEmpSn());
+                    //  根据工号获取userId
+                    String empNo = dingDingService.getUserId(sysUser.getEmpSn());
+                    List<String> modelCodeList = Arrays.asList(empNo);
                     String[] modelToBeStored = new String[modelCodeList.size()];
                     modelCodeList.toArray(modelToBeStored);
-                    modelGroupId = dingDingService.createGroup(name , sysUser.getEmpSn() , modelToBeStored);
+                    modelGroupId = dingDingService.createGroup(name , empNo , modelToBeStored);
                 }
 
                 //更新链群的群组ID字段

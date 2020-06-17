@@ -121,4 +121,23 @@ public class DingDingServiceImpl implements DingDingService{
             throw new RException("修改群组失败");
         }
     }
+
+    @Override
+    public String getUserId(String empNo) {
+        String method="/admin/user/getDingUserId/{empNo}";
+        String uri=dingDingConfig.getBaseUri().concat(method);
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken",getAccessToken());
+        map.put("empNo", empNo);
+        ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,map);
+        String body=responseEntity.getBody();
+        log.info("=====获取用户userId返回：{}==",body);
+        JSONObject jsonObject= JSON.parseObject(body);
+        if(jsonObject.containsKey("code")&&"0".equals(jsonObject.getString("code"))){
+            return jsonObject.getString("data");
+        }else{
+            throw new RException("获取失败");
+        }
+
+    }
 }

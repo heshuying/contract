@@ -549,8 +549,9 @@ public class GrabServiceImpl implements GrabService {
                     String[] users=new String[]{sysUser.getEmpSn()};
                     IHaierUtil.joinGroup(groupId, users);
                 }else{ // 钉钉
-                    // TODO  根据工号获取userId
-                    List<String> codeList = Arrays.asList(sysUser.getEmpSn());
+                    //   根据工号获取userId
+                    String empNo = dingDingService.getUserId(sysUser.getEmpSn());
+                    List<String> codeList = Arrays.asList(empNo);
                     String[] toBeStored = new String[codeList.size()];
                     codeList.toArray(toBeStored);
                     // 添加群聊
