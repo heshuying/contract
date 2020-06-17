@@ -36,7 +36,7 @@ public interface ZGamblingContractsService {
 
     void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException;
 
-    List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String originalFilename) throws Exception;
+    List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String originalFilename, String chainCode) throws Exception;
 
     List<ZContracts> selectHomePageContract(QueryContractListDTO2 queryDTO);
 

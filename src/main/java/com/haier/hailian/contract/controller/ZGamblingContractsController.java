@@ -8,6 +8,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.TargetBasicService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
+import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +49,8 @@ public class ZGamblingContractsController {
     private ZHrChainInfoDao hrChainInfoDao;
     @Autowired
     private ZChainShareDao chainShareDao;
+    @Autowired
+    private ZHrChainInfoService chainInfoService;
 
     @PostMapping(value = {"/saveGamblingNew"})
     @ApiOperation(value = "新版链群主抢单（举单）信息保存")
@@ -105,6 +108,9 @@ public class ZGamblingContractsController {
                 //6.查询子链群的xwType3资源类型和最大数量
                 List<ContractXwType3DTO> childXwType3 = gamblingContractsService.selectXwType3(chainCode);
                 targetDTO.setChildXwType3(childXwType3);
+                //查询子链群42中心的目标名称
+                List<TargetBasic> list = chainInfoService.getTYNodeTargetList(chainCode);
+                targetDTO.setChildCenterTarget(list);
                 children.add(targetDTO);
             }
             targetAllDTO.setChildren(children);
@@ -122,6 +128,9 @@ public class ZGamblingContractsController {
             //9.查询主链群的xwType3资源类型和最大数量
             List<ContractXwType3DTO> childXwType3 = gamblingContractsService.selectXwType3(parentChain);
             targetAllDTO.setParentXwType3(childXwType3);
+            //查询主链群42中心的目标名称
+            List<TargetBasic> list = chainInfoService.getTYNodeTargetList(parentChain);
+            targetAllDTO.setCenterTarget(list);
         }
         return R.ok().put("data",targetAllDTO);
     }
@@ -215,12 +224,12 @@ public class ZGamblingContractsController {
 
     @PostMapping(value = {"/importMarket"})
     @ApiOperation(value = "导入42市场小微的名字和商圈目标名称")
-    public R importMarket(MultipartFile file) throws Exception{
+    public R importMarket(@RequestParam("chainCode")String chainCode,MultipartFile file) throws Exception{
         if (file.isEmpty()) {
             return R.error().put("msg","文件为空");
         }
         InputStream inputStream = file.getInputStream();
-        List<MarketTargetDTO> list = gamblingContractsService.getMarketTargetListByExcel(inputStream, file.getOriginalFilename());
+        List<MarketTargetDTO> list = gamblingContractsService.getMarketTargetListByExcel(inputStream, file.getOriginalFilename(),chainCode);
         inputStream.close();
         return R.ok().put("data",list);
     }

@@ -6,6 +6,7 @@ import com.haier.hailian.contract.dto.*;
 import com.haier.hailian.contract.entity.*;
 import com.haier.hailian.contract.service.ZContractsService;
 import com.haier.hailian.contract.service.ZGamblingContractsService;
+import com.haier.hailian.contract.service.ZHrChainInfoService;
 import com.haier.hailian.contract.util.Constant;
 import com.haier.hailian.contract.util.DateFormatUtil;
 import com.haier.hailian.contract.util.ExcelUtil;
@@ -58,6 +59,8 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     private ZContractsXwType3Dao xwtype3Dao;
     @Autowired
     private ZContractsService contractsService;
+    @Autowired
+    private ZHrChainInfoService chainInfoService;
 
     @Override
     public MarketReturnDTO selectMarket(String chainCode) {
@@ -360,7 +363,22 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
         List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent"));
         Workbook workbook = new HSSFWorkbook();
-        ExcelUtil.buildSheet(workbook, "中心", list, TEMPLATE_TITLE_MARKET);
+        List<TargetBasic> targetBasicList = chainInfoService.getTYNodeTargetList(chainCode);
+        if (targetBasicList == null || targetBasicList.size() == 0) {
+            throw new RException("请先维护体验节点的目标",Constant.CODE_VALIDFAIL);
+        }
+        List<ExcelUtil.CellHeadField> titleList = new ArrayList<>();
+        titleList.add(new ExcelUtil.CellHeadField("中心编码", "xwCode"));
+        titleList.add(new ExcelUtil.CellHeadField("中心名称", "xwName"));
+        titleList.add(new ExcelUtil.CellHeadField("最小作战单元编码", "nodeCode"));
+        titleList.add(new ExcelUtil.CellHeadField("最小作战单元名称", "nodeName"));
+        for(TargetBasic targetBasic : targetBasicList){
+            ExcelUtil.CellHeadField headField = new ExcelUtil.CellHeadField(targetBasic.getTargetName()+"("+targetBasic.getTargetUnit()+")", "");
+            titleList.add(headField);
+        }
+        ExcelUtil.CellHeadField[] headFields = new ExcelUtil.CellHeadField[titleList.size()];
+        ExcelUtil.buildSheet(workbook, "中心", list, titleList.toArray(headFields));
+
         ByteArrayOutputStream bot = new ByteArrayOutputStream();
         workbook.write(bot);
         ExcelUtil.export(request,response,workbook,"中心.xls");
@@ -368,9 +386,9 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     }
 
     @Override
-    public List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String fileName) throws Exception{
+    public List<MarketTargetDTO> getMarketTargetListByExcel(InputStream inputStream, String fileName,String chainCode) throws Exception{
 
-        List list = new ArrayList<>();
+        List<MarketTargetDTO> list = new ArrayList<>();
         //创建Excel工作薄
         Workbook work = this.getWorkbook(inputStream, fileName);
         if (null == work) {
@@ -383,58 +401,61 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if (sheet == null) {
             throw new RException("Excle工作簿为空",Constant.CODE_VALIDFAIL);
         }
+        List<TargetBasic> targetBasicList = chainInfoService.getTYNodeTargetList(chainCode);
+        if (targetBasicList == null || targetBasicList.size() == 0) {
+            throw new RException("请先维护体验节点的目标",Constant.CODE_VALIDFAIL);
+        }
+        List<String> titleList = new ArrayList<>();
+        titleList.add("中心编码");
+        titleList.add("中心名称");
+        titleList.add("最小作战单元编码");
+        titleList.add("最小作战单元名称");
+        for(TargetBasic targetBasic : targetBasicList){
+            titleList.add(targetBasic.getTargetName()+"("+targetBasic.getTargetUnit()+")");
+        }
         for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
              row = sheet.getRow(j);
             if (row == null ) {
                 continue;
             }
-            if(row.getFirstCellNum() == j){
-                String title1 = row.getCell(0)==null?"":row.getCell(0).getStringCellValue();
-                String title2 = row.getCell(1)==null?"":row.getCell(1).getStringCellValue();
-                String title3 = row.getCell(2)==null?"":row.getCell(2).getStringCellValue();
-                String title4 = row.getCell(3)==null?"":row.getCell(3).getStringCellValue();
-                String title5 = row.getCell(4)==null?"":row.getCell(4).getStringCellValue();
-                String title6 = row.getCell(5)==null?"":row.getCell(5).getStringCellValue();
-                if("中心编码".equals(title1)&&"中心名称".equals(title2)&&"最小作战单元编码".equals(title3)&&"最小作战单元名称".equals(title4)&&"收入(万元)".equals(title5)&&"高端占比(%)".equals(title6)){
-                    continue;
-                }else {
+            if( j==0 ){
+                if(row.getLastCellNum() != titleList.size()){
                     throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
                 }
-            }
-            MarketTargetDTO3 marketTargetDTO3 = new MarketTargetDTO3();
-            for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
-                cell = row.getCell(y);
-                if(cell != null){
-                    if(y==0) marketTargetDTO3.setXwCode(cell.getStringCellValue());
-                    if(y==1) marketTargetDTO3.setXwName(cell.getStringCellValue());
-                    if(y==2) marketTargetDTO3.setNodeCode(cell.getStringCellValue());
-                    if(y==3) marketTargetDTO3.setNodeName(cell.getStringCellValue());
-                    if(y==4){
-                        if(cell.getCellTypeEnum().equals(CellType.STRING)){
-                            throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
-                        }else {
-                            BigDecimal income = BigDecimal.valueOf(cell.getNumericCellValue());
-                            if(income.compareTo(BigDecimal.ZERO)==-1 ){
-                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，收入不能小于0", Constant.CODE_VALIDFAIL);
-                            }
-                            marketTargetDTO3.setIncome(income.setScale(0,BigDecimal.ROUND_HALF_UP));
-                        }
-                    }
-                    if(y==5) {
-                        if(cell.getCellTypeEnum().equals(CellType.STRING)) {
-                            throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，请填写数字，不需要单位", Constant.CODE_VALIDFAIL);
-                        }else {
-                            BigDecimal high = BigDecimal.valueOf(cell.getNumericCellValue());
-                            if(high.compareTo(BigDecimal.ZERO)==-1 || high.compareTo(BigDecimal.valueOf(100))==1){
-                                throw new RException("第" + (j + 1) + "行第" + (y + 1) + "列，高端占比要介于0和100之间", Constant.CODE_VALIDFAIL);
-                            }
-                            marketTargetDTO3.setHigh(high.setScale(2,BigDecimal.ROUND_HALF_UP));
-                        }
-
+                for(int i = 0 ; i<titleList.size() ; i++ ){
+                    String title = titleList.get(i);
+                    if(!title.equals(row.getCell(i).getStringCellValue())){
+                        throw new RException("请先下载模板，再上传",Constant.CODE_VALIDFAIL);
                     }
                 }
+            }else {
+                MarketTargetDTO marketTargetDTO = new MarketTargetDTO();
+                List<MarketTargetDTO2> dto2List = new ArrayList<>();
+                int lastCellNum = row.getLastCellNum();
+                if( lastCellNum > titleList.size() ) lastCellNum = titleList.size();
+                for (int y = row.getFirstCellNum(); y < lastCellNum; y++) {
+                    cell = row.getCell(y);
+                    if(cell != null){
+                        if(y==0) marketTargetDTO.setXwCode(cell.getStringCellValue());
+                        if(y==1) marketTargetDTO.setXwName(cell.getStringCellValue());
+                        if(y==2) marketTargetDTO.setNodeCode(cell.getStringCellValue());
+                        if(y==3) marketTargetDTO.setNodeName(cell.getStringCellValue());
+                        if(y>3){
+                            if(cell.getCellTypeEnum().equals(CellType.STRING)){
+                                throw new RException("第"+(j+1)+"行第"+(y+1)+"列，请填写数字，不需要单位",Constant.CODE_VALIDFAIL);
+                            }else {
+                                MarketTargetDTO2 marketTargetDTO2 = new MarketTargetDTO2();
+                                BigDecimal targetValue = BigDecimal.valueOf(cell.getNumericCellValue());
+                                marketTargetDTO2.setTargetValue(targetValue.setScale(2,BigDecimal.ROUND_HALF_UP)+"");
+                                marketTargetDTO2.setTargetCode(targetBasicList.get(y-4).getTargetCode());
+                                dto2List.add(marketTargetDTO2);
+                            }
+                        }
+                    }
+                }
+                marketTargetDTO.setTargetList(dto2List);
+                list.add(marketTargetDTO);
             }
-            list.add(marketTargetDTO3);
         }
 
         work.close();
@@ -1425,15 +1446,6 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         return workbook;
     }
 
-
-    private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_MARKET = {
-            new ExcelUtil.CellHeadField("中心编码", "xwCode"),
-            new ExcelUtil.CellHeadField("中心名称", "xwName"),
-            new ExcelUtil.CellHeadField("最小作战单元编码", "nodeCode"),
-            new ExcelUtil.CellHeadField("最小作战单元名称", "nodeName"),
-            new ExcelUtil.CellHeadField("收入(万元)", "income"),
-            new ExcelUtil.CellHeadField("高端占比(%)", "high")
-    };
 
     private static final ExcelUtil.CellHeadField[] TEMPLATE_TITLE_PRODUCT = {
             new ExcelUtil.CellHeadField("系列名称", "productSeries"),

@@ -231,7 +231,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     public List<TargetBasic> getTYNodeTargetList(String chainCode) {
         TargetBasic targetBasic = new TargetBasic();
         targetBasic.setTargetDiffType("005");
-        targetBasic.setChainCode("|" + chainCode + "|");
+        targetBasic.setChainCode(chainCode);
         return targetBasicDao.selectTYTarget(targetBasic);
     }
 

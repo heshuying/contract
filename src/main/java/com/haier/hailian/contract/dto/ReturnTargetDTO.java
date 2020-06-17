@@ -16,6 +16,7 @@ public class ReturnTargetDTO {
     private String childChainName;
     private List<TargetBasic> childTarget;
     private List<ZNodeTargetPercentInfo> childCenter;
+    private List<TargetBasic> childCenterTarget;
     private List<ContractProductDTO> childProduct;
     private List<ContractXwType3DTO> childXwType3;
 }
