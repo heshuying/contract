@@ -3,6 +3,7 @@ package com.haier.hailian.contract.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.haier.hailian.contract.config.DingDingConfig;
+import com.haier.hailian.contract.dto.DingDingUserInfo;
 import com.haier.hailian.contract.dto.RException;
 import com.haier.hailian.contract.service.DingDingService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class DingDingServiceImpl implements DingDingService{
     }
 
     @Override
-    public String getUserIdByToken(String code) {
+    public DingDingUserInfo getUserIdByToken(String code) {
         String method="/gateway/ihaier/user/getuserinfo?access_token={accessToken}&code={code}";
         String uri=dingDingConfig.getBaseUri().concat(method);
         String accessToken=getAccessToken();
@@ -66,7 +67,7 @@ public class DingDingServiceImpl implements DingDingService{
 
     }
 
-    private String getJobNumber(String accessToken, String userId) {
+    private DingDingUserInfo getJobNumber(String accessToken, String userId) {
         String method="/gateway/ihaier/user/get?access_token={accessToken}&userid={userId}";
         String uri=dingDingConfig.getBaseUri().concat(method);
         Map<String, String> map = new HashMap<>();
@@ -77,7 +78,8 @@ public class DingDingServiceImpl implements DingDingService{
         log.info("=====获取用户工号返回：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
         if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
-            return jsonObject.getString("jobnumber");
+            DingDingUserInfo dingUser= JSONObject.toJavaObject(jsonObject, DingDingUserInfo.class);
+            return dingUser;
         }else{
             throw new RException("登陆失败");
         }

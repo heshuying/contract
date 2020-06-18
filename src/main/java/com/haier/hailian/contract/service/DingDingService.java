@@ -1,5 +1,6 @@
 package com.haier.hailian.contract.service;
 
+import com.haier.hailian.contract.dto.DingDingUserInfo;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -8,7 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 public interface DingDingService {
     String getAccessToken();
 
-    String getUserIdByToken(String code);
+    DingDingUserInfo getUserIdByToken(String code);
 
     String createGroup(String lqName , String chainMasterCode , String[] users);
 
