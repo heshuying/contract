@@ -190,4 +190,11 @@
     <update id="updateNum">
         update calculator set counter=counter+1 where keySource='modelCode'
     </update>
+
+    <select id="getChainAttr" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          chain_attr
+        from vw_dm_lq_dim
+        where chain_code_l = #{chainCode}
+    </select>
 </mapper>
