@@ -151,6 +151,7 @@ public class GrabServiceImpl implements GrabService {
         String chainAttr=chainInfoDao.getChainAttr(contracts.getChainCode());
         if("H".equals(chainAttr)){
             tyMasterGrabChainInfoDto.setCanEdit(false);
+
         }else if("1".equals(chainInfo.getGrabFlag()) ){
             //链群闸口
             tyMasterGrabChainInfoDto.setCanEdit(true);
@@ -160,6 +161,12 @@ public class GrabServiceImpl implements GrabService {
             }else {
                 tyMasterGrabChainInfoDto.setCanEdit(false);
             }
+        }
+
+        if("H".equals(chainAttr)){
+            tyMasterGrabChainInfoDto.setShowE2E(true);
+        }else{
+            tyMasterGrabChainInfoDto.setShowE2E(false);
         }
         tyMasterGrabChainInfoDto.setContractName(chainName);
         tyMasterGrabChainInfoDto.setContractOwner(contracts.getCreateName());
