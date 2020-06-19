@@ -722,7 +722,11 @@ public class GrabServiceImpl implements GrabService {
         tyMasterGrabChainInfoDto.setContractName(contracts.getContractName());
         ZHrChainInfo chainInfo=chainInfoDao.selectOne(new QueryWrapper<ZHrChainInfo>()
                 .eq("chain_code", contracts.getChainCode()));
-        if("1".equals(chainInfo.getGrabFlag()) ){
+        //判断是否属于高端品牌，高端品牌来源OMS，其他手动填写
+        String chainAttr=chainInfoDao.getChainAttr(contracts.getChainCode());
+        if("H".equals(chainAttr)){
+            tyMasterGrabChainInfoDto.setCanEdit(true);
+        } else if("1".equals(chainInfo.getGrabFlag()) ){
             //链群闸口
             tyMasterGrabChainInfoDto.setCanEdit(true);
         }else{
@@ -731,6 +735,12 @@ public class GrabServiceImpl implements GrabService {
             }else {
                 tyMasterGrabChainInfoDto.setCanEdit(false);
             }
+        }
+
+        if("H".equals(chainAttr)){
+            tyMasterGrabChainInfoDto.setShowE2E(true);
+        }else{
+            tyMasterGrabChainInfoDto.setShowE2E(false);
         }
         tyMasterGrabChainInfoDto.setChainName(chainInfo.getChainName());
         tyMasterGrabChainInfoDto.setContractOwner(chainInfo.getMasterName());
