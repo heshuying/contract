@@ -343,7 +343,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
 
             String groupId = null;
             // 判断是钉钉还是ihaier
-            if(!zHrChainInfoDto.getAppFlag().equals("ding")){
+            if(!"ding".equals(zHrChainInfoDto.getAppFlag())){
                 List<String> codeList = new ArrayList<>(); //只有插入了节点才创建群组
                 if(minbuList.size()>0){
                     codeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),minbuList);
@@ -431,7 +431,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                 //4.新增创建群组，在创建链群的时候创建
                 String modelGroupId = null;
                 // 判断是钉钉还是ihaier
-                if(!zHrChainInfoDto.getAppFlag().equals("ding")){
+                if(!"ding".equals(zHrChainInfoDto.getAppFlag())){
                     List<String> modelCodeList = new ArrayList<>();
                     if(modelMinbuList.size()>0){
                         modelCodeList = tOdsMinbuDao.getListByCodeList(zHrChainInfoDto.getChainPtCode(),modelMinbuList);
