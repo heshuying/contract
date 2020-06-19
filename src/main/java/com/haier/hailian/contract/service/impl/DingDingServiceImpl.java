@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -135,16 +136,21 @@ public class DingDingServiceImpl implements DingDingService{
     public String getPhonebookToken(){
         String method="/auth/oauth/token";
         String uri=dingDingConfig.getBaseUri().concat(method);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Basic UzAxODAwOlMwMTgwMA==");
+
         Map<String, Object> map = new HashMap<>();
         map.put("username","S01800");
         map.put("password","y%2BxebMTkbcWhyUwGhKohhQ%3D%3D");
         map.put("grant_type","password");
         map.put("scope","server");
         map.put("step","1");
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map , headers);
         ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(uri,entity,String.class);
         String body = responseEntity.getBody();
-        log.info("=====修改群组返回：{}==",body);
+        log.info("=====获取通讯录token返回：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
         if(!"1".equals(jsonObject.getString("code"))){
             // 成功
@@ -162,13 +168,12 @@ public class DingDingServiceImpl implements DingDingService{
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        // TODO
         String basic=getPhonebookToken();
         headers.set("Authorization", "bearer "+ basic);
 
-//        Map<String, String> map = new HashMap<>();
-//        map.put("accessToken",getAccessToken());
-        ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,headers);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,entity);
         String body=responseEntity.getBody();
         log.info("=====获取用户userId返回：{}==",body);
         JSONObject jsonObject= JSON.parseObject(body);
