@@ -556,7 +556,7 @@ public class GrabServiceImpl implements GrabService {
             if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())){
                 String groupId=chainInfo.getGroupId();
                 // 判断是否是钉钉
-                if(!chainInfoDto.getAppFlag().equals("ding")){
+                if(!"ding".equals(chainInfoDto.getAppFlag())){
                     String[] users=new String[]{sysUser.getEmpSn()};
                     IHaierUtil.joinGroup(groupId, users);
                 }else{ // 钉钉
