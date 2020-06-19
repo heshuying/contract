@@ -131,6 +131,30 @@ public class DingDingServiceImpl implements DingDingService{
         }
     }
 
+
+    public String getPhonebookToken(){
+        String method="/auth/oauth/token";
+        String uri=dingDingConfig.getBaseUri().concat(method);
+        Map<String, Object> map = new HashMap<>();
+        map.put("username","S01800");
+        map.put("password","y%2BxebMTkbcWhyUwGhKohhQ%3D%3D");
+        map.put("grant_type","password");
+        map.put("scope","server");
+        map.put("step","1");
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map);
+        ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(uri,entity,String.class);
+        String body = responseEntity.getBody();
+        log.info("=====修改群组返回：{}==",body);
+        JSONObject jsonObject= JSON.parseObject(body);
+        if(!"1".equals(jsonObject.getString("code"))){
+            // 成功
+            return jsonObject.getString("access_token");
+        }else{
+            throw new RException("获取通讯录token失败");
+        }
+    }
+
+
     @Override
     public String getUserId(String empNo) {
         String method="/admin/user/getDingUserId/" + empNo;
@@ -139,7 +163,7 @@ public class DingDingServiceImpl implements DingDingService{
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         // TODO
-        String basic="";
+        String basic=getPhonebookToken();
         headers.set("Authorization", "bearer "+ basic);
 
 //        Map<String, String> map = new HashMap<>();
