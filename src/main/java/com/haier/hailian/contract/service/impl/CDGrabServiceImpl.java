@@ -466,7 +466,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         if(chainInfo!=null&&StringUtils.isNoneBlank(chainInfo.getGroupId())) {
             String groupId = chainInfo.getGroupId();
             // 判断是否是钉钉
-            if(!requestDto.getAppFlag().equals("ding")){
+            if(!"ding".equals(requestDto.getAppFlag())){
                 String[] users=new String[]{sysUser.getEmpSn()};
                 IHaierUtil.joinGroup(groupId, users);
             }else{ // 钉钉
