@@ -83,4 +83,6 @@ public interface ZHrChainInfoDao extends BaseMapper<ZHrChainInfo> {
     int getNum();
 
     void updateNum();
+
+    String getChainAttr(@Param("chainCode") String chainCode);
 }

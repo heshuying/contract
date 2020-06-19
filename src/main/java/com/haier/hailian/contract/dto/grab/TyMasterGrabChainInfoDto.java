@@ -29,6 +29,7 @@ public class TyMasterGrabChainInfoDto {
 
     private Boolean canSubmit;
     private Boolean canEdit;
+    private Boolean showE2E;
 
     private String errorMsg;
 

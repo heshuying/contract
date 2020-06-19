@@ -4,6 +4,7 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.config.shiro.HacLoginToken;
 import com.haier.hailian.contract.dto.CurrentUser;
+import com.haier.hailian.contract.dto.DingDingUserInfo;
 import com.haier.hailian.contract.dto.HacLoginDto;
 import com.haier.hailian.contract.dto.LoginMagicDto;
 import com.haier.hailian.contract.dto.R;
@@ -194,8 +195,8 @@ public class LoginController {
     @ApiOperation(value = "登录")
     public R iHaierDingLogin(String code,HttpServletResponse response) {
 
-        String userId = dingDingService.getUserIdByToken(code);
-        HacLoginToken token = new HacLoginToken(userId);
+        DingDingUserInfo userInfo = dingDingService.getUserIdByToken(code);
+        HacLoginToken token = new HacLoginToken(userInfo.getJobNumber());
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
         SysEmployeeEhr sysUser = (SysEmployeeEhr) subject.getPrincipal();
@@ -213,6 +214,6 @@ public class LoginController {
         }).start();
 
         return R.ok().put(Constant.JWT_AUTH_HEADER, subject.getSession().getId())
-                .put("data", sysUser);
+                .put("data", sysUser).put("ding",userInfo);
     }
 }
