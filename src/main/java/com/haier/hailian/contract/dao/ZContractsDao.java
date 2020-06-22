@@ -152,4 +152,6 @@ public interface ZContractsDao extends BaseMapper<ZContracts> {
     List<ZContracts> selectContractsForCheckWarning();
 
     TargetTrend selectChainShareTrend(int contractId);
+
+    List<String> getGrabCreateCode(Map<String,Object> paraMap);
 }

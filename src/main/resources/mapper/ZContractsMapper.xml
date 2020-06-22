@@ -957,4 +957,12 @@
         where t4.id = #{contractId}
     </select>
     <!-- 事中显差查询接口结束 -->
+
+    <select id="getGrabCreateCode" parameterType="map" resultType="java.lang.String">
+        select create_code from z_contracts where chain_code=#{chainCode}
+        and start_date='2020-06-01 00:00:00' and `status` in (1,8) and contract_type!=10
+--         UNION
+--         SELECT master_code as create_code from z_hr_chain_info where chain_code=#{chainCode} and deleted=0
+    </select>
+
 </mapper>

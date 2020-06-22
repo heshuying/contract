@@ -2,6 +2,7 @@ package com.haier.hailian.contract.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.ExportChainUnitInfo;
 import com.haier.hailian.contract.dto.R;
@@ -50,6 +51,8 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     private VwDmLqDimDao vwDmLqDimDao;
     @Resource
     private DingDingService dingDingService;
+    @Resource
+    private ZContractsDao zContractsDao;
     //hr发版后放开
     //@Reference(version = "ehr2.0", registry = "registry2", check = false)
 //    @Reference(version = "ehr2.0-test",registry = "registry2",check=false)
@@ -710,14 +713,39 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
     @Override
     public int updateAllGroupId() {
         int num = 0;
-        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().isNull("group_id"));
+        List<ZHrChainInfo> list = zHrChainInfoDao.selectList(new QueryWrapper<ZHrChainInfo>().eq("deleted" , 0));
         for(ZHrChainInfo chainInfo : list){
-            String[] users = {chainInfo.getMasterCode(),"19037699"};
-            String groupId = IHaierUtil.createGroup(users,chainInfo.getChainName(),chainInfo.getChainCode());
+            Map<String,Object> paraMap = new HashMap<>();
+            paraMap.put("chainCode" , chainInfo.getChainCode());
+            List<String> codes = zContractsDao.getGrabCreateCode(paraMap);
+            // 创建群组
+            //  根据工号获取userId
+            String empNo = dingDingService.getUserId(chainInfo.getMasterCode());
+            List<String> codeList = Arrays.asList(empNo);
+            String[] toBeStored = new String[codeList.size()];
+            codeList.toArray(toBeStored);
+            String groupId = dingDingService.createGroup(chainInfo.getChainName() , empNo , toBeStored);
+            // 其他人加入群组
+            for (String code : codes){
+                //  根据工号获取userId
+                String otherUserId = dingDingService.getUserId(code);
+                List<String> otherCodeList = Arrays.asList(otherUserId);
+                String[] otherToBeStored = new String[otherCodeList.size()];
+                otherCodeList.toArray(otherToBeStored);
+                // 添加群聊
+                dingDingService.updateGroup(groupId , otherToBeStored , "add_useridlist");
+            }
+            // 更新链群群组id
             ZHrChainInfo exp = new ZHrChainInfo();
             exp.setId(chainInfo.getId());
             exp.setGroupId(groupId);
             zHrChainInfoDao.update(exp);
+            // 更新合约群组id
+            ZContracts pxd = new ZContracts();
+            pxd.setGroupId(groupId);
+            zContractsDao.update(pxd , new UpdateWrapper<ZContracts>()
+                    .eq("chain_code" , chainInfo.getChainCode())
+                    .eq("start_date" , "2020-06-01 00:00:00"));
             num++;
         }
         return num;
