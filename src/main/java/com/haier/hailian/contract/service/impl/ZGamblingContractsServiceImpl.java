@@ -1360,6 +1360,10 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
         if(dto.getJoinTime() != null && sf.parse(dto.getJoinTime()).after(joinTime)){
             contracts.setStatus("0");
         }
+        if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(checkTime)
+                && checkTime.before(new Date())){
+            contracts.setIsChecked("0");
+        }
         updateList.add(contracts);
         //查询子合约
         List<ZContracts> childList=contractsService.list(new QueryWrapper<ZContracts>().eq("contract_type","10").eq("parent_id",dto.getId()));
@@ -1395,6 +1399,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
             if(dto.getCheckTime() != null && sf.parse(dto.getCheckTime()).after(checkTime)
                     && checkTime.before(new Date())&& "8".equals(grab.getStatus())){
                 updateContract.setStatus("1");
+                updateContract.setIsChecked("0");
             }
             updateList.add(updateContract);
         }
