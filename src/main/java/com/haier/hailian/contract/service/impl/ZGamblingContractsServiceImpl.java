@@ -67,7 +67,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
 
         MarketReturnDTO dto = new MarketReturnDTO();
         //查询42个市场小微
-        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent"));
+        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent").orderByAsc("node_code"));
         dto.setMarket(list);
         TargetBasic targetBasic = new TargetBasic();
         //查询链群主举单时商圈的必填目标
@@ -361,7 +361,7 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
     @Override
     public void exportMarket(String chainCode,HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent"));
+        List<ZNodeTargetPercentInfo> list = nodeTargetPercentInfoDao.selectList(new QueryWrapper<ZNodeTargetPercentInfo>().eq("lq_code",chainCode).isNull("share_percent").orderByAsc("node_code"));
         Workbook workbook = new HSSFWorkbook();
         List<TargetBasic> targetBasicList = chainInfoService.getTYNodeTargetList(chainCode);
         if (targetBasicList == null || targetBasicList.size() == 0) {
