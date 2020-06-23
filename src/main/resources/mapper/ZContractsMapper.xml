@@ -545,21 +545,12 @@
                 )
                 ) AS xwName,
               zc.org_name AS nodeName,
-              cf.factor_name,
-              cf.`factor_code`,
-              cf.`factor_value`,
-              cf.`factor_type`,
-              cf.`factor_unit`,
               '1' AS isGrab
             FROM
-              z_contracts_factor cf
-              JOIN z_contracts zc
-                ON cf.`contract_id` = zc.id
-                AND cf.`factor_type` = '02'
-                AND cf.`factor_code` = #{factorCode}
+              z_contracts zc
               JOIN sys_xiaowei_ehr xw
                 ON zc.`xiaowei_code` = xw.`xwCode`
-            WHERE cf.`contract_id` IN
+            WHERE zc.`id` IN
               (SELECT
                 t1.id
               FROM
@@ -567,18 +558,13 @@
               WHERE t1.contract_type = '20'
                 AND t1.`status` in ('1','8')
                 AND t1.`parent_id` = #{contractId})
-            ORDER BY CONVERT(cf.`factor_value`,DECIMAL) DESC)
+            )
             UNION
             (SELECT
               '' AS grabId,
               '' AS contract_name,
               node.xw_name AS xwName,
               node.node_name AS nodeName,
-              '' AS factor_name,
-              '' AS factor_code,
-              '' AS factor_value,
-              '' AS factor_type,
-              '' AS factor_unit,
               '0' AS isGrab
             FROM
               z_node_target_percent_info node
