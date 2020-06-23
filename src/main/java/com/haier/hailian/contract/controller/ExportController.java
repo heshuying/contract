@@ -143,54 +143,54 @@ public class ExportController {
 
 
 
-    /**
-     * 导出模板
-     * params 参数类型
-     * @return
-     * @author liuyq 2020年1月13日 15:36:15
-     */
-    @ApiOperation(value = "POST导出", notes = "POST导出")
-    @PostMapping(value = "/exportTemplate" , headers="Accept=application/octet-stream")
-    public void exportTemplate(@RequestBody ExportInfo exportInfo, HttpServletRequest request, HttpServletResponse response){
-        List rows = new ArrayList();
-        // 文件名
-        String fileName = "";
-        String sheetName = "";
-        ExcelUtil.CellHeadField[] headFields = new ExcelUtil.CellHeadField[0];
-        switch (exportInfo.getType()){
-            case "chain":
-                rows = zHrChainInfoService.getPartMinbuList();
-                sheetName = "链群注册";
-                fileName = "链群注册模板.xls";
-                headFields = CHAIN_EXCEL_TITLE;
-                break;
-            case "grabGrid": // 导出网格信息
-                TyMasterGrabQueryDto queryDTO = new TyMasterGrabQueryDto();
-                queryDTO.setContractId(exportInfo.getContractId());
-                rows = grabService.queryMeshGrabDetail(queryDTO);
-                sheetName = "网格信息";
-                fileName = "网格信息.xls";
-                headFields = GRID_EXCEL_TITLE;
-                break;
-            case "masterGrab":
-                ContractViewRequestNewDTO requestBean = new ContractViewRequestNewDTO();
-                requestBean.setContractId(String.valueOf(exportInfo.getContractId()));
-                rows = (ArrayList)contractViewService.getContractViewDataTYNew(requestBean).get("data");
-                sheetName = "体验链群抢单信息";
-                fileName = "体验链群抢单信息.xls";
-                headFields = MASTER_GRAB_EXCEL_TITLE;
-                break;
-            default:
-                System.out.println("暂无匹配类型");
-        }
-        // 导出
-        try {
-            fileName = URLEncoder.encode(fileName, "UTF-8");
-            exportService.export(fileName , sheetName , headFields , rows ,  request , response);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * 导出模板
+//     * params 参数类型
+//     * @return
+//     * @author liuyq 2020年1月13日 15:36:15
+//     */
+//    @ApiOperation(value = "POST导出", notes = "POST导出")
+//    @PostMapping(value = "/exportTemplate" , headers="Accept=application/octet-stream")
+//    public void exportTemplate(@RequestBody ExportInfo exportInfo, HttpServletRequest request, HttpServletResponse response){
+//        List rows = new ArrayList();
+//        // 文件名
+//        String fileName = "";
+//        String sheetName = "";
+//        ExcelUtil.CellHeadField[] headFields = new ExcelUtil.CellHeadField[0];
+//        switch (exportInfo.getType()){
+//            case "chain":
+//                rows = zHrChainInfoService.getPartMinbuList();
+//                sheetName = "链群注册";
+//                fileName = "链群注册模板.xls";
+//                headFields = CHAIN_EXCEL_TITLE;
+//                break;
+//            case "grabGrid": // 导出网格信息
+//                TyMasterGrabQueryDto queryDTO = new TyMasterGrabQueryDto();
+//                queryDTO.setContractId(exportInfo.getContractId());
+//                rows = grabService.queryMeshGrabDetail(queryDTO);
+//                sheetName = "网格信息";
+//                fileName = "网格信息.xls";
+//                headFields = GRID_EXCEL_TITLE;
+//                break;
+//            case "masterGrab":
+//                ContractViewRequestNewDTO requestBean = new ContractViewRequestNewDTO();
+//                requestBean.setContractId(String.valueOf(exportInfo.getContractId()));
+//                rows = (ArrayList)contractViewService.getContractViewDataTYNew(requestBean).get("data");
+//                sheetName = "体验链群抢单信息";
+//                fileName = "体验链群抢单信息.xls";
+//                headFields = MASTER_GRAB_EXCEL_TITLE;
+//                break;
+//            default:
+//                System.out.println("暂无匹配类型");
+//        }
+//        // 导出
+//        try {
+//            fileName = URLEncoder.encode(fileName, "UTF-8");
+//            exportService.export(fileName , sheetName , headFields , rows ,  request , response);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
 
 
