@@ -30,6 +30,12 @@
         <result column="grab" property="grab" />
     </resultMap>
 
+    <select id="getFactorByContractId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+       select zcf.* from z_contracts_factor zcf join z_contracts zc on zcf.contract_id=zc.id
+        where zc.parent_id=#{contractId} and zc.contract_type='20'  and zc.status in ('1','8')
+				and zcf.factor_type in ('01','02')
+    </select>
+
     <select id="selectChainFactorByContractId" resultMap="ResultMap1">
         select factor_code,factor_name,factor_unit,is_lq_target,MAX(CASE factor_type WHEN '01' THEN factor_value  END ) bottom,
                 MAX(CASE factor_type WHEN '02' THEN factor_value  END ) grab,

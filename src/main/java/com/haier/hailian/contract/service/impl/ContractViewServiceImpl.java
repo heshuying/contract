@@ -1,5 +1,7 @@
 package com.haier.hailian.contract.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.haier.hailian.contract.dao.*;
 import com.haier.hailian.contract.dto.*;
@@ -60,7 +62,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("月累", "actualMonth")
 
     };
-    private static final ExcelUtil.CellHeadField[] Ty_Export_Header = {
+    private static ExcelUtil.CellHeadField[] Ty_Export_Header = {
             new ExcelUtil.CellHeadField("链群编码", "chainCode"),
             new ExcelUtil.CellHeadField("链群名称", "chainName"),
             new ExcelUtil.CellHeadField("合约编码", "parentId"),
@@ -74,11 +76,6 @@ public class ContractViewServiceImpl implements ContractViewService {
             new ExcelUtil.CellHeadField("抢单人工号", "createCode"),
             new ExcelUtil.CellHeadField("抢单人", "createName"),
             new ExcelUtil.CellHeadField("抢单时间", "createTime"),
-
-            new ExcelUtil.CellHeadField("底线收入", "bottomInc"),
-            new ExcelUtil.CellHeadField("底线高端占比", "bottomHigh"),
-            new ExcelUtil.CellHeadField("抢单收入", "grabInc"),
-            new ExcelUtil.CellHeadField("抢单高端占比", "grabHigh"),
 
     };
     private static final ExcelUtil.CellHeadField[] Cd_Export_Header = {
@@ -812,7 +809,37 @@ public class ContractViewServiceImpl implements ContractViewService {
             Workbook workbook = new HSSFWorkbook();
             //市场
             List<ContractExportEntity> tyExports=monthChainGroupOrderDao.tyExport(contractId);
-            ExcelUtil.buildSheet(workbook, "体验抢单数据", tyExports, Ty_Export_Header);
+            List<ZContractsFactor> factors=factorDao.getFactorByContractId(contractId);
+            List<ExcelUtil.CellHeadField> headFields = new ArrayList<>();
+            headFields.addAll(Arrays.asList(Ty_Export_Header));
+
+            //获取动态列
+            List<ZContractsFactor> anyone=factors.stream().filter(m->tyExports.get(0).getId().equals(
+                    m.getContractId().toString()
+            )).collect(Collectors.toList());
+            for(ZContractsFactor fac:anyone){
+                headFields.add(new ExcelUtil.CellHeadField(
+                        Constant.FactorType.Bottom.getValue().equals(fac.getFactorType()) ?
+                                "目标"+fac.getFactorName():"抢单"+fac.getFactorName(),fac.getFactorType()+fac.getFactorCode()) );
+            }
+            ExcelUtil.CellHeadField[] constHeader= (ExcelUtil.CellHeadField[]) headFields.toArray(
+                    new ExcelUtil.CellHeadField[headFields.size()]
+            );
+
+            //动态设置值
+            List<Map<String,Object>> tyExportData=new ArrayList<>();
+            for(ContractExportEntity entity:tyExports){
+                Map<String,Object> map= JSONObject.parseObject(JSON.toJSONString(entity));
+                List<ZContractsFactor> curr=factors.stream().filter(m->entity.getId().equals(
+                        m.getContractId().toString()
+                )).collect(Collectors.toList());
+                for(ZContractsFactor fac:curr){
+                    map.put(fac.getFactorType()+fac.getFactorCode(),fac.getFactorValue());
+                }
+                tyExportData.add(map);
+            }
+            //获取动态
+            ExcelUtil.buildSheet(workbook, "体验抢单数据", tyExportData, constHeader);
 
             //创单
             List<ContractExportEntity> cdExports=monthChainGroupOrderDao.cdExport(contractId);
