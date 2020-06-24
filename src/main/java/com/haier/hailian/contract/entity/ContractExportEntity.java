@@ -27,6 +27,6 @@ public class ContractExportEntity {
 
     private String xwCode;
     private String xwName;
-    
+
 
 }

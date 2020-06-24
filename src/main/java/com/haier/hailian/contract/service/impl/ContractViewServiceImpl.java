@@ -820,7 +820,7 @@ public class ContractViewServiceImpl implements ContractViewService {
             for(ZContractsFactor fac:anyone){
                 headFields.add(new ExcelUtil.CellHeadField(
                         Constant.FactorType.Bottom.getValue().equals(fac.getFactorType()) ?
-                                "目标"+fac.getFactorName():"抢单"+fac.getFactorName(),fac.getFactorType()+fac.getFactorCode()) );
+                                "举单"+fac.getFactorName():"抢单"+fac.getFactorName(),fac.getFactorType()+fac.getFactorCode()) );
             }
             ExcelUtil.CellHeadField[] constHeader= (ExcelUtil.CellHeadField[]) headFields.toArray(
                     new ExcelUtil.CellHeadField[headFields.size()]
