@@ -149,17 +149,19 @@ public class GrabServiceImpl implements GrabService {
                 .eq("chain_code", contracts.getChainCode()));
         //判断是否属于高端品牌，高端品牌来源OMS，其他手动填写
         String chainAttr=chainInfoDao.getChainAttr(contracts.getChainCode());
-        if("H".equals(chainAttr)){
-            tyMasterGrabChainInfoDto.setCanEdit(false);
-
-        }else if("1".equals(chainInfo.getGrabFlag()) ){
+        if("1".equals(chainInfo.getGrabFlag()) ){
             //链群闸口
             tyMasterGrabChainInfoDto.setCanEdit(true);
-        }else{
-            if(!minBu.isIn42Center()){
-                tyMasterGrabChainInfoDto.setCanEdit(true);
-            }else {
+        }else {
+            if ("H".equals(chainAttr)) {
                 tyMasterGrabChainInfoDto.setCanEdit(false);
+                if (!minBu.isIn42Center()) {
+                    tyMasterGrabChainInfoDto.setCanEdit(true);
+                } else {
+                    tyMasterGrabChainInfoDto.setCanEdit(false);
+                }
+            } else {
+                tyMasterGrabChainInfoDto.setCanEdit(true);
             }
         }
 
