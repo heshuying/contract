@@ -596,7 +596,7 @@
         <if test="isgrab!=null and isgrab == 'no'">
             HAVING t.factor_code = ''
         </if>
-        ORDER BY t.isGrab DESC, CONVERT(t.`factor_value`,DECIMAL) DESC
+        ORDER BY t.isGrab DESC
     </select>
 
     <select id="selectFactorJDForTYNew" parameterType="map" resultMap="jdResultMap">
