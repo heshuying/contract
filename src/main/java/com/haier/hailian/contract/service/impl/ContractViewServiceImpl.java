@@ -316,15 +316,15 @@ public class ContractViewServiceImpl implements ContractViewService {
 //        }
 
         // 排序
-        if(StringUtils.isNotBlank(requestBean.getOrderStr())){
-            if("incomeDesc".equals(requestBean.getOrderStr())){
-                paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
-            }else if("highDesc".equals(requestBean.getOrderStr())){
-                paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
-            }
-        }else {
-            paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
-        }
+//        if(StringUtils.isNotBlank(requestBean.getOrderStr())){
+//            if("incomeDesc".equals(requestBean.getOrderStr())){
+//                paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+//            }else if("highDesc".equals(requestBean.getOrderStr())){
+//                paraMap.put("factorCode", Constant.FactorCode.HighPercent.getValue());
+//            }
+//        }else {
+//            paraMap.put("factorCode", Constant.FactorCode.Incom.getValue());
+//        }
 
         // 按名称检索
         if(StringUtils.isNotBlank(requestBean.getXwName())){
