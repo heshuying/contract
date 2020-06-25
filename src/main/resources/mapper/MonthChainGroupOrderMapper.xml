@@ -119,7 +119,7 @@
     </select>
 
 <select id="tyExport" parameterType="java.lang.Integer" resultMap="contractExportResult">
-    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,
+    select ci.chain_code, ci.chain_name, zc.parent_id,zc.start_date,zc.end_date,bu.xwCode,bu.xwName
     zc.id,zc.org_code,zc.org_name,zc.create_code,zc.create_name,zc.create_time
      from z_contracts zc
       join z_hr_chain_info ci on  zc.chain_code=ci.chain_code
