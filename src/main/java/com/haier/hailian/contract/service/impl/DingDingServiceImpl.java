@@ -154,7 +154,6 @@ public class DingDingServiceImpl implements DingDingService{
 
 
     public String getPhonebookToken(){
-        Gson gson = new Gson();
         String method="/auth/oauth/token?username=S01800&password=y%2BxebMTkbcWhyUwGhKohhQ%3D%3D&grant_type=password&scope=server&step=1";
         String uri=dingDingConfig.getBaseUri().concat(method);
         // 获取token
@@ -170,7 +169,7 @@ public class DingDingServiceImpl implements DingDingService{
 
         org.json.simple.JSONObject jsonObject = doPostHeaderForJson("" , httpPost);
 
-        if(!"1".equals(jsonObject.get("code"))){
+        if(!"1".equals(jsonObject.get("code").toString())){
             // 成功
             return jsonObject.get("access_token").toString();
         }else{
