@@ -169,7 +169,7 @@ public class DingDingServiceImpl implements DingDingService{
 
         org.json.simple.JSONObject jsonObject = doPostHeaderForJson("" , httpPost);
 
-        if(!"1".equals(jsonObject.get("code").toString())){
+        if(!"1".equals(jsonObject.get("code"))){
             // 成功
             return jsonObject.get("access_token").toString();
         }else{
