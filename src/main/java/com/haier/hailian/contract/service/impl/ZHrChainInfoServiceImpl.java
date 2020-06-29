@@ -449,7 +449,7 @@ public class ZHrChainInfoServiceImpl implements ZHrChainInfoService {
                     List<String> modelCodeList = Arrays.asList(empNo);
                     String[] modelToBeStored = new String[modelCodeList.size()];
                     modelCodeList.toArray(modelToBeStored);
-                    modelGroupId = dingDingService.createGroup(name , empNo , modelToBeStored);
+                    modelGroupId = dingDingService.createGroup(modelName , empNo , modelToBeStored);
                 }
 
                 //更新链群的群组ID字段
