@@ -2,22 +2,27 @@ package com.haier.hailian.contract.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.haier.hailian.contract.config.DingDingConfig;
 import com.haier.hailian.contract.dto.DingDingUserInfo;
 import com.haier.hailian.contract.dto.RException;
-import com.haier.hailian.contract.dto.sms.NotifySms;
 import com.haier.hailian.contract.service.DingDingService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,19 +99,27 @@ public class DingDingServiceImpl implements DingDingService{
 
     @Override
     public String createGroup(String lqName , String chainMasterCode , String[] users) {
-        String method="/chat/create?access_token=" + getAccessToken();
+
+        String method="/gateway/ihaier/chat/create?access_token=" + getAccessToken();
         String uri=dingDingConfig.getBaseUri().concat(method);
-        Map<String, Object> map = new HashMap<>();
-        map.put("name",lqName + "链群交互群");
-        map.put("owner", chainMasterCode);
-        map.put("useridlist" , users);//创建时只传链群主自己
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map);
-        ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(uri,entity,String.class);
-        String body = responseEntity.getBody();
-        log.info("=====创建群组返回：{}==",body);
-        JSONObject jsonObject= JSON.parseObject(body);
-        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
-            return jsonObject.getString("chatid");
+        JSONObject json = new JSONObject();
+        json.put("name",lqName + "链群交互群");
+        json.put("owner", chainMasterCode);
+        json.put("useridlist" , users);//创建时只传链群主自己
+
+        HttpPost httpPost = new HttpPost(uri);
+        RequestConfig requestConfig = RequestConfig.custom().
+                setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
+                .setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
+        httpPost.setConfig(requestConfig);
+        httpPost.setHeader("Content-Type", "application/json");
+
+        org.json.simple.JSONObject jsonObject = doPostHeaderForJson(json.toJSONString() , httpPost);
+
+        log.info("=====创建群组返回：{}==",jsonObject.toJSONString());
+//        JSONObject jsonObject= JSON.parseObject(body);
+        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.get("errcode").toString())){
+            return jsonObject.get("chatid").toString();
         }else{
             throw new RException("创建群组失败");
         }
@@ -114,18 +127,25 @@ public class DingDingServiceImpl implements DingDingService{
 
     @Override
     public void updateGroup(String groupId , String[] users , String updateType) {
-        String method="/chat/update?access_token=" + getAccessToken();
+        String method="/gateway/ihaier/chat/update?access_token=" + getAccessToken();
         String uri=dingDingConfig.getBaseUri().concat(method);
-        Map<String, Object> map = new HashMap<>();
-        map.put("chatid",groupId);
+
+        JSONObject json = new JSONObject();
+        json.put("chatid",groupId);
         // 新增：add_useridlist； 删除：del_useridlist
-        map.put(updateType , users);//群组新增或者删除
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map);
-        ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(uri,entity,String.class);
-        String body = responseEntity.getBody();
-        log.info("=====修改群组返回：{}==",body);
-        JSONObject jsonObject= JSON.parseObject(body);
-        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.getString("errcode"))){
+        json.put(updateType , users);//群组新增或者删除
+
+        HttpPost httpPost = new HttpPost(uri);
+        RequestConfig requestConfig = RequestConfig.custom().
+                setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
+                .setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
+        httpPost.setConfig(requestConfig);
+        httpPost.setHeader("Content-Type", "application/json");
+
+        org.json.simple.JSONObject jsonObject = doPostHeaderForJson(json.toJSONString() , httpPost);
+
+        log.info("=====修改群组返回：{}==",jsonObject.toJSONString());
+        if(jsonObject.containsKey("errcode")&&"0".equals(jsonObject.get("errcode").toString())){
             // 成功
         }else{
             throw new RException("修改群组失败");
@@ -134,30 +154,29 @@ public class DingDingServiceImpl implements DingDingService{
 
 
     public String getPhonebookToken(){
-        String method="/auth/oauth/token";
+        Gson gson = new Gson();
+        String method="/auth/oauth/token?username=S01800&password=y%2BxebMTkbcWhyUwGhKohhQ%3D%3D&grant_type=password&scope=server&step=1";
         String uri=dingDingConfig.getBaseUri().concat(method);
+        // 获取token
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Basic UzAxODAwOlMwMTgwMA==");
+        HttpPost httpPost = new HttpPost(uri);
+        RequestConfig requestConfig = RequestConfig.custom().
+                setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
+                .setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
+        httpPost.setConfig(requestConfig);
+        httpPost.setHeader("Content-Type", "application/json");
+        httpPost.setHeader("Authorization","Basic UzAxODAwOlMwMTgwMA==");
+        httpPost.setHeader("TENANT_ID","1");
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("username","S01800");
-        map.put("password","y%2BxebMTkbcWhyUwGhKohhQ%3D%3D");
-        map.put("grant_type","password");
-        map.put("scope","server");
-        map.put("step","1");
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map , headers);
-        ResponseEntity<String> responseEntity = nRestTemplate.postForEntity(uri,entity,String.class);
-        String body = responseEntity.getBody();
-        log.info("=====获取通讯录token返回：{}==",body);
-        JSONObject jsonObject= JSON.parseObject(body);
-        if(!"1".equals(jsonObject.getString("code"))){
+        org.json.simple.JSONObject jsonObject = doPostHeaderForJson("" , httpPost);
+
+        if(!"1".equals(jsonObject.get("code"))){
             // 成功
-            return jsonObject.getString("access_token");
+            return jsonObject.get("access_token").toString();
         }else{
             throw new RException("获取通讯录token失败");
         }
+
     }
 
 
@@ -166,22 +185,84 @@ public class DingDingServiceImpl implements DingDingService{
         String method="/admin/user/getDingUserId/" + empNo;
         String uri=dingDingConfig.getBaseUri().concat(method);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String basic=getPhonebookToken();
-        headers.set("Authorization", "bearer "+ basic);
+        // 获取userId
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
+        HttpGet httpGet = new HttpGet(uri);
+        RequestConfig requestConfig = RequestConfig.custom().
+                setConnectTimeout(180 * 1000).setConnectionRequestTimeout(180 * 1000)
+                .setSocketTimeout(180 * 1000).setRedirectsEnabled(true).build();
+        httpGet.setConfig(requestConfig);
+        httpGet.setHeader("Content-Type", "application/json");
+        httpGet.setHeader("Authorization","Bearer " + getPhonebookToken());
 
-        ResponseEntity<String> responseEntity = nRestTemplate.getForEntity(uri,String.class,entity);
-        String body=responseEntity.getBody();
-        log.info("=====获取用户userId返回：{}==",body);
-        JSONObject jsonObject= JSON.parseObject(body);
-        if(jsonObject.containsKey("code")&&"0".equals(jsonObject.getString("code"))){
-            return jsonObject.getString("data");
+        org.json.simple.JSONObject jsonObject = doGetHeaderForJson(httpGet);
+
+        log.info("=====获取用户userId返回：{}==",jsonObject.toJSONString());
+        if("0".equals(jsonObject.get("code").toString())){
+            return jsonObject.get("data").toString();
         }else{
-            throw new RException("获取失败");
+            throw new RException("获取userId失败");
         }
 
     }
+
+
+    public static org.json.simple.JSONObject doPostHeaderForJson(String jsonParams , HttpPost httpPost) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        org.json.simple.JSONObject jsonObject = null;
+
+        try {
+            httpPost.setEntity(new StringEntity(jsonParams, ContentType.create("application/json", "utf-8")));
+            log.info("request parameters={}", EntityUtils.toString(httpPost.getEntity()));
+            HttpResponse response = httpClient.execute(httpPost);
+            if (response != null && response.getStatusLine().getStatusCode() == 200) {
+                String result = EntityUtils.toString(response.getEntity());
+                log.info("post utils returns ={}", result);
+                jsonObject = (org.json.simple.JSONObject)(new JSONParser().parse(result));
+                return jsonObject;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != httpClient) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return jsonObject;
+        }
+    }
+
+
+
+
+    public static org.json.simple.JSONObject doGetHeaderForJson(HttpGet httpGet) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        org.json.simple.JSONObject jsonObject = null;
+
+        try {
+            HttpResponse response = httpClient.execute(httpGet);
+            if (response != null && response.getStatusLine().getStatusCode() == 200) {
+                String result = EntityUtils.toString(response.getEntity());
+                log.info("get utils returns ={}", result);
+                jsonObject = (org.json.simple.JSONObject)(new JSONParser().parse(result));
+                return jsonObject;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != httpClient) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return jsonObject;
+        }
+    }
+
+
 }
