@@ -576,7 +576,7 @@ public class CDGrabServiceImpl implements CDGrabService {
         }
 
         if(!"1".equals(contracts.getStatus())){
-            throw new RException("撤销失败：未抢入成功不可以撤销");
+            throw new RException("撤销失败：链群主已复核");
         }
         if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
             throw new RException("撤销失败：已过结束时间不可以撤销");
@@ -601,7 +601,7 @@ public class CDGrabServiceImpl implements CDGrabService {
                 throw new RException("批量撤销失败：所选合约有数据库中不存在的记录，不可以撤销");
             }
             if(!"1".equals(contracts.getStatus())){
-                throw new RException("批量撤销失败：所选合约有未抢入成功的，不可以撤销");
+                throw new RException("批量撤销失败：所选合约存在链群主已复核，不可以撤销");
             }
             if(contracts.getEndDate() != null && new Date().getTime() > contracts.getEndDate().getTime()){
                 throw new RException("批量撤销失败：所选合约有已过结束时间的，不可以撤销");
