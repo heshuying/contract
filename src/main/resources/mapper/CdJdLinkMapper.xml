@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.hailian.contract.dao.CdJdLinkDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haier.hailian.contract.entity.CdJdLink">
+        <id column="ID" property="id" />
+        <result column="data_date" property="dataDate" />
+        <result column="lq_code" property="lqCode" />
+        <result column="source_jd_code" property="sourceJdCode" />
+        <result column="source_jd_name" property="sourceJdName" />
+        <result column="target_jd_code" property="targetJdCode" />
+        <result column="target_jd_name" property="targetJdName" />
+        <result column="hy" property="hy" />
+        <result column="active_flag" property="activeFlag" />
+        <result column="created_date" property="createdDate" />
+        <result column="created_by" property="createdBy" />
+        <result column="last_upd_date" property="lastUpdDate" />
+        <result column="last_upd_by" property="lastUpdBy" />
+        <result column="remark" property="remark" />
+        <result column="contract_id" property="contractId" />
+        <result column="contract_name" property="contractName" />
+    </resultMap>
+
+</mapper>
