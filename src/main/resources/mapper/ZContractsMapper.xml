@@ -720,7 +720,7 @@
         )
         and not exists(select 1 from z_contracts where
         parent_id=base.id and contract_type='10')
-        order by id desc
+        order by ${defaultOrder}
     </select>
 
     <select id="queryTyMyGrabList" resultMap="BaseResultMap" >
@@ -741,7 +741,7 @@
         <if test=" name != null and name != ''">
             and zc.contract_name like CONCAT(CONCAT('%', #{name}), '%')
         </if>
-        order by base.id desc
+        order by ${defaultOrder}
     </select>
 
 

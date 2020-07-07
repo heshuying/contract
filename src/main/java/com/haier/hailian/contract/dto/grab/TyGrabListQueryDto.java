@@ -18,4 +18,6 @@ public class TyGrabListQueryDto {
     private String empSn;
     @ApiModelProperty(value = "登陆人作战单元编码", required = false)
     private String loginBuCode;
+
+    private  String defaultOrder;
 }

@@ -71,7 +71,9 @@ public class GrabServiceImpl implements GrabService {
         TOdsMinbu minBu = sysUser.getMinbu();
         List<TyMasterGrabChainInfoDto> list=new ArrayList<>();
         queryDto.setEmpSn(sysUser.getEmpSn());
-
+        if(StringUtils.isBlank(queryDto.getDefaultOrder()) ){
+            queryDto.setDefaultOrder(" id desc ");
+        }
         List<ZContracts> contracts= contractsService.queryTyMyGrabList(queryDto);
 
         for ( ZContracts contract: contracts
@@ -107,6 +109,9 @@ public class GrabServiceImpl implements GrabService {
             query.setChainCodes(chainCodes);
             query.setEmpSn(sysUser.getEmpSn());
             query.setLoginBuCode(minbu.getLittleXwCode());
+            if(StringUtils.isBlank(query.getDefaultOrder()) ){
+                query.setDefaultOrder(" id desc ");
+            }
             List<ZContracts> contractses=contractsService.queryTyGrabList(query);
 
             for ( ZContracts contract: contractses
