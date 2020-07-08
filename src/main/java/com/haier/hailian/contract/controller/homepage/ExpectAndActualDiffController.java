@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -74,7 +75,7 @@ public class ExpectAndActualDiffController {
     @ApiOperation(value = "抢入星图")
     public R grabStarMap(@RequestBody ExpectAndActualDiffDto expectAndActualDiffDto) {
         try{
-            Map<String , Object> res = expectAndActualDiffService.grabStarMap(expectAndActualDiffDto);
+            List<Map<String, Object>> res = expectAndActualDiffService.grabStarMap(expectAndActualDiffDto);
             return R.ok().put("data",res);
         }catch (Exception e){
             e.printStackTrace();

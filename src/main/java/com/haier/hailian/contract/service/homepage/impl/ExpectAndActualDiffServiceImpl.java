@@ -11,10 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -30,6 +27,8 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
     private VJdxpDao vJdxpDao;
     @Autowired
     private CdJdDao cdJdDao;
+    @Autowired
+    private CdJdLinkDao cdJdLinkDao;
 
 
     @Override
@@ -192,15 +191,29 @@ public class ExpectAndActualDiffServiceImpl implements ExpectAndActualDiffServic
     }
 
     @Override
-    public Map<String, Object> grabStarMap(ExpectAndActualDiffDto expectAndActualDiffDto) {
-        Map<String, Object> res = new HashMap<>();
+    public List<Map<String , Object>> grabStarMap(ExpectAndActualDiffDto expectAndActualDiffDto) {
+        // 获取节点
+        List<Map<String, Object>> res = new ArrayList<>();
         Map<String , Object> exp = new HashMap<>();
         exp.put("chainCode" , expectAndActualDiffDto.getChainCode());
         exp.put("contractId" ,expectAndActualDiffDto.getContractId());
         List<CdJd> list = cdJdDao.selectGrabStarMap(exp);
-        res.put("data" , list);
+        for(CdJd cd : list){
+            Map<String , Object> map = new HashMap<>();
+            // 获取关系
+            List<CdJdLink> linkList = cdJdLinkDao.selectList(
+                    new QueryWrapper<CdJdLink>()
+                            .eq("source_jd_code" , cd.getJdCode()));
+            map.put("jdCode" , cd.getJdCode());
+            map.put("jdName" , cd.getJdName());
+            map.put("x" , cd.getX());
+            map.put("y" , cd.getY());
+            map.put("jdType" , cd.getXwTypeCode());
+            map.put("link" , linkList);
+
+            res.add(map);
+        }
         return res;
     }
-
 
 }
