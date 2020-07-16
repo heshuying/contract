@@ -32,6 +32,11 @@ public class ContractViewController {
         return R.ok().put("data",resultDTO);
     }
 
+    /**
+     * 合约创单数据查询（历史接口）
+     * @param contractId
+     * @return
+     */
     @GetMapping(value = {"/getContractInfoCD/{contractId}"})
     @ApiOperation(value = "合约创单数据查询")
     public R getContractInfoCD(@PathVariable String contractId) {
@@ -164,7 +169,7 @@ public class ContractViewController {
     }
 
     /**
-     * 批量计算分享筹并保存
+     * 批量计算分享筹并保存(初始化一次)
      * @param paramBean
      * @return
      */
@@ -179,6 +184,11 @@ public class ContractViewController {
         return R.ok();
     }
 
+    /**
+     * (初始化一次)
+     * @param paraMap
+     * @return
+     */
     @PostMapping(value = {"/updateType3List"})
     @ApiOperation(value = "初始化抢单个数")
     public R updateType3List(@RequestBody Map<String,String> paraMap) {
