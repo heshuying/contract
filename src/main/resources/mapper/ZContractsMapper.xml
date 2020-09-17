@@ -555,4 +555,10 @@
         )) a
         ORDER BY a.create_time DESC
     </select>
+
+    <select id="selectGamnlingBeginDate" resultType="java.util.Date">
+      select start_date from z_waring_period_config
+      where chain_code=#{chainCode}
+      and  DATE_FORMAT(start_date,'%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m' )
+    </select>
 </mapper>

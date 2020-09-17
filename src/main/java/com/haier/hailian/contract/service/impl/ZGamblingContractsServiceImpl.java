@@ -419,11 +419,23 @@ public class ZGamblingContractsServiceImpl implements ZGamblingContractsService 
                 for(ZHrChainInfo chainInfo : chainList){
                     QueryContractListDTO dto = new QueryContractListDTO();
                     dto.setChainCode(chainInfo.getChainCode());
-                    dto.setNextMonth(DateFormatUtil.getMonthOfDate(new Date())+1+"");
+                    int next = DateFormatUtil.getMonthOfDate(new Date())+1;
+                    int year = DateFormatUtil.getYearOfDate(new Date());
+                    String nextMonth = "";
+                    nextMonth = next<10?year+"0"+next:year+""+next;
+                    dto.setNextMonth(nextMonth);
                     List<ZContracts> contractsList = contractsDao.selectContractList(dto);
                     if(null == contractsList || contractsList.size()==0){
                         ZContracts zContracts = new ZContracts();
                         zContracts.setContractName(chainInfo.getChainName()+"-"+chainInfo.getMasterName());
+                        //从z_waring_period_config表中查询举单开始日期
+                        Date begin = contractsDao.selectGamnlingBeginDate(chainInfo.getChainCode());
+                        int day = 0;
+                        if(begin != null){
+                            day = DateFormatUtil.getDAYOfDate(begin);
+                        }else {
+                            day = 20;
+                        }
                         if(DateFormatUtil.getDAYOfDate(new Date())<20){
                             zContracts.setStatus("close");
                         }else{
